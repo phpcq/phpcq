@@ -43,13 +43,13 @@
 
     <target
         name="verify"
-        depends="phplint"
+        depends="phplint, composer-validate"
         description="Verify the quality of the code"
     />
 
     <target
         name="analyze"
-        depends="phploc, pdepend, phpmd, phpcs, phpcpd, phpunit, branch-alias-validation, composer-validate"
+        depends="phploc, pdepend, phpmd, phpcs, phpcpd, phpunit, branch-alias-validation"
         description="Do static analysis of the code"
     />
 <!--
