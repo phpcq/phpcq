@@ -1,5 +1,4 @@
 [![Version](http://img.shields.io/packagist/v/contao-community-alliance/build-system.svg?style=flat-square)](https://packagist.org/packages/contao-community-alliance/build-system)
-[![Stable Build Status](http://img.shields.io/travis/contao-community-alliance/build-system/master.svg?style=flat-square)](https://travis-ci.org/contao-community-alliance/build-system)
 [![License](http://img.shields.io/packagist/l/contao-community-alliance/build-system.svg?style=flat-square)](https://github.com/contao-community-alliance/build-system/blob/master/LICENSE)
 [![Downloads](http://img.shields.io/packagist/dt/contao-community-alliance/build-system.svg?style=flat-square)](https://packagist.org/packages/contao-community-alliance/build-system)
 
