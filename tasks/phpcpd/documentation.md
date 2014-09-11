@@ -1,0 +1,13 @@
+CCABS task phpcpd
+=================
+
+This task executes [phpcpd](https://github.com/sebastianbergmann/phpcpd) on your code base.
+
+Utilized properties
+-------------------
+
+Currently the phpcpd task knows about the following properties:
+* `phpcpd.excluded` List of excluded files and folders (space separated list, default: none).
+* `phpcpd.src` source directories to be analyzed with phpcpd (space separated list, default: ${ccabs.src.dirs.php}).
+
+See the default [properties file](default.properties) for the complete list.

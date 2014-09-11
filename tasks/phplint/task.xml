@@ -1,0 +1,20 @@
+<project name="ccabs.task.phplint">
+    <property file="${ccabs.basedir}/tasks/phplint/default.properties"/>
+    <target name="phplint" description="Perform PHP syntax check of sourcecode files">
+        <loadresource property="phplint.src.dirs">
+            <propertyresource name="phplint.src"/>
+            <filterchain>
+                <tokenfilter>
+                    <replaceregex pattern="${basedir}" replace="" flags="g"/>
+                    <replaceregex pattern="^/" replace="" />
+                    <replaceregex pattern=" " replace="/**/*.php," flags="g"/>
+                    <replaceregex pattern="$"  replace="/**/*.php" />
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <apply executable="php" output="/dev/null" logError="true" failonerror="true">
+            <arg value="-l" />
+            <fileset dir="${basedir}" includes="${phplint.src.dirs}" />
+        </apply>
+    </target>
+</project>

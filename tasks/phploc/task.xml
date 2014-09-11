@@ -1,0 +1,20 @@
+<project name="ccabs.task.phploc">
+    <property file="${ccabs.basedir}/tasks/phploc/default.properties"/>
+    <target name="-check-phploc.installed" unless="phploc.installed">
+        <available property="phploc.installed" file="vendor/bin/phploc"/>
+        <exec executable="php" outputproperty="phploc.excluded.arguments">
+            <arg line="-r"/>
+            <arg value="
+            echo ($ignored=implode(' --exclude=', array_filter(array_map('trim', explode(' ', '${phploc.excluded}')))))
+                ? '--exclude=' . $ignored
+                : '';
+            "/>
+        </exec>
+    </target>
+    <target name="phploc" depends="-check-phploc.installed" if="${phploc.installed}">
+        <exec dir="${basedir}" executable="vendor/bin/phploc" failonerror="true">
+            <arg line="${phploc.excluded.arguments}"/>
+            <arg line="${phploc.src}"/>
+        </exec>
+    </target>
+</project>

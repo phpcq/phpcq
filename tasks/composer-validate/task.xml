@@ -1,0 +1,10 @@
+<project name="ccabs.task.composer-validate">
+    <target name="-check-composer.installed" unless="composer.installed">
+        <available property="composer.installed" file="composer"/>
+    </target>
+    <target name="composer-validate" depends="-check-composer.installed" if="${composer.installed}">
+        <exec dir="${basedir}" executable="composer" failonerror="true">
+            <arg value="validate"/>
+        </exec>
+    </target>
+</project>

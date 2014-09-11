@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is a default build file that sits outside of any project folders, but which is imported into the project build
+    file like so:
+        <import file="vendor/contao-community-alliance/build-system/ccabs.main.xml"/>
+
+    All relative references in this file, are assumed to be from the base of the project build file.
+    If an identically named target in the project build file is also present in this imported file, the one from the
+    project file takes precedence. e.g. a project build file can define a different "build" target to remove the analyze
+    target, for instance.
+-->
+
+<project
+    name="ccabs.main"
+    default="build"
+    >
+    <property name="ccabs.basedir" value="${basedir}/vendor/contao-community-alliance/build-system" />
+
+    <!-- Pull in the local properties first. -->
+    <property file="${basedir}/build.properties"/>
+    <!-- Pull in the project default properties next. -->
+    <property file="${basedir}/build.default.properties"/>
+    <!-- Pull in the global default properties -->
+    <property file="${ccabs.basedir}/build.default.properties" />
+
+    <!-- Import the tasks now. -->
+    <import file="tasks/branch-alias-validation/task.xml" />
+    <import file="tasks/composer-validate/task.xml" />
+    <import file="tasks/pdepend/task.xml" />
+    <import file="tasks/phplint/task.xml" />
+    <import file="tasks/phpcpd/task.xml" />
+    <import file="tasks/phpcs/task.xml" />
+    <import file="tasks/phploc/task.xml" />
+    <import file="tasks/phpmd/task.xml" />
+    <import file="tasks/phpunit/task.xml" />
+
+    <!-- Build targets from here on. -->
+    <target
+        name="build"
+        depends="verify, analyze"
+        description="Do a full build"
+    />
+
+    <target
+        name="verify"
+        depends="phplint"
+        description="Verify the quality of the code"
+    />
+
+    <target
+        name="analyze"
+        depends="phploc, pdepend, phpmd, phpcs, phpcpd, phpunit, branch-alias-validation, composer-validate"
+        description="Do static analysis of the code"
+    />
+<!--
+    <target
+        name="docs"
+        depends="phpdoc, phpcb, htaccess, copysvg, copybuild"
+    />
+-->
+</project>

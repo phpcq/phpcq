@@ -1,0 +1,21 @@
+<project name="ccabs.task.phpcs">
+    <property file="${ccabs.basedir}/tasks/phpcs/default.properties"/>
+    <target name="-check-phpcs.installed" unless="phpcs.installed">
+        <available property="phpcs.installed" file="vendor/bin/phpcs"/>
+        <exec executable="php" outputproperty="phpcs.excluded.arguments">
+            <arg line="-r"/>
+            <arg value="
+            echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcs.excluded}')))))
+                ? '--ignore=' . $ignored
+                : '';
+            "/>
+        </exec>
+    </target>
+    <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
+        <exec dir="${basedir}" executable="vendor/bin/phpcs" failonerror="true">
+            <arg line="--standard=${phpcs.standard}"/>
+            <arg line="${phpcs.excluded.arguments}"/>
+            <arg line="${phpcs.src}"/>
+        </exec>
+    </target>
+</project>
