@@ -3,7 +3,7 @@
         <available property="branch-alias-validation.installed" file="vendor/bin/validate-branch-alias.php"/>
     </target>
     <target name="branch-alias-validation" depends="-check-branch-alias-validation.installed" if="${branch-alias-validation.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/validate-branch-alias.php" failonerror="true">
+        <exec dir="${basedir}" executable="vendor/bin/validate-branch-alias.php" failonerror="true" taskname="branch-alias-validation">
             <arg line="${basedir}"/>
         </exec>
     </target>

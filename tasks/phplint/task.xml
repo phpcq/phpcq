@@ -12,7 +12,7 @@
                 </tokenfilter>
             </filterchain>
         </loadresource>
-        <apply executable="php" output="/dev/null" logError="true" failonerror="true">
+        <apply executable="php" output="/dev/null" logError="true" failonerror="true" taskname="phplint">
             <arg value="-l" />
             <fileset dir="${basedir}" includes="${phplint.src.dirs}" />
         </apply>

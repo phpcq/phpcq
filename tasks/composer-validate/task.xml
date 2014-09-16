@@ -4,7 +4,7 @@
         <available file="composer" filepath="${ccabs.task.composer-validate.env.PATH}" property="composer.installed" />
     </target>
     <target name="composer-validate" depends="-check-composer.installed" if="${composer.installed}">
-        <exec dir="${basedir}" executable="composer" failonerror="true">
+        <exec dir="${basedir}" executable="composer" failonerror="true" taskname="composer-validate">
             <arg value="validate"/>
         </exec>
     </target>

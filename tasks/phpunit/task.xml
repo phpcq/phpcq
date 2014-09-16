@@ -3,6 +3,6 @@
         <available property="phpunit.installed" file="vendor/bin/phpunit"/>
     </target>
     <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/phpunit" failonerror="true" />
+        <exec dir="${basedir}" executable="vendor/bin/phpunit" failonerror="true" taskname="phpunit" />
     </target>
 </project>

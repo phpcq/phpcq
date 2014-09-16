@@ -21,7 +21,7 @@
         </exec>
     </target>
     <target name="pdepend" depends="-check-pdepend.installed" if="${pdepend.available}">
-        <exec dir="${basedir}" executable="vendor/bin/pdepend" failonerror="true">
+        <exec dir="${basedir}" executable="vendor/bin/pdepend" failonerror="true" taskname="pdepend">
             <arg line="${pdepend.output}"/>
             <arg line="${pdepend.excluded.arguments}"/>
             <arg line="${pdepend.dirs}"/>

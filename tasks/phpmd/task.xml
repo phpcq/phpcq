@@ -15,7 +15,7 @@
         </exec>
     </target>
     <target name="phpmd" depends="-check-phpmd.installed" if="${phpmd.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/phpmd" failonerror="true">
+        <exec dir="${basedir}" executable="vendor/bin/phpmd" failonerror="true" taskname="phpmd">
             <arg line="${phpmd.dirs}"/>
             <arg line="${phpmd.format}"/>
             <arg line="${phpmd.ruleset}"/>

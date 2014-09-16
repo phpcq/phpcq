@@ -12,7 +12,7 @@
         </exec>
     </target>
     <target name="phploc" depends="-check-phploc.installed" if="${phploc.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/phploc" failonerror="true">
+        <exec dir="${basedir}" executable="vendor/bin/phploc" failonerror="true" taskname="phploc">
             <arg line="${phploc.excluded.arguments}"/>
             <arg line="${phploc.src}"/>
         </exec>

@@ -12,7 +12,7 @@
         </exec>
     </target>
     <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/phpcs" failonerror="true">
+        <exec dir="${basedir}" executable="vendor/bin/phpcs" failonerror="true" taskname="phpcs">
             <arg line="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.excluded.arguments}"/>
             <arg line="${phpcs.src}"/>
