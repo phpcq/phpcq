@@ -10,4 +10,8 @@ Currently the phpcpd task knows about the following properties:
 * `phpcpd.excluded` List of excluded files and folders (space separated list, default: none).
 * `phpcpd.src` source directories to be analyzed with phpcpd (space separated list, default: ${ccabs.src.dirs.php}).
 
+Note: the pathes for the exclude option are calculated relative to the source path and have NO leading slash.
+
+Therefore: `src/Foo => Foo`
+
 See the default [properties file](default.properties) for the complete list.
