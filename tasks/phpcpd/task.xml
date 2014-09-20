@@ -5,8 +5,8 @@
         <exec executable="php" outputproperty="phpcpd.excluded.arguments">
             <arg line="-r"/>
             <arg value="
-            echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcpd.excluded}')))))
-                ? '--ignore=' . $ignored
+            echo ($ignored=implode(' --exclude ', array_filter(array_map('trim', explode(' ', '${phpcpd.excluded}')))))
+                ? '--exclude ' . $ignored
                 : '';
             "/>
         </exec>
