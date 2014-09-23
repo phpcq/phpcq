@@ -20,6 +20,7 @@
             <arg line="${phpmd.format}"/>
             <arg line="${phpmd.ruleset}"/>
             <arg line="${phpmd.excluded.arguments}"/>
+            <arg line="${phpmd.customflags}"/>
         </exec>
     </target>
 </project>
