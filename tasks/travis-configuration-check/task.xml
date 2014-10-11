@@ -1,10 +1,10 @@
 <project name="ccabs.task.travis-configuration-check">
     <property file="${ccabs.basedir}/tasks/travis-configuration-check/default.properties"/>
     <target name="-travis-configuration-check.installed" unless="travis-configuration-check.installed">
-        <available property="travis-configuration-check.installed" file="vendor/bin/travis-configuration-check.php"/>
+        <available property="travis-configuration-check.installed" file="vendor/bin/check-travis-configuration.php"/>
     </target>
     <target name="travis-configuration-check" depends="-travis-configuration-check.installed" if="${travis-configuration-check.installed}">
-        <exec dir="${basedir}" executable="${travis-configuration-check.installed}" failonerror="true" taskname="travis-configuration-check">
+        <exec dir="${basedir}" executable="vendor/bin/check-travis-configuration.php" failonerror="true" taskname="travis-configuration-check">
             <arg line="${basedir}"/>
             <arg line="${travis-configuration-check.customflags}"/>
         </exec>
