@@ -33,6 +33,7 @@
     <import file="tasks/phploc/task.xml" />
     <import file="tasks/phpmd/task.xml" />
     <import file="tasks/phpunit/task.xml" />
+    <import file="tasks/travis-configuration-check/task.xml" />
 
     <!-- Build targets from here on. -->
     <target
@@ -49,7 +50,7 @@
 
     <target
         name="analyze"
-        depends="phploc, pdepend, phpmd, phpcs, phpcpd, phpunit, branch-alias-validation"
+        depends="phploc, pdepend, phpmd, phpcs, phpcpd, phpunit, branch-alias-validation, travis-configuration-check"
         description="Do static analysis of the code"
     />
 <!--
