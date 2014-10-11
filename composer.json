@@ -11,13 +11,13 @@
         }
     ],
     "suggest": {
-        "phpunit/phpunit": "Enable the phpunit task (sugested version: ~3.7).",
-        "sebastian/phpcpd": "Enable the phpcpd task (sugested version: ~1.4).",
-        "phploc/phploc": "Enable the phploc task (sugested version: ~2.0)",
-        "pdepend/pdepend": "Enable the pdepend task (sugested version: ~2.0)",
-        "phpmd/phpmd": "Enable the phpmd task (sugested version: ~2.0)",
-        "squizlabs/php_codesniffer": "Enable the phpcs task (sugested version: ~1.0)",
-        "contao-community-alliance/build-system-tool-branch-alias-validation": "Enable the branch-alias-validation task (sugested version: ~1.0)"
+        "phpunit/phpunit": "Enable the phpunit task (suggested version: ~3.7).",
+        "sebastian/phpcpd": "Enable the phpcpd task (suggested version: ~1.4).",
+        "phploc/phploc": "Enable the phploc task (suggested version: ~2.0)",
+        "pdepend/pdepend": "Enable the pdepend task (suggested version: ~2.0)",
+        "phpmd/phpmd": "Enable the phpmd task (suggested version: ~2.0)",
+        "squizlabs/php_codesniffer": "Enable the phpcs task (suggested version: ~1.0)",
+        "contao-community-alliance/build-system-tool-branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.0)"
     },
     "extra": {
         "branch-alias": {
