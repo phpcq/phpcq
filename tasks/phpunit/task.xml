@@ -1,4 +1,5 @@
 <project name="ccabs.task.phpunit">
+    <property file="${ccabs.basedir}/tasks/phpunit/default.properties"/>
     <target name="-check-phpunit.installed" unless="phpunit.installed">
         <available property="phpunit.installed" file="vendor/bin/phpunit"/>
     </target>
