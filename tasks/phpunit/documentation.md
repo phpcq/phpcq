@@ -12,4 +12,5 @@ This task simply executes phpunit and does nothing more.
 Utilized properties
 -------------------
 
-Currently the phpunit task knows about no additional properties.
+Currently the phpunit task knows about the following properties:
+* `ccabs.bin.phpunit` the path to the phpunit executable (default: ${ccabs.bin.dir}/vendor/bin/phpunit).

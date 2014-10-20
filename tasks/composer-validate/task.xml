@@ -1,11 +1,22 @@
 <project name="ccabs.task.composer-validate">
-    <property environment="ccabs.task.composer-validate.env" />
-    <target name="-check-composer.installed" unless="composer.installed">
-        <available file="composer" filepath="${ccabs.task.composer-validate.env.PATH}" property="composer.installed" />
+    <target name="-check-composer.installed.binary" unless="composer.installed.binary">
+        <available file="composer" file="${ccabs.bin.composer}" property="composer.installed.binary" />
     </target>
-    <target name="composer-validate" depends="-check-composer.installed" if="${composer.installed}">
+    <target name="composer-validate.binary" depends="-check-composer.installed.binary" if="${composer.installed.binary}">
+        <exec dir="${basedir}" executable="${ccabs.bin.composer}" failonerror="true" taskname="composer-validate">
+            <arg value="validate"/>
+        </exec>
+    </target>
+    <property environment="ccabs.task.composer-validate.env" />
+    <target name="-check-composer.installed.environment" unless="composer.installed.environment">
+        <available file="composer" filepath="${ccabs.task.composer-validate.env.PATH}" property="composer.installed.environment" />
+    </target>
+    <target name="composer-validate.environment" depends="-check-composer.installed.environment" if="${composer.installed.environment}">
         <exec dir="${basedir}" executable="composer" failonerror="true" taskname="composer-validate">
             <arg value="validate"/>
         </exec>
+    </target>
+    <target name="composer-validate" depends="composer-validate.binary,composer-validate.environment">
+        <available file="composer" file="${ccabs.bin.composer}" property="composer.installed.binary" />
     </target>
 </project>

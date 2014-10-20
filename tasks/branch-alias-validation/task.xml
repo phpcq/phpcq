@@ -1,9 +1,9 @@
 <project name="ccabs.task.branch-alias-validation">
     <target name="-check-branch-alias-validation.installed" unless="branch-alias-validation.installed">
-        <available property="branch-alias-validation.installed" file="vendor/bin/validate-branch-alias.php"/>
+        <available property="branch-alias-validation.installed" file="${ccabs.bin.validate-branch-alias}"/>
     </target>
     <target name="branch-alias-validation" depends="-check-branch-alias-validation.installed" if="${branch-alias-validation.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/validate-branch-alias.php" failonerror="true" taskname="branch-alias-validation">
+        <exec dir="${basedir}" executable="${ccabs.bin.validate-branch-alias}" failonerror="true" taskname="branch-alias-validation">
             <arg line="${basedir}"/>
         </exec>
     </target>

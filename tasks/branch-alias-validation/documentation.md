@@ -7,4 +7,4 @@ your git repository.
 Utilized properties
 -------------------
 
-None so far.
+* `ccabs.bin.validate-branch-alias` the path to the validate-branch-alias executable (default: ${ccabs.bin.dir}/vendor/bin/validate-branch-alias).

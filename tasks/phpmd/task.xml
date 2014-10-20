@@ -1,7 +1,7 @@
 <project name="ccabs.task.phpmd">
     <property file="${ccabs.basedir}/tasks/phpmd/default.properties"/>
     <target name="-check-phpmd.installed" unless="phpmd.available">
-        <available property="phpmd.installed" file="vendor/bin/phpmd"/>
+        <available property="phpmd.installed" file="${ccabs.bin.phpmd}"/>
         <exec executable="php" outputproperty="phpmd.dirs">
             <arg line="-r"/>
             <arg value="echo implode(',', array_filter(array_map('trim', explode(' ', '${phpmd.src}')))) ?: '';"/>
@@ -15,7 +15,7 @@
         </exec>
     </target>
     <target name="phpmd" depends="-check-phpmd.installed" if="${phpmd.installed}">
-        <exec dir="${basedir}" executable="vendor/bin/phpmd" failonerror="true" taskname="phpmd">
+        <exec dir="${basedir}" executable="${ccabs.bin.phpmd}" failonerror="true" taskname="phpmd">
             <arg line="${phpmd.dirs}"/>
             <arg line="${phpmd.format}"/>
             <arg line="${phpmd.ruleset}"/>

@@ -54,6 +54,7 @@ All relative references in properties are assumed to be from the base of the pro
 Currently ccabs knows about the following properties:
 * `ccabs.src.dirs` the common source directories (space separated list, default: ${basedir}/src)
 * `ccabs.src.dirs.php` the source directories containing php sources (space separated list, default: ${ccabs.src.dirs}).
+* `ccabs.bin.dir` the base path for binaries (default: `${basedir}/vendor/bin`).
 
 Be aware that every task listed in the task list below can provide it's own parameters in the form of: `<task>.<option>`
 where `<task>` is the name of the task and `<option>` the name of the option which is task dependant.

@@ -9,6 +9,7 @@ Utilized properties
 -------------------
 
 Currently the pdepend task knows about the following properties:
+* `ccabs.bin.phpcpd` the path to the phpcpd executable (default: ${ccabs.bin.dir}/vendor/bin/phpcpd).
 * `pdepend.src` source directories to be analyzed with pdepend (space separated list, default: ${ccabs.src.dirs.php}).
 * `pdepend.excluded` source directories to be excluded from analysis with pdepend (space separated list, default: none).
 * `pdepend.output` the outputs to use (space separated list, default: empty).

@@ -5,5 +5,4 @@ This task executes `composer validate`.
 
 Utilized properties
 -------------------
-
-None so far.
+* `ccabs.bin.composer` the path to the composer executable (default: ${ccabs.bin.dir}/vendor/bin/composer or via environment $PATH).

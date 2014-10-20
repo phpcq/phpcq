@@ -7,6 +7,7 @@ Utilized properties
 -------------------
 
 Currently the phploc task knows about the following properties:
+* `ccabs.bin.phploc` the path to the phploc executable (default: ${ccabs.bin.dir}/vendor/bin/phploc).
 * `phploc.excluded` List of excluded files and folders (space separated list, default: none).
 * `phploc.src` source directories to be analyzed with phploc (space separated list, default: ${ccabs.src.dirs.php}).
 
