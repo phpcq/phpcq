@@ -1,6 +1,6 @@
 <project name="ccabs.task.composer-validate">
     <target name="-check-composer.installed.binary" unless="composer.installed.binary">
-        <available file="composer" file="${ccabs.bin.composer}" property="composer.installed.binary" />
+        <available file="${ccabs.bin.composer}" property="composer.installed.binary" />
     </target>
     <target name="composer-validate.binary" depends="-check-composer.installed.binary" if="${composer.installed.binary}">
         <exec dir="${basedir}" executable="${ccabs.bin.composer}" failonerror="true" taskname="composer-validate">
@@ -17,6 +17,5 @@
         </exec>
     </target>
     <target name="composer-validate" depends="composer-validate.binary,composer-validate.environment">
-        <available file="composer" file="${ccabs.bin.composer}" property="composer.installed.binary" />
     </target>
 </project>
