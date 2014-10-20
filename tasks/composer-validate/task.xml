@@ -16,6 +16,5 @@
             <arg value="validate"/>
         </exec>
     </target>
-    <target name="composer-validate" depends="composer-validate.binary,composer-validate.environment">
-    </target>
+    <target name="composer-validate" depends="composer-validate.binary,composer-validate.environment" />
 </project>
