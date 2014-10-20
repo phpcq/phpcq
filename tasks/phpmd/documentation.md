@@ -9,7 +9,7 @@ Utilized properties
 -------------------
 
 Currently the phpmd task knows about the following properties:
-* `ccabs.bin.phpmd` the path to the phpmd executable (default: ${ccabs.bin.dir}/vendor/bin/phpmd).
+* `ccabs.bin.phpmd` the path to the phpmd executable (default: ${ccabs.bin.dir}/phpmd).
 * `phpmd.src` source directories to be analyzed with phpmd (space separated list, default: ${ccabs.src.dirs.php}).
 * `phpmd.excluded` directories to be excluded from analysis (space separated list, default: empty).
 * `phpmd.format` a format name to use for the output.
