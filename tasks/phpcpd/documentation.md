@@ -7,7 +7,7 @@ Utilized properties
 -------------------
 
 Currently the phpcpd task knows about the following properties:
-* `ccabs.bin.phpcpd` the path to the phpcpd executable (default: ${ccabs.bin.dir}/vendor/bin/phpcpd).
+* `ccabs.bin.phpcpd` the path to the phpcpd executable (default: ${ccabs.bin.dir}/phpcpd).
 * `phpcpd.excluded` List of excluded files and folders (space separated list, default: none).
 * `phpcpd.src` source directories to be analyzed with phpcpd (space separated list, default: ${ccabs.src.dirs.php}).
 

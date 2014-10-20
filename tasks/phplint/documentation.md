@@ -6,7 +6,8 @@ This task executes `php` in lint mode on your project.
 Utilized properties
 -------------------
 
-Currently the phpcs task knows about the following properties:
+Currently the phplint task knows about the following properties:
+* `ccabs.bin.phplint` the path to the php executable (default: php from environment variable).
 * `phplint.src` source directories to be analyzed with php in lint mode (space separated list, default:
   ${ccabs.src.dirs.php}).
 
