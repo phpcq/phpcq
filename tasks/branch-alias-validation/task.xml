@@ -1,4 +1,5 @@
 <project name="ccabs.task.branch-alias-validation">
+    <property file="${ccabs.basedir}/tasks/branch-alias-validation/default.properties"/>
     <target name="-check-branch-alias-validation.installed" unless="branch-alias-validation.installed">
         <available property="branch-alias-validation.installed" file="${ccabs.bin.validate-branch-alias}"/>
     </target>
