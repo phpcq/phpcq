@@ -78,3 +78,4 @@ Currently ccabs consists of the following tasks:
 * [phploc](../tasks/phploc/documentation.md)
 * [phpmd](../tasks/phpmd/documentation.md)
 * [phpunit](../tasks/phpunit/documentation.md)
+* [phpspec](../tasks/phpspec/documentation.md)
