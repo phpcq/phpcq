@@ -10,7 +10,7 @@
             <arg line="-r"/>
             <arg value="echo
             ($excludes=implode(',${basedir}/', array_filter(array_map('trim', explode(' ', '${phpmd.excluded}')))))
-            ? '--exclude=${basedir}/'. $excludes
+            ? '--exclude ${basedir}/'. $excludes
             : '';"/>
         </exec>
     </target>
