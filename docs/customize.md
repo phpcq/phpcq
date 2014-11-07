@@ -69,6 +69,7 @@ Defined build tasks
 -------------------
 
 Currently ccabs consists of the following tasks:
+* [autoloading-validation](../tasks/autoloading-validation/documentation.md)
 * [branch-alias-validation](../tasks/branch-alias-validation/documentation.md)
 * [composer-validate](../tasks/composer-validate/documentation.md)
 * [pdepend](../tasks/pdepend/documentation.md)
