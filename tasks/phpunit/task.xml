@@ -4,6 +4,8 @@
         <available property="phpunit.installed" file="${ccabs.bin.phpunit}"/>
     </target>
     <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.phpunit}" failonerror="true" taskname="phpunit" />
+        <exec dir="${basedir}" executable="${ccabs.bin.phpunit}" failonerror="true" taskname="phpunit">
+            <arg line="${phpunit.customflags}"/>
+        </exec>
     </target>
 </project>
