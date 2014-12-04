@@ -1,0 +1,21 @@
+<project name="ccabs.task.author-validation">
+    <property file="${ccabs.basedir}/tasks/author-validation/default.properties"/>
+    <target name="-check-author-validation.installed" unless="author-validation.installed">
+        <available property="author-validation.installed" file="${ccabs.bin.author-validation}"/>
+        <exec executable="php" outputproperty="author-validation.arguments">
+            <arg line="-r"/>
+            <arg value="
+            echo ('true' === '${author-validation.php-files}' ? ' --php-files' : '');
+            echo ('true' === '${author-validation.composer}' ? ' --composer' : '');
+            echo ('true' === '${author-validation.bower}' ? ' --bower' : '');
+            echo ('true' === '${author-validation.packages}' ? ' --packages' : '');
+            "/>
+        </exec>
+    </target>
+    <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
+        <exec dir="${basedir}" executable="${ccabs.bin.author-validation}" failonerror="true" taskname="author-validation">
+            <arg line="${author-validation.arguments}"/>
+            <arg line="${basedir}"/>
+        </exec>
+    </target>
+</project>
