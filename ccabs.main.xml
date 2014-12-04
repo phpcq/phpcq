@@ -24,6 +24,7 @@
     <property file="${ccabs.basedir}/build.default.properties" />
 
     <!-- Import the tasks now. -->
+    <import file="tasks/author-validation/task.xml" />
     <import file="tasks/autoloading-validation/task.xml" />
     <import file="tasks/branch-alias-validation/task.xml" />
     <import file="tasks/composer-validate/task.xml" />
@@ -49,7 +50,8 @@
         depends="
             phplint,
             composer-validate,
-            autoloading-validation"
+            autoloading-validation,
+            author-validation"
         description="Verify the quality of the code"
     />
 
