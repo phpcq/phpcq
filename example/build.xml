@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <!--
-     This project is using the Contao Community Alliance Build System (CCABS).
+     This project is using the PHP code quality project (PHPCQ).
 
      For documentation visit:
-       https://github.com/contao-community-alliance/build-system
+       https://github.com/phpcq/phpcq
 
     -->
 <project name="my-project" default="build">
@@ -11,7 +11,7 @@
     <!-- <property name="" value="" /> -->
 
     <!-- import the main build system -->
-    <import file="vendor/contao-community-alliance/build-system/ccabs.main.xml" />
+    <import file="vendor/phpcq/phpcq/phpcq.main.xml" />
 
     <!--
         Overwrite individual targets - you can leave them empty to stop a called target from having any effect.

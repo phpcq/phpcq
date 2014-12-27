@@ -1,7 +1,7 @@
-<project name="ccabs.task.phpcpd">
-    <property file="${ccabs.basedir}/tasks/phpcpd/default.properties"/>
+<project name="phpcq.task.phpcpd">
+    <property file="${phpcq.basedir}/tasks/phpcpd/default.properties"/>
     <target name="-check-phpcpd.installed" unless="phpcpd.installed">
-        <available property="phpcpd.installed" file="${ccabs.bin.phpcpd}"/>
+        <available property="phpcpd.installed" file="${phpcq.bin.phpcpd}"/>
         <exec executable="php" outputproperty="phpcpd.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -12,7 +12,7 @@
         </exec>
     </target>
     <target name="phpcpd" depends="-check-phpcpd.installed" if="${phpcpd.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.phpcpd}" failonerror="true" taskname="phpcpd">
+        <exec dir="${basedir}" executable="${phpcq.bin.phpcpd}" failonerror="true" taskname="phpcpd">
             <arg line="${phpcpd.excluded.arguments}"/>
             <arg line="${phpcpd.src}"/>
         </exec>

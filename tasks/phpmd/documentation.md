@@ -1,4 +1,4 @@
-CCABS task phpmd
+PHPCQ task phpmd
 ================
 
 Calculate software metrics using PHP_Depend.
@@ -9,8 +9,8 @@ Utilized properties
 -------------------
 
 Currently the phpmd task knows about the following properties:
-* `ccabs.bin.phpmd` the path to the phpmd executable (default: ${ccabs.bin.dir}/phpmd).
-* `phpmd.src` source directories to be analyzed with phpmd (space separated list, default: ${ccabs.src.dirs.php}).
+* `phpcq.bin.phpmd` the path to the phpmd executable (default: ${phpcq.bin.dir}/phpmd).
+* `phpmd.src` source directories to be analyzed with phpmd (space separated list, default: ${phpcq.src.dirs.php}).
 * `phpmd.excluded` directories to be excluded from analysis (space separated list, default: empty).
 * `phpmd.format` a format name to use for the output.
 * `phpmd.ruleset` a ruleset filename or a comma-separated string of rule set file names.

@@ -1,4 +1,4 @@
-CCABS task phpunit
+PHPCQ task phpunit
 ==================
 
 This task executes [phpunit](https://github.com/squizlabs/PHP_CodeSniffer) on your code base.
@@ -13,5 +13,5 @@ Utilized properties
 -------------------
 
 Currently the phpunit task knows about the following properties:
-* `ccabs.bin.phpunit` the path to the phpunit executable (default: ${ccabs.bin.dir}/phpunit).
+* `phpcq.bin.phpunit` the path to the phpunit executable (default: ${phpcq.bin.dir}/phpunit).
 * `phpunit.customflags` any custom flags to pass to phpunit. For valid flags refer to the phpunit documentation.

@@ -1,10 +1,10 @@
-CCABS branch-alias-validation
+PHPCQ branch-alias-validation
 =============================
 
-This task executes [phpcs](https://github.com/contao-community-alliance/build-system-tool-branch-alias-validation) on
+This task executes [phpcs](https://github.com/phpcq/branch-alias-validation) on
 your git repository.
 
 Utilized properties
 -------------------
 
-* `ccabs.bin.validate-branch-alias` the path to the validate-branch-alias executable (default: ${ccabs.bin.dir}/validate-branch-alias.php).
+* `phpcq.bin.validate-branch-alias` the path to the validate-branch-alias executable (default: ${phpcq.bin.dir}/validate-branch-alias.php).
