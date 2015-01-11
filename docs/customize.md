@@ -27,7 +27,7 @@ See the following example for overriding via `build.xml`:
 <project name="my-project" default="build">
     <!-- override the source directory -->
     <property name="phpcq.src.dirs" value="custom-src" />
-    <!-- import the main build system -->
+    <!-- import the main tasks definition -->
     <import file="vendor/phpcq/phpcq/phpcq.main.xml" />
 </project>
 ```
