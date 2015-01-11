@@ -2,7 +2,7 @@
 <!--
     This is a default build file that sits outside of any project folders, but which is imported into the project build
     file like so:
-        <import file="vendor/contao-community-alliance/build-system/ccabs.main.xml"/>
+        <import file="vendor/phpcq/phpcq/phpcq.main.xml"/>
 
     All relative references in this file, are assumed to be from the base of the project build file.
     If an identically named target in the project build file is also present in this imported file, the one from the
@@ -11,21 +11,21 @@
 -->
 
 <project
-    name="ccabs.main"
+    name="phpcq.main"
     default="build"
     >
-    <property name="ccabs.basedir" value="${basedir}/vendor/contao-community-alliance/build-system" />
+    <property name="phpcq.basedir" value="${basedir}/vendor/phpcq/phpcq" />
 
     <!-- Pull in the local properties first. -->
     <property file="${basedir}/build.properties"/>
     <!-- Pull in the project default properties next. -->
     <property file="${basedir}/build.default.properties"/>
     <!-- Pull in the global default properties -->
-    <property file="${ccabs.basedir}/build.default.properties" />
+    <property file="${phpcq.basedir}/build.default.properties" />
 
     <!-- Import the tasks now. -->
     <import file="tasks/author-validation/task.xml" />
-    <import file="tasks/autoloading-validation/task.xml" />
+    <import file="tasks/autoload-validation/task.xml" />
     <import file="tasks/branch-alias-validation/task.xml" />
     <import file="tasks/composer-validate/task.xml" />
     <import file="tasks/pdepend/task.xml" />
@@ -50,7 +50,7 @@
         depends="
             phplint,
             composer-validate,
-            autoloading-validation,
+            autoload-validation,
             author-validation"
         description="Verify the quality of the code"
     />

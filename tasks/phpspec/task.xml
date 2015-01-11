@@ -1,19 +1,19 @@
-<project name="ccabs.task.phpspec">
-    <property file="${ccabs.basedir}/tasks/phpspec/default.properties"/>
-    <condition property="ccabs.phpspec.arg.format" value="" else="--format=${ccabs.phpspec.format}">
-        <equals arg1="${ccabs.phpspec.format}" arg2="" />
+<project name="phpcq.task.phpspec">
+    <property file="${phpcq.basedir}/tasks/phpspec/default.properties"/>
+    <condition property="phpcq.phpspec.arg.format" value="" else="--format=${phpcq.phpspec.format}">
+        <equals arg1="${phpcq.phpspec.format}" arg2="" />
     </condition>
-    <condition property="ccabs.phpspec.arg.config" value="" else="--config=${ccabs.phpspec.config}">
-        <equals arg1="${ccabs.phpspec.config}" arg2="" />
+    <condition property="phpcq.phpspec.arg.config" value="" else="--config=${phpcq.phpspec.config}">
+        <equals arg1="${phpcq.phpspec.config}" arg2="" />
     </condition>
     <target name="-check-phpspec.installed" unless="phpspec.installed">
-        <available property="phpspec.installed" file="${ccabs.bin.phpspec}"/>
+        <available property="phpspec.installed" file="${phpcq.bin.phpspec}"/>
     </target>
     <target name="phpspec" depends="-check-phpspec.installed" if="${phpspec.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.phpspec}" failonerror="true" taskname="phpspec">
+        <exec dir="${basedir}" executable="${phpcq.bin.phpspec}" failonerror="true" taskname="phpspec">
             <arg value="run" />
-            <arg line="${ccabs.phpspec.arg.config}" />
-            <arg line="${ccabs.phpspec.arg.format}" />
+            <arg line="${phpcq.phpspec.arg.config}" />
+            <arg line="${phpcq.phpspec.arg.format}" />
         </exec>
     </target>
 </project>

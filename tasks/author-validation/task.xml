@@ -1,7 +1,7 @@
-<project name="ccabs.task.author-validation">
-    <property file="${ccabs.basedir}/tasks/author-validation/default.properties"/>
+<project name="phpcq.task.author-validation">
+    <property file="${phpcq.basedir}/tasks/author-validation/default.properties"/>
     <target name="-check-author-validation.installed" unless="author-validation.installed">
-        <available property="author-validation.installed" file="${ccabs.bin.author-validation}"/>
+        <available property="author-validation.installed" file="${phpcq.bin.author-validation}"/>
         <exec executable="php" outputproperty="author-validation.arguments">
             <arg line="-r"/>
             <arg value="
@@ -13,7 +13,7 @@
         </exec>
     </target>
     <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.author-validation}" failonerror="true" taskname="author-validation">
+        <exec dir="${basedir}" executable="${phpcq.bin.author-validation}" failonerror="true" taskname="author-validation">
             <arg line="${author-validation.arguments}"/>
             <arg line="${basedir}"/>
         </exec>

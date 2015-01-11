@@ -1,10 +1,10 @@
-CCABS author-validation
+PHPCQ author-validation
 ============================
 
-This task executes [author-validation](https://github.com/contao-community-alliance/build-system-tool-author-validation) on
+This task executes [author-validation](https://github.com/phpcq/author-validation) on
 your repository.
 
 Utilized properties
 -------------------
 
-* `ccabs.bin.author-validation` the path to the check-author executable (default: ${ccabs.bin.dir}/check-author.php).
+* `phpcq.bin.author-validation` the path to the check-author executable (default: ${phpcq.bin.dir}/check-author.php).

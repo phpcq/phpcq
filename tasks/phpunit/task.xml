@@ -1,10 +1,10 @@
-<project name="ccabs.task.phpunit">
-    <property file="${ccabs.basedir}/tasks/phpunit/default.properties"/>
+<project name="phpcq.task.phpunit">
+    <property file="${phpcq.basedir}/tasks/phpunit/default.properties"/>
     <target name="-check-phpunit.installed" unless="phpunit.installed">
-        <available property="phpunit.installed" file="${ccabs.bin.phpunit}"/>
+        <available property="phpunit.installed" file="${phpcq.bin.phpunit}"/>
     </target>
     <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.phpunit}" failonerror="true" taskname="phpunit">
+        <exec dir="${basedir}" executable="${phpcq.bin.phpunit}" failonerror="true" taskname="phpunit">
             <arg line="${phpunit.customflags}"/>
         </exec>
     </target>

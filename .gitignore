@@ -14,5 +14,5 @@ nbproject/
 # composer related
 vendor/
 
-# build
-build/
+# Transifex
+/.tx/

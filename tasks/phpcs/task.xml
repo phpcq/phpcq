@@ -1,7 +1,7 @@
-<project name="ccabs.task.phpcs">
-    <property file="${ccabs.basedir}/tasks/phpcs/default.properties"/>
+<project name="phpcq.task.phpcs">
+    <property file="${phpcq.basedir}/tasks/phpcs/default.properties"/>
     <target name="-check-phpcs.installed" unless="phpcs.installed">
-        <available property="phpcs.installed" file="${ccabs.bin.phpcs}"/>
+        <available property="phpcs.installed" file="${phpcq.bin.phpcs}"/>
         <exec executable="php" outputproperty="phpcs.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -12,7 +12,7 @@
         </exec>
     </target>
     <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
-        <exec dir="${basedir}" executable="${ccabs.bin.phpcs}" failonerror="true" taskname="phpcs">
+        <exec dir="${basedir}" executable="${phpcq.bin.phpcs}" failonerror="true" taskname="phpcs">
             <arg line="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>
             <arg line="${phpcs.excluded.arguments}"/>

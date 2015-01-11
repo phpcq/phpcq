@@ -1,5 +1,5 @@
-<project name="ccabs.task.phplint">
-    <property file="${ccabs.basedir}/tasks/phplint/default.properties"/>
+<project name="phpcq.task.phplint">
+    <property file="${phpcq.basedir}/tasks/phplint/default.properties"/>
     <target name="phplint" description="Perform PHP syntax check of sourcecode files">
         <loadresource property="phplint.src.dirs">
             <propertyresource name="phplint.src"/>
@@ -12,7 +12,7 @@
                 </tokenfilter>
             </filterchain>
         </loadresource>
-        <apply executable="${ccabs.bin.phplint}" output="/dev/null" logError="true" failonerror="true" taskname="phplint">
+        <apply executable="${phpcq.bin.phplint}" output="/dev/null" logError="true" failonerror="true" taskname="phplint">
             <arg value="-l" />
             <fileset dir="${basedir}" includes="${phplint.src.dirs}" />
         </apply>

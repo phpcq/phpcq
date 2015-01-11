@@ -1,12 +1,18 @@
 {
-    "name": "contao-community-alliance/build-system",
-    "description": "CCABS base system.",
+    "name": "phpcq/phpcq",
+    "description": "PHP code quality project.",
     "license": "MIT",
     "authors": [
         {
             "name": "Christian Schiffler",
             "email": "c.schiffler@cyberspectrum.de",
-            "homepage":"http://cyberspectrum.de",
+            "homepage": "http://cyberspectrum.de",
+            "role": "lead"
+        },
+        {
+            "name": "Tristan Lins",
+            "email": "tristan@lins.de",
+            "homepage": "https://tristan.lins.io",
             "role": "lead"
         }
     ],
@@ -17,15 +23,13 @@
         "pdepend/pdepend": "Enable the pdepend task (suggested version: ~2.0)",
         "phpmd/phpmd": "Enable the phpmd task (suggested version: ~2.0)",
         "squizlabs/php_codesniffer": "Enable the phpcs task (suggested version: ~1.0)",
-        "contao-community-alliance/build-system-tool-author-validation": "Enable the author-validation task (suggested version: ~1.0)",
-        "contao-community-alliance/build-system-tool-branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.0)",
-        "contao-community-alliance/build-system-tool-travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.0)"
+        "phpcq/author-validation": "Enable the author-validation task (suggested version: ~1.0)",
+        "phpcq/branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.0)",
+        "phpcq/travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.0)"
     },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

@@ -1,7 +1,7 @@
-<project name="ccabs.task.pdepend">
-    <property file="${ccabs.basedir}/tasks/pdepend/default.properties"/>
+<project name="phpcq.task.pdepend">
+    <property file="${phpcq.basedir}/tasks/pdepend/default.properties"/>
     <target name="-check-pdepend.installed" unless="pdepend.available">
-        <available property="pdepend.installed" file="${ccabs.bin.pdepend}"/>
+        <available property="pdepend.installed" file="${phpcq.bin.pdepend}"/>
         <condition property="pdepend.available">
             <and>
                 <istrue value="${pdepend.installed}" />
@@ -21,7 +21,7 @@
         </exec>
     </target>
     <target name="pdepend" depends="-check-pdepend.installed" if="${pdepend.available}">
-        <exec dir="${basedir}" executable="${ccabs.bin.pdepend}" failonerror="true" taskname="pdepend">
+        <exec dir="${basedir}" executable="${phpcq.bin.pdepend}" failonerror="true" taskname="pdepend">
             <arg line="${pdepend.output}"/>
             <arg line="${pdepend.excluded.arguments}"/>
             <arg line="${pdepend.dirs}"/>

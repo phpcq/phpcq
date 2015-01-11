@@ -1,16 +1,16 @@
-<project name="ccabs.task.composer-validate">
-    <property file="${ccabs.basedir}/tasks/composer-validate/default.properties"/>
+<project name="phpcq.task.composer-validate">
+    <property file="${phpcq.basedir}/tasks/composer-validate/default.properties"/>
     <target name="-check-composer.installed.binary" unless="composer.installed.binary">
-        <available file="${ccabs.bin.composer-validate}" property="composer.installed.binary" />
+        <available file="${phpcq.bin.composer-validate}" property="composer.installed.binary" />
     </target>
     <target name="composer-validate.binary" depends="-check-composer.installed.binary" if="${composer.installed.binary}">
-        <exec dir="${basedir}" executable="${ccabs.bin.composer-validate}" failonerror="true" taskname="composer-validate">
+        <exec dir="${basedir}" executable="${phpcq.bin.composer-validate}" failonerror="true" taskname="composer-validate">
             <arg value="validate"/>
         </exec>
     </target>
-    <property environment="ccabs.task.composer-validate.env" />
+    <property environment="phpcq.task.composer-validate.env" />
     <target name="-check-composer.installed.environment" unless="composer.installed.environment">
-        <available file="composer" filepath="${ccabs.task.composer-validate.env.PATH}" property="composer.installed.environment" />
+        <available file="composer" filepath="${phpcq.task.composer-validate.env.PATH}" property="composer.installed.environment" />
     </target>
     <target name="composer-validate.environment" depends="-check-composer.installed.environment" if="${composer.installed.environment}" unless="${composer.installed.binary}">
         <exec dir="${basedir}" executable="composer" failonerror="true" taskname="composer-validate">
