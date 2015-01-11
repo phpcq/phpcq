@@ -25,7 +25,7 @@
 
     <!-- Import the tasks now. -->
     <import file="tasks/author-validation/task.xml" />
-    <import file="tasks/autoloading-validation/task.xml" />
+    <import file="tasks/autoload-validation/task.xml" />
     <import file="tasks/branch-alias-validation/task.xml" />
     <import file="tasks/composer-validate/task.xml" />
     <import file="tasks/pdepend/task.xml" />
@@ -50,7 +50,7 @@
         depends="
             phplint,
             composer-validate,
-            autoloading-validation,
+            autoload-validation,
             author-validation"
         description="Verify the quality of the code"
     />

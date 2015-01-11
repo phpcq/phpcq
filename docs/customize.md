@@ -69,7 +69,7 @@ Defined build tasks
 -------------------
 
 Currently phpcq consists of the following tasks:
-* [autoloading-validation](../tasks/autoloading-validation/documentation.md)
+* [autoload-validation](../tasks/autoload-validation/documentation.md)
 * [branch-alias-validation](../tasks/branch-alias-validation/documentation.md)
 * [composer-validate](../tasks/composer-validate/documentation.md)
 * [pdepend](../tasks/pdepend/documentation.md)
