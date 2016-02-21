@@ -1,0 +1,100 @@
+<project name="phpcq.task.sonarqube" xmlns:sonar="antlib:org.sonar.ant">
+    <property file="${phpcq.basedir}/tasks/sonarqube/default.properties"/>
+    <property file="${sonarqube.propertiesFile}"/>
+
+    <target name="-determine-sonarqube.antTaskJarReal" unless="sonarqube.antTaskJarReal">
+        <exec executable="php" outputproperty="sonarqube.antTaskJarReal">
+            <arg line="-r"/>
+            <arg value="
+                $files = glob('${sonarqube.antTaskJar}');
+                if (count($files)) {
+                    echo $files[0];
+                }
+            "/>
+        </exec>
+    </target>
+
+    <target name="-check-sonarqube.installed" depends="-determine-sonarqube.antTaskJarReal" unless="sonarqube.installed">
+        <condition property="sonarqube.installed">
+            <and>
+                <isset property="sonar.host.url"/>
+                <available file="${sonarqube.antTaskJarReal}" />
+            </and>
+        </condition>
+    </target>
+
+    <target name="-determine-sonarqube.isAuthenticated" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="-sonarqube.isAuthenticated">
+        <condition property="-sonarqube.isAuthenticated" else="false">
+            <and>
+                <isset property="sonar.login"/>
+                <isset property="sonar.password"/>
+            </and>
+        </condition>
+    </target>
+
+    <target name="-determine-sonarqube.isAnonymous" depends="-determine-sonarqube.isAuthenticated" if="${sonarqube.installed}" unless="-sonarqube.isAnonymous">
+        <condition property="-sonarqube.isAnonymous" else="false">
+            <not>
+                <and>
+                    <isset property="sonar.login"/>
+                    <isset property="sonar.password"/>
+                </and>
+            </not>
+        </condition>
+    </target>
+
+    <target name="-determine-sonar.projectKey" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="sonar.projectKey">
+        <exec executable="php" outputproperty="sonar.projectKey">
+            <arg line="-r"/>
+            <arg value="
+                $file = file_get_contents('composer.json');
+                if ($file) {
+                    $json = json_decode($file, true);
+                    if ($json) {
+                        $name = $json['name'];
+                        $name = str_replace('/', ':', $name);
+                        echo $name;
+                    }
+                }
+            "/>
+        </exec>
+    </target>
+
+    <target name="-determine-sonar.projectName" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="sonar.projectName">
+        <exec executable="php" outputproperty="sonar.projectName">
+            <arg line="-r"/>
+            <arg value="
+                $file = file_get_contents('composer.json');
+                if ($file) {
+                    $json = json_decode($file, true);
+                    if ($json) {
+                        $name = $json['name'];
+                        $name = preg_replace('~^.*/~', '', $name);
+                        echo $name;
+                    }
+                }
+            "/>
+        </exec>
+    </target>
+
+    <target name="-determine-sonar.projectVersion" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="sonar.projectVersion">
+        <exec executable="git" outputproperty="sonar.projectVersion">
+            <arg line="describe"/>
+        </exec>
+    </target>
+
+    <target name="-determine-sonar.analysis.mode" depends="-determine-sonarqube.isAnonymous" if="${-sonarqube.isAnonymous}" unless="sonar.analysis.mode">
+        <property name="sonar.analysis.mode" value="preview"/>
+    </target>
+
+    <target name="-determine-sonar-properties"
+            depends="-determine-sonar.projectKey,-determine-sonar.projectName,-determine-sonar.projectVersion,-determine-sonar.analysis.mode"/>
+
+    <target name="sonarqube" depends="-check-sonarqube.installed,-determine-sonar-properties" if="${sonarqube.installed}">
+        <taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+            <classpath path="${sonarqube.antTaskJarReal}" />
+        </taskdef>
+
+        <sonar:sonar />
+    </target>
+</project>
