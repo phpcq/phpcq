@@ -25,7 +25,8 @@
         "squizlabs/php_codesniffer": "Enable the phpcs task (suggested version: ~1.0)",
         "phpcq/author-validation": "Enable the author-validation task (suggested version: ~1.0)",
         "phpcq/branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.0)",
-        "phpcq/travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.0)"
+        "phpcq/travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.0)",
+        "phpspec/phpspec": "Enable the phpspec task (suggested version: ~2.0)"
     },
     "extra": {
         "branch-alias": {
