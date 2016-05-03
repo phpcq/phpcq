@@ -37,6 +37,7 @@
     <import file="tasks/phpunit/task.xml" />
     <import file="tasks/phpspec/task.xml" />
     <import file="tasks/travis-configuration-check/task.xml" />
+    <import file="tasks/sonarqube/task.xml" />
 
     <!-- Build targets from here on. -->
     <target
