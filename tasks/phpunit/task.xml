@@ -1,7 +1,15 @@
 <project name="phpcq.task.phpunit">
     <property file="${phpcq.basedir}/tasks/phpunit/default.properties"/>
     <target name="-check-phpunit.installed" unless="phpunit.installed">
-        <available property="phpunit.installed" file="${phpcq.bin.phpunit}"/>
+        <condition property="phpunit.installed">
+            <and>
+                <available file="${phpcq.bin.phpunit}"/>
+                <or>
+                    <available file="${basedir}/phpunit.xml"/>
+                    <available file="${basedir}/phpunit.xml.dist"/>
+                </or>
+            </and>
+        </condition>
     </target>
     <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.phpunit}" failonerror="true" taskname="phpunit">
