@@ -17,15 +17,16 @@
         }
     ],
     "suggest": {
-        "phpunit/phpunit": "Enable the phpunit task (suggested version: ~3.7).",
+        "phpunit/phpunit": "Enable the phpunit task (suggested version: ~4.7).",
         "sebastian/phpcpd": "Enable the phpcpd task (suggested version: ~1.4).",
         "phploc/phploc": "Enable the phploc task (suggested version: ~2.0)",
         "pdepend/pdepend": "Enable the pdepend task (suggested version: ~2.0)",
         "phpmd/phpmd": "Enable the phpmd task (suggested version: ~2.0)",
-        "squizlabs/php_codesniffer": "Enable the phpcs task (suggested version: ~1.0)",
-        "phpcq/author-validation": "Enable the author-validation task (suggested version: ~1.0)",
-        "phpcq/branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.0)",
-        "phpcq/travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.0)"
+        "squizlabs/php_codesniffer": "Enable the phpcs task (suggested version: ~2.0)",
+        "phpcq/author-validation": "Enable the author-validation task (suggested version: ~1.1)",
+        "phpcq/branch-alias-validation": "Enable the branch-alias-validation task (suggested version: ~1.1)",
+        "phpcq/travis-configuration-check": "Enable the travis-configuration-check task (suggested version: ~1.1)",
+        "phpspec/phpspec": "Enable the phpspec task (suggested version: ~2.0)"
     },
     "extra": {
         "branch-alias": {
