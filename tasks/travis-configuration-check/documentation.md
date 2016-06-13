@@ -1,7 +1,7 @@
 PHPCQ travis-configuration-check
 ================================
 
-This task executes [phpcs](https://github.com/phpcq/travis-configuration-check) on
+This task executes [travis-configuration-check](https://github.com/phpcq/travis-configuration-check) on
 your repository.
 
 Utilized properties
