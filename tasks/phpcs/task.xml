@@ -13,7 +13,7 @@
     </target>
     <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.phpcs}" failonerror="true" taskname="phpcs">
-            <arg line="--standard=${phpcs.standard}"/>
+            <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>
             <arg line="${phpcs.excluded.arguments}"/>
             <arg line="${phpcs.src}"/>

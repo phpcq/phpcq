@@ -5,7 +5,7 @@
     </target>
     <target name="travis-configuration-check" depends="-travis-configuration-check.installed" if="${travis-configuration-check.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.check-travis-configuration}" failonerror="true" taskname="travis-configuration-check">
-            <arg line="${basedir}"/>
+            <arg value="${basedir}"/>
             <arg line="${travis-configuration-check.customflags}"/>
         </exec>
     </target>
