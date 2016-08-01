@@ -5,7 +5,7 @@
     </target>
     <target name="autoload-validation" depends="-check-autoload-validation.installed" if="${autoload-validation.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.autoload-validation}" failonerror="true" taskname="autoload-validation">
-            <arg line="${basedir}"/>
+            <arg value="${basedir}"/>
         </exec>
     </target>
 </project>

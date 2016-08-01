@@ -1,7 +1,7 @@
 PHPCQ task phpunit
 ==================
 
-This task executes [phpunit](https://github.com/squizlabs/PHP_CodeSniffer) on your code base.
+This task executes [phpunit](https://phpunit.de/) on your code base.
 
 Requirements
 ------------
