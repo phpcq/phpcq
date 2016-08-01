@@ -18,7 +18,7 @@
         <exec dir="${basedir}" executable="${phpcq.bin.phpmd}" failonerror="true" taskname="phpmd">
             <arg line="${phpmd.dirs}"/>
             <arg line="${phpmd.format}"/>
-            <arg line="${phpmd.ruleset}"/>
+            <arg value="${phpmd.ruleset}"/>
             <arg line="${phpmd.excluded.arguments}"/>
             <arg line="${phpmd.customflags}"/>
         </exec>
