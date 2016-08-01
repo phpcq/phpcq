@@ -5,7 +5,7 @@
     </target>
     <target name="branch-alias-validation" depends="-check-branch-alias-validation.installed" if="${branch-alias-validation.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.validate-branch-alias}" failonerror="true" taskname="branch-alias-validation">
-            <arg line="${basedir}"/>
+            <arg value="${basedir}"/>
         </exec>
     </target>
 </project>

@@ -15,7 +15,7 @@
     <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.author-validation}" failonerror="true" taskname="author-validation">
             <arg line="${author-validation.arguments}"/>
-            <arg line="${basedir}"/>
+            <arg value="${basedir}"/>
         </exec>
     </target>
 </project>

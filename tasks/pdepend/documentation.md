@@ -3,7 +3,7 @@ PHPCQ task pdepend
 
 Calculate software metrics using PHP_Depend.
 
-This task executes [pdepend](https://http://pdepend.org/) on your code base.
+This task executes [pdepend](https://pdepend.org/) on your code base.
 
 Utilized properties
 -------------------
