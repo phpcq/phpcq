@@ -2,10 +2,20 @@
     <property file="${phpcq.basedir}/tasks/autoload-validation/default.properties"/>
     <target name="-check-autoload-validation.installed" unless="autoload-validation.installed">
         <available property="autoload-validation.installed" file="${phpcq.bin.autoload-validation}"/>
+        <exec executable="php" outputproperty="autoload-validation.excluded.arguments">
+            <arg line="-r"/>
+            <arg value="
+                echo ($ignored=implode(' --ignore-files=', array_filter(array_map('trim', explode(' ', '${autoload-validation.excluded}')))))
+                    ? '--ignore-files=' . $ignored
+                    : '';
+                "/>
+        </exec>
     </target>
     <target name="autoload-validation" depends="-check-autoload-validation.installed" if="${autoload-validation.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.autoload-validation}" failonerror="true" taskname="autoload-validation">
             <arg value="${basedir}"/>
+            <arg line="${autoload-validation.customflags}"/>
+            <arg line="${autoload-validation.excluded.arguments}"/>
         </exec>
     </target>
 </project>
