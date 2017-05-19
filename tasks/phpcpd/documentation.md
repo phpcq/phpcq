@@ -10,6 +10,7 @@ Currently the phpcpd task knows about the following properties:
 * `phpcq.bin.phpcpd` the path to the phpcpd executable (default: ${phpcq.bin.dir}/phpcpd).
 * `phpcpd.excluded` List of excluded files and folders (space separated list, default: none).
 * `phpcpd.src` source directories to be analyzed with phpcpd (space separated list, default: ${phpcq.src.dirs.php}).
+* `phpcpd.customflags` any custom flags to pass to phpcpd. For valid flags refer to the phpcpd documentation.
 
 Note: the pathes for the exclude option are calculated relative to the source path and have NO leading slash.
 

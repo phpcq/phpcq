@@ -22,6 +22,7 @@
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpcpd">
             <arg value="${phpcq.task.phpcpd.bin}"/>
             <arg line="${phpcpd.excluded.arguments}"/>
+            <arg line="${phpcpd.customflags}"/>
             <arg line="${phpcpd.src}"/>
         </exec>
     </target>
