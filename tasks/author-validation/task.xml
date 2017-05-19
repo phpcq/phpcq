@@ -1,9 +1,14 @@
 <project name="phpcq.task.author-validation">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/author-validation/default.properties"/>
-    <target name="-check-author-validation.installed" unless="author-validation.installed">
-        <available property="author-validation.installed" file="${phpcq.bin.author-validation}"/>
+    <target name="-check-author-validation.is-available" unless="phpcq.task.author-validation.bin">
+        <find-file-in-path
+            name="check-author.php"
+            property="phpcq.task.author-validation.bin"
+            alternativepath="${phpcq.bin.author-validation}"
+        />
     </target>
-    <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
+    <target name="author-validation" depends="-check-author-validation.is-available" if="phpcq.task.author-validation.bin">
         <exec executable="${php.binary}" outputproperty="author-validation.arguments">
             <arg line="-r"/>
             <arg value="
@@ -14,7 +19,7 @@
             "/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="author-validation">
-            <arg value="${phpcq.bin.author-validation}"/>
+            <arg value="${phpcq.task.author-validation.bin}"/>
             <arg line="${author-validation.arguments}"/>
             <arg value="${basedir}"/>
         </exec>

@@ -1,11 +1,16 @@
 <project name="phpcq.task.travis-configuration-check">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/travis-configuration-check/default.properties"/>
-    <target name="-travis-configuration-check.installed" unless="travis-configuration-check.installed">
-        <available property="travis-configuration-check.installed" file="${phpcq.bin.check-travis-configuration}"/>
+    <target name="-check-travis-configuration-check.is-available" unless="phpcq.task.travis-configuration-check.bin">
+        <find-file-in-path
+            name="travis-configuration-check"
+            property="phpcq.task.travis-configuration-check.bin"
+            alternativepath="${phpcq.bin.travis-configuration-check}"
+        />
     </target>
-    <target name="travis-configuration-check" depends="-travis-configuration-check.installed" if="${travis-configuration-check.installed}">
+    <target name="travis-configuration-check" depends="-check-travis-configuration-check.is-available" if="phpcq.task.travis-configuration-check.bin">
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="travis-configuration-check">
-            <arg value="${phpcq.bin.check-travis-configuration}"/>
+            <arg value="${phpcq.task.travis-configuration-check.bin}"/>
             <arg value="${basedir}"/>
             <arg line="${travis-configuration-check.customflags}"/>
         </exec>

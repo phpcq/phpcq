@@ -1,9 +1,14 @@
 <project name="phpcq.task.phpcs">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpcs/default.properties"/>
-    <target name="-check-phpcs.installed" unless="phpcs.installed">
-        <available property="phpcs.installed" file="${phpcq.bin.phpcs}"/>
+    <target name="-check-phpcs.is-available" unless="phpcq.task.phpcs.bin">
+        <find-file-in-path
+            name="phpcs"
+            property="phpcq.task.phpcs.bin"
+            alternativepath="${phpcq.bin.phpcs}"
+        />
     </target>
-    <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
+    <target name="phpcs" depends="-check-phpcs.is-available" if="phpcq.task.phpcs.bin">
         <exec executable="${php.binary}" outputproperty="phpcs.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -13,7 +18,7 @@
             "/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpcs">
-            <arg value="${phpcq.bin.phpcs}"/>
+            <arg value="${phpcq.task.phpcs.bin}"/>
             <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>
             <arg line="${phpcs.excluded.arguments}"/>

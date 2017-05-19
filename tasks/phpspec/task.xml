@@ -1,4 +1,5 @@
 <project name="phpcq.task.phpspec">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpspec/default.properties"/>
     <condition property="phpcq.phpspec.arg.format" value="" else="--format=${phpcq.phpspec.format}">
         <equals arg1="${phpcq.phpspec.format}" arg2="" />
@@ -6,12 +7,16 @@
     <condition property="phpcq.phpspec.arg.config" value="" else="--config=${phpcq.phpspec.config}">
         <equals arg1="${phpcq.phpspec.config}" arg2="" />
     </condition>
-    <target name="-check-phpspec.installed" unless="phpspec.installed">
-        <available property="phpspec.installed" file="${phpcq.bin.phpspec}"/>
+    <target name="-check-phpspec.is-available" unless="phpcq.task.phpspec.bin">
+        <find-file-in-path
+            name="phpspec"
+            property="phpcq.task.phpspec.bin"
+            alternativepath="${phpcq.bin.phpspec}"
+        />
     </target>
-    <target name="phpspec" depends="-check-phpspec.installed" if="${phpspec.installed}">
+    <target name="phpspec" depends="-check-phpspec.is-available" if="phpcq.task.phpspec.bin">
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpspec">
-            <arg value="${phpcq.bin.phpspec}" />
+            <arg value="${phpcq.task.phpspec.bin}" />
             <arg value="run" />
             <arg line="${phpcq.phpspec.arg.config}" />
             <arg line="${phpcq.phpspec.arg.format}" />

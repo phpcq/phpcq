@@ -1,9 +1,14 @@
 <project name="phpcq.task.phpcpd">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpcpd/default.properties"/>
-    <target name="-check-phpcpd.installed" unless="phpcpd.installed">
-        <available property="phpcpd.installed" file="${phpcq.bin.phpcpd}"/>
+    <target name="-check-phpcpd.is-available" unless="phpcq.task.phpcpd.bin">
+        <find-file-in-path
+            name="phpcpd"
+            property="phpcq.task.phpcpd.bin"
+            alternativepath="${phpcq.bin.phpcpd}"
+        />
     </target>
-    <target name="phpcpd" depends="-check-phpcpd.installed" if="${phpcpd.installed}">
+    <target name="phpcpd" depends="-check-phpcpd.is-available" if="phpcq.task.phpcpd.bin">
         <exec executable="${php.binary}" outputproperty="phpcpd.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -13,7 +18,7 @@
             "/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpcpd">
-            <arg value="${phpcq.bin.phpcpd}"/>
+            <arg value="${phpcq.task.phpcpd.bin}"/>
             <arg line="${phpcpd.excluded.arguments}"/>
             <arg line="${phpcpd.src}"/>
         </exec>

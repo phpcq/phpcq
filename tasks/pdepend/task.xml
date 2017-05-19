@@ -1,15 +1,18 @@
 <project name="phpcq.task.pdepend">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/pdepend/default.properties"/>
-    <target name="-check-pdepend.installed" unless="pdepend.available">
-        <available property="pdepend.installed" file="${phpcq.bin.pdepend}"/>
-        <condition property="pdepend.available">
-            <and>
-                <istrue value="${pdepend.installed}" />
+    <target name="-check-pdepend.is-available" unless="phpcq.task.pdepend.bin">
+        <find-file-in-path
+            name="pdepend"
+            property="phpcq.task.pdepend.bin"
+            alternativepath="${phpcq.bin.pdepend}"
+        >
+            <only-if>
                 <not><equals arg1="${pdepend.output}" arg2=""/></not>
-            </and>
-        </condition>
+            </only-if>
+        </find-file-in-path>
     </target>
-    <target name="pdepend" depends="-check-pdepend.installed" if="${pdepend.available}">
+    <target name="pdepend" depends="-check-pdepend.is-available" if="phpcq.task.pdepend.bin">
         <exec executable="${php.binary}" outputproperty="pdepend.dirs">
             <arg line="-r"/>
             <arg value="echo implode(',', array_filter(array_map('trim', explode(' ', '${pdepend.src}')))) ?: '';"/>
@@ -22,7 +25,7 @@
             : '';"/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="pdepend">
-            <arg value="${phpcq.bin.pdepend}"/>
+            <arg value="${phpcq.task.pdepend.bin}"/>
             <arg line="${pdepend.output}"/>
             <arg line="${pdepend.excluded.arguments}"/>
             <arg line="${pdepend.dirs}"/>

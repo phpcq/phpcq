@@ -1,9 +1,14 @@
 <project name="phpcq.task.autoload-validation">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/autoload-validation/default.properties"/>
-    <target name="-check-autoload-validation.installed" unless="autoload-validation.installed">
-        <available property="autoload-validation.installed" file="${phpcq.bin.autoload-validation}"/>
+    <target name="-check-autoload-validation.is-available" unless="autoload-validation.installed">
+        <find-file-in-path
+            name="check-autoloading.php"
+            property="phpcq.task.autoload-validation.bin"
+            alternativepath="${phpcq.bin.autoload-validation}"
+        />
     </target>
-    <target name="autoload-validation" depends="-check-autoload-validation.installed" if="${autoload-validation.installed}">
+    <target name="autoload-validation" depends="-check-autoload-validation.is-available" if="phpcq.task.autoload-validation.bin">
         <exec executable="${php.binary}" outputproperty="autoload-validation.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -13,7 +18,7 @@
                 "/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="autoload-validation">
-            <arg value="${phpcq.bin.autoload-validation}"/>
+            <arg value="${phpcq.task.autoload-validation.bin}"/>
             <arg value="${basedir}"/>
             <arg line="${autoload-validation.customflags}"/>
             <arg line="${autoload-validation.excluded.arguments}"/>

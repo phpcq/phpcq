@@ -1,9 +1,14 @@
 <project name="phpcq.task.phpmd">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpmd/default.properties"/>
-    <target name="-check-phpmd.installed" unless="phpmd.available">
-        <available property="phpmd.installed" file="${phpcq.bin.phpmd}"/>
+    <target name="-check-phpmd.is-available" unless="phpcq.task.phpmd.bin">
+        <find-file-in-path
+                name="phpmd"
+                property="phpcq.task.phpmd.bin"
+                alternativepath="${phpcq.bin.phpmd}"
+        />
     </target>
-    <target name="phpmd" depends="-check-phpmd.installed" if="${phpmd.installed}">
+    <target name="phpmd" depends="-check-phpmd.is-available" if="phpcq.task.phpmd.bin">
         <exec executable="${php.binary}" outputproperty="phpmd.dirs">
             <arg line="-r"/>
             <arg value="echo implode(',', array_filter(array_map('trim', explode(' ', '${phpmd.src}')))) ?: '';"/>
@@ -16,7 +21,7 @@
             : '';"/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpmd">
-            <arg value="${phpcq.bin.phpmd}"/>
+            <arg value="${phpcq.task.phpmd.bin}"/>
             <arg line="${phpmd.dirs}"/>
             <arg line="${phpmd.format}"/>
             <arg value="${phpmd.ruleset}"/>

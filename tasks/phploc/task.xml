@@ -1,9 +1,14 @@
 <project name="phpcq.task.phploc">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phploc/default.properties"/>
-    <target name="-check-phploc.installed" unless="phploc.installed">
-        <available property="phploc.installed" file="${phpcq.bin.phploc}"/>
+    <target name="-check-phploc.is-available" unless="phpcq.task.phploc.bin">
+        <find-file-in-path
+            name="phploc"
+            property="phpcq.task.phploc.bin"
+            alternativepath="${phpcq.bin.phploc}"
+        />
     </target>
-    <target name="phploc" depends="-check-phploc.installed" if="${phploc.installed}">
+    <target name="phploc" depends="-check-phploc.is-available" if="phpcq.task.phploc.bin">
         <exec executable="${php.binary}" outputproperty="phploc.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -13,7 +18,7 @@
             "/>
         </exec>
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phploc">
-            <arg value="${phpcq.bin.phploc}"/>
+            <arg value="${phpcq.task.phploc.bin}"/>
             <arg line="${phploc.excluded.arguments}"/>
             <arg line="${phploc.src}"/>
         </exec>

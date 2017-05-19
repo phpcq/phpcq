@@ -1,19 +1,23 @@
 <project name="phpcq.task.phpunit">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpunit/default.properties"/>
-    <target name="-check-phpunit.installed" unless="phpunit.installed">
-        <condition property="phpunit.installed">
-            <and>
-                <available file="${phpcq.bin.phpunit}"/>
+    <target name="-check-phpunit.is-available" unless="phpcq.task.phpunit.bin">
+        <find-file-in-path
+            name="phpunit"
+            property="phpcq.task.phpunit.bin"
+            alternativepath="${phpcq.bin.phpunit}"
+        >
+            <only-if>
                 <or>
                     <available file="${basedir}/phpunit.xml"/>
                     <available file="${basedir}/phpunit.xml.dist"/>
                 </or>
-            </and>
-        </condition>
+            </only-if>
+        </find-file-in-path>
     </target>
-    <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
+    <target name="phpunit" depends="-check-phpunit.is-available" if="phpcq.task.phpunit.bin">
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpunit">
-            <arg value="${phpcq.bin.phpunit}"/>
+            <arg value="${phpcq.task.phpunit.bin}"/>
             <arg line="${phpunit.customflags}"/>
         </exec>
     </target>

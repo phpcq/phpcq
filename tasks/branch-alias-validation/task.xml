@@ -1,11 +1,16 @@
 <project name="phpcq.task.branch-alias-validation">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/branch-alias-validation/default.properties"/>
-    <target name="-check-branch-alias-validation.installed" unless="branch-alias-validation.installed">
-        <available property="branch-alias-validation.installed" file="${phpcq.bin.validate-branch-alias}"/>
+    <target name="-check-branch-alias-validation.is-available" unless="phpcq.task.branch-alias-validation.bin">
+        <find-file-in-path
+            name="validate-branch-alias.php"
+            property="phpcq.task.branch-alias-validation.bin"
+            alternativepath="${phpcq.bin.branch-alias-validation}"
+        />
     </target>
-    <target name="branch-alias-validation" depends="-check-branch-alias-validation.installed" if="${branch-alias-validation.installed}">
+    <target name="branch-alias-validation" depends="-check-branch-alias-validation.is-available" if="phpcq.task.branch-alias-validation.bin">
         <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="branch-alias-validation">
-            <arg value="${phpcq.bin.validate-branch-alias}"/>
+            <arg value="${phpcq.task.branch-alias-validation.bin}"/>
             <arg value="${basedir}"/>
         </exec>
     </target>
