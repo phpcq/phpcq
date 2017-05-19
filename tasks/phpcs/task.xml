@@ -9,14 +9,16 @@
         />
     </target>
     <target name="phpcs" depends="-check-phpcs.is-available" if="phpcq.task.phpcs.bin">
-        <exec executable="${phpcq.php-cli.bin}" outputproperty="phpcs.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcs.excluded}')))))
-                ? '--ignore=' . $ignored
-                : '';
-            "/>
-        </exec>
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phpcs.excluded.arguments',
+                project.getProperty('phpcs.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--ignore=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpcs">
             <arg value="${phpcq.task.phpcs.bin}"/>
             <arg value="--standard=${phpcs.standard}"/>

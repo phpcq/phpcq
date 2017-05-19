@@ -9,14 +9,16 @@
         />
     </target>
     <target name="phpcpd" depends="-check-phpcpd.is-available" if="phpcq.task.phpcpd.bin">
-        <exec executable="${phpcq.php-cli.bin}" outputproperty="phpcpd.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ($ignored=implode(' --exclude ', array_filter(array_map('trim', explode(' ', '${phpcpd.excluded}')))))
-                ? '--exclude ' . $ignored
-                : '';
-            "/>
-        </exec>
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phpcpd.excluded.arguments',
+                project.getProperty('phpcpd.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--exclude=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpcpd">
             <arg value="${phpcq.task.phpcpd.bin}"/>
             <arg line="${phpcpd.excluded.arguments}"/>

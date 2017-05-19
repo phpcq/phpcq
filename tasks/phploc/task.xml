@@ -9,14 +9,16 @@
         />
     </target>
     <target name="phploc" depends="-check-phploc.is-available" if="phpcq.task.phploc.bin">
-        <exec executable="${phpcq.php-cli.bin}" outputproperty="phploc.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ($ignored=implode(' --exclude=', array_filter(array_map('trim', explode(' ', '${phploc.excluded}')))))
-                ? '--exclude=' . $ignored
-                : '';
-            "/>
-        </exec>
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phploc.excluded.arguments',
+                project.getProperty('phploc.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--exclude=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phploc">
             <arg value="${phpcq.task.phploc.bin}"/>
             <arg line="${phploc.excluded.arguments}"/>

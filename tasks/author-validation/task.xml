@@ -9,15 +9,15 @@
         />
     </target>
     <target name="author-validation" depends="-check-author-validation.is-available" if="phpcq.task.author-validation.bin">
-        <exec executable="${phpcq.php-cli.bin}" outputproperty="author-validation.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ('true' === '${author-validation.php-files}' ? ' --php-files' : '');
-            echo ('true' === '${author-validation.composer}' ? ' --composer' : '');
-            echo ('true' === '${author-validation.bower}' ? ' --bower' : '');
-            echo ('true' === '${author-validation.packages}' ? ' --packages' : '');
-            "/>
-        </exec>
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'author-validation.arguments',
+                (project.getProperty('author-validation.php-files') ? '--php-files' : '') +
+                (project.getProperty('author-validation.composer')  ? '--composer' : '') +
+                (project.getProperty('author-validation.bower')     ? '--bower' : '') +
+                (project.getProperty('author-validation.packages')  ? '--packages' : '')
+            );
+        ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="author-validation">
             <arg value="${phpcq.task.author-validation.bin}"/>
             <arg line="${author-validation.arguments}"/>

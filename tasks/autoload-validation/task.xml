@@ -9,14 +9,16 @@
         />
     </target>
     <target name="autoload-validation" depends="-check-autoload-validation.is-available" if="phpcq.task.autoload-validation.bin">
-        <exec executable="${phpcq.php-cli.bin}" outputproperty="autoload-validation.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-                echo ($ignored=implode(' --ignore-files=', array_filter(array_map('trim', explode(' ', '${autoload-validation.excluded}')))))
-                    ? '--ignore-files=' . $ignored
-                    : '';
-                "/>
-        </exec>
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'autoload-validation.excluded.arguments',
+                project.getProperty('autoload-validation.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--ignore-files=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="autoload-validation">
             <arg value="${phpcq.task.autoload-validation.bin}"/>
             <arg value="${basedir}"/>
