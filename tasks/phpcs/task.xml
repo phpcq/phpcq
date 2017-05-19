@@ -4,7 +4,7 @@
         <available property="phpcs.installed" file="${phpcq.bin.phpcs}"/>
     </target>
     <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
-        <exec executable="php" outputproperty="phpcs.excluded.arguments">
+        <exec executable="${php.binary}" outputproperty="phpcs.excluded.arguments">
             <arg line="-r"/>
             <arg value="
             echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcs.excluded}')))))
@@ -12,7 +12,8 @@
                 : '';
             "/>
         </exec>
-        <exec dir="${basedir}" executable="${phpcq.bin.phpcs}" failonerror="true" taskname="phpcs">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpcs">
+            <arg value="${phpcq.bin.phpcs}"/>
             <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>
             <arg line="${phpcs.excluded.arguments}"/>

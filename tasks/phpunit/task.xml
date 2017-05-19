@@ -12,7 +12,8 @@
         </condition>
     </target>
     <target name="phpunit" depends="-check-phpunit.installed" if="${phpunit.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.phpunit}" failonerror="true" taskname="phpunit">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpunit">
+            <arg value="${phpcq.bin.phpunit}"/>
             <arg line="${phpunit.customflags}"/>
         </exec>
     </target>

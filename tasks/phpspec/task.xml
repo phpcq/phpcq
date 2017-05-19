@@ -10,7 +10,8 @@
         <available property="phpspec.installed" file="${phpcq.bin.phpspec}"/>
     </target>
     <target name="phpspec" depends="-check-phpspec.installed" if="${phpspec.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.phpspec}" failonerror="true" taskname="phpspec">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpspec">
+            <arg value="${phpcq.bin.phpspec}" />
             <arg value="run" />
             <arg line="${phpcq.phpspec.arg.config}" />
             <arg line="${phpcq.phpspec.arg.format}" />

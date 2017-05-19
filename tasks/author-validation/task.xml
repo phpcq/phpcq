@@ -4,7 +4,7 @@
         <available property="author-validation.installed" file="${phpcq.bin.author-validation}"/>
     </target>
     <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
-        <exec executable="php" outputproperty="author-validation.arguments">
+        <exec executable="${php.binary}" outputproperty="author-validation.arguments">
             <arg line="-r"/>
             <arg value="
             echo ('true' === '${author-validation.php-files}' ? ' --php-files' : '');
@@ -13,7 +13,8 @@
             echo ('true' === '${author-validation.packages}' ? ' --packages' : '');
             "/>
         </exec>
-        <exec dir="${basedir}" executable="${phpcq.bin.author-validation}" failonerror="true" taskname="author-validation">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="author-validation">
+            <arg value="${phpcq.bin.author-validation}"/>
             <arg line="${author-validation.arguments}"/>
             <arg value="${basedir}"/>
         </exec>

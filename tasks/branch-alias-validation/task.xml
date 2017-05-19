@@ -4,7 +4,8 @@
         <available property="branch-alias-validation.installed" file="${phpcq.bin.validate-branch-alias}"/>
     </target>
     <target name="branch-alias-validation" depends="-check-branch-alias-validation.installed" if="${branch-alias-validation.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.validate-branch-alias}" failonerror="true" taskname="branch-alias-validation">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="branch-alias-validation">
+            <arg value="${phpcq.bin.validate-branch-alias}"/>
             <arg value="${basedir}"/>
         </exec>
     </target>

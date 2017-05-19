@@ -4,7 +4,7 @@
         <available property="phpcpd.installed" file="${phpcq.bin.phpcpd}"/>
     </target>
     <target name="phpcpd" depends="-check-phpcpd.installed" if="${phpcpd.installed}">
-        <exec executable="php" outputproperty="phpcpd.excluded.arguments">
+        <exec executable="${php.binary}" outputproperty="phpcpd.excluded.arguments">
             <arg line="-r"/>
             <arg value="
             echo ($ignored=implode(' --exclude ', array_filter(array_map('trim', explode(' ', '${phpcpd.excluded}')))))
@@ -12,7 +12,8 @@
                 : '';
             "/>
         </exec>
-        <exec dir="${basedir}" executable="${phpcq.bin.phpcpd}" failonerror="true" taskname="phpcpd">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpcpd">
+            <arg value="${phpcq.bin.phpcpd}"/>
             <arg line="${phpcpd.excluded.arguments}"/>
             <arg line="${phpcpd.src}"/>
         </exec>

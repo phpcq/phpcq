@@ -4,7 +4,7 @@
         <available property="phploc.installed" file="${phpcq.bin.phploc}"/>
     </target>
     <target name="phploc" depends="-check-phploc.installed" if="${phploc.installed}">
-        <exec executable="php" outputproperty="phploc.excluded.arguments">
+        <exec executable="${php.binary}" outputproperty="phploc.excluded.arguments">
             <arg line="-r"/>
             <arg value="
             echo ($ignored=implode(' --exclude=', array_filter(array_map('trim', explode(' ', '${phploc.excluded}')))))
@@ -12,7 +12,8 @@
                 : '';
             "/>
         </exec>
-        <exec dir="${basedir}" executable="${phpcq.bin.phploc}" failonerror="true" taskname="phploc">
+        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phploc">
+            <arg value="${phpcq.bin.phploc}"/>
             <arg line="${phploc.excluded.arguments}"/>
             <arg line="${phploc.src}"/>
         </exec>
