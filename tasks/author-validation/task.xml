@@ -12,10 +12,10 @@
         <script language="javascript"><![CDATA[
             project.setProperty(
                 'author-validation.arguments',
-                (project.getProperty('author-validation.php-files') ? '--php-files' : '') +
-                (project.getProperty('author-validation.composer')  ? '--composer' : '') +
-                (project.getProperty('author-validation.bower')     ? '--bower' : '') +
-                (project.getProperty('author-validation.packages')  ? '--packages' : '')
+                ((project.getProperty('author-validation.php-files') == 'true') ? ' --php-files' : '') +
+                ((project.getProperty('author-validation.composer')  == 'true') ? ' --composer'  : '') +
+                ((project.getProperty('author-validation.bower')     == 'true') ? ' --bower'     : '') +
+                ((project.getProperty('author-validation.packages')  == 'true') ? ' --packages'  : '')
             );
         ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="author-validation">
