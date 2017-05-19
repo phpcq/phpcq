@@ -22,6 +22,7 @@
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phploc">
             <arg value="${phpcq.task.phploc.bin}"/>
             <arg line="${phploc.excluded.arguments}"/>
+            <arg line="${phploc.output}"/>
             <arg line="${phploc.src}"/>
         </exec>
     </target>
