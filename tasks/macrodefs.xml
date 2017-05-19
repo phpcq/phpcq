@@ -4,6 +4,7 @@
         <attribute name="name"/>
         <attribute name="property"/>
         <attribute name="alternativepath" default="" />
+        <element name="only-if" optional="true" />
         <sequential>
             <property environment="phpcq.task.find-file-in-path.environment" />
             <pathconvert
@@ -40,6 +41,7 @@
 
             <condition property="@{property}" value="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}">
                 <and>
+                    <only-if />
                     <not><equals arg1="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}" arg2="" /></not>
                     <available file="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}" />
                 </and>
