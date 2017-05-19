@@ -9,7 +9,7 @@
         />
     </target>
     <target name="travis-configuration-check" depends="-check-travis-configuration-check.is-available" if="phpcq.task.travis-configuration-check.bin">
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="travis-configuration-check">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="travis-configuration-check">
             <arg value="${phpcq.task.travis-configuration-check.bin}"/>
             <arg value="${basedir}"/>
             <arg line="${travis-configuration-check.customflags}"/>

@@ -15,7 +15,7 @@
         />
     </target>
     <target name="phpspec" depends="-check-phpspec.is-available" if="phpcq.task.phpspec.bin">
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpspec">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpspec">
             <arg value="${phpcq.task.phpspec.bin}" />
             <arg value="run" />
             <arg line="${phpcq.phpspec.arg.config}" />

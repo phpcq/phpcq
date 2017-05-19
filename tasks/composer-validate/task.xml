@@ -10,7 +10,7 @@
     </target>
     <target name="composer-validate" depends="-check-composer-validate.is-available" if="phpcq.task.composer-validate.bin">
         <echo>${phpcq.task.composer-validate.bin}</echo>
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="composer-validate">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="composer-validate">
             <arg value="${phpcq.task.composer-validate.bin}"/>
             <arg value="validate"/>
         </exec>

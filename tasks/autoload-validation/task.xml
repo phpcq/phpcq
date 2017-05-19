@@ -9,7 +9,7 @@
         />
     </target>
     <target name="autoload-validation" depends="-check-autoload-validation.is-available" if="phpcq.task.autoload-validation.bin">
-        <exec executable="${php.binary}" outputproperty="autoload-validation.excluded.arguments">
+        <exec executable="${phpcq.php-cli.bin}" outputproperty="autoload-validation.excluded.arguments">
             <arg line="-r"/>
             <arg value="
                 echo ($ignored=implode(' --ignore-files=', array_filter(array_map('trim', explode(' ', '${autoload-validation.excluded}')))))
@@ -17,7 +17,7 @@
                     : '';
                 "/>
         </exec>
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="autoload-validation">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="autoload-validation">
             <arg value="${phpcq.task.autoload-validation.bin}"/>
             <arg value="${basedir}"/>
             <arg line="${autoload-validation.customflags}"/>

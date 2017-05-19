@@ -9,7 +9,7 @@
         />
     </target>
     <target name="phpcs" depends="-check-phpcs.is-available" if="phpcq.task.phpcs.bin">
-        <exec executable="${php.binary}" outputproperty="phpcs.excluded.arguments">
+        <exec executable="${phpcq.php-cli.bin}" outputproperty="phpcs.excluded.arguments">
             <arg line="-r"/>
             <arg value="
             echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcs.excluded}')))))
@@ -17,7 +17,7 @@
                 : '';
             "/>
         </exec>
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpcs">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpcs">
             <arg value="${phpcq.task.phpcs.bin}"/>
             <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>

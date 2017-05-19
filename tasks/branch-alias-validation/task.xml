@@ -9,7 +9,7 @@
         />
     </target>
     <target name="branch-alias-validation" depends="-check-branch-alias-validation.is-available" if="phpcq.task.branch-alias-validation.bin">
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="branch-alias-validation">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="branch-alias-validation">
             <arg value="${phpcq.task.branch-alias-validation.bin}"/>
             <arg value="${basedir}"/>
         </exec>

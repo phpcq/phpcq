@@ -16,7 +16,7 @@
         </find-file-in-path>
     </target>
     <target name="phpunit" depends="-check-phpunit.is-available" if="phpcq.task.phpunit.bin">
-        <exec dir="${basedir}" executable="${php.binary}" failonerror="true" taskname="phpunit">
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpunit">
             <arg value="${phpcq.task.phpunit.bin}"/>
             <arg line="${phpunit.customflags}"/>
         </exec>
