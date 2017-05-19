@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="phpcq.macros">
+    <macrodef name="find-file-in-path">
+        <attribute name="name"/>
+        <attribute name="property"/>
+        <attribute name="alternativepath" default="" />
+        <sequential>
+            <property environment="phpcq.task.find-file-in-path.environment" />
+            <pathconvert
+              property="phpcq.task.find-file-in-path.environment.paths.@{name}"
+              pathsep=","
+            >
+                <path>
+                  <pathelement path="${phpcq.task.find-file-in-path.environment.PATH}"/>
+                  <!-- On Windows the Environment-Variable is not all uppercase -->
+                  <pathelement path="${phpcq.task.find-file-in-path.environment.Path}"/>
+                </path>
+            </pathconvert>
+            <!-- make absolute path for alternative location relative -->
+            <property
+               name="phpcq.task.find-file-in-path.environment.candidates.alternative.@{name}"
+               location="@{alternativepath}"
+               relative="yes"
+            />
+            <pathconvert property="phpcq.task.find-file-in-path.environment.candidates.multiroot.@{name}" pathsep=",">
+                <fileset dir=".">
+                    <include name="${phpcq.task.find-file-in-path.environment.candidates.alternative.@{name}}" />
+                </fileset>
+                <multirootfileset
+                        basedirs="${phpcq.task.find-file-in-path.environment.paths.@{name}}"
+                        erroronmissingdir="false"
+                >
+                    <include name="@{name}" />
+                </multirootfileset>
+                <map from="${basedir}/" to="" />
+            </pathconvert>
+            <first id="phpcq.task.find-file-in-path.environment.found.@{name}">
+                <filelist files="${phpcq.task.find-file-in-path.environment.candidates.multiroot.@{name}}"/>
+            </first>
+
+            <condition property="@{property}" value="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}">
+                <and>
+                    <not><equals arg1="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}" arg2="" /></not>
+                    <available file="${toString:phpcq.task.find-file-in-path.environment.found.@{name}}" />
+                </and>
+            </condition>
+        </sequential>
+    </macrodef>
+</project>
