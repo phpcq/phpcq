@@ -2,6 +2,8 @@
     <property file="${phpcq.basedir}/tasks/phpcs/default.properties"/>
     <target name="-check-phpcs.installed" unless="phpcs.installed">
         <available property="phpcs.installed" file="${phpcq.bin.phpcs}"/>
+    </target>
+    <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
         <exec executable="php" outputproperty="phpcs.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -10,8 +12,6 @@
                 : '';
             "/>
         </exec>
-    </target>
-    <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.phpcs}" failonerror="true" taskname="phpcs">
             <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>

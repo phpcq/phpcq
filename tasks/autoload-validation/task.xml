@@ -2,6 +2,8 @@
     <property file="${phpcq.basedir}/tasks/autoload-validation/default.properties"/>
     <target name="-check-autoload-validation.installed" unless="autoload-validation.installed">
         <available property="autoload-validation.installed" file="${phpcq.bin.autoload-validation}"/>
+    </target>
+    <target name="autoload-validation" depends="-check-autoload-validation.installed" if="${autoload-validation.installed}">
         <exec executable="php" outputproperty="autoload-validation.excluded.arguments">
             <arg line="-r"/>
             <arg value="
@@ -10,8 +12,6 @@
                     : '';
                 "/>
         </exec>
-    </target>
-    <target name="autoload-validation" depends="-check-autoload-validation.installed" if="${autoload-validation.installed}">
         <exec dir="${basedir}" executable="${phpcq.bin.autoload-validation}" failonerror="true" taskname="autoload-validation">
             <arg value="${basedir}"/>
             <arg line="${autoload-validation.customflags}"/>

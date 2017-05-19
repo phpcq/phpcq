@@ -8,6 +8,8 @@
                 <not><equals arg1="${pdepend.output}" arg2=""/></not>
             </and>
         </condition>
+    </target>
+    <target name="pdepend" depends="-check-pdepend.installed" if="${pdepend.available}">
         <exec executable="php" outputproperty="pdepend.dirs">
             <arg line="-r"/>
             <arg value="echo implode(',', array_filter(array_map('trim', explode(' ', '${pdepend.src}')))) ?: '';"/>
@@ -19,8 +21,6 @@
             ? '--ignore=${basedir}/'. $excludes
             : '';"/>
         </exec>
-    </target>
-    <target name="pdepend" depends="-check-pdepend.installed" if="${pdepend.available}">
         <exec dir="${basedir}" executable="${phpcq.bin.pdepend}" failonerror="true" taskname="pdepend">
             <arg line="${pdepend.output}"/>
             <arg line="${pdepend.excluded.arguments}"/>
