@@ -11,6 +11,6 @@ Currently the phpcs task knows about the following properties:
 * `phpcs.standard` the code standard to use (may be either the name of a standard or the path to `ruleset.xml`, default: PSR2).
 * `phpcs.excluded` List of excluded files and folders (space separated list, default: none).
 * `phpcs.src` source directories to be analyzed with phpcs (space separated list, default: ${phpcq.src.dirs.php}).
-* `phpcs.customflags` any custom flags to pass to phpcs. For valid flags
+* `phpcs.customflags` any custom flags to pass to phpcs. For valid flags refer to the phpcs documentation.
 
 See the default [properties file](default.properties) for the complete list.
