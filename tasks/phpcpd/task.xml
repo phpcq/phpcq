@@ -15,7 +15,7 @@
                 project.getProperty('phpcpd.excluded')
                     .split(' ')
                     .filter(function(s) { return s.trim().length>0; })
-                    .map(function(s) { return '--exclude=' + s.trim(); })
+                    .map(function(s) { return '--exclude ' + s.trim(); })
                     .join(' ')
             );
         ]]></script>
