@@ -25,7 +25,7 @@
                 .map(function(s) { return baseDir + '/' + s.trim(); })
                 .join(',')
             if (dirs.length>0) {
-                project.setProperty('phpmd.excluded.arguments', '--exclude=' + dirs);
+                project.setProperty('phpmd.excluded.arguments', '--exclude ' + dirs);
             }
         ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpmd">
