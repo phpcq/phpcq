@@ -1,19 +1,25 @@
 <project name="phpcq.task.author-validation">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/author-validation/default.properties"/>
-    <target name="-check-author-validation.installed" unless="author-validation.installed">
-        <available property="author-validation.installed" file="${phpcq.bin.author-validation}"/>
-        <exec executable="php" outputproperty="author-validation.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ('true' === '${author-validation.php-files}' ? ' --php-files' : '');
-            echo ('true' === '${author-validation.composer}' ? ' --composer' : '');
-            echo ('true' === '${author-validation.bower}' ? ' --bower' : '');
-            echo ('true' === '${author-validation.packages}' ? ' --packages' : '');
-            "/>
-        </exec>
+    <target name="-check-author-validation.is-available" unless="phpcq.task.author-validation.bin">
+        <find-file-in-path
+            name="check-author.php"
+            property="phpcq.task.author-validation.bin"
+            alternativepath="${phpcq.bin.author-validation}"
+        />
     </target>
-    <target name="author-validation" depends="-check-author-validation.installed" if="${author-validation.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.author-validation}" failonerror="true" taskname="author-validation">
+    <target name="author-validation" depends="-check-author-validation.is-available" if="phpcq.task.author-validation.bin">
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'author-validation.arguments',
+                ((project.getProperty('author-validation.php-files') == 'true') ? ' --php-files' : '') +
+                ((project.getProperty('author-validation.composer')  == 'true') ? ' --composer'  : '') +
+                ((project.getProperty('author-validation.bower')     == 'true') ? ' --bower'     : '') +
+                ((project.getProperty('author-validation.packages')  == 'true') ? ' --packages'  : '')
+            );
+        ]]></script>
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="author-validation">
+            <arg value="${phpcq.task.author-validation.bin}"/>
             <arg line="${author-validation.arguments}"/>
             <arg value="${basedir}"/>
         </exec>

@@ -3,7 +3,7 @@
     <property file="${sonarqube.propertiesFile}"/>
 
     <target name="-determine-sonarqube.antTaskJarReal" unless="sonarqube.antTaskJarReal">
-        <exec executable="php" outputproperty="sonarqube.antTaskJarReal">
+        <exec executable="${phpcq.php-cli.bin}" outputproperty="sonarqube.antTaskJarReal">
             <arg line="-r"/>
             <arg value="
                 $files = glob('${sonarqube.antTaskJar}');
@@ -44,7 +44,7 @@
     </target>
 
     <target name="-determine-sonar.projectKey" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="sonar.projectKey">
-        <exec executable="php" outputproperty="sonar.projectKey">
+        <exec executable="${phpcq.php-cli.bin}" outputproperty="sonar.projectKey">
             <arg line="-r"/>
             <arg value="
                 $file = file_get_contents('composer.json');
@@ -61,7 +61,7 @@
     </target>
 
     <target name="-determine-sonar.projectName" depends="-check-sonarqube.installed" if="${sonarqube.installed}" unless="sonar.projectName">
-        <exec executable="php" outputproperty="sonar.projectName">
+        <exec executable="${phpcq.php-cli.bin}" outputproperty="sonar.projectName">
             <arg line="-r"/>
             <arg value="
                 $file = file_get_contents('composer.json');

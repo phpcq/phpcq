@@ -1,18 +1,26 @@
 <project name="phpcq.task.phpcs">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpcs/default.properties"/>
-    <target name="-check-phpcs.installed" unless="phpcs.installed">
-        <available property="phpcs.installed" file="${phpcq.bin.phpcs}"/>
-        <exec executable="php" outputproperty="phpcs.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ($ignored=implode(' --ignore=', array_filter(array_map('trim', explode(' ', '${phpcs.excluded}')))))
-                ? '--ignore=' . $ignored
-                : '';
-            "/>
-        </exec>
+    <target name="-check-phpcs.is-available" unless="phpcq.task.phpcs.bin">
+        <find-file-in-path
+            name="phpcs"
+            property="phpcq.task.phpcs.bin"
+            alternativepath="${phpcq.bin.phpcs}"
+        />
     </target>
-    <target name="phpcs" depends="-check-phpcs.installed" if="${phpcs.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.phpcs}" failonerror="true" taskname="phpcs">
+    <target name="phpcs" depends="-check-phpcs.is-available" if="phpcq.task.phpcs.bin">
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phpcs.excluded.arguments',
+                project.getProperty('phpcs.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--ignore=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpcs">
+            <arg value="${phpcq.task.phpcs.bin}"/>
             <arg value="--standard=${phpcs.standard}"/>
             <arg line="${phpcs.customflags}"/>
             <arg line="${phpcs.excluded.arguments}"/>

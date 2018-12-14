@@ -1,21 +1,35 @@
 <project name="phpcq.task.phpmd">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phpmd/default.properties"/>
-    <target name="-check-phpmd.installed" unless="phpmd.available">
-        <available property="phpmd.installed" file="${phpcq.bin.phpmd}"/>
-        <exec executable="php" outputproperty="phpmd.dirs">
-            <arg line="-r"/>
-            <arg value="echo implode(',', array_filter(array_map('trim', explode(' ', '${phpmd.src}')))) ?: '';"/>
-        </exec>
-        <exec executable="php" outputproperty="phpmd.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="echo
-            ($excludes=implode(',${basedir}/', array_filter(array_map('trim', explode(' ', '${phpmd.excluded}')))))
-            ? '--exclude ${basedir}/'. $excludes
-            : '';"/>
-        </exec>
+    <target name="-check-phpmd.is-available" unless="phpcq.task.phpmd.bin">
+        <find-file-in-path
+                name="phpmd"
+                property="phpcq.task.phpmd.bin"
+                alternativepath="${phpcq.bin.phpmd}"
+        />
     </target>
-    <target name="phpmd" depends="-check-phpmd.installed" if="${phpmd.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.phpmd}" failonerror="true" taskname="phpmd">
+    <target name="phpmd" depends="-check-phpmd.is-available" if="phpcq.task.phpmd.bin">
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phpmd.dirs',
+                project.getProperty('phpmd.src')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return s.trim(); })
+                    .join(',')
+            );
+            var baseDir=project.getProperty('basedir')
+            var dirs = project.getProperty('phpmd.excluded')
+                .split(' ')
+                .filter(function(s) { return s.trim().length>0; })
+                .map(function(s) { return baseDir + '/' + s.trim(); })
+                .join(',')
+            if (dirs.length>0) {
+                project.setProperty('phpmd.excluded.arguments', '--exclude ' + dirs);
+            }
+        ]]></script>
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phpmd">
+            <arg value="${phpcq.task.phpmd.bin}"/>
             <arg line="${phpmd.dirs}"/>
             <arg line="${phpmd.format}"/>
             <arg value="${phpmd.ruleset}"/>

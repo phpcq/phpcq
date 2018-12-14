@@ -55,6 +55,7 @@ Currently phpcq knows about the following properties:
 * `phpcq.src.dirs` the common source directories (space separated list, default: ${basedir}/src)
 * `phpcq.src.dirs.php` the source directories containing php sources (space separated list, default: ${phpcq.src.dirs}).
 * `phpcq.bin.dir` the base path for binaries (default: `${basedir}/vendor/bin`).
+* `php.binary` the PHP binary to use (default: `php` which will use the default interpreter from the path).
 
 Be aware that every task listed in the task list below can provide it's own parameters in the form of: `<task>.<option>`
 where `<task>` is the name of the task and `<option>` the name of the option which is task dependant.

@@ -23,6 +23,13 @@
     <!-- Pull in the global default properties -->
     <property file="${phpcq.basedir}/build.default.properties" />
 
+    <import file="${phpcq.basedir}/tasks/macrodefs.xml" />
+    <find-file-in-path
+        name="php"
+        property="phpcq.php-cli.bin"
+        alternativepath="${php.binary}"
+    />
+
     <!-- Import the tasks now. -->
     <import file="tasks/author-validation/task.xml" />
     <import file="tasks/autoload-validation/task.xml" />

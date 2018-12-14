@@ -1,19 +1,28 @@
 <project name="phpcq.task.phploc">
+    <import file="../macrodefs.xml" />
     <property file="${phpcq.basedir}/tasks/phploc/default.properties"/>
-    <target name="-check-phploc.installed" unless="phploc.installed">
-        <available property="phploc.installed" file="${phpcq.bin.phploc}"/>
-        <exec executable="php" outputproperty="phploc.excluded.arguments">
-            <arg line="-r"/>
-            <arg value="
-            echo ($ignored=implode(' --exclude=', array_filter(array_map('trim', explode(' ', '${phploc.excluded}')))))
-                ? '--exclude=' . $ignored
-                : '';
-            "/>
-        </exec>
+    <target name="-check-phploc.is-available" unless="phpcq.task.phploc.bin">
+        <find-file-in-path
+            name="phploc"
+            property="phpcq.task.phploc.bin"
+            alternativepath="${phpcq.bin.phploc}"
+        />
     </target>
-    <target name="phploc" depends="-check-phploc.installed" if="${phploc.installed}">
-        <exec dir="${basedir}" executable="${phpcq.bin.phploc}" failonerror="true" taskname="phploc">
+    <target name="phploc" depends="-check-phploc.is-available" if="phpcq.task.phploc.bin">
+        <script language="javascript"><![CDATA[
+            project.setProperty(
+                'phploc.excluded.arguments',
+                project.getProperty('phploc.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--exclude=' + s.trim(); })
+                    .join(' ')
+            );
+        ]]></script>
+        <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="phploc">
+            <arg value="${phpcq.task.phploc.bin}"/>
             <arg line="${phploc.excluded.arguments}"/>
+            <arg line="${phploc.output}"/>
             <arg line="${phploc.src}"/>
         </exec>
     </target>
