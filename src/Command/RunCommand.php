@@ -5,19 +5,11 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function getcwd;
 
-final class RunCommand extends Command
+final class RunCommand extends AbstractCommand
 {
-    protected function configure(): void
-    {
-        $this->addArgument('config', InputArgument::OPTIONAL, '', getcwd() . '/.phpcq.yaml');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $configFile  = $input->getArgument('config');
