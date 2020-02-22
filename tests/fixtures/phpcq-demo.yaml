@@ -1,0 +1,93 @@
+phpcq:
+  # ProjectConfigInterface contains this
+  directories:
+    - src
+    - tests
+  artifact: .phpcq/build
+  # Used only at load time to build plugin instances.
+  # auth.json Format analog zu composer.json
+  auth:
+    - domain: github.com
+      proto: https
+      auth: header
+    - domain: github.com
+      proto: ssh
+      # auth: ssh-agent
+      # ...
+  repositories:
+    - https://example.com/build-tools/info.json
+    - {url: https://example.com/build-tools2/info.json, auth: http, username: john, password: doe}
+    - {url: https://example.com/build-tools3/info.json, auth: header, header: {X-token: value}}
+  tools:
+    phpunit:
+      version: ^7.0
+    custom-task-tool:
+      version: ^1.0
+    local-tool:
+      runner-plugin: .phpcq/plugins/boot-local-tool.php
+
+# Read by config parser and passed to ConfigurationPluginInterface
+phpunit:
+ customflags:
+
+phpcpd:
+  customflags: #flags for all directories
+  directories:
+    a: # no special flags
+    b:
+    xyz:
+      excluded:
+        - ... a (string)
+        - ... b (string)
+      customflags: # flags for xyz only
+
+author-validation:
+  composer: false
+  bower: false
+  packages: false
+  php-files: true
+  directories:
+    src: # nothing special
+
+
+autoload-validation:
+  customflags: false
+  excluded: false
+
+branch-alias-validation: ~
+
+composer-validate: ~
+
+pdepend:
+  src: ~
+  excluded: ~
+  output: ~
+
+phpcs:
+  standard: ~
+  excluded: ~
+  src: ~
+  customflags: ~
+
+phplint:
+  src: ~
+
+phploc:
+  excluded: ~
+  src: ~
+  output: ~
+
+phpmd:
+  src: ~
+  excluded: ~
+  format: ~
+  ruleset: ~
+  customflags: ~
+
+phpspec:
+  config: ~
+  format: ~
+
+travis-configuration-check:
+  customflags: ~
+

@@ -1,0 +1,34 @@
+phpcq:
+  # ProjectConfigInterface contains this
+  directories:
+    - src
+    - tests
+  tools:
+    phpunit:
+      version: ^7.0
+    custom-task-tool:
+      version: ^1.0
+    local-tool:
+      runner-plugin: .phpcq/plugins/boot-local-tool.php
+
+author-validation:
+  directories:
+    tests: false
+    examples:
+
+# Example merge
+#author-validation:
+#  directories:
+#    src:
+#    examples:
+
+phpcpd:
+  customflags: #flags for all directories
+  directories:
+    a: # no special flags
+    b:
+    xyz:
+      excluded:
+        - ... a (string)
+        - ... b (string)
+      customflags: # flags for xyz only

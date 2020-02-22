@@ -1,0 +1,12 @@
+phpcq:
+  # ProjectConfigInterface contains this
+  directories:
+    - src
+    - tests
+  tools:
+    phpunit:
+      version: ^7.0
+    custom-task-tool:
+      version: ^1.0
+    local-tool:
+      runner-plugin: .phpcq/plugins/boot-local-tool.php
