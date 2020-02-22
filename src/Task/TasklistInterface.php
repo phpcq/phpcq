@@ -10,5 +10,8 @@ interface TasklistInterface extends IteratorAggregate
 {
     public function add(TaskRunnerInterface $taskRunner): void;
 
+    /**
+     * @return TaskRunnerInterface[]|iterable
+     */
     public function getIterator(): iterable;
 }
