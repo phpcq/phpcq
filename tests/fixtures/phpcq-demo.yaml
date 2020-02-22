@@ -6,18 +6,18 @@ phpcq:
   artifact: .phpcq/build
   # Used only at load time to build plugin instances.
   # auth.json Format analog zu composer.json
-  auth:
-    - domain: github.com
-      proto: https
-      auth: header
-    - domain: github.com
-      proto: ssh
-      # auth: ssh-agent
-      # ...
+#  auth:
+#    - domain: github.com
+#      proto: https
+#      auth: header
+#    - domain: github.com
+#      proto: ssh
+#      # auth: ssh-agent
+#      # ...
   repositories:
     - https://example.com/build-tools/info.json
-    - {url: https://example.com/build-tools2/info.json, auth: http, username: john, password: doe}
-    - {url: https://example.com/build-tools3/info.json, auth: header, header: {X-token: value}}
+    - https://example.com/build-tools2/info.json
+    - https://example.com/build-tools3/info.json
   tools:
     phpunit:
       version: ^7.0

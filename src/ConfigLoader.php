@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq;
 
+use Phpcq\Config\PhpcqConfiguration;
+use Phpcq\Exception\InvalidConfigException;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
+use function array_keys;
 
 final class ConfigLoader
 {
@@ -34,15 +38,27 @@ final class ConfigLoader
     {
         $config = Yaml::parseFile($this->configPath);
 
-        // TODO: Valid phpcq section of configuration
+        if (!isset($config['phpcq'])) {
+            throw new InvalidConfigException('Phpcq section missing');
+        }
 
-        return $this->mergeConfig($config);
+        $processedConfiguration = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
+
+        return $this->mergeConfig($processedConfiguration);
     }
 
-    private function mergeConfig($config) : array
+    private function mergeConfig(array $config) : array
     {
-        // TODO: Merge directories to sub configs.
-        // TODO: Create empty task config if missing
+        foreach (array_keys($config['tools']) as $tool) {
+            if (!isset($config[$tool])) {
+                $config[$tool] = [];
+            }
+
+            $config[$tool]['directories'] = isset($config[$tool]['directories'])
+                ? array_merge($config['directories'], $config[$tool]['directories'])
+                : $config['directories']
+            ;
+        }
 
         return $config;
     }

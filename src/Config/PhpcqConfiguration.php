@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Phpcq\Config;
+
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+
+final class PhpcqConfiguration implements ConfigurationInterface
+{
+    public function getConfigTreeBuilder(): TreeBuilder
+    {
+        $treeBuilder = new TreeBuilder('phpcq');
+        $root        = $treeBuilder->getRootNode();
+
+        $root
+            ->children()
+                ->arrayNode('directories')
+                    ->scalarPrototype()->end()
+                ->end()
+                ->scalarNode('artifact')
+                    ->defaultValue('.phpcq/build')
+                    ->info('Artifact directory for builds')
+                ->end()
+                ->arrayNode('repositories')
+                    ->scalarPrototype()->end()
+                ->end()
+                ->arrayNode('tools')
+                    ->normalizeKeys(false)
+                    ->arrayPrototype()
+                        ->normalizeKeys(false)
+                        ->children()
+                            ->scalarNode('version')->end()
+                            ->scalarNode('runner-plugin')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $treeBuilder;
+    }
+}
