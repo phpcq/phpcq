@@ -4,12 +4,10 @@ phpcq:
     - src
     - tests
   tools:
-    phpunit:
-      version: ^7.0
-    custom-task-tool:
+    author-validation:
       version: ^1.0
-    local-tool:
-      runner-plugin: .phpcq/plugins/boot-local-tool.php
+    phpcpd:
+      version: ^2.0
 
 author-validation:
   directories:

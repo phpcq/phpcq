@@ -43,6 +43,8 @@ final class ConfigLoader
         }
 
         $processedConfiguration = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
+        unset($config['phpcq']);
+        $processedConfiguration = array_merge($processedConfiguration, $config);
 
         return $this->mergeConfig($processedConfiguration);
     }
@@ -54,10 +56,18 @@ final class ConfigLoader
                 $config[$tool] = [];
             }
 
-            $config[$tool]['directories'] = isset($config[$tool]['directories'])
-                ? array_merge($config['directories'], $config[$tool]['directories'])
-                : $config['directories']
-            ;
+            if (!isset($config[$tool]['directories'])) {
+                $config[$tool]['directories'] = array_flip($config['directories']);
+                continue;
+            }
+            foreach ($config['directories'] as $baseDir) {
+                if (array_key_exists($baseDir, $config[$tool]['directories'])
+                    && false === $config[$tool]['directories'][$baseDir]) {
+                    unset($config[$tool]['directories'][$baseDir]);
+                    continue;
+                }
+                $config[$tool]['directories'] = [$baseDir => null] + $config[$tool]['directories'];
+            }
         }
 
         return $config;

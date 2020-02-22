@@ -3,8 +3,13 @@
 declare(strict_types=1);
 
 use Phpcq\ConfigLoader;
+use Phpcq\Exception\InvalidConfigException;
+use PHPUnit\Framework\TestCase;
 
-final class ConfigLoaderTest extends \PHPUnit\Framework\TestCase
+/**
+ * @covers \Phpcq\ConfigLoader
+ */
+final class ConfigLoaderTest extends TestCase
 {
     public function testFullFeaturedConfigFile(): void
     {
@@ -46,11 +51,50 @@ final class ConfigLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testMergeConfiguration(): void
     {
-        $this->markTestSkipped();
+        $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-merge.yaml');
+        $config = $loader->getConfig();
+
+        $this->assertEquals(
+            [
+                'directories'       => ['src', 'tests'],
+                'repositories'      => [],
+                'artifact'          => '.phpcq/build',
+                'tools'             => [
+                    'author-validation' => ['version' => '^1.0'],
+                    'phpcpd'            => ['version' => '^2.0'],
+                ],
+                'author-validation' => [
+                    'directories' => ['src' => null, 'examples' => null
+                    ]
+                ],
+                'phpcpd'            => [
+                    'customflags' => '',
+                    'directories' => [
+                        'src'   => null,
+                        'tests' => null,
+                        'a'     => null,
+                        'b'     => null,
+                        'xyz'   => [
+                            'excluded'    => [
+                                '... a (string)',
+                                '... b (string)'
+                            ],
+                            'customflags' => null
+                        ]
+                    ]
+                ]
+            ],
+            $config
+        );
     }
 
     public function testMissingPhpcqConfiguration(): void
     {
-        $this->markTestSkipped();
+        $loader = new ConfigLoader(__DIR__ . '/fixtures/invalid-config.yaml');
+
+        $this->expectException(InvalidConfigException::class);
+        $this->expectExceptionMessage('Phpcq section missing');
+
+        $loader->getConfig();
     }
 }
