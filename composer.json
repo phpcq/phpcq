@@ -31,7 +31,8 @@
         "symfony/console": "^5.0",
         "symfony/config": "^5.0",
         "symfony/yaml": "^5.0",
-        "symfony/finder": "^5.0"
+        "symfony/finder": "^5.0",
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
