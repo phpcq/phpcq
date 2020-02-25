@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://phpcq.github.io/repository-schema.json#",
+  "title": "phpcq repository schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "bootstraps": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "Name of a bootstrap file.",
+          "$ref": "#/definitions/BootstrapType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "phars": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "The list of contained phar program sources.",
+          "$ref": "#/definitions/PharProgramSource"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "BootstrapType": {
+      "oneOf": [
+        {
+          "$comment": "An inline bootstrap file.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "inline"
+            },
+            "code": {
+              "$comment": "The PHP code of the bootstrap.",
+              "type": "string",
+              "contentMediaType": "application/x-php"
+            },
+            "plugin-version": {
+              "$comment": "Version of the plugin contained",
+              "type": "string"
+            }
+          },
+          "required": ["type", "code", "plugin-version"],
+          "additionalProperties": false
+        },
+        {
+          "$comment": "A bootstrap file.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "file"
+            },
+            "url": {
+              "$comment": "URL of a bootstrap file",
+              "type": "string",
+              "format": "iri-reference"
+            },
+            "plugin-version": {
+              "$comment": "Version of the plugin contained",
+              "type": "string"
+            }
+          },
+          "required": ["type", "url", "plugin-version"],
+          "additionalProperties": false
+        },
+        {
+          "type": "string",
+          "$comment": "name of a bootstrap in /bootstrap"
+        }
+      ]
+    },
+    "PharProgramSource": {
+      "description": "A program source may be either an IRI to an include file or a program version list",
+      "oneOf": [
+        {
+          "$comment": "URL of an include file",
+          "type": "string",
+          "format": "iri-reference"
+        },
+        {
+          "$ref": "#/definitions/PharProgramVersionList"
+        }
+      ]
+    },
+    "PharProgramVersionList": {
+      "$comment": "Definition of a phar program and it's sources",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "format": "TODO: version format"
+          },
+          "phar-url": {
+            "$comment": "URL to the .phar file",
+            "type": "string",
+            "format": "iri-reference"
+          },
+          "bootstrap": {
+            "$ref": "#/definitions/BootstrapType"
+          }
+        },
+        "required": ["version", "phar-url", "bootstrap"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

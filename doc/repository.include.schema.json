@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "id": "https://phpcq.github.io/repository-include-schema.json#",
+  "title": "phpcq repository include schema",
+  "$comment": "Definition of a phar program and it's sources",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "version": {
+        "type": "string",
+        "format": "TODO: version format"
+      },
+      "phar-url": {
+        "$comment": "URL to the .phar file",
+        "type": "string",
+        "format": "iri-reference"
+      },
+      "bootstrap": {
+        "$ref": "https://phpcq.github.io/repository-schema.json#/definitions/BootstrapType"
+      },
+      "additionalProperties": false
+    }
+  }
+}
