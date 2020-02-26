@@ -10,7 +10,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class RunCommand extends AbstractCommand
 {
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function configure(): void
+    {
+        $this->setName('run')->setDescription('Run configured build tasks');
+        parent::configure();
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $configFile  = $input->getArgument('config');
         $config      = ConfigLoader::load($configFile);
@@ -21,5 +27,7 @@ final class RunCommand extends AbstractCommand
         // Initialisierung der Phars
         // Create build configuration
         // Execute task list
+
+        return 0;
     }
 }
