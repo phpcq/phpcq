@@ -12,13 +12,16 @@ class Tasklist implements TasklistInterface
     /**
      * @var TaskRunnerInterface[]
      */
-    private $tasks;
+    private $tasks = [];
 
     public function add(TaskRunnerInterface $taskRunner): void
     {
         $this->tasks[] = $taskRunner;
     }
 
+    /**
+     * @return TaskRunnerInterface[]|iterable
+     */
     public function getIterator(): iterable
     {
         yield from $this->tasks;

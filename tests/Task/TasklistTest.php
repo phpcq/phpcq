@@ -30,4 +30,11 @@ class TasklistTest extends TestCase
 
         $this->assertSame([$task1, $task2], $tasks);
     }
+
+    public function testIteratesEmptyCorrectly(): void
+    {
+        $list = new Tasklist();
+        iterator_to_array($list->getIterator());
+        $this->addToAssertionCount(1);
+    }
 }
