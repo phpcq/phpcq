@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Config;
 
-use Phpcq\Task\TasklistInterface;
+use Phpcq\Task\TaskFactory;
 
 interface BuildConfigInterface
 {
@@ -18,9 +18,9 @@ interface BuildConfigInterface
     /**
      * Get registered tasks for the build.
      *
-     * @return TasklistInterface
+     * @return TaskFactory
      */
-    public function getTaskList(): TasklistInterface;
+    public function getTaskFactory(): TaskFactory;
 
     /**
      * Get the temporary dir for the current build.

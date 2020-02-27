@@ -2,11 +2,12 @@
 
 namespace Phpcq\Plugin;
 
+use IteratorAggregate;
 use Phpcq\Exception\RuntimeException;
 use Symfony\Component\Finder\Finder;
 use function get_class;
 
-final class PluginRegistry
+final class PluginRegistry implements IteratorAggregate
 {
     private $plugins = [];
 
@@ -27,5 +28,19 @@ final class PluginRegistry
         return $instance;
     }
 
-    // TODO: iterate over plugin, get by name etc.
+    public function getPluginByName(string $name): PluginInterface
+    {
+        if (!isset($this->plugins[$name])) {
+            throw new RuntimeException('Plugin not registered: ' . $name);
+        }
+        return $this->plugins[$name];
+    }
+
+    /**
+     * @return PluginInterface[]|iterable
+     */
+    public function getIterator(): iterable
+    {
+        yield from $this->plugins;
+    }
 }
