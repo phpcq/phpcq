@@ -10,7 +10,16 @@
       "patternProperties": {
         "^[a-zA-Z0-9-]*$": {
           "description": "Name of a bootstrap file.",
-          "$ref": "#/definitions/BootstrapType"
+          "oneOf": [
+            {
+              "$comment": "An inline bootstrap file.",
+              "$ref": "#/definitions/BootstrapTypeInline"
+            },
+            {
+              "$comment": "A bootstrap file.",
+              "$ref": "#/definitions/BootstrapTypeFile"
+            }
+          ]
         }
       },
       "additionalProperties": false
@@ -31,43 +40,11 @@
       "oneOf": [
         {
           "$comment": "An inline bootstrap file.",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "inline"
-            },
-            "code": {
-              "$comment": "The PHP code of the bootstrap.",
-              "type": "string",
-              "contentMediaType": "application/x-php"
-            },
-            "plugin-version": {
-              "$comment": "Version of the plugin contained",
-              "type": "string"
-            }
-          },
-          "required": ["type", "code", "plugin-version"],
-          "additionalProperties": false
+          "$ref": "#/definitions/BootstrapTypeInline"
         },
         {
           "$comment": "A bootstrap file.",
-          "type": "object",
-          "properties": {
-            "type": {
-              "const": "file"
-            },
-            "url": {
-              "$comment": "URL of a bootstrap file",
-              "type": "string",
-              "format": "iri-reference"
-            },
-            "plugin-version": {
-              "$comment": "Version of the plugin contained",
-              "type": "string"
-            }
-          },
-          "required": ["type", "url", "plugin-version"],
-          "additionalProperties": false
+          "$ref": "#/definitions/BootstrapTypeFile"
         },
         {
           "type": "string",
@@ -75,8 +52,49 @@
         }
       ]
     },
+    "BootstrapTypeInline": {
+      "$comment": "An inline bootstrap file.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "inline"
+        },
+        "code": {
+          "$comment": "The PHP code of the bootstrap.",
+          "type": "string",
+          "contentMediaType": "application/x-php"
+        },
+        "plugin-version": {
+          "$comment": "Version of the plugin contained",
+          "type": "string"
+        }
+      },
+      "required": ["type", "code", "plugin-version"],
+      "additionalProperties": false
+    },
+    "BootstrapTypeFile": {
+      "$comment": "A bootstrap file.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "file"
+        },
+        "url": {
+          "$comment": "URL of a bootstrap file",
+          "type": "string",
+          "format": "iri-reference"
+        },
+        "plugin-version": {
+          "$comment": "Version of the plugin contained",
+          "type": "string",
+          "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
+        }
+      },
+      "required": ["type", "url", "plugin-version"],
+      "additionalProperties": false
+    },
     "PharProgramSource": {
-      "description": "A program source may be either an IRI to an include file or a program version list",
+      "description": "A program source may be either an IRI to an version include file or a program version list",
       "oneOf": [
         {
           "$comment": "URL of an include file",
