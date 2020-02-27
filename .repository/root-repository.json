@@ -1,0 +1,28 @@
+{
+  "bootstraps": {
+    "phpunit": {
+      "plugin-version": "1.0.0",
+      "type": "file",
+      "url": "./bootstrap-phpunit.php"
+    }
+  },
+  "phars": {
+    "phpunit": [
+      {
+        "version": "9.0.1",
+        "phar-url": "https://phar.phpunit.de/phpunit-9.0.1.phar",
+        "bootstrap": "phpunit"
+      },
+      {
+        "version": "9.0.0",
+        "phar-url": "https://phar.phpunit.de/phpunit-9.0.0.phar",
+        "bootstrap": "phpunit"
+      },
+      {
+        "version": "7.0.0",
+        "phar-url": "https://phar.phpunit.de/phpunit-7.0.0.phar",
+        "bootstrap": "phpunit"
+      }
+    ]
+  }
+}

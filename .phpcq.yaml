@@ -1,0 +1,11 @@
+phpcq:
+  repositories:
+    # Interim repository - change to real one when published.
+    - ./.repository/root-repository.json
+  directories:
+    - src
+    - tests
+  artifact: .phpcq/build
+  tools:
+    phpunit:
+      version: ^9.0

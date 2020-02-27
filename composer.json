@@ -34,7 +34,6 @@
         "symfony/config": "^5.0",
         "symfony/yaml": "^5.0",
         "symfony/finder": "^5.0",
-        "phpunit/phpunit": "^9.0",
         "composer/semver": "^1.5",
         "symfony/process": "^5.0"
     },
