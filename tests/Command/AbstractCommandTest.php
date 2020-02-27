@@ -17,9 +17,19 @@ class AbstractCommandTest extends TestCase
         $command    = $this->getMockForAbstractClass(AbstractCommand::class);
         $definition = $command->getDefinition();
 
-        $this->assertTrue($definition->hasArgument('config'));
-        $argument = $definition->getArgument('config');
-        $this->assertFalse($argument->isRequired());
-        $this->assertSame($argument->getDefault(), getcwd() . '/.phpcq.yaml');
+        $this->assertTrue($definition->hasOption('config'));
+        $option = $definition->getOption('config');
+        $this->assertTrue($option->isValueRequired());
+        $this->assertSame($option->getDefault(), getcwd() . '/.phpcq.yaml');
+
+        $this->assertTrue($definition->hasOption('tools'));
+        $option = $definition->getOption('tools');
+        $this->assertTrue($option->isValueRequired());
+        $this->assertSame($option->getDefault(), getcwd() . '/vendor/phpcq');
+
+        $this->assertTrue($definition->hasOption('cache'));
+        $option = $definition->getOption('cache');
+        $this->assertTrue($option->isValueRequired());
+        $this->assertSame($option->getDefault(), getenv('HOME') . '/.cache/phpcq');
     }
 }
