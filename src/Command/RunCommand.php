@@ -17,6 +17,7 @@ use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 final class RunCommand extends AbstractCommand
 {
@@ -48,7 +49,7 @@ final class RunCommand extends AbstractCommand
         $taskFactory = new TaskFactory(
             $phpcqPath,
             $this->getInstalledRepository($phpcqPath, $cachePath),
-            $this->findPhpCli($input)
+            ...$this->findPhpCli()
         );
         // Create build configuration
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
@@ -85,9 +86,10 @@ final class RunCommand extends AbstractCommand
         return $loader->loadFile($phpcqPath . '/installed.json');
     }
 
-    private function findPhpCli(InputInterface $input)
+    private function findPhpCli(): array
     {
-        // FIXME: locate real php binary.
-        return '/usr/bin/php';
+        $finder = new PhpExecutableFinder();
+
+        return [$finder->find(), $finder->findArguments()];
     }
 }

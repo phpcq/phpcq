@@ -26,17 +26,28 @@ class TaskFactory
     private $phpcqPath;
 
     /**
+     * @var string
+     */
+    private $phpArguments;
+
+    /**
      * Create a new instance.
      *
      * @param string              $phpcqPath
      * @param RepositoryInterface $installed
      * @param string              $phpCliBinary
+     * @param string[]            $phpArguments
      */
-    public function __construct(string $phpcqPath, RepositoryInterface $installed, string $phpCliBinary)
-    {
+    public function __construct(
+        string $phpcqPath,
+        RepositoryInterface $installed,
+        string $phpCliBinary,
+        array $phpArguments
+    ) {
         $this->phpcqPath    = $phpcqPath;
         $this->installed    = $installed;
         $this->phpCliBinary = $phpCliBinary;
+        $this->phpArguments = $phpArguments;
     }
 
     /**
@@ -57,9 +68,11 @@ class TaskFactory
      */
     public function buildRunPhar(string $pharName, array $arguments = []): TaskRunnerBuilder
     {
-        return new TaskRunnerBuilder([
-            $this->phpCliBinary,
-            $this->phpcqPath . '/' . $this->installed->getTool($pharName, '*')->getPharUrl()
-        ] + $arguments);
+        return $this->buildRunProcess(array_merge(
+            [$this->phpCliBinary],
+            $this->phpArguments,
+            [$this->phpcqPath . '/' . $this->installed->getTool($pharName, '*')->getPharUrl()],
+            $arguments
+        ));
     }
 }
