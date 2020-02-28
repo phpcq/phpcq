@@ -7,7 +7,7 @@ namespace Phpcq\Repository;
 use IteratorAggregate;
 use Phpcq\Exception\ToolNotFoundException;
 
-final class RepositoryPool implements RepositoryInterface, IteratorAggregate
+final class RepositoryPool implements IteratorAggregate, RepositoryInterface
 {
     /**
      * @var RepositoryInterface[]
