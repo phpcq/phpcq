@@ -9,7 +9,7 @@ use Traversable;
 /**
  * A remote repository.
  */
-class RemoteRepository implements RepositoryInterface, IteratorAggregate
+class RemoteRepository implements IteratorAggregate, RepositoryInterface
 {
     use RepositoryHasToolTrait;
 

@@ -13,7 +13,7 @@ use Traversable;
 /**
  * Represents a JSON contained repository.
  */
-class Repository implements RepositoryInterface, IteratorAggregate
+class Repository implements IteratorAggregate, RepositoryInterface
 {
     use RepositoryHasToolTrait;
 
