@@ -57,7 +57,7 @@ final class ConfigLoader
             }
 
             if (!isset($config[$tool]['directories'])) {
-                $config[$tool]['directories'] = array_flip($config['directories']);
+                $config[$tool]['directories'] = $config['directories'];
                 continue;
             }
             foreach ($config['directories'] as $baseDir) {
