@@ -66,9 +66,13 @@ class ProcessTaskRunner implements TaskRunnerInterface
     public function run(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
-
         // FIXME: we need an own output abstraction to allow buffering error and stdout differently for concurrent tasks.
         $errorOutput = ($output instanceof ConsoleOutput) ? $output->getErrorOutput() : $output;
+        if ($output->isVerbose()) {
+            $errorOutput->writeln('');
+            $errorOutput->writeln('Executing: ' . $process->getCommandLine());
+            $errorOutput->writeln('');
+        }
         $process->mustRun(function ($type, $data) use ($output, $errorOutput) {
             switch ($type) {
                 case Process::ERR:
