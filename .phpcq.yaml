@@ -7,5 +7,21 @@ phpcq:
     - tests
   artifact: .phpcq/build
   tools:
+    phpcpd:
+      version: ^5.0
     phpunit:
       version: ^9.0
+
+phpunit:
+  custom_flags:
+
+phpcpd:
+#  exclude:
+#  names:
+#  names_exclude:
+#  regexps_exclude:
+#  log:
+#  min_lines:
+#  min_tokens:
+#  fuzzy: true
+#  custom_flags:

@@ -4,9 +4,36 @@
       "plugin-version": "1.0.0",
       "type": "file",
       "url": "./bootstrap-phpunit.php"
+    },
+    "phpcpd": {
+      "plugin-version": "1.0.0",
+      "type": "file",
+      "url": "./bootstrap-phpcpd.php"
     }
   },
   "phars": {
+    "phpcpd": [
+      {
+        "version": "5.0.2",
+        "phar-url": "https://phar.phpunit.de/phpcpd-5.0.2.phar",
+        "bootstrap": "phpcpd"
+      },
+      {
+        "version": "5.0.1",
+        "phar-url": "https://phar.phpunit.de/phpcpd-5.0.1.phar",
+        "bootstrap": "phpcpd"
+      },
+      {
+        "version": "5.0.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-5.0.0.phar",
+        "bootstrap": "phpcpd"
+      },
+      {
+        "version": "4.1.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-4.1.0.phar",
+        "bootstrap": "phpcpd"
+      }
+    ],
     "phpunit": [
       {
         "version": "9.0.1",
