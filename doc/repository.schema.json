@@ -110,27 +110,31 @@
       "$comment": "Definition of a phar program and it's sources",
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "string",
-            "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
-          },
-          "phar-url": {
-            "$comment": "URL to the .phar file",
-            "type": "string",
-            "format": "iri-reference"
-          },
-          "bootstrap": {
-            "$ref": "#/definitions/BootstrapType"
-          },
-          "requirements": {
-            "$ref": "#/definitions/PharPlatformRequirements"
-          }
-        },
-        "required": ["version", "phar-url", "bootstrap", "requirements"],
-        "additionalProperties": false
+        "$ref": "#/definitions/PharProgramVersion"
       }
+    },
+    "PharProgramVersion": {
+      "$comment": "Definition of a phar program version and it's requirements",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
+        },
+        "phar-url": {
+          "$comment": "URL to the .phar file",
+          "type": "string",
+          "format": "iri-reference"
+        },
+        "bootstrap": {
+          "$ref": "#/definitions/BootstrapType"
+        },
+        "requirements": {
+          "$ref": "#/definitions/PharPlatformRequirements"
+        }
+      },
+      "required": ["version", "phar-url", "bootstrap", "requirements"],
+      "additionalProperties": false
     },
     "PharPlatformRequirements": {
       "type": "object",

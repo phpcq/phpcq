@@ -5,21 +5,6 @@
   "$comment": "Definition of a phar program and it's sources",
   "type": "array",
   "items": {
-    "type": "object",
-    "properties": {
-      "version": {
-        "type": "string",
-        "format": "TODO: version format"
-      },
-      "phar-url": {
-        "$comment": "URL to the .phar file",
-        "type": "string",
-        "format": "iri-reference"
-      },
-      "bootstrap": {
-        "$ref": "https://phpcq.github.io/v1/repository-schema.json#/definitions/BootstrapType"
-      },
-      "additionalProperties": false
-    }
+    "$ref": "https://phpcq.github.io/v1/repository-schema.json#/definitions/PharProgramVersion"
   }
 }
