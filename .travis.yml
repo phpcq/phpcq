@@ -7,9 +7,21 @@ addons:
 
 language: php
 
-php:
-  - "7.4"
-  - "7.3"
+matrix:
+  fast_finish: true
+  include:
+    # latest requirement test
+    - php: nightly
+    - php: 7.4
+    - php: 7.3
+      env:
+        - COMPOSER_FLAGS=""
+    # minimum requirement test
+    - php: 7.3
+      env:
+        - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+  allow_failures:
+    - php: nightly
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
@@ -23,7 +35,7 @@ install:
       COMPOSER_ROOT_VERSION=$([[ ${TRAVIS_BRANCH} =~ (release|hotfix)/([0-9.]*(-(alpha|beta|rc)[0-9]+)?) ]] \
         && echo ${BASH_REMATCH[2]} \
         || echo dev-${TRAVIS_BRANCH}) \
-        travis_retry composer update --prefer-dist --no-interaction;
+        travis_retry composer update $COMPOSER_FLAGS --prefer-dist --no-interaction;
     fi
   - ./phpcq update
 
