@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "id": "https://phpcq.github.io/repository-schema.json#",
+  "id": "https://phpcq.github.io/v1/repository-schema.json#",
   "title": "phpcq repository schema",
   "type": "object",
   "additionalProperties": false,
