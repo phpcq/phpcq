@@ -6,6 +6,9 @@
       "type": "file",
       "url": "./",
       "plugin-version": "1.0.0"
+    },
+    "requirements": {
+      "php": "^5.3.9"
     }
   }
 ]

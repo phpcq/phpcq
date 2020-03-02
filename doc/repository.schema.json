@@ -123,11 +123,36 @@
           },
           "bootstrap": {
             "$ref": "#/definitions/BootstrapType"
+          },
+          "requirements": {
+            "$ref": "#/definitions/PharPlatformRequirements"
           }
         },
-        "required": ["version", "phar-url", "bootstrap"],
+        "required": ["version", "phar-url", "bootstrap", "requirements"],
         "additionalProperties": false
       }
+    },
+    "PharPlatformRequirements": {
+      "type": "object",
+      "patternProperties": {
+        "^(php|ext-[a-z0-9-]*)$": {
+          "description": "The list of platform requirements for phar programs.",
+          "$ref": "#/definitions/VersionConstraint"
+        }
+      },
+      "additionalProperties": false
+    },
+    "VersionConstraint": {
+      "oneOf": [
+        {
+          "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
+          "pattern": "^\\^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s\\^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+        },
+        {
+          "$comment": "Unrestricted boundaries.",
+          "const": "*"
+        }
+      ]
     }
   }
 }

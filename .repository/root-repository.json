@@ -16,39 +16,62 @@
       {
         "version": "5.0.2",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.2.phar",
-        "bootstrap": "phpcpd"
+        "bootstrap": "phpcpd",
+        "requirements": {
+          "php": "^7.3.0"
+        }
       },
       {
         "version": "5.0.1",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.1.phar",
-        "bootstrap": "phpcpd"
+        "bootstrap": "phpcpd",
+        "requirements": {
+          "php": "^7.3.0"
+        }
+
       },
       {
         "version": "5.0.0",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.0.phar",
-        "bootstrap": "phpcpd"
+        "bootstrap": "phpcpd",
+        "requirements": {
+          "php": "^7.3.0"
+        }
+
       },
       {
         "version": "4.1.0",
         "phar-url": "https://phar.phpunit.de/phpcpd-4.1.0.phar",
-        "bootstrap": "phpcpd"
+        "bootstrap": "phpcpd",
+        "requirements": {
+          "php": "^7.1.0"
+        }
       }
     ],
     "phpunit": [
       {
         "version": "9.0.1",
         "phar-url": "https://phar.phpunit.de/phpunit-9.0.1.phar",
-        "bootstrap": "phpunit"
+        "bootstrap": "phpunit",
+        "requirements": {
+          "php": "^7.3.0"
+        }
       },
       {
         "version": "9.0.0",
         "phar-url": "https://phar.phpunit.de/phpunit-9.0.0.phar",
-        "bootstrap": "phpunit"
+        "bootstrap": "phpunit",
+        "requirements": {
+          "php": "^7.3.0"
+        }
       },
       {
         "version": "7.0.0",
         "phar-url": "https://phar.phpunit.de/phpunit-7.0.0.phar",
-        "bootstrap": "phpunit"
+        "bootstrap": "phpunit",
+        "requirements": {
+          "php": "^7.1.0"
+        }
       }
     ]
   }
