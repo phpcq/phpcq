@@ -10,7 +10,6 @@ language: php
 php:
   - "7.4"
   - "7.3"
-  - "7.2"
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
