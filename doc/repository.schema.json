@@ -114,7 +114,7 @@
         "properties": {
           "version": {
             "type": "string",
-            "format": "TODO: version format"
+            "pattern": "^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?$"
           },
           "phar-url": {
             "$comment": "URL to the .phar file",
