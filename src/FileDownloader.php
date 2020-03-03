@@ -30,12 +30,13 @@ class FileDownloader
      * @param string $url
      * @param string $destinationFile
      * @param string $baseDir
+     * @param bool $force
      *
      * @return void
      */
-    public function downloadFileTo(string $url, string $destinationFile, string $baseDir = ''): void
+    public function downloadFileTo(string $url, string $destinationFile, string $baseDir = '', bool $force = false): void
     {
-        file_put_contents($destinationFile, $this->downloadFile($url, $baseDir));
+        file_put_contents($destinationFile, $this->downloadFile($url, $baseDir, $force));
     }
 
     /**
@@ -43,16 +44,17 @@ class FileDownloader
      *
      * @param string $url
      * @param string $baseDir
+     * @param bool $force
      *
      * @return string
      */
-    public function downloadFile(string $url, string $baseDir = ''): string
+    public function downloadFile(string $url, string $baseDir = '', bool $force = false): string
     {
         if (!is_dir($this->cacheDirectory)) {
             mkdir($this->cacheDirectory);
         }
         $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
-        if (!is_file($cacheFile)) {
+        if ($force || !is_file($cacheFile)) {
             // FIXME: apply auth - download via any library like curl or guzzle or the like.
             file_put_contents($cacheFile, file_get_contents($this->validateUrlOrFile($url, $baseDir)));
         }
@@ -65,12 +67,13 @@ class FileDownloader
      *
      * @param string $url
      * @param string $baseDir
+     * @param bool $force
      *
      * @return array
      */
-    public function downloadJsonFile(string $url, string $baseDir = ''): array
+    public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false): array
     {
-        $data = json_decode($this->downloadFile($url, $baseDir), true);
+        $data = json_decode($this->downloadFile($url, $baseDir, $force), true);
         if (null === $data) {
             throw new RuntimeException('Invalid repository ' . $url);
         }

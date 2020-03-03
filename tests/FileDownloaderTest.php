@@ -49,4 +49,24 @@ class FileDownloaderTest extends TestCase
             unlink($filename);
         }
     }
+
+    public function testDownloadFile(): void
+    {
+        $tempDir = sys_get_temp_dir() . '/phpcq';
+        $downloader = new FileDownloader($tempDir);
+
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir);
+        }
+
+        $filename = $tempDir . '/' . uniqid('test-download');
+        file_put_contents($filename, '{"json": "file"}');
+
+        $this->assertSame('{"json": "file"}', $downloader->downloadFile($filename));
+
+        file_put_contents($filename, '{"json": "foo"}');
+        $this->assertSame('{"json": "file"}', $downloader->downloadFile($filename));
+
+        $this->assertSame('{"json": "foo"}', $downloader->downloadFile($filename, '', true));
+    }
 }
