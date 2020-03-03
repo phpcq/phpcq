@@ -18,6 +18,7 @@ use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,6 +29,13 @@ final class RunCommand extends AbstractCommand
     protected function configure(): void
     {
         $this->setName('run')->setDescription('Run configured build tasks');
+
+        $this->addArgument(
+            'tool',
+            InputArgument::OPTIONAL,
+            'Define a specific tool which should be run'
+        );
+
         parent::configure();
     }
 
@@ -59,16 +67,12 @@ final class RunCommand extends AbstractCommand
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
         // Load bootstraps
         $plugins = PluginRegistry::buildFromPath($phpcqPath);
-        foreach ($config['tools'] as $toolName => $tool) {
-            $plugin = $plugins->getPluginByName($toolName);
-            $name = $plugin->getName();
-            // Initialize phar files
-            if ($plugin instanceof ConfigurationPluginInterface) {
-                $configuration = $config[$name] ?? [];
-                $plugin->validateConfig($configuration);
-                foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
-                    $taskList->add($task);
-                }
+
+        if ($toolName = $input->getArgument('tool')) {
+            $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
+        } else {
+            foreach ($config['tools'] as $toolName => $tool) {
+                $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
             }
         }
 
@@ -105,5 +109,29 @@ final class RunCommand extends AbstractCommand
         $finder = new PhpExecutableFinder();
 
         return [$finder->find(), $finder->findArguments()];
+    }
+
+    /**
+     * @param PluginRegistry $plugins
+     * @param $toolName
+     * @param $config
+     * @param BuildConfiguration $buildConfig
+     * @param Tasklist $taskList
+     *
+     * @return void
+     */
+    protected function handlePlugin(PluginRegistry $plugins, $toolName, $config, BuildConfiguration $buildConfig, Tasklist $taskList): void
+    {
+        $plugin = $plugins->getPluginByName($toolName);
+        $name   = $plugin->getName();
+
+        // Initialize phar files
+        if ($plugin instanceof ConfigurationPluginInterface) {
+            $configuration = $config[$name] ?? [];
+            $plugin->validateConfig($configuration);
+            foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
+                $taskList->add($task);
+            }
+        }
     }
 }
