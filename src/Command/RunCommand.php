@@ -9,6 +9,9 @@ use Phpcq\Config\ProjectConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
+use Phpcq\Output\BufferedOutput;
+use Phpcq\Output\SymfonyConsoleOutput;
+use Phpcq\Output\SymfonyOutput;
 use Phpcq\Plugin\ConfigurationPluginInterface;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\Repository\JsonRepositoryLoader;
@@ -16,6 +19,7 @@ use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 
@@ -68,9 +72,19 @@ final class RunCommand extends AbstractCommand
             }
         }
 
+        // Wrap console output
+        if ($output instanceof ConsoleOutputInterface) {
+            $consoleOutput = new SymfonyConsoleOutput($output);
+        } else {
+            $consoleOutput = new SymfonyOutput($output);
+        }
+
+        // TODO: Parallelize tasks
         // Execute task list
         foreach ($taskList->getIterator() as $task) {
-            $task->run($output);
+            $taskOutput = new BufferedOutput($consoleOutput);
+            $task->run($taskOutput);
+            $taskOutput->release();
         }
 
         return 0;

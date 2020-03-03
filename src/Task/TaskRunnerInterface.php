@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\Exception\RuntimeException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Phpcq\Output\OutputInterface;
 
 interface TaskRunnerInterface
 {
