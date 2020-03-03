@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+use Phpcq\Command\PlatformInformationCommand;
 use Phpcq\Command\RunCommand;
 use Phpcq\Command\UpdateCommand;
 use Phpcq\Command\ValidateCommand;
@@ -25,6 +26,7 @@ $application->addCommands([
     new RunCommand(),
     new UpdateCommand(),
     new ValidateCommand(),
+    new PlatformInformationCommand(),
 ]);
 
 $application->setAutoExit(true);
