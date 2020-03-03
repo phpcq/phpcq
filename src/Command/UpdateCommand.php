@@ -7,6 +7,7 @@ namespace Phpcq\Command;
 use Phpcq\ConfigLoader;
 use Phpcq\FileDownloader;
 use Phpcq\Repository\JsonRepositoryDumper;
+use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryFactory;
 use Phpcq\Repository\ToolInformation;
@@ -36,10 +37,11 @@ final class UpdateCommand extends AbstractCommand
             $output->writeln('Using CACHE: ' . $cachePath);
         }
 
-        $configFile = $input->getOption('config');
-        $config     = ConfigLoader::load($configFile);
-        $downloader = new FileDownloader($cachePath, $config['auth'] ?? []);
-        $factory    = new RepositoryFactory($downloader);
+        $configFile       = $input->getOption('config');
+        $config           = ConfigLoader::load($configFile);
+        $downloader       = new FileDownloader($cachePath, $config['auth'] ?? []);
+        $repositoryLoader = new JsonRepositoryLoader($downloader, true);
+        $factory          = new RepositoryFactory($repositoryLoader);
         // Download repositories
         $pool = $factory->buildPool($config);
         // Download needed tools and add to local repository.

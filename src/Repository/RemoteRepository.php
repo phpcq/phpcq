@@ -3,7 +3,6 @@
 namespace Phpcq\Repository;
 
 use IteratorAggregate;
-use Phpcq\FileDownloader;
 use Traversable;
 
 /**
@@ -19,11 +18,6 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
     private $url;
 
     /**
-     * @var FileDownloader
-     */
-    private $downloader;
-
-    /**
      * The repository to delegate to when queried.
      *
      * @var Repository
@@ -31,13 +25,18 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
     private $delegate;
 
     /**
-     * @param string         $url        URL to the root information of this repository.
-     * @param FileDownloader $downloader The downloader to use.
+     * @var JsonRepositoryLoader
      */
-    public function __construct(string $url, FileDownloader $downloader)
+    private $repositoryLoader;
+
+    /**
+     * @param string $url URL to the root information of this repository.
+     * @param JsonRepositoryLoader $repositoryLoader The repository loader loading the repository data.
+     */
+    public function __construct(string $url, JsonRepositoryLoader $repositoryLoader)
     {
         $this->url        = $url;
-        $this->downloader = $downloader;
+        $this->repositoryLoader = $repositoryLoader;
     }
 
     public function getTool(string $name, string $versionConstraint): ToolInformationInterface
@@ -64,11 +63,8 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
      *
      * @return void
      */
-    private function preload()
+    private function preload(): void
     {
-        // FIXME: should we rather inject the loader in this class?
-        $loader = new JsonRepositoryLoader($this->downloader);
-
-        $this->delegate = $loader->loadFile($this->url);
+        $this->delegate = $this->repositoryLoader->loadFile($this->url);
     }
 }

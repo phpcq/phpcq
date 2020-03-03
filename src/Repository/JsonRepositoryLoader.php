@@ -23,27 +23,34 @@ class JsonRepositoryLoader
     private $repository;
 
     /**
+     * @var bool
+     */
+    private $bypassCache;
+
+    /**
      * Create a new instance.
      *
      * @param FileDownloader $downloader
+     * @param bool $bypassCache
      */
-    public function __construct(FileDownloader $downloader)
+    public function __construct(FileDownloader $downloader, bool $bypassCache = false)
     {
         $this->downloader = $downloader;
+        $this->bypassCache = $bypassCache;
     }
 
     public function loadFile(string $filePath): RepositoryInterface
     {
         $this->repository = new Repository();
         $baseDir          = dirname($filePath);
-        $data             = $this->downloader->downloadJsonFile($filePath, $baseDir);
+        $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache);
         $bootstrapLookup  = $data['bootstraps'] ?? [];
         foreach ($data['phars'] as $toolName => $versions) {
             switch (true) {
                 case is_string($versions):
                     $this->handleVersionList(
                         $toolName,
-                        $this->downloader->downloadJsonFile($versions, $baseDir),
+                        $this->downloader->downloadJsonFile($versions, $baseDir, $this->bypassCache),
                         [],
                         $baseDir
                     );

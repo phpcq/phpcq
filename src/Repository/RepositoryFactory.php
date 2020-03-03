@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
-use Phpcq\FileDownloader;
-
 class RepositoryFactory
 {
     /**
-     * @var FileDownloader
+     * @var JsonRepositoryLoader
      */
-    private $downloader;
+    private $repositoryLoader;
 
     /**
-     * @param FileDownloader $downloader The downloader to use.
+     * @param JsonRepositoryLoader $repositoryLoader The repository loader to use.
      */
-    public function __construct(FileDownloader $downloader)
+    public function __construct(JsonRepositoryLoader $repositoryLoader)
     {
-        $this->downloader = $downloader;
+        $this->repositoryLoader = $repositoryLoader;
     }
 
     public function buildPool(array $config): RepositoryPool
@@ -29,7 +27,7 @@ class RepositoryFactory
         }
         foreach ($config['repositories'] as $repository) {
             if (is_string($repository)) {
-                $pool->addRepository(new RemoteRepository($repository, $this->downloader));
+                $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
                 continue;
             }
             // TODO: handle different repository types here.
