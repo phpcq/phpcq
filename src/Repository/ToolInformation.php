@@ -27,19 +27,26 @@ class ToolInformation implements ToolInformationInterface
     private $bootstrap;
 
     /**
+     * @var array
+     */
+    private $platformRequirements;
+
+    /**
      * Create a new instance.
      *
      * @param string $name
      * @param string $version
      * @param string $pharUrl
+     * @param array $platformRequirements
      * @param BootstrapInterface $bootstrap
      */
-    public function __construct(string $name, string $version, string $pharUrl, BootstrapInterface $bootstrap)
+    public function __construct(string $name, string $version, string $pharUrl, array $platformRequirements, BootstrapInterface $bootstrap)
     {
-        $this->name      = $name;
-        $this->version   = $version;
-        $this->pharUrl   = $pharUrl;
-        $this->bootstrap = $bootstrap;
+        $this->name                 = $name;
+        $this->version              = $version;
+        $this->pharUrl              = $pharUrl;
+        $this->platformRequirements = $platformRequirements;
+        $this->bootstrap            = $bootstrap;
     }
 
     public function getName(): string
@@ -60,5 +67,10 @@ class ToolInformation implements ToolInformationInterface
     public function getBootstrap(): BootstrapInterface
     {
         return $this->bootstrap;
+    }
+
+    public function getPlatformRequirements() : array
+    {
+        return $this->platformRequirements;
     }
 }

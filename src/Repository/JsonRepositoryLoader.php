@@ -6,6 +6,7 @@ namespace Phpcq\Repository;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
+use Phpcq\Platform\PlatformInformationInterface;
 
 /**
  * Load a json file.
@@ -28,20 +29,27 @@ class JsonRepositoryLoader
     private $bypassCache;
 
     /**
+     * @var PlatformInformationInterface
+     */
+    private $platformInformation;
+
+    /**
      * Create a new instance.
      *
+     * @param PlatformInformationInterface $platformInformation
      * @param FileDownloader $downloader
      * @param bool $bypassCache
      */
-    public function __construct(FileDownloader $downloader, bool $bypassCache = false)
+    public function __construct(PlatformInformationInterface $platformInformation, FileDownloader $downloader, bool $bypassCache = false)
     {
+        $this->platformInformation = $platformInformation;
         $this->downloader = $downloader;
         $this->bypassCache = $bypassCache;
     }
 
     public function loadFile(string $filePath): RepositoryInterface
     {
-        $this->repository = new Repository();
+        $this->repository = new Repository($this->platformInformation);
         $baseDir          = dirname($filePath);
         $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache);
         $bootstrapLookup  = $data['bootstraps'] ?? [];
@@ -79,6 +87,7 @@ class JsonRepositoryLoader
                 $toolName,
                 $version['version'],
                 $version['phar-url'],
+                $version['requirements'],
                 $this->makeBootstrap($version['bootstrap'], $bootstrapLookup, $baseDir)
             ));
         }

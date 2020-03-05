@@ -12,6 +12,7 @@ use Phpcq\FileDownloader;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
+use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\ConfigurationPluginInterface;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\Repository\JsonRepositoryLoader;
@@ -99,7 +100,7 @@ final class RunCommand extends AbstractCommand
         if (!is_file($phpcqPath . '/installed.json')) {
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
-        $loader = new JsonRepositoryLoader(new FileDownloader($cachePath));
+        $loader = new JsonRepositoryLoader(new PlatformInformation(), new FileDownloader($cachePath));
 
         return $loader->loadFile($phpcqPath . '/installed.json');
     }

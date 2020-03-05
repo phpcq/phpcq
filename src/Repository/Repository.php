@@ -8,6 +8,7 @@ use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\VersionParser;
 use IteratorAggregate;
 use Phpcq\Exception\ToolNotFoundException;
+use Phpcq\Platform\PlatformInformationInterface;
 use Traversable;
 
 /**
@@ -17,12 +18,30 @@ class Repository implements IteratorAggregate, RepositoryInterface
 {
     use RepositoryHasToolTrait;
 
+    /**
+     * @var ToolInformationInterface[][]
+     */
     private $tools = [];
 
     /**
      * @var VersionParser
      */
     private $parser;
+
+    /**
+     * @var PlatformInformationInterface
+     */
+    private $platformInformation;
+
+    /**
+     * Repository constructor.
+     *
+     * @param PlatformInformationInterface $platformInformation
+     */
+    public function __construct(PlatformInformationInterface $platformInformation)
+    {
+        $this->platformInformation = $platformInformation;
+    }
 
     public function addVersion(ToolInformationInterface $toolVersion)
     {
@@ -67,13 +86,39 @@ class Repository implements IteratorAggregate, RepositoryInterface
         $results    = [];
         foreach ($this->tools[$name] as $versionHunk) {
             $version = $versionHunk->getVersion();
-            if ($constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {
-                $results[$version] = $versionHunk;
+            if (!$constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {
+                continue;
             }
+
+            if (!$this->matchesPlatformRequirements($versionHunk)) {
+                continue;
+            }
+
+            $results[$version] = $versionHunk;
         }
 
         krsort($results);
 
         return $results;
+    }
+
+    private function matchesPlatformRequirements(ToolInformationInterface $versionHunk) : bool
+    {
+        foreach ($versionHunk->getPlatformRequirements() as $requirement => $constraints) {
+            $installedVersion = $this->platformInformation->getInstalledVersion($requirement);
+
+            // Requirement is not available
+            if (null === $installedVersion) {
+                return false;
+            }
+
+            $constraints = $this->parser->parseConstraints($constraints);
+
+            if (!$constraints->matches(new Constraint('=', $this->parser->normalize($installedVersion)))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

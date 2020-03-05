@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Test\Repository;
 
 use Phpcq\FileDownloader;
+use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteRepository;
-use Phpcq\Repository\ToolInformationInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,9 +17,10 @@ class RemoteRepositoryTest extends TestCase
 {
     public function testAddsVersionAndCanRetrieveVersion(): void
     {
-        $downloader = $this->createMock(FileDownloader::class);
-        $loader     = new JsonRepositoryLoader($downloader);
-        $repository = new RemoteRepository('http://dummy/repository.json', $loader);
+        $platformInformation = $this->createMock(PlatformInformationInterface::class);
+        $downloader          = $this->createMock(FileDownloader::class);
+        $loader              = new JsonRepositoryLoader($platformInformation, $downloader);
+        $repository          = new RemoteRepository('http://dummy/repository.json', $loader);
 
         $downloader
             ->expects($this->once())
@@ -35,6 +36,7 @@ class RemoteRepositoryTest extends TestCase
                             'type'           => 'inline',
                             'code'           => 'bootstrap-code'
                         ],
+                        'requirements' => [],
                     ]
                 ]
             ]]);
@@ -52,9 +54,10 @@ class RemoteRepositoryTest extends TestCase
 
     public function testEnumeratesAllVersions(): void
     {
-        $downloader = $this->createMock(FileDownloader::class);
-        $loader     = new JsonRepositoryLoader($downloader);
-        $repository = new RemoteRepository('http://dummy/repository.json', $loader);
+        $downloader          = $this->createMock(FileDownloader::class);
+        $platformInformation = $this->createMock(PlatformInformationInterface::class);
+        $loader              = new JsonRepositoryLoader($platformInformation, $downloader);
+        $repository          = new RemoteRepository('http://dummy/repository.json', $loader);
 
         $downloader
             ->expects($this->once())
@@ -70,6 +73,7 @@ class RemoteRepositoryTest extends TestCase
                             'type'           => 'inline',
                             'code'           => 'bootstrap-code'
                         ],
+                        'requirements' => [],
                     ],
                     [
                         'version'   => '1.3.0',
@@ -78,6 +82,9 @@ class RemoteRepositoryTest extends TestCase
                             'plugin-version' => '1.0.0',
                             'type'           => 'inline',
                             'code'           => 'bootstrap-code2'
+                        ],
+                        'requirements' => [
+                            'php' => '^7.4'
                         ],
                     ],
                 ],
@@ -96,5 +103,6 @@ class RemoteRepositoryTest extends TestCase
         $this->assertSame('http://dummy/supertool-1.3.0.phar', $versions[1]->getPharUrl());
         $this->assertSame('1.0.0', $versions[1]->getBootstrap()->getPluginVersion());
         $this->assertSame('bootstrap-code2', $versions[1]->getBootstrap()->getCode());
+        $this->assertSame(['php' => '^7.4'], $versions[1]->getPlatformRequirements());
     }
 }

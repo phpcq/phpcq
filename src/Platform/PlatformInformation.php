@@ -11,7 +11,7 @@ use Composer\XdebugHandler\XdebugHandler;
  *
  * @psee https://github.com/composer/composer/blob/master/src/Composer/Repository/PlatformRepository.php
  */
-final class PlatformInformation implements PlatformInformationInterface
+class PlatformInformation implements PlatformInformationInterface
 {
     private static $extensions = null;
 
@@ -153,6 +153,29 @@ final class PlatformInformation implements PlatformInformationInterface
         return self::$libraries;
     }
 
+    public function getInstalledVersion(string $name) : ?string
+    {
+        if ($name === 'php') {
+            return $this->getPhpVersion();
+        }
+
+        [$prefix, $shortName] = explode('-', $name, 2);
+
+        if ($name === null) {
+            return null;
+        }
+
+        switch ($prefix) {
+            case 'ext':
+                return $this->getExtensions()[$name] ?? null;
+
+            case 'lib':
+                return $this->getLibraries()[$name] ?? null;
+
+            default:
+                return null;
+        }
+    }
 
     private function initialize(): void
     {

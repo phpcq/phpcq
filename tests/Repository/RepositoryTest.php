@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Repository;
 
+use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolInformationInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,8 @@ class RepositoryTest extends TestCase
 {
     public function testAddsVersionAndCanRetrieveVersion(): void
     {
-        $repository = new Repository();
+        $platformInformation = $this->createMock(PlatformInformationInterface::class);
+        $repository = new Repository($platformInformation);
 
         $version = $this->createMock(ToolInformationInterface::class);
         $version->method('getVersion')->willReturn('1.0.0');
@@ -29,7 +31,8 @@ class RepositoryTest extends TestCase
 
     public function testEnumeratesAllVersions(): void
     {
-        $repository = new Repository();
+        $platformInformation = $this->createMock(PlatformInformationInterface::class);
+        $repository = new Repository($platformInformation);
 
         $version1 = $this->createMock(ToolInformationInterface::class);
         $version1->method('getVersion')->willReturn('1.0.0');
@@ -46,5 +49,10 @@ class RepositoryTest extends TestCase
         $this->assertTrue($repository->hasTool('supertool', '1.0.1'));
         $this->assertTrue($repository->hasTool('supertool', '^1.0.1'));
         $this->assertSame([$version1, $version2], iterator_to_array($repository->getIterator()));
+    }
+
+    public function testAppliedPlatformInformation(): void
+    {
+        $this->markTestSkipped();
     }
 }

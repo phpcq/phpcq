@@ -34,4 +34,11 @@ interface ToolInformationInterface
      * @return BootstrapInterface
      */
     public function getBootstrap(): BootstrapInterface;
+
+    /**
+     * Obtain the platform requirements
+     *
+     * @return string[]
+     */
+    public function getPlatformRequirements() : array;
 }

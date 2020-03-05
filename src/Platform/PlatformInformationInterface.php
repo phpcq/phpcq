@@ -29,4 +29,13 @@ interface PlatformInformationInterface
      * @return string[]
      */
     public function getLibraries(): array;
+
+    /**
+     * Get the installed version of a platform requirement. Returns null if requirement does not exists.
+     *
+     * @param string $name Name of the requirement.
+     *
+     * @return string|null
+     */
+    public function getInstalledVersion(string $name) : ?string;
 }
