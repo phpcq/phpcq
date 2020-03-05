@@ -32,6 +32,14 @@ class PlatformInformationTest extends TestCase
 
     public function testLibraries(): void
     {
-        $this->markTestSkipped();
+        $platformInformation = new PlatformInformation();
+        $libraries = $platformInformation->getLibraries();
+        $loadedExtensions = get_loaded_extensions();
+
+        foreach ($libraries as $name => $version) {
+            $this->assertStringStartsWith('lib-', $name);
+            $name = $name === 'lib-ICU' ? 'intl' : substr($name, 4);
+            $this->assertContains($name, $loadedExtensions);
+        }
     }
 }
