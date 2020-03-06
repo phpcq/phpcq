@@ -53,6 +53,27 @@ class RepositoryTest extends TestCase
 
     public function testAppliedPlatformInformation(): void
     {
-        $this->markTestSkipped();
+        $platformInformation = $this->createMock(PlatformInformationInterface::class);
+        $platformInformation->method('getInstalledVersion')->willReturn('5.6');
+
+        $repository = new Repository($platformInformation);
+
+        $version1 = $this->createMock(ToolInformationInterface::class);
+        $version1->method('getVersion')->willReturn('1.0.0');
+        $version1->method('getName')->willReturn('supertool');
+        $version1->method('getPlatformRequirements')->willReturn(['php' => '^5.6']);
+
+        $version2 = $this->createMock(ToolInformationInterface::class);
+        $version2->method('getVersion')->willReturn('2.0.1');
+        $version2->method('getName')->willReturn('supertool');
+        $version2->method('getPlatformRequirements')->willReturn(['php' => '^7.1']);
+
+        $repository->addVersion($version1);
+        $repository->addVersion($version2);
+
+        $this->assertTrue($repository->hasTool('supertool', '1.0.0'));
+        $this->assertTrue($repository->hasTool('supertool', '^1.0.0'));
+        $this->assertFalse($repository->hasTool('supertool', '2.0.1'));
+        $this->assertFalse($repository->hasTool('supertool', '^2.0.1'));
     }
 }
