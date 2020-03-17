@@ -32,21 +32,42 @@ class ToolInformation implements ToolInformationInterface
     private $platformRequirements;
 
     /**
+     * @var ToolHash|null
+     */
+    private $hash;
+
+    /**
+     * @var string|null
+     */
+    private $signatureUrl;
+
+    /**
      * Create a new instance.
      *
-     * @param string $name
-     * @param string $version
-     * @param string $pharUrl
-     * @param array $platformRequirements
+     * @param string             $name
+     * @param string             $version
+     * @param string             $pharUrl
+     * @param array              $platformRequirements
      * @param BootstrapInterface $bootstrap
+     * @param ToolHash|null      $hash
+     * @param string|null        $signatureUrl
      */
-    public function __construct(string $name, string $version, string $pharUrl, array $platformRequirements, BootstrapInterface $bootstrap)
-    {
+    public function __construct(
+        string $name,
+        string $version,
+        string $pharUrl,
+        array $platformRequirements,
+        BootstrapInterface $bootstrap,
+        ?ToolHash $hash,
+        ?string $signatureUrl
+    ) {
         $this->name                 = $name;
         $this->version              = $version;
         $this->pharUrl              = $pharUrl;
         $this->platformRequirements = $platformRequirements;
         $this->bootstrap            = $bootstrap;
+        $this->hash                 = $hash;
+        $this->signatureUrl         = $signatureUrl;
     }
 
     public function getName(): string
@@ -69,8 +90,18 @@ class ToolInformation implements ToolInformationInterface
         return $this->bootstrap;
     }
 
-    public function getPlatformRequirements() : array
+    public function getPlatformRequirements(): array
     {
         return $this->platformRequirements;
+    }
+
+    public function getHash(): ?ToolHash
+    {
+        return $this->hash;
+    }
+
+    public function getSignatureUrl(): ?string
+    {
+        return $this->signatureUrl;
     }
 }

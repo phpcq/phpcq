@@ -83,7 +83,9 @@ class JsonRepositoryLoader
                 $version['version'],
                 $version['phar-url'],
                 $version['requirements'],
-                $this->makeBootstrap($version['bootstrap'], $bootstrapLookup, $baseDir)
+                $this->makeBootstrap($version['bootstrap'], $bootstrapLookup, $baseDir),
+                isset($version['hash']) ? new ToolHash($version['hash']['type'], $version['hash']['value']) : null,
+                $version['signature'] ?? null
             ));
         }
     }

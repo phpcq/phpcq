@@ -59,7 +59,9 @@ final class UpdateCommand extends AbstractCommand
                 $toolInfo->getVersion(),
                 $pharName,
                 $toolInfo->getPlatformRequirements(),
-                $toolInfo->getBootstrap()
+                $toolInfo->getBootstrap(),
+                $toolInfo->getHash(),
+                $toolInfo->getSignatureUrl()
             );
 
             $installed->addVersion($localTool);

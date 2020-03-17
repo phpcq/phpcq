@@ -41,4 +41,18 @@ interface ToolInformationInterface
      * @return string[]
      */
     public function getPlatformRequirements() : array;
+
+    /**
+     * Obtain the hash for the tool (if any).
+     *
+     * @return ToolHash|null
+     */
+    public function getHash(): ?ToolHash;
+
+    /**
+     * Obtain the signature URL (if any).
+     *
+     * @return string|null
+     */
+    public function getSignatureUrl(): ?string;
 }
