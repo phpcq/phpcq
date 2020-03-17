@@ -1,5 +1,11 @@
 {
   "phars": {
-    "foobar": "123"
+    "foobar": {
+      "url": "123",
+      "checksum": {
+        "type": "sha-256",
+        "value": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      }
+    }
   }
 }

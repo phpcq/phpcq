@@ -43,7 +43,7 @@ class Repository implements IteratorAggregate, RepositoryInterface
         $this->platformInformation = $platformInformation;
     }
 
-    public function addVersion(ToolInformationInterface $toolVersion)
+    public function addVersion(ToolInformationInterface $toolVersion): void
     {
         $name = $toolVersion->getName();
         if (!isset($this->tools[$name])) {

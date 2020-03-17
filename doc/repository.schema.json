@@ -2,10 +2,22 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "id": "https://phpcq.github.io/v1/repository-schema.json#",
   "title": "phpcq repository schema",
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "bootstraps": {
+  "$ref": "#/definitions/Repository",
+  "definitions": {
+    "Repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bootstraps": {
+          "$ref": "#/definitions/BootstrapList"
+        },
+        "phars": {
+          "$ref": "#/definitions/PharProgramList"
+        }
+      },
+      "required": ["phars"]
+    },
+    "BootstrapList": {
       "type": "object",
       "patternProperties": {
         "^[a-zA-Z0-9-]*$": {
@@ -24,18 +36,6 @@
       },
       "additionalProperties": false
     },
-    "phars": {
-      "type": "object",
-      "patternProperties": {
-        "^[a-zA-Z0-9-]*$": {
-          "description": "The list of contained phar program sources.",
-          "$ref": "#/definitions/PharProgramSource"
-        }
-      },
-      "additionalProperties": false
-    }
-  },
-  "definitions": {
     "BootstrapType": {
       "oneOf": [
         {
@@ -93,13 +93,31 @@
       "required": ["type", "url", "plugin-version"],
       "additionalProperties": false
     },
+    "PharProgramList": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9-]*$": {
+          "description": "The list of contained phar program sources.",
+          "$ref": "#/definitions/PharProgramSource"
+        }
+      },
+      "additionalProperties": false
+    },
     "PharProgramSource": {
       "description": "A program source may be either an IRI to an version include file or a program version list",
       "oneOf": [
         {
-          "$comment": "URL of an include file",
-          "type": "string",
-          "format": "iri-reference"
+          "type": "object",
+          "properties": {
+            "url": {
+              "$comment": "URL of an repository include file",
+              "type": "string",
+              "format": "iri-reference"
+            },
+            "checksum": {
+              "$ref": "#/definitions/HashChecksum"
+            }
+          }
         },
         {
           "$ref": "#/definitions/PharProgramVersionList"
@@ -131,6 +149,14 @@
         },
         "requirements": {
           "$ref": "#/definitions/PharPlatformRequirements"
+        },
+        "hash": {
+          "$ref": "#/definitions/HashChecksum"
+        },
+        "signature": {
+          "$comment": "URL to the .phar.asc file",
+          "type": "string",
+          "format": "iri-reference"
         }
       },
       "required": ["version", "phar-url", "bootstrap", "requirements"],
@@ -155,6 +181,70 @@
         {
           "$comment": "Unrestricted boundaries.",
           "const": "*"
+        }
+      ]
+    },
+    "HashChecksum": {
+      "oneOf": [
+        {
+          "$comment": "SHA 1",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "sha-1"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-z0-9]{40}$"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        },
+     {
+          "$comment": "SHA 256",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "sha-256"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-z0-9]{64}$"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        },
+        {
+          "$comment": "SHA 384",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "sha-384"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-z0-9]{96}$"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        },
+        {
+          "$comment": "SHA 512",
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "sha-512"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-z0-9]{128}$"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
         }
       ]
     }

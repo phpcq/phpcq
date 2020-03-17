@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq;
 
+use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
 
 class FileDownloader
@@ -42,19 +43,20 @@ class FileDownloader
     /**
      * Download a file and return it's content.
      *
-     * @param string $url
-     * @param string $baseDir
-     * @param bool $force
+     * @param string     $url
+     * @param string     $baseDir
+     * @param bool       $force
+     * @param array|null $hash
      *
      * @return string
      */
-    public function downloadFile(string $url, string $baseDir = '', bool $force = false): string
+    public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string
     {
         if (!is_dir($this->cacheDirectory)) {
             mkdir($this->cacheDirectory);
         }
         $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
-        if ($force || !is_file($cacheFile)) {
+        if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
             // FIXME: apply auth - download via any library like curl or guzzle or the like.
             file_put_contents($cacheFile, file_get_contents($this->validateUrlOrFile($url, $baseDir)));
         }
@@ -65,15 +67,16 @@ class FileDownloader
     /**
      * Download a JSON file and return the decoded result.
      *
-     * @param string $url
-     * @param string $baseDir
-     * @param bool $force
+     * @param string     $url
+     * @param string     $baseDir
+     * @param bool       $force
+     * @param array|null $hash
      *
      * @return array
      */
-    public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false): array
+    public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
-        $data = json_decode($this->downloadFile($url, $baseDir, $force), true);
+        $data = json_decode($this->downloadFile($url, $baseDir, $force, $hash), true);
         if (null === $data) {
             throw new RuntimeException('Invalid repository ' . $url);
         }
@@ -101,5 +104,33 @@ class FileDownloader
 
         // Did not understand.
         throw new RuntimeException('Invalid URI passed: ' . $url);
+    }
+
+    /**
+     * Check the hash for the passed cache file - return true if it is valid, false otherwise.
+     *
+     * @param string     $cacheFile The file to check
+     * @param array|null $hash      The hash to validate.
+     *
+     * @return bool
+     */
+    private function cacheFileMatches(string $cacheFile, ?array $hash): bool
+    {
+        if (null === $hash) {
+            return false;
+        }
+
+        static $hashMap = [
+            'sha-1'   => 'sha1',
+            'sha-256' => 'sha256',
+            'sha-384' => 'sha384',
+            'sha-512' => 'sha512',
+        ];
+
+        if (!isset($hashMap[$hash['type']])) {
+            throw new InvalidHashException($hash['type'], $hash['value']);
+        }
+
+        return $hash['value'] === hash_file($hashMap[$hash['type']], $cacheFile);
     }
 }

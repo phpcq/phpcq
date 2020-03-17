@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Config;
+namespace Phpcq\Test\Config;
 
 use Phpcq\Config\PhpcqConfiguration;
 use PHPUnit\Framework\TestCase;

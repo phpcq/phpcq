@@ -10,12 +10,20 @@ use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteBootstrap;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @covers \Phpcq\Repository\JsonRepositoryLoader
  */
 class JsonRepositoryLoaderTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $filesystem = new Filesystem();
+        $filesystem->remove(sys_get_temp_dir() . '/phpcq-test');
+    }
+
     public function testInvalidRepositoryThrows(): void
     {
         $fixture = __DIR__ . '/../fixtures/repositories/invalid/broken-url.json';
@@ -33,7 +41,7 @@ class JsonRepositoryLoaderTest extends TestCase
             ->willReturnCallback(function ($url) use ($fixture) {
                 switch ($url) {
                     case $fixture:
-                        return json_encode(['phars' => ['foobar' => '123']]);
+                        return file_get_contents($fixture);
                         break;
                 }
                 throw new RuntimeException('Invalid URI passed: ' . $url);
@@ -49,7 +57,7 @@ class JsonRepositoryLoaderTest extends TestCase
 
     public function testLoadRepository()
     {
-        $downloader = new FileDownloader(sys_get_temp_dir());
+        $downloader = new FileDownloader(sys_get_temp_dir() . '/phpcq-test');
         $platformInformation = $this->createMock(PlatformInformationInterface::class);
         $platformInformation
             ->method('getInstalledVersion')

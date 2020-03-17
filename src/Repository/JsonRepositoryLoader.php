@@ -47,28 +47,23 @@ class JsonRepositoryLoader
         $this->bypassCache = $bypassCache;
     }
 
-    public function loadFile(string $filePath): RepositoryInterface
+    public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
         $this->repository = new Repository($this->platformInformation);
-        $baseDir          = dirname($filePath);
-        $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache);
+        $baseDir          = $baseDir ?? dirname($filePath);
+        $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache, $hash);
         $bootstrapLookup  = $data['bootstraps'] ?? [];
         foreach ($data['phars'] as $toolName => $versions) {
-            switch (true) {
-                case is_string($versions):
-                    $this->handleVersionList(
-                        $toolName,
-                        $this->downloader->downloadJsonFile($versions, $baseDir, $this->bypassCache),
-                        [],
-                        $baseDir
-                    );
-                    break;
-                case is_array($versions):
-                    $this->handleVersionList($toolName, $versions, $bootstrapLookup, $baseDir);
-                    break;
-                default:
-                    throw new RuntimeException('Invalid version list');
+            if (!is_array($versions)) {
+                throw new RuntimeException('Invalid version list');
             }
+            // Include? - load it!
+            if (['url', 'checksum'] === array_keys($versions)) {
+                $this->loadFile($versions['url'], $versions['checksum'], $baseDir);
+                continue;
+            }
+
+            $this->handleVersionList($toolName, $versions, $bootstrapLookup, $baseDir);
         }
 
         return $this->repository;

@@ -7,7 +7,13 @@
     }
   },
   "phars": {
-    "phpmd": "./repository-include.json",
+    "phpmd": {
+      "url": "./repository-include.json",
+      "checksum": {
+        "type": "sha-512",
+        "value": "5d8eb564bbd08c998ce7c28b00dfff02ae40de8f2cd1e41743535959af2e9ac46278adcaa2853ec5017bd48e3bb0d5f4496086737dfd9f42db4b15c71d54bf59"
+      }
+    },
     "phpunit": [
       {
         "version": "7.0.0",

@@ -65,7 +65,7 @@ class FileDownloaderTest extends TestCase
         $this->assertSame('{"json": "file"}', $downloader->downloadFile($filename));
 
         file_put_contents($filename, '{"json": "foo"}');
-        $this->assertSame('{"json": "file"}', $downloader->downloadFile($filename));
+        $this->assertSame('{"json": "foo"}', $downloader->downloadFile($filename));
 
         $this->assertSame('{"json": "foo"}', $downloader->downloadFile($filename, '', true));
     }

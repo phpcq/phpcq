@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Config;
+namespace Phpcq\Test\Exception;
 
 use Exception;
 use Phpcq\Exception\ToolNotFoundException;
