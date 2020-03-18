@@ -1,7 +1,7 @@
 phpcq:
   repositories:
     # Interim repository - change to real one when published.
-    - ../repository-builder/web/repository.json
+    - ./.repository/root-repository.json
   directories:
     - src
     - tests
