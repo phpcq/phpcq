@@ -79,7 +79,7 @@ final class RunCommand extends AbstractCommand
         if ($toolName = $input->getArgument('tool')) {
             $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
         } else {
-            foreach ($config['tools'] as $toolName => $tool) {
+            foreach (array_keys($config['tools']) as $toolName) {
                 $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
             }
         }

@@ -18,6 +18,9 @@ class PlatformInformationCommand extends Command
         $this->setName('platform-information')->setDescription('Shows platform information');
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);

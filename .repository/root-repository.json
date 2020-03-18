@@ -1,14 +1,24 @@
 {
   "bootstraps": {
-    "phpunit": {
+    "bootstrap-0": {
       "plugin-version": "1.0.0",
-      "type": "file",
-      "url": "./bootstrap-phpunit.php"
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\n/**\n * Tool home: https://github.com/sebastianbergmann/phpcpd\n */\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'phpcpd';\n    }\n\n    /**\n     * exclude         [array]  Exclude directories from code analysis (must be relative to source).\n     * names           [array]  A list of file names to check [default: [\"*.php\"]].\n     * names_exclude   [array]  A list of file names to exclude.\n     * regexps_exclude [array]  A list of paths regexps to exclude (example: \"#var/.*_tmp#\")\n     * log             [string] Write result in PMD-CPD XML format to file.\n     * min_lines       [int]    Minimum number of identical lines [default: 5]\n     * min_tokens      [int]    Minimum number of identical tokens [default: 70]\n     * fuzzy           [bool]   Fuzz variable names\n     *\n     * custom_flags    [string] Any custom flags to pass to phpcpd. For valid flags refer to the phpcpd documentation.\n     *\n     * directories     [array]  source directories to be analyzed with phpcpd.\n     *\n     * @var string[]\n     */\n    private static $knownConfigKeys = [\n        'exclude'         => 'exclude',\n        'names'           => 'names',\n        'names_exclude'   => 'names_exclude',\n        'regexps_exclude' => 'regexps_exclude',\n        'log'             => 'log',\n        'min_lines'       => 'min_lines',\n        'min_tokens'      => 'min_tokens',\n        'fuzzy'           => 'fuzzy',\n        'custom_flags'    => 'custom_flags',\n        'directories'     => 'directories',\n    ];\n\n    public function validateConfig(array $config) : void\n    {\n        if ($diff = array_diff_key($config, self::$knownConfigKeys)) {\n            throw new \\Phpcq\\Exception\\RuntimeException(\n                'Unknown config keys encountered: ' . implode(', ', array_keys($diff))\n            );\n        }\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        $args = [];\n        if ([] !== ($excluded = (array) ($config['exclude'] ?? []))) {\n            foreach ($excluded as $path) {\n                if ('' === ($path = trim($path))) {\n                    continue;\n                }\n                $args[] = '--exclude=' . $path;\n\n            }\n        }\n        if ('' !== ($values = $this->commaValues($config, 'names'))) {\n            $args[] = '--names=' . $values;\n        }\n        if ('' !== ($values = $this->commaValues($config, 'names_exclude'))) {\n            $args[] = '--names-exclude=' . $values;\n        }\n        if ('' !== ($values = $this->commaValues($config, 'regexps_exclude'))) {\n            $args[] = '--regexps-exclude=' . $values;\n        }\n        if ('' !== ($values = $config['log'] ?? '')) {\n            $args[] = '--log-pmd=' . $values;\n        }\n        if ('' !== ($values = $config['min_lines'] ?? '')) {\n            $args[] = '--min-lines=' . $values;\n        }\n        if ('' !== ($values = $config['min_tokens'] ?? '')) {\n            $args[] = '--min-tokens=' . $values;\n        }\n        if ($config['fuzzy'] ?? false) {\n            $args[] = '--fuzzy';\n        }\n        if ('' !== ($values = $config['custom_flags'] ?? '')) {\n            $args[] = 'custom_flags';\n        }\n\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('phpcpd', array_merge($args, $config['directories']))\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function commaValues(array $config, string $key): string\n    {\n        if (!isset($config[$key])) {\n            return '';\n        }\n        return implode(',', (array) $config[$key]);\n    }\n};\n"
     },
-    "phpcpd": {
+    "bootstrap-1": {
       "plugin-version": "1.0.0",
-      "type": "file",
-      "url": "./bootstrap-phpcpd.php"
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\n/**\n * Tool home: https://github.com/sebastianbergmann/phploc\n */\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'phploc';\n    }\n\n    /**\n     * exclude         [array]  List of excluded files and folders.\n     * output          [array]  List of outputs to use.\n     *\n     * custom_flags    [string] Any custom flags to pass to phploc. For valid flags refer to the phploc documentation.\n     *\n     * directories     [array]  source directories to be analyzed with phploc.\n     *\n     * @var string[]\n     */\n    private static $knownConfigKeys = [\n        'exclude'         => 'exclude',\n        'output'          => 'output',\n        'custom_flags'    => 'custom_flags',\n        'directories'     => 'directories',\n    ];\n\n    public function validateConfig(array $config) : void\n    {\n        if ($diff = array_diff_key($config, self::$knownConfigKeys)) {\n            throw new \\Phpcq\\Exception\\RuntimeException(\n                'Unknown config keys encountered: ' . implode(', ', array_keys($diff))\n            );\n        }\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        $args = [];\n        if ([] !== ($excluded = (array) ($config['exclude'] ?? []))) {\n            foreach ($excluded as $path) {\n                if ('' === ($path = trim($path))) {\n                    continue;\n                }\n                $args[] = '--exclude=' . $path;\n\n            }\n        }\n        if ('' !== ($values = $config['custom_flags'] ?? '')) {\n            $args[] = 'custom_flags';\n        }\n\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('phploc', array_merge($args, $config['directories']))\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function commaValues(array $config, string $key): string\n    {\n        if (!isset($config[$key])) {\n            return '';\n        }\n        return implode(',', (array) $config[$key]);\n    }\n};\n"
+    },
+    "bootstrap-2": {
+      "plugin-version": "1.0.0",
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'phpunit';\n    }\n\n    private static $knownConfigKeys = [\n        'custom_flags' => 'custom_flags'\n    ];\n\n    public function validateConfig(array $config) : void\n    {\n        // Fix: we do not use the directories in this task, so we do not want to bail on them.\n        unset($config['directories']);\n        if ($diff = array_diff_key($config, self::$knownConfigKeys)) {\n            throw new \\Phpcq\\Exception\\RuntimeException(\n                'Unknown config keys encountered: ' . implode(', ', array_keys($diff))\n            );\n        }\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('phpunit')\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n};\n"
+    },
+    "bootstrap-3": {
+      "plugin-version": "1.0.0",
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\n/**\n * Tool home: https://github.com/phpmd/phpmd\n */\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'phpmd';\n    }\n\n    /**\n     * format          [string] Output format to use (ansi, html, json, text, xml).\n     * ruleset         [array]  List of rulesets (cleancode, codesize, controversial, design, naming, unusedcode).\n     * exclude         [array]  List of excluded files and folders.\n     *\n     * custom_flags    [string] Any custom flags to pass to phploc. For valid flags refer to the phploc documentation.\n     *\n     * directories     [array]  source directories to be analyzed with phploc.\n     *\n     * @var string[]\n     */\n    private static $knownConfigKeys = [\n        'format'          => 'format',\n        'ruleset'         => 'ruleset',\n        'exclude'         => 'exclude',\n        'custom_flags'    => 'custom_flags',\n        'directories'     => 'directories',\n    ];\n\n    public function validateConfig(array $config) : void\n    {\n        if ($diff = array_diff_key($config, self::$knownConfigKeys)) {\n            throw new \\Phpcq\\Exception\\RuntimeException(\n                'Unknown config keys encountered: ' . implode(', ', array_keys($diff))\n            );\n        }\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        $flags = [\n            'format' => 'text',\n            'ruleset' => 'naming,unusedcode',\n        ];\n\n        foreach ($flags as $key => $value) {\n            if ('' !== ($value = $this->commaValues($config, $key))) {\n                $flags[$key] = $value;\n            }\n        }\n\n        $args = [\n            implode(',', $config['directories']),\n            $flags['format'],\n            $flags['ruleset'],\n        ];\n\n        if ([] !== ($excluded = (array) ($config['exclude'] ?? []))) {\n            $exclude = [];\n            foreach ($excluded as $path) {\n                if ('' === ($path = trim($path))) {\n                    continue;\n                }\n                $exclude[] = $path;\n            }\n            $args[] = '--exclude=' . implode(',', $exclude);\n        }\n        if ('' !== ($values = $config['custom_flags'] ?? '')) {\n            $args[] = $values;\n        }\n\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('phpmd', $args)\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function commaValues(array $config, string $key): string\n    {\n        if (!isset($config[$key])) {\n            return '';\n        }\n        return implode(',', (array) $config[$key]);\n    }\n};\n"
     }
   },
   "phars": {
@@ -16,61 +26,523 @@
       {
         "version": "5.0.2",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.2.phar",
-        "bootstrap": "phpcpd",
-        "requirements": {
-          "php": "^7.3.0"
-        }
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "12e94af9928be2f33fd394d2cc5d96b3925de24d614381d06b3096cc9eeabbcb"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-5.0.2.phar.asc"
       },
       {
         "version": "5.0.1",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.1.phar",
-        "bootstrap": "phpcpd",
-        "requirements": {
-          "php": "^7.3.0"
-        }
-
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "26c4813a4737adb6406a1314cb34da25dc8dc5c2bb86f672b03515d2f7316296"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-5.0.1.phar.asc"
       },
       {
         "version": "5.0.0",
         "phar-url": "https://phar.phpunit.de/phpcpd-5.0.0.phar",
-        "bootstrap": "phpcpd",
-        "requirements": {
-          "php": "^7.3.0"
-        }
-
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "935b8f29026306615eb9fe57ea7991ce4c45c660cfd766d9ce1330810759f54c"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-5.0.0.phar.asc"
       },
       {
         "version": "4.1.0",
         "phar-url": "https://phar.phpunit.de/phpcpd-4.1.0.phar",
-        "bootstrap": "phpcpd",
-        "requirements": {
-          "php": "^7.1.0"
-        }
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "5918d1d764227c35b590769a1416c799619f7b864f5659b4eab7dd214af530ea"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-4.1.0.phar.asc"
+      },
+      {
+        "version": "4.0.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-4.0.0.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "e406841a9839179953998b3b1d2c3db848920c194c7204f3e603d7aead98bab9"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-4.0.0.phar.asc"
+      },
+      {
+        "version": "3.0.1",
+        "phar-url": "https://phar.phpunit.de/phpcpd-3.0.1.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "47ff2771b952578c4664dec631dc8720bb3f51f707e13ec9a9d52857b7b63c37"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-3.0.1.phar.asc"
+      },
+      {
+        "version": "3.0.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-3.0.0.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "bc03385966b4bd1e62d717cb746c347401b995a23f0f2c0c72bf78016bb039d3"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-3.0.0.phar.asc"
+      },
+      {
+        "version": "2.0.4",
+        "phar-url": "https://phar.phpunit.de/phpcpd-2.0.4.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "491eeac71f1421395648ff079b60fe4858217b70d66eaa07644351f2699c38fe"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-2.0.4.phar.asc"
+      },
+      {
+        "version": "2.0.3",
+        "phar-url": "https://phar.phpunit.de/phpcpd-2.0.3.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "0fd6826f477922c3e102e4bb142cee97485d0c05f87c24046c7e788db32c1fce"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-2.0.3.phar.asc"
+      },
+      {
+        "version": "2.0.2",
+        "phar-url": "https://phar.phpunit.de/phpcpd-2.0.2.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "8a45aa560e332e663d6c6ac10e1ba543410b748467bdc62724ca6b530b760ca6"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-2.0.2.phar.asc"
+      },
+      {
+        "version": "2.0.1",
+        "phar-url": "https://phar.phpunit.de/phpcpd-2.0.1.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "3060ec805184c4cc31c45a81d456f74dcca9ca05efa662442ef9bf74ffa86e7c"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-2.0.1.phar.asc"
+      },
+      {
+        "version": "2.0.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-2.0.0.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "ea4856166beb0dace104124deece3f6d43b9af6dbfe44e0bb41f45aba1d85b26"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-2.0.0.phar.asc"
+      },
+      {
+        "version": "1.4.3",
+        "phar-url": "https://phar.phpunit.de/phpcpd-1.4.3.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "4a840653b5402d58b2a5401e710f0e8b5e42b7225b6fde87226427541789a324"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-1.4.3.phar.asc"
+      },
+      {
+        "version": "1.4.2",
+        "phar-url": "https://phar.phpunit.de/phpcpd-1.4.2.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "fce748e5b0bb97bce3f3a44d4061b84ece99a1aa8913db72f747b5837d4c1428"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-1.4.2.phar.asc"
+      },
+      {
+        "version": "1.4.0",
+        "phar-url": "https://phar.phpunit.de/phpcpd-1.4.0.phar",
+        "bootstrap": "bootstrap-0",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "d25b51608ef67165c4cbd6eb2fcf600450142fce3bd01a02969c6524c5db5f1e"
+        },
+        "signature": "https://phar.phpunit.de/phpcpd-1.4.0.phar.asc"
+      }
+    ],
+    "phploc": [
+      {
+        "version": "6.0.2",
+        "phar-url": "https://phar.phpunit.de/phploc-6.0.2.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "1ccb826b0a55b9d77b17656ad72f9c90877737a4a4be3f1517dda73524bfb16e"
+        },
+        "signature": "https://phar.phpunit.de/phploc-6.0.2.phar.asc"
+      },
+      {
+        "version": "6.0.1",
+        "phar-url": "https://phar.phpunit.de/phploc-6.0.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "543b587b04ff11b1d1eb9ea245249a6aab08ff40f4151b4bf3f0ff393a818e96"
+        },
+        "signature": "https://phar.phpunit.de/phploc-6.0.1.phar.asc"
+      },
+      {
+        "version": "6.0.0",
+        "phar-url": "https://phar.phpunit.de/phploc-6.0.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "49145e07cd94491608f25a045ed860b78ab2dd291e2a9570254d189ed2abfd06"
+        },
+        "signature": "https://phar.phpunit.de/phploc-6.0.0.phar.asc"
+      },
+      {
+        "version": "5.0.0",
+        "phar-url": "https://phar.phpunit.de/phploc-5.0.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "1399c8025f87bc6021697ce3476ebc6e57c647e47b22d4558ab82784af48b1d8"
+        },
+        "signature": "https://phar.phpunit.de/phploc-5.0.0.phar.asc"
+      },
+      {
+        "version": "4.0.1",
+        "phar-url": "https://phar.phpunit.de/phploc-4.0.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "626b7320984ecd400dee8da9ebd10c3527084f698de640d9bfd5d03564743582"
+        },
+        "signature": "https://phar.phpunit.de/phploc-4.0.1.phar.asc"
+      },
+      {
+        "version": "4.0.0",
+        "phar-url": "https://phar.phpunit.de/phploc-4.0.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "6b26f5b39e0b54e39892acfd049e7f408fa20b8f12ca8e38a6d01707165a6b95"
+        },
+        "signature": "https://phar.phpunit.de/phploc-4.0.0.phar.asc"
+      },
+      {
+        "version": "3.0.1",
+        "phar-url": "https://phar.phpunit.de/phploc-3.0.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "a712dec6b1044505a411d207813c6b11cc1c138c0ed467f65788b6f9441c9701"
+        },
+        "signature": "https://phar.phpunit.de/phploc-3.0.1.phar.asc"
+      },
+      {
+        "version": "3.0.0",
+        "phar-url": "https://phar.phpunit.de/phploc-3.0.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "2d5ed6990f056c7cfbfadf03c926b39370ac9afde66747c30f50d2594bff6dca"
+        },
+        "signature": "https://phar.phpunit.de/phploc-3.0.0.phar.asc"
+      },
+      {
+        "version": "2.1.5",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.5.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "dff1369013230e82856fa7f75ed95461d31bb9a08533f1f6c76ae90d7781ea45"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.5.phar.asc"
+      },
+      {
+        "version": "2.1.4",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.4.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "4840c81119cef3dd9c154517e95570fddbebe432fedc6682a2878bf362ed8201"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.4.phar.asc"
+      },
+      {
+        "version": "2.1.3",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.3.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "2d84fac491cdf9eb00fa6fff5ea61b6086b6924eb85c4b3ae48a2ab99279c745"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.3.phar.asc"
+      },
+      {
+        "version": "2.1.2",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.2.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "6b6ed74e917ea44594a18be48194213b3825976f1a9f24baca334b07217b9217"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.2.phar.asc"
+      },
+      {
+        "version": "2.1.1",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "01ef652dff211dc1409ee573e0030026eef56671f3e3a02b6c17c47be9b65853"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.1.phar.asc"
+      },
+      {
+        "version": "2.1.0",
+        "phar-url": "https://phar.phpunit.de/phploc-2.1.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "413026cb8d601ffd2dc0d5906566d32b59fca2b5cc6569c077d4888a459d4bdb"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.1.0.phar.asc"
+      },
+      {
+        "version": "2.0.6",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.6.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "d66ca3fbe3d144ecc432ac6c686b71c20828b7c3c93e581d2156178a5c824fb0"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.6.phar.asc"
+      },
+      {
+        "version": "2.0.5",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.5.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "bcb17818068d5d3ee33c0a8d679d10f6be996421a34dd6e28b28498592ffa511"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.5.phar.asc"
+      },
+      {
+        "version": "2.0.4",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.4.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "c98074382aaeb10ffbdc1ff80b2fab3a474eb5c55d6282c7c69ecfb821aeac4a"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.4.phar.asc"
+      },
+      {
+        "version": "2.0.3",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.3.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "3b603f2426da280956392c0d844eafef28f843141124b88a520bced567e4ef3b"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.3.phar.asc"
+      },
+      {
+        "version": "2.0.2",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.2.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "0ce805f48d778c49ae78af0b08a16efd2eba01ff31aa59e5374fad27e93c5558"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.2.phar.asc"
+      },
+      {
+        "version": "2.0.1",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "6a6c55bd573e82bba4e6688561b8bb474e7aaeed6e9e2a808be95261022bc101"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.1.phar.asc"
+      },
+      {
+        "version": "2.0.0",
+        "phar-url": "https://phar.phpunit.de/phploc-2.0.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "b674e1eb907fcffb0420c3d579f4040f22abda5248ffaaabb41f3e55230f6a83"
+        },
+        "signature": "https://phar.phpunit.de/phploc-2.0.0.phar.asc"
+      },
+      {
+        "version": "1.7.4",
+        "phar-url": "https://phar.phpunit.de/phploc-1.7.4.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "7bfcc8ef6c741a7f87ec31a3f542e4be89638c70ec2311738a5fd6344d81edff"
+        },
+        "signature": "https://phar.phpunit.de/phploc-1.7.4.phar.asc"
+      },
+      {
+        "version": "1.7.3",
+        "phar-url": "https://phar.phpunit.de/phploc-1.7.3.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "cda083fd0c770aef825acd3a1cd039beed11b8680f4820fa3a8a351cebacb46f"
+        },
+        "signature": "https://phar.phpunit.de/phploc-1.7.3.phar.asc"
+      },
+      {
+        "version": "1.7.2",
+        "phar-url": "https://phar.phpunit.de/phploc-1.7.2.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "ac687a7cef191e69f2a0725ea410d4f8f3823f24a48176ab23ff95f20b0b9bc3"
+        },
+        "signature": "https://phar.phpunit.de/phploc-1.7.2.phar.asc"
+      },
+      {
+        "version": "1.7.1",
+        "phar-url": "https://phar.phpunit.de/phploc-1.7.1.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "e40803ad5b71c78d2d1935508c57d35927dab96e32b41b80f1efcb1a9ee9393c"
+        },
+        "signature": "https://phar.phpunit.de/phploc-1.7.1.phar.asc"
+      },
+      {
+        "version": "1.7.0",
+        "phar-url": "https://phar.phpunit.de/phploc-1.7.0.phar",
+        "bootstrap": "bootstrap-1",
+        "requirements": {},
+        "hash": {
+          "type": "sha-256",
+          "value": "e4d8eec06445387ca23e4910926cb77fbfc5378a44fb7f37d1e9db0173fdb1b2"
+        },
+        "signature": "https://phar.phpunit.de/phploc-1.7.0.phar.asc"
       }
     ],
     "phpunit": [
       {
         "version": "9.0.1",
         "phar-url": "https://phar.phpunit.de/phpunit-9.0.1.phar",
-        "bootstrap": "phpunit",
+        "bootstrap": "bootstrap-2",
         "requirements": {
-          "php": "^7.3.0"
-        }
+          "php": "^7.3",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-mbstring": "*",
+          "ext-xml": "*",
+          "ext-xmlwriter": "*"
+        },
+        "hash": {
+          "type": "sha-256",
+          "value": "4192f6c8e80184036284c52311083740ef3350af11fe4350581a0429de9b1f21"
+        },
+        "signature": "https://phar.phpunit.de/phpunit-9.0.1.phar.asc"
       },
       {
         "version": "9.0.0",
         "phar-url": "https://phar.phpunit.de/phpunit-9.0.0.phar",
-        "bootstrap": "phpunit",
+        "bootstrap": "bootstrap-2",
         "requirements": {
-          "php": "^7.3.0"
+          "php": "^7.3",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-mbstring": "*",
+          "ext-xml": "*",
+          "ext-xmlwriter": "*"
+        },
+        "hash": {
+          "type": "sha-256",
+          "value": "432357d27805dba6e623fb1a1cf8d1abac9a07f208717e5c1b3cca9a6b265376"
+        },
+        "signature": "https://phar.phpunit.de/phpunit-9.0.0.phar.asc"
+      }
+    ],
+    "phpmd": [
+      {
+        "version": "2.8.0",
+        "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.0/phpmd.phar",
+        "bootstrap": "bootstrap-3",
+        "requirements": {
+          "php": "^5.3.9",
+          "ext-xml": "*"
         }
       },
       {
-        "version": "7.0.0",
-        "phar-url": "https://phar.phpunit.de/phpunit-7.0.0.phar",
-        "bootstrap": "phpunit",
+        "version": "2.8.1",
+        "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.1/phpmd.phar",
+        "bootstrap": "bootstrap-3",
         "requirements": {
-          "php": "^7.1.0"
+          "php": "^5.3.9",
+          "ext-xml": "*"
+        }
+      },
+      {
+        "version": "2.8.2",
+        "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.2/phpmd.phar",
+        "bootstrap": "bootstrap-3",
+        "requirements": {
+          "php": "^5.3.9",
+          "ext-xml": "*"
         }
       }
     ]

@@ -37,7 +37,7 @@ class PlatformInformationTest extends TestCase
         $libraries = $platformInformation->getLibraries();
         $loadedExtensions = get_loaded_extensions();
 
-        foreach ($libraries as $name => $version) {
+        foreach (array_keys($libraries) as $name) {
             $this->assertStringStartsWith('lib-', $name);
             $name = $name === 'lib-ICU' ? 'intl' : substr($name, 4);
             $this->assertContains($name, $loadedExtensions);

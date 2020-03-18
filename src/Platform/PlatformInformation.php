@@ -25,25 +25,7 @@ class PlatformInformation implements PlatformInformationInterface
     public function getExtensions(): array
     {
         if (null === self::$extensions) {
-            self::$extensions = [];
-            $loadedExtensions = get_loaded_extensions();
-
-            // Extensions scanning
-            foreach ($loadedExtensions as $name) {
-                if (in_array($name, array('standard', 'Core'))) {
-                    continue;
-                }
-
-                $reflExt = new \ReflectionExtension($name);
-                $prettyVersion = $reflExt->getVersion();
-
-                self::$extensions['ext-' . $name] = $prettyVersion;
-            }
-
-            // Check for Xdebug in a restarted process
-            if (!in_array('xdebug', $loadedExtensions, true) && ($prettyVersion = XdebugHandler::getSkippedVersion())) {
-                self::$extensions['ext-xdebug'] = $prettyVersion;
-            }
+            $this->initialize();
         }
 
         return self::$extensions;
@@ -153,6 +135,9 @@ class PlatformInformation implements PlatformInformationInterface
         return self::$libraries;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
     public function getInstalledVersion(string $name) : ?string
     {
         if ($name === 'php') {

@@ -1,7 +1,7 @@
 phpcq:
   repositories:
     # Interim repository - change to real one when published.
-    - ./.repository/root-repository.json
+    - ../repository-builder/web/repository.json
   directories:
     - src
     - tests
@@ -11,6 +11,8 @@ phpcq:
       version: ^5.0
     phpunit:
       version: ^9.0
+    phpmd:
+      version: ^2.8.2
 
 phpunit:
   custom_flags:
@@ -25,3 +27,7 @@ phpcpd:
 #  min_tokens:
 #  fuzzy: true
 #  custom_flags:
+
+phploc:
+
+phpmd:

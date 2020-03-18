@@ -42,11 +42,11 @@ final class ConfigLoader
             throw new InvalidConfigException('Phpcq section missing');
         }
 
-        $processedConfiguration = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
+        $processed = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
         unset($config['phpcq']);
-        $processedConfiguration = array_merge($processedConfiguration, $config);
+        $processed = array_merge($processed, $config);
 
-        return $this->mergeConfig($processedConfiguration);
+        return $this->mergeConfig($processed);
     }
 
     private function mergeConfig(array $config) : array
