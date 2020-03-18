@@ -88,7 +88,13 @@ final class RunCommand extends AbstractCommand
         // Execute task list
         foreach ($taskList->getIterator() as $task) {
             $taskOutput = new BufferedOutput($consoleOutput);
-            $task->run($taskOutput);
+            try {
+                $task->run($taskOutput);
+            } catch (RuntimeException $throwable) {
+                $taskOutput->writeln($throwable->getMessage(), SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
+                $taskOutput->release();
+                return $throwable->getCode();
+            }
             $taskOutput->release();
         }
 

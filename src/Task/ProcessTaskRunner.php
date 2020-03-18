@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\OutputInterface;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
@@ -70,15 +71,23 @@ class ProcessTaskRunner implements TaskRunnerInterface
         $output->writeln('Executing: ' . $process->getCommandLine(), OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
 
-        $process->mustRun(function ($type, $data) use ($output) {
-            switch ($type) {
-                case Process::ERR:
-                    $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
-                    return;
-                case Process::OUT:
-                    $output->write($data);
-                    return;
-            }
-        });
+        try {
+            $process->mustRun(function ($type, $data) use ($output) {
+                switch ($type) {
+                    case Process::ERR:
+                        $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
+                        return;
+                    case Process::OUT:
+                        $output->write($data);
+                        return;
+                }
+            });
+        } catch (\Throwable $exception) {
+            throw new RuntimeException(
+                'Process failed with exit code ' . $process->getExitCode() . ': ' . $process->getCommandLine(),
+                $exception->getCode(),
+                $exception
+            );
+        }
     }
 }
