@@ -51,13 +51,17 @@ final class ConfigLoader
 
     private function mergeConfig(array $config) : array
     {
+        $defaultDirs = [];
+        foreach ($config['directories'] as $directory) {
+            $defaultDirs[$directory] = null;
+        }
         foreach (array_keys($config['tools']) as $tool) {
             if (!isset($config[$tool])) {
                 $config[$tool] = [];
             }
 
             if (!isset($config[$tool]['directories'])) {
-                $config[$tool]['directories'] = $config['directories'];
+                $config[$tool]['directories'] = $defaultDirs;
                 continue;
             }
             foreach ($config['directories'] as $baseDir) {
