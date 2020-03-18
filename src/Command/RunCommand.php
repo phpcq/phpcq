@@ -21,6 +21,7 @@ use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -35,6 +36,12 @@ final class RunCommand extends AbstractCommand
             'tool',
             InputArgument::OPTIONAL,
             'Define a specific tool which should be run'
+        );
+        $this->addOption(
+            'keep-going',
+            'k',
+            InputOption::VALUE_NONE,
+            'Keep going and execute all tasks.'
         );
 
         parent::configure();
@@ -86,19 +93,24 @@ final class RunCommand extends AbstractCommand
 
         // TODO: Parallelize tasks
         // Execute task list
+        $exitCode = 0;
+        $keepGoing = $input->getOption('keep-going');
         foreach ($taskList->getIterator() as $task) {
             $taskOutput = new BufferedOutput($consoleOutput);
             try {
                 $task->run($taskOutput);
             } catch (RuntimeException $throwable) {
                 $taskOutput->writeln($throwable->getMessage(), SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
-                $taskOutput->release();
-                return $throwable->getCode();
+                if (!$keepGoing) {
+                    $taskOutput->release();
+                    return $throwable->getCode();
+                }
+                $exitCode = $throwable->getCode();
             }
             $taskOutput->release();
         }
 
-        return 0;
+        return $exitCode;
     }
 
     private function getInstalledRepository(string $phpcqPath, string $cachePath): RepositoryInterface
