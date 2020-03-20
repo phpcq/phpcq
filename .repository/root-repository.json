@@ -523,7 +523,7 @@
         "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.0/phpmd.phar",
         "bootstrap": "bootstrap-3",
         "requirements": {
-          "php": "^5.3.9",
+          "php": ">=5.3.9",
           "ext-xml": "*"
         }
       },
@@ -532,7 +532,7 @@
         "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.1/phpmd.phar",
         "bootstrap": "bootstrap-3",
         "requirements": {
-          "php": "^5.3.9",
+          "php": ">=5.3.9",
           "ext-xml": "*"
         }
       },
@@ -541,7 +541,7 @@
         "phar-url": "https://github.com/phpmd/phpmd/releases/download/2.8.2/phpmd.phar",
         "bootstrap": "bootstrap-3",
         "requirements": {
-          "php": "^5.3.9",
+          "php": ">=5.3.9",
           "ext-xml": "*"
         }
       }

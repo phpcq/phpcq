@@ -176,7 +176,7 @@
       "oneOf": [
         {
           "$comment": "Allow multiple constraints chained by OR. ie. ^1.0.0( || ^2.0.0)?",
-          "pattern": "^\\^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s\\^v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
+          "pattern": "^(\\^|>=?)v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?(\\s?\\|\\|\\s(\\^|>=?)v?(\\d++)(?:\\.(\\d++))?(?:\\.(\\d++))?(?:\\.(\\d++))?[._-]?(?:(stable|beta|b|RC|alpha|a|patch|pl|p)((?:[.-]?\\d+)*+)?)?([.-]?dev)?(?:\\+[^\\s]+)?)*$"
         },
         {
           "$comment": "Unrestricted boundaries.",
