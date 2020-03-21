@@ -27,7 +27,7 @@ abstract class AbstractConfigOption implements ConfigOptionInterface
     private $defaultValue;
 
     /**
-     * @psalm-param V
+     * @psalm-param V $defaultValue
      *
      * @param mixed $defaultValue
      */
