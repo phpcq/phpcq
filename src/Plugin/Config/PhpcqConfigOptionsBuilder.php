@@ -15,7 +15,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeArrayOption(
         string $name,
         string $description,
-        array $defaultValue = [],
+        ?array $defaultValue = null,
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
@@ -42,7 +42,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeBoolOption(
         string $name,
         string $description,
-        bool $defaultValue,
+        ?bool $defaultValue = null,
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));

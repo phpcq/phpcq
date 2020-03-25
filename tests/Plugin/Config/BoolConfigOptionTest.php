@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Plugin\Config;
 
 use Phpcq\Exception\InvalidConfigException;
+use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\BoolConfigOption;
 use Phpcq\Plugin\Config\ConfigOptionInterface;
 use PHPUnit\Framework\TestCase;
@@ -43,6 +44,7 @@ final class BoolConfigOptionTest extends TestCase
         $option = new BoolConfigOption('param', 'Param description', false, false);
         $option->validateValue(true);
         $option->validateValue(false);
+        $option->validateValue(null);
     }
 
     public function testThrowsOnInvalidValue() : void
@@ -51,5 +53,13 @@ final class BoolConfigOptionTest extends TestCase
 
         $option = new BoolConfigOption('param', 'Param description', false, false);
         $option->validateValue('1');
+    }
+
+    public function testThrowsOnRequiredValue() : void
+    {
+        $this->expectException(InvalidConfigException::class);
+
+        $option = new ArrayConfigOption('param', 'Param description', ['bar'], true);
+        $option->validateValue(null);
     }
 }

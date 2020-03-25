@@ -8,7 +8,7 @@ use function is_bool;
 
 final class BoolConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, bool $defaultValue, bool $required)
+    public function __construct(string $name, string $description, ?bool $defaultValue, bool $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }
@@ -20,12 +20,14 @@ final class BoolConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
+        if (is_bool($value)) {
+            return;
+        }
+
         if ($value === null && !$this->isRequired()) {
             return;
         }
 
-        if (!is_bool($value)) {
-            $this->throwException($value);
-        }
+        $this->throwException($value);
     }
 }
