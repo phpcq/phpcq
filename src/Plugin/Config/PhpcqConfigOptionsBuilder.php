@@ -66,6 +66,11 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
 
     public function validateConfig(array $config): void
     {
+        // Fixme: We might need a better solution for tasks not supporting the directories config
+        if (!isset($this->options['directories'])) {
+            unset($config['directories']);
+        }
+
         if ($diff = array_diff_key($config, $this->options)) {
             throw new InvalidConfigException(
                 'Unknown config keys encountered: ' . implode(', ', array_keys($diff))
@@ -73,7 +78,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         }
 
         foreach ($this->options as $option) {
-            $option->validateValue($config[$option->getName()]);
+            $option->validateValue($config[$option->getName()] ?? null);
         }
     }
 
