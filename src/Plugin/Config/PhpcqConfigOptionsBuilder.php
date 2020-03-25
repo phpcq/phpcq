@@ -15,7 +15,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeArrayOption(
         string $name,
         string $description,
-        array $defaultValue,
+        array $defaultValue = [],
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
@@ -24,7 +24,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeIntOption(
         string $name,
         string $description,
-        int $defaultValue,
+        ?int $defaultValue = null,
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new IntConfigOption($name, $description, $defaultValue, $required));
@@ -33,7 +33,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeStringOption(
         string $name,
         string $description,
-        string $defaultValue,
+        ?string $defaultValue = null,
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new StringConfigOption($name, $description, $defaultValue, $required));
@@ -51,7 +51,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeFloatOption(
         string $name,
         string $description,
-        float $defaultValue,
+        ?float $defaultValue = null,
         bool $required = false
     ) : ConfigOptionsBuilderInterface {
         return $this->describeOption(new FloatConfigOption($name, $description, $defaultValue, $required));
