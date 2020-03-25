@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Plugin\Config;
 
 use Phpcq\Exception\InvalidConfigException;
+use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\IntConfigOption;
 use Phpcq\Plugin\Config\ConfigOptionInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,6 +43,7 @@ final class IntConfigOptionTest extends TestCase
 
         $option = new IntConfigOption('param', 'Param description', 1, false);
         $option->validateValue(1);
+        $option->validateValue(null);
     }
 
     public function testThrowsOnInvalidValue() : void
@@ -50,5 +52,13 @@ final class IntConfigOptionTest extends TestCase
 
         $option = new IntConfigOption('param', 'Param description', 1, false);
         $option->validateValue(1.5);
+    }
+
+    public function testThrowsOnRequiredValue() : void
+    {
+        $this->expectException(InvalidConfigException::class);
+
+        $option = new ArrayConfigOption('param', 'Param description', ['bar'], true);
+        $option->validateValue(null);
     }
 }
