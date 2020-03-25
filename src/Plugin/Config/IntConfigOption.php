@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Phpcq\Plugin\Config;
 
-use function gettype;
 use function is_int;
 
 final class IntConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, int $defaultValue)
+    public function __construct(string $name, string $description, int $defaultValue, bool $required)
     {
-        parent::__construct($name, $description, $defaultValue);
+        parent::__construct($name, $description, $defaultValue, $required);
     }
 
     public function getType() : string

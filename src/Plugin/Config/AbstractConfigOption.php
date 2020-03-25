@@ -27,15 +27,24 @@ abstract class AbstractConfigOption implements ConfigOptionInterface
     private $defaultValue;
 
     /**
+     * @var bool
+     */
+    private $required;
+
+    /**
      * @psalm-param V $defaultValue
      *
-     * @param mixed $defaultValue
+     * @param string $name
+     * @param string $description
+     * @param mixed  $defaultValue
+     * @param bool   $required
      */
-    public function __construct(string $name, string $description, $defaultValue)
+    public function __construct(string $name, string $description, $defaultValue, bool $required)
     {
         $this->name         = $name;
         $this->description  = $description;
         $this->defaultValue = $defaultValue;
+        $this->required     = $required;
     }
 
     /**
@@ -68,6 +77,11 @@ abstract class AbstractConfigOption implements ConfigOptionInterface
     public function getDefaultValue()
     {
         return $this->defaultValue;
+    }
+
+    public function isRequired() : bool
+    {
+        return $this->required;
     }
 
     /**

@@ -37,6 +37,13 @@ interface ConfigOptionInterface
     public function getDefaultValue();
 
     /**
+     * Returns true if config option is required.
+     *
+     * @return bool
+     */
+    public function isRequired(): bool;
+
+    /**
      * Validate a given value.
      *
      * @param mixed $value Given value.

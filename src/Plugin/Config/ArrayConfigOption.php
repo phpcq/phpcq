@@ -8,9 +8,9 @@ use function is_array;
 
 final class ArrayConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, array $defaultValue)
+    public function __construct(string $name, string $description, array $defaultValue, bool $required)
     {
-        parent::__construct($name, $description, $defaultValue);
+        parent::__construct($name, $description, $defaultValue, $required);
     }
 
     public function getType() : string

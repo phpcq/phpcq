@@ -8,9 +8,9 @@ use function is_bool;
 
 final class BoolConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, bool $defaultValue)
+    public function __construct(string $name, string $description, bool $defaultValue, bool $required)
     {
-        parent::__construct($name, $description, $defaultValue);
+        parent::__construct($name, $description, $defaultValue, $required);
     }
 
     public function getType() : string

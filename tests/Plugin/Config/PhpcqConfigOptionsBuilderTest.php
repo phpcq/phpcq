@@ -26,13 +26,14 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
-        $this->assertSame($instance, $instance->describeArrayOption('foo', 'Foo Option', ['bar']));
+        $this->assertSame($instance, $instance->describeArrayOption('foo', 'Foo Option', ['bar'], true));
 
         foreach ($instance->getOptions() as $option) {
             $this->assertInstanceOf(ArrayConfigOption::class, $option);
             $this->assertSame('foo', $option->getName());
             $this->assertSame('Foo Option', $option->getDescription());
             $this->assertSame(['bar'], $option->getDefaultValue());
+            $this->assertTrue($option->isRequired());
         }
     }
 
@@ -40,13 +41,14 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
-        $this->assertSame($instance, $instance->describeBoolOption('foo', 'Foo Option', false));
+        $this->assertSame($instance, $instance->describeBoolOption('foo', 'Foo Option', false, true));
 
         foreach ($instance->getOptions() as $option) {
             $this->assertInstanceOf(BoolConfigOption::class, $option);
             $this->assertSame('foo', $option->getName());
             $this->assertSame('Foo Option', $option->getDescription());
             $this->assertFalse($option->getDefaultValue());
+            $this->assertTrue($option->isRequired());
         }
     }
 
@@ -54,13 +56,14 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
-        $this->assertSame($instance, $instance->describeIntOption('foo', 'Foo Option', 1));
+        $this->assertSame($instance, $instance->describeIntOption('foo', 'Foo Option', 1, true));
 
         foreach ($instance->getOptions() as $option) {
             $this->assertInstanceOf(IntConfigOption::class, $option);
             $this->assertSame('foo', $option->getName());
             $this->assertSame('Foo Option', $option->getDescription());
             $this->assertSame(1, $option->getDefaultValue());
+            $this->assertTrue($option->isRequired());
         }
     }
 
@@ -68,13 +71,14 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
-        $this->assertSame($instance, $instance->describeStringOption('foo', 'Foo Option', 'bar'));
+        $this->assertSame($instance, $instance->describeStringOption('foo', 'Foo Option', 'bar', true));
 
         foreach ($instance->getOptions() as $option) {
             $this->assertInstanceOf(StringConfigOption::class, $option);
             $this->assertSame('foo', $option->getName());
             $this->assertSame('Foo Option', $option->getDescription());
             $this->assertSame('bar', $option->getDefaultValue());
+            $this->assertTrue($option->isRequired());
         }
     }
 

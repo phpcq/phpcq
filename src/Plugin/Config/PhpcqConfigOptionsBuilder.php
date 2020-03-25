@@ -15,33 +15,37 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     public function describeArrayOption(
         string $name,
         string $description,
-        array $defaultValue
+        array $defaultValue,
+        bool $required = false
     ) : ConfigOptionsBuilderInterface {
-        return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue));
+        return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
     }
 
     public function describeIntOption(
         string $name,
         string $description,
-        int $defaultValue
+        int $defaultValue,
+        bool $required = false
     ) : ConfigOptionsBuilderInterface {
-        return $this->describeOption(new IntConfigOption($name, $description, $defaultValue));
+        return $this->describeOption(new IntConfigOption($name, $description, $defaultValue, $required));
     }
 
     public function describeStringOption(
         string $name,
         string $description,
-        string $defaultValue
+        string $defaultValue,
+        bool $required = false
     ) : ConfigOptionsBuilderInterface {
-        return $this->describeOption(new StringConfigOption($name, $description, $defaultValue));
+        return $this->describeOption(new StringConfigOption($name, $description, $defaultValue, $required));
     }
 
     public function describeBoolOption(
         string $name,
         string $description,
-        bool $defaultValue
+        bool $defaultValue,
+        bool $required = false
     ) : ConfigOptionsBuilderInterface {
-        return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue));
+        return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));
     }
 
     public function describeOption(ConfigOptionInterface $configOption) : ConfigOptionsBuilderInterface
