@@ -8,7 +8,7 @@ use function is_string;
 
 final class StringConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, string $defaultValue, $required)
+    public function __construct(string $name, string $description, ?string $defaultValue, $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }
@@ -20,8 +20,14 @@ final class StringConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
-        if (!is_string($value)) {
-            $this->throwException($value);
+        if (is_string($value)) {
+            return;
         }
+
+        if ($value === null && !$this->isRequired()) {
+            return;
+        }
+
+        $this->throwException($value);
     }
 }

@@ -8,7 +8,7 @@ use function is_int;
 
 final class IntConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, int $defaultValue, bool $required)
+    public function __construct(string $name, string $description, ?int $defaultValue, bool $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }
@@ -20,8 +20,14 @@ final class IntConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
-        if (! is_int($value)) {
-            $this->throwException($value);
+        if (is_int($value)) {
+            return;
         }
+
+        if ($value === null && !$this->isRequired()) {
+            return;
+        }
+
+        $this->throwException($value);
     }
 }

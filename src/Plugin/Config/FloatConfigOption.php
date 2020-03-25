@@ -8,7 +8,7 @@ use function is_float;
 
 final class FloatConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, float $defaultValue, bool $required)
+    public function __construct(string $name, string $description, ?float $defaultValue, bool $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }
@@ -20,8 +20,14 @@ final class FloatConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
-        if (! is_float($value)) {
-            $this->throwException($value);
+        if (is_float($value)) {
+            return;
         }
+
+        if ($value === null && !$this->isRequired()) {
+            return;
+        }
+
+        $this->throwException($value);
     }
 }

@@ -20,6 +20,10 @@ final class BoolConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
+        if ($value === null && !$this->isRequired()) {
+            return;
+        }
+
         if (!is_bool($value)) {
             $this->throwException($value);
         }

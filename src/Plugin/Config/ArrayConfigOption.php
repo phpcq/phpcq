@@ -8,7 +8,7 @@ use function is_array;
 
 final class ArrayConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, array $defaultValue, bool $required)
+    public function __construct(string $name, string $description, ?array $defaultValue, bool $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }
@@ -20,8 +20,14 @@ final class ArrayConfigOption extends AbstractConfigOption
 
     public function validateValue($value) : void
     {
-        if (!is_array($value)) {
-            $this->throwException($value);
+        if (is_array($value)) {
+            return;
         }
+
+        if ($value === null && !$this->isRequired()) {
+            return;
+        }
+
+        $this->throwException($value);
     }
 }
