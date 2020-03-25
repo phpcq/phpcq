@@ -48,6 +48,15 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));
     }
 
+    public function describeFloatOption(
+        string $name,
+        string $description,
+        float $defaultValue,
+        bool $required = false
+    ) : ConfigOptionsBuilderInterface {
+        return $this->describeOption(new FloatConfigOption($name, $description, $defaultValue, $required));
+    }
+
     public function describeOption(ConfigOptionInterface $configOption) : ConfigOptionsBuilderInterface
     {
         $this->options[$configOption->getName()] = $configOption;

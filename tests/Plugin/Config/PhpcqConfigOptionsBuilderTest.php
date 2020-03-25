@@ -9,6 +9,7 @@ use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\BoolConfigOption;
 use Phpcq\Plugin\Config\ConfigOptionInterface;
 use Phpcq\Plugin\Config\ConfigOptionsBuilderInterface;
+use Phpcq\Plugin\Config\FloatConfigOption;
 use Phpcq\Plugin\Config\IntConfigOption;
 use Phpcq\Plugin\Config\PhpcqConfigOptionsBuilder;
 use Phpcq\Plugin\Config\StringConfigOption;
@@ -52,7 +53,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
         }
     }
 
-    public function testIntBoolOption(): void
+    public function testDescribeIntOption(): void
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
@@ -67,7 +68,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
         }
     }
 
-    public function testStringBoolOption(): void
+    public function testDescribeStringOption(): void
     {
         $instance = new PhpcqConfigOptionsBuilder();
 
@@ -78,6 +79,21 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
             $this->assertSame('foo', $option->getName());
             $this->assertSame('Foo Option', $option->getDescription());
             $this->assertSame('bar', $option->getDefaultValue());
+            $this->assertTrue($option->isRequired());
+        }
+    }
+
+    public function testDescribeFloatOption(): void
+    {
+        $instance = new PhpcqConfigOptionsBuilder();
+
+        $this->assertSame($instance, $instance->describeFloatOption('foo', 'Foo Option', 1.5, true));
+
+        foreach ($instance->getOptions() as $option) {
+            $this->assertInstanceOf(FloatConfigOption::class, $option);
+            $this->assertSame('foo', $option->getName());
+            $this->assertSame('Foo Option', $option->getDescription());
+            $this->assertSame(1.5, $option->getDefaultValue());
             $this->assertTrue($option->isRequired());
         }
     }
