@@ -24,6 +24,11 @@
       "plugin-version": "1.0.0",
       "type": "inline",
       "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\Config\\ConfigOptionsBuilderInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'psalm';\n    }\n\n    public function describeOptions(ConfigOptionsBuilderInterface $configOptionsBuilder) : void\n    {\n        $configOptionsBuilder\n            ->describeBoolOption('debug', 'Show debug information.')\n            ->describeBoolOption('debug_by_line', 'Debug information on a line-by-line level')\n            ->describeBoolOption('shepherd', 'Send data to Shepherd, Psalm\\'s GitHub integration tool.')\n            ->describeStringOption('shepherd_host', 'Override shepherd host');\n\n        $configOptionsBuilder->describeStringOption(\n            'custom_flags',\n            'Any custom flags to pass to phpunit. For valid flags refer to the phpunit documentation.',\n        );\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('psalm', $this->buildArguments($config))\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function buildArguments(array $config) : array\n    {\n        $arguments = [];\n\n        foreach (['debug', 'debug_by_line'] as $flag) {\n            if (isset($config[$flag])) {\n                $arguments[] = '--' .  str_replace('_', '-', $flag);\n            }\n        }\n\n        if (isset($config['shepherd'])) {\n            if (isset($config['shepherd_host'])) {\n                $arguments[] = '--shepherd=' . $config['shepherd_host'];\n            } else {\n                $arguments[] = '--shepherd';\n            }\n        }\n\n        return $arguments;\n    }\n};\n"
+    },
+    "bootstrap-5": {
+      "plugin-version": "1.0.0",
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\Config\\ConfigOptionsBuilderInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'composer-require-checker';\n    }\n\n    public function describeOptions(ConfigOptionsBuilderInterface $configOptionsBuilder) : void\n    {\n        $configOptionsBuilder\n            ->describeStringOption('config_file', 'Path to configuration file')\n            ->describeStringOption('composer_file', 'Path to the composer.json', 'composer.json');\n\n        $configOptionsBuilder->describeStringOption(\n            'custom_flags',\n            'Any custom flags to pass to composer-require-checker. For valid flags refer to the composer-require-checker documentation.',\n            );\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('composer-require-checker', $this->buildArguments($config, $buildConfig))\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function buildArguments(array $config, BuildConfigInterface $buildConfig) : array\n    {\n        $arguments = ['check'];\n\n        if (isset($config['config_file'])) {\n            $arguments[] = '--config-file=' . $buildConfig->getProjectConfiguration()->getProjectRootPath() . '/' . $config['config_file'];\n        }\n\n        if (isset($config['composer_file'])) {\n            $arguments[] = $buildConfig->getProjectConfiguration()->getProjectRootPath() . '/' . $config['composer_file'];\n        }\n\n        return $arguments;\n    }\n};\n"
     }
   },
   "phars": {
@@ -8146,6 +8151,170 @@
           "ext-json": "*",
           "ext-libxml": "*",
           "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      }
+    ],
+    "composer-require-checker": [
+      {
+        "version": "0.1.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-pcre": "*",
+          "ext-spl": "*",
+          "ext-reflection": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.1",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.1/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-pcre": "*",
+          "ext-spl": "*",
+          "ext-reflection": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.2",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.2/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.3",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.3/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.4",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.4/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.5",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.5/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.1.6",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.1.6/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.0",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.2.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.2.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.1",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "0.2.1",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/0.2.1/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.1",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.0.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/1.0.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.1",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.1.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/1.1.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "~7.1",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/2.0.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "^7.1",
+          "ext-json": "*",
+          "ext-phar": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.1.0",
+        "phar-url": "https://github.com/maglnet/ComposerRequireChecker/releases/download/2.1.0/composer-require-checker.phar",
+        "bootstrap": "bootstrap-5",
+        "requirements": {
+          "php": "^7.2",
+          "ext-json": "*",
+          "ext-phar": "*"
         },
         "hash": null,
         "signature": null

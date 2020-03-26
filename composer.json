@@ -29,6 +29,7 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
+        "ext-hash": "*",
         "ext-xml": "*",
         "symfony/console": "^5.0",
         "symfony/config": "^5.0",

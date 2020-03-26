@@ -14,7 +14,9 @@ phpcq:
     phpmd:
       version: ^2.8.2
     psalm:
-      version: ^3.0.0
+      version: ^3.10.0
+    composer-require-checker:
+      version: ^2.0.0
 
 phpunit:
   custom_flags:
@@ -35,3 +37,6 @@ phploc:
 phpmd:
 
 psalm:
+
+composer-require-checker:
+  config_file: '.composer-require-checker.json'
