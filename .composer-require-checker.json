@@ -4,7 +4,8 @@
     "static", "self", "parent",
     "array", "string", "int", "float", "bool", "iterable", "callable", "void", "object",
     "Imagick",
-    "LIBXSLT_DOTTED_VERSION"
+    "LIBXSLT_DOTTED_VERSION",
+    "Gnupg"
   ],
   "php-core-extensions" : [
     "Core",

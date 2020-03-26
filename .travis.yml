@@ -20,6 +20,7 @@ matrix:
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
+  - pecl install gnupg
 
 install:
   - travis_retry composer self-update && composer --version
