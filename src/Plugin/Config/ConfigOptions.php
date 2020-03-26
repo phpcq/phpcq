@@ -13,7 +13,7 @@ use function array_diff_key;
 use function array_keys;
 use function implode;
 
-final class ConfigOptions implements Traversable, Countable, IteratorAggregate
+final class ConfigOptions implements IteratorAggregate, Countable
 {
     /**
      * @var array<string, ConfigOptionInterface>
