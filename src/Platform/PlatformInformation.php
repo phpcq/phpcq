@@ -18,6 +18,7 @@ use function preg_replace;
 use function preg_replace_callback;
 use function strlen;
 use function strpos;
+use function strtolower;
 use const ICONV_VERSION;
 use const INTL_ICU_VERSION;
 use const LIBXML_DOTTED_VERSION;
@@ -102,7 +103,7 @@ class PlatformInformation implements PlatformInformationInterface
 
         switch ($prefix) {
             case 'ext':
-                return $this->getExtensions()[$name] ?? null;
+                return $this->getExtensions()[strtolower($name)] ?? null;
 
             case 'lib':
                 return $this->getLibraries()[$name] ?? null;
@@ -127,7 +128,7 @@ class PlatformInformation implements PlatformInformationInterface
             $reflExt = new \ReflectionExtension($name);
             $prettyVersion = $reflExt->getVersion();
 
-            $extensions['ext-' . $name] = $prettyVersion;
+            $extensions['ext-' . strtolower($name)] = $prettyVersion;
         }
 
         // Check for Xdebug in a restarted process
