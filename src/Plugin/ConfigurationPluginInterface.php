@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace Phpcq\Plugin;
 
 use Phpcq\Config\BuildConfigInterface;
-use Phpcq\Exception\InvalidConfigException;
+use Phpcq\Plugin\Config\ConfigOptionsBuilderInterface;
 use Phpcq\Task\TaskRunnerInterface;
 
 interface ConfigurationPluginInterface extends PluginInterface
 {
     /**
-     * Validate configuration for current plugin.
+     * Describe available config options.
      *
-     * @param array $config The plugin configuration.
-     *
-     * @return void
-     *
-     * @throws InvalidConfigException
+     * @param ConfigOptionsBuilderInterface $configOptionsBuilder The config options builder.
      */
-    public function validateConfig(array $config): void;
+    public function describeOptions(ConfigOptionsBuilderInterface $configOptionsBuilder) : void;
 
     /**
      * Process plugin configuration and create task runners.
