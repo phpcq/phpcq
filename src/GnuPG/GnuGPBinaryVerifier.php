@@ -39,8 +39,8 @@ final class GnuGPBinaryVerifier implements VerifierInterface
         $command = [
             $this->binaryPath,
             '--verify',
-            $messageFile,
-            $signatureFile
+            $signatureFile,
+            $messageFile
         ];
 
         try {

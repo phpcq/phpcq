@@ -46,7 +46,7 @@ final class GnuGPExtensionVerifierTest extends TestCase
 
         $fixtures = dirname(__DIR__);
         $verifier = new GnuGPExtensionVerifier($this->gnugp);
-        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt.asc', $fixtures . '/fixtures/gpg/test.txt');
+        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt', $fixtures . '/fixtures/gpg/test.txt.asc');
 
         $this->assertTrue($status);
     }
@@ -59,7 +59,7 @@ final class GnuGPExtensionVerifierTest extends TestCase
 
         $fixtures = dirname(__DIR__);
         $verifier = new GnuGPExtensionVerifier($this->gnugp);
-        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt.invalid.asc', $fixtures . '/fixtures/gpg/test.txt');
+        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt', $fixtures . '/fixtures/gpg/test.txt.invalid.asc');
 
         $this->assertFalse($status);
     }

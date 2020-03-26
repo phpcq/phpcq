@@ -47,7 +47,7 @@ final class GnuGPBinaryVerifierTest extends TestCase
 
         $fixtures = dirname(__DIR__);
         $verifier = new GnuGPBinaryVerifier($this->binary, sys_get_temp_dir());
-        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt.asc', $fixtures . '/fixtures/gpg/test.txt');
+        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt', $fixtures . '/fixtures/gpg/test.txt.asc');
 
         $this->assertTrue($status);
     }
@@ -60,7 +60,7 @@ final class GnuGPBinaryVerifierTest extends TestCase
 
         $fixtures = dirname(__DIR__);
         $verifier = new GnuGPBinaryVerifier($this->binary, sys_get_temp_dir());
-        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt.invalid.asc', $fixtures . '/fixtures/gpg/test.txt');
+        $status   = $verifier->verify($fixtures . '/fixtures/gpg/test.txt', $fixtures . '/fixtures/gpg/test.txt.invalid.asc');
 
         $this->assertFalse($status);
     }
