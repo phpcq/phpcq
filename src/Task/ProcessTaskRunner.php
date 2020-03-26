@@ -41,11 +41,11 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $timeout;
 
     /**
-     * @param string[]       $command The command to run and its arguments listed as separate entries
-     * @param string|null    $cwd     The working directory or null to use the working dir of the current PHP process
-     * @param array|null     $env     The environment variables or null to use the same environment as the current PHP process
-     * @param mixed|null     $input   The input as stream resource, scalar or \Traversable, or null for no input
-     * @param int|float|null $timeout The timeout in seconds or null to disable
+     * @param string[]                         $command The command to run and its arguments listed as separate entries
+     * @param string|null                      $cwd     The working directory or null to use the working dir of the current PHP process
+     * @param string[]|null                    $env     The environment variables or null to use the same environment as the current PHP process
+     * @param resource|string|Traversable|null $input   The input as stream resource, scalar or \Traversable, or null for no input
+     * @param int|float|null                   $timeout The timeout in seconds or null to disable
      *
      * @throws LogicException When proc_open is not installed
      */
@@ -71,7 +71,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
 
         try {
-            $process->mustRun(function ($type, $data) use ($output) {
+            $process->mustRun(static function (string $type, string $data) use ($output) {
                 switch ($type) {
                     case Process::ERR:
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
@@ -83,8 +83,8 @@ class ProcessTaskRunner implements TaskRunnerInterface
             });
         } catch (\Throwable $exception) {
             throw new RuntimeException(
-                'Process failed with exit code ' . $process->getExitCode() . ': ' . $process->getCommandLine(),
-                $exception->getCode(),
+                'Process failed with exit code ' . (string) $process->getExitCode() . ': ' . $process->getCommandLine(),
+                (int) $exception->getCode(),
                 $exception
             );
         }

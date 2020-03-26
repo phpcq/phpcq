@@ -12,6 +12,8 @@ use Phpcq\Plugin\PluginRegistry;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_keys;
+use function assert;
+use function is_string;
 use function sprintf;
 
 final class ValidateCommand extends AbstractCommand
@@ -25,6 +27,7 @@ final class ValidateCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $phpcqPath = $input->getOption('tools');
+        assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
         if ($output->isVeryVerbose()) {
@@ -34,6 +37,7 @@ final class ValidateCommand extends AbstractCommand
         $output->writeln('Validate phpcq configuration', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         $configFile = $input->getOption('config');
+        assert(is_string($configFile));
         $config     = ConfigLoader::load($configFile);
 
         $plugins = PluginRegistry::buildFromPath($phpcqPath);
@@ -55,10 +59,10 @@ final class ValidateCommand extends AbstractCommand
      *
      * It validates a plugin configuration, creates console output and returns boolean to indicate valid configuration.
      *
-     * @param PluginRegistry  $plugins  The plugin registry.
-     * @param string          $toolName The tool name being validated.
-     * @param array           $config   The tools configuration.
-     * @param OutputInterface $output   The console output.
+     * @param PluginRegistry         $plugins  The plugin registry.
+     * @param string                 $toolName The tool name being validated.
+     * @param array<string, mixed[]> $config   The tools configuration.
+     * @param OutputInterface        $output   The console output.
      *
      * @return bool
      */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use IteratorAggregate;
+use Traversable;
 
 interface TasklistInterface extends IteratorAggregate
 {
@@ -12,6 +13,8 @@ interface TasklistInterface extends IteratorAggregate
 
     /**
      * @return TaskRunnerInterface[]|iterable
+     *
+     * @psalm-return Traversable<int, TaskRunnerInterface>
      */
     public function getIterator(): iterable;
 }

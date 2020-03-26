@@ -19,6 +19,11 @@
       "plugin-version": "1.0.0",
       "type": "inline",
       "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\Config\\ConfigOptionsBuilderInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\n/**\n * Tool home: https://github.com/phpmd/phpmd\n */\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'phpmd';\n    }\n\n    public function describeOptions(ConfigOptionsBuilderInterface $configOptionsBuilder) : void\n    {\n        $configOptionsBuilder->describeStringOption(\n            'format',\n            'Output format to use (ansi, html, json, text, xml).',\n            'text'\n        );\n\n        $configOptionsBuilder->describeStringOption(\n            'ruleset',\n            'List of rulesets (cleancode, codesize, controversial, design, naming, unusedcode).',\n            'naming,unusedcode'\n        );\n\n        $configOptionsBuilder->describeStringOption(\n            'custom_flags',\n            'Any custom flags to pass to phpmd.'\n        );\n\n        $configOptionsBuilder->describeArrayOption(\n            'directories',\n            'Source directories to be analyzed with phpmd.'\n        );\n    }\n\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        [$should, $excluded] = $this->processDirectories($config['directories']);\n\n        $flags = [\n            'format' => 'text',\n            'ruleset' => 'naming,unusedcode',\n        ];\n\n        foreach ($flags as $key => $value) {\n            if ('' !== ($value = $this->commaValues($config, $key))) {\n                $flags[$key] = $value;\n            }\n        }\n\n        $args = [\n            implode(',', $should),\n            $flags['format'],\n            $flags['ruleset'],\n        ];\n\n        if ([] !== $excluded) {\n            $exclude = [];\n            foreach ($excluded as $path) {\n                if ('' === ($path = trim($path))) {\n                    continue;\n                }\n                $exclude[] = $path;\n            }\n            $args[] = '--exclude=' . implode(',', $exclude);\n        }\n        if ('' !== ($values = $config['custom_flags'] ?? '')) {\n            $args[] = $values;\n        }\n\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('phpmd', $args)\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    /**\n     * Process the directory list.\n     *\n     * @param array $directories The directory list.\n     *\n     * @return array\n     */\n    private function processDirectories(array $directories): array\n    {\n        $should  = [];\n        $exclude = [];\n        foreach ($directories as $directory => $dirConfig) {\n            $should[] = $directory;\n            if (null !== $dirConfig) {\n                if (isset($dirConfig['excluded'])) {\n                    foreach ($dirConfig['excluded'] as $excl) {\n                        $exclude[] = $directory . '/' . $excl;\n                    }\n                }\n            }\n        }\n        return [$should, $exclude];\n    }\n\n    private function commaValues(array $config, string $key): string\n    {\n        if (!isset($config[$key])) {\n            return '';\n        }\n        return implode(',', (array) $config[$key]);\n    }\n};\n"
+    },
+    "bootstrap-4": {
+      "plugin-version": "1.0.0",
+      "type": "inline",
+      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Plugin\\Config\\ConfigOptionsBuilderInterface;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\n\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'psalm';\n    }\n\n    public function describeOptions(ConfigOptionsBuilderInterface $configOptionsBuilder) : void\n    {\n        $configOptionsBuilder\n            ->describeBoolOption('debug', 'Show debug information.')\n            ->describeBoolOption('debug_by_line', 'Debug information on a line-by-line level')\n            ->describeBoolOption('shepherd', 'Send data to Shepherd, Psalm\\'s GitHub integration tool.')\n            ->describeStringOption('shepherd_host', 'Override shepherd host');\n\n        $configOptionsBuilder->describeStringOption(\n            'custom_flags',\n            'Any custom flags to pass to phpunit. For valid flags refer to the phpunit documentation.',\n        );\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        yield $buildConfig\n            ->getTaskFactory()\n            ->buildRunPhar('psalm', $this->buildArguments($config))\n            ->withWorkingDirectory($buildConfig->getProjectConfiguration()->getProjectRootPath())\n            ->build();\n    }\n\n    private function buildArguments(array $config) : array\n    {\n        $arguments = [];\n\n        foreach (['debug', 'debug_by_line'] as $flag) {\n            if (isset($config[$flag])) {\n                $arguments[] = '--' .  str_replace('_', '-', $flag);\n            }\n        }\n\n        if (isset($config['shepherd'])) {\n            if (isset($config['shepherd_host'])) {\n                $arguments[] = '--shepherd=' . $config['shepherd_host'];\n            } else {\n                $arguments[] = '--shepherd';\n            }\n        }\n\n        return $arguments;\n    }\n};\n"
     }
   },
   "phars": {
@@ -7092,6 +7097,1055 @@
         "requirements": {
           "php": ">=5.3.9",
           "ext-xml": "*"
+        },
+        "hash": null,
+        "signature": null
+      }
+    ],
+    "psalm": [
+      {
+        "version": "1.0.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.0.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6 || ^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.0.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.0.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6 || ^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.0.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.0.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6 || ^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.1.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.1.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6 || ^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.1.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.1.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6 || ^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.1.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.1.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6||^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "1.1.9",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/1.1.9/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^5.6||^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.0-dev",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.0-dev/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.8",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.8/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.9",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.9/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.10",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.10/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.11",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.11/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.12",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.12/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.13",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.13/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.14",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.14/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.15",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.15/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.16",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.16/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "2.0.17",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/2.0.17/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.7",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.7/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.8",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.8/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.9",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.9/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.10",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.10/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.11",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.11/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.12",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.12/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.13",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.13/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.14",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.14/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.15",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.15/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.16",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.16/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.0.17",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.0.17/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.1.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.1.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.1.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.1.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.1.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.1.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.1.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.1.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.7",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.7/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.8",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.8/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.9",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.9/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.10",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.10/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.11",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.11/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.2.12",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.2.12/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.0"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.3.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.3.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.3.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.3.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.3.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.3.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.7",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.7/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.8",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.8/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.9",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.9/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.10",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.10/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.11",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.11/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.4.12",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.4.12/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.5.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.5.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.5.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.5.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.5.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.5.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.5.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.5.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.6.6",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.6.6/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.7.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.7.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.7.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.7.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.7.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.7.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.8.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.8.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3",
+          "ext-dom": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.8.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.8.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3",
+          "ext-dom": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.8.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.8.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3",
+          "ext-dom": "*",
+          "ext-SimpleXML": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.8.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.8.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-SimpleXML": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.8.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.8.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.2",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.2/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.3",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.3/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.4",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.4/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.9.5",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.9.5/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.10.0",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.10.0/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
+        },
+        "hash": null,
+        "signature": null
+      },
+      {
+        "version": "3.10.1",
+        "phar-url": "https://github.com/vimeo/psalm/releases/download/3.10.1/psalm.phar",
+        "bootstrap": "bootstrap-4",
+        "requirements": {
+          "php": "^7.1.3|^8",
+          "ext-SimpleXML": "*",
+          "ext-dom": "*",
+          "ext-json": "*",
+          "ext-libxml": "*",
+          "ext-tokenizer": "*"
         },
         "hash": null,
         "signature": null

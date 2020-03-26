@@ -8,7 +8,10 @@ use RuntimeException;
 
 class InvalidHashException extends RuntimeException implements Exception
 {
+    /** @var string */
     private $hashType;
+
+    /** @var string */
     private $hashValue;
 
     /**

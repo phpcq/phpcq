@@ -26,6 +26,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
+use function assert;
+use function is_string;
 
 final class RunCommand extends AbstractCommand
 {
@@ -51,9 +53,11 @@ final class RunCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $phpcqPath = $input->getOption('tools');
+        assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
         $cachePath = $input->getOption('cache');
+        assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 
         if ($output->isVeryVerbose()) {
@@ -61,10 +65,12 @@ final class RunCommand extends AbstractCommand
             $output->writeln('Using CACHE: ' . $cachePath);
         }
         $configFile = $input->getOption('config');
+        assert(is_string($configFile));
         $config     = ConfigLoader::load($configFile);
 
         $projectConfig = new ProjectConfiguration(getcwd(), $config['directories'], $config['artifact']);
         $taskList = new Tasklist();
+        /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $phpcqPath,
             $this->getInstalledRepository($phpcqPath, $cachePath),
@@ -76,6 +82,7 @@ final class RunCommand extends AbstractCommand
         $plugins = PluginRegistry::buildFromPath($phpcqPath);
 
         if ($toolName = $input->getArgument('tool')) {
+            assert(is_string($toolName));
             $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
         } else {
             foreach (array_keys($config['tools']) as $toolName) {
@@ -102,9 +109,9 @@ final class RunCommand extends AbstractCommand
                 $taskOutput->writeln($throwable->getMessage(), SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
                 if (!$keepGoing) {
                     $taskOutput->release();
-                    return $throwable->getCode();
+                    return (int) $throwable->getCode();
                 }
-                $exitCode = $throwable->getCode();
+                $exitCode = (int) $throwable->getCode();
             }
             $taskOutput->release();
         }
@@ -117,28 +124,38 @@ final class RunCommand extends AbstractCommand
         if (!is_file($phpcqPath . '/installed.json')) {
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
-        $loader = new JsonRepositoryLoader(new PlatformInformation(), new FileDownloader($cachePath));
+        $loader = new JsonRepositoryLoader(
+            PlatformInformation::createFromCurrentPlatform(),
+            new FileDownloader($cachePath)
+        );
 
         return $loader->loadFile($phpcqPath . '/installed.json');
     }
 
+    /** @psalm-return array{0: string, 1: array} */
     private function findPhpCli(): array
     {
-        $finder = new PhpExecutableFinder();
+        $finder     = new PhpExecutableFinder();
+        $executable = $finder->find();
 
-        return [$finder->find(), $finder->findArguments()];
+        if (!is_string($executable)) {
+            throw new RuntimeException('PHP executable not found');
+        }
+
+        return [$executable, $finder->findArguments()];
     }
 
     /**
      * @param PluginRegistry $plugins
-     * @param $toolName
-     * @param $config
+     * @param string $toolName
+     * @param array $config
      * @param BuildConfiguration $buildConfig
      * @param Tasklist $taskList
+     * @param array[] $config
      *
      * @return void
      */
-    protected function handlePlugin(PluginRegistry $plugins, $toolName, $config, BuildConfiguration $buildConfig, Tasklist $taskList): void
+    protected function handlePlugin(PluginRegistry $plugins, string $toolName, array $config, BuildConfiguration $buildConfig, Tasklist $taskList): void
     {
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();

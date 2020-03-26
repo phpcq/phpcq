@@ -5,10 +5,12 @@ namespace Phpcq\Plugin;
 use IteratorAggregate;
 use Phpcq\Exception\RuntimeException;
 use Symfony\Component\Finder\Finder;
+use function assert;
 use function get_class;
 
 final class PluginRegistry implements IteratorAggregate
 {
+    /** @var array<string, PluginInterface> */
     private $plugins = [];
 
     public static function buildFromPath(string $pluginPath): self
@@ -16,13 +18,22 @@ final class PluginRegistry implements IteratorAggregate
         $instance = new self();
 
         foreach (Finder::create()->in($pluginPath)->name('*.php')->getIterator() as $fileInfo) {
-            if (!($plugin = require $fileInfo->getRealPath()) instanceof PluginInterface) {
+            /**
+             * @psalm-suppress UnresolvableInclude
+             *
+             * @var PluginInterface
+             */
+            $plugin = require $fileInfo->getRealPath();
+            if (!$plugin instanceof PluginInterface) {
                 throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
             }
-            if (isset($instance->plugins[$plugin->getName()])) {
-                throw new RuntimeException('Plugin already registered: ' . $plugin->getName());
+
+            /** @var string */
+            $name = $plugin->getName();
+            if (isset($instance->plugins[$name])) {
+                throw new RuntimeException('Plugin already registered: ' . $name);
             }
-            $instance->plugins[$plugin->getName()] = $plugin;
+            $instance->plugins[$name] = $plugin;
         }
 
         return $instance;
@@ -38,6 +49,8 @@ final class PluginRegistry implements IteratorAggregate
 
     /**
      * @return PluginInterface[]|iterable
+     *
+     * @psalm-return \Generator<string, PluginInterface>
      */
     public function getIterator(): iterable
     {

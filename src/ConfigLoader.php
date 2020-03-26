@@ -21,8 +21,6 @@ final class ConfigLoader
      * Load configuration from yaml file and return a preprocessed configuration.
      *
      * @param string $configPath Path of the yaml configuration file.
-     *
-     * @return mixed[][]
      */
     public static function load(string $configPath): array
     {

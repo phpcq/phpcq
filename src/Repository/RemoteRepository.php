@@ -20,7 +20,7 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
     /**
      * The repository to delegate to when queried.
      *
-     * @var Repository
+     * @var RepositoryInterface|null
      */
     private $delegate;
 
@@ -49,8 +49,10 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
 
     /**
      * @return ToolInformationInterface[]|Traversable
+     *
+     * @psalm-return \Traversable<int, ToolInformationInterface>
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         if (!$this->delegate) {
             $this->preload();

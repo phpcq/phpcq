@@ -51,7 +51,7 @@ final class TaskRunnerBuilder
     }
 
     /**
-     * @param string[] $cwd
+     * @param string[] $env
      */
     public function withEnv(array $env): self
     {
@@ -71,7 +71,7 @@ final class TaskRunnerBuilder
     }
 
     /**
-     * @var int|float
+     * @param int|float $timeout
      */
     public function withTimeout($timeout): self
     {

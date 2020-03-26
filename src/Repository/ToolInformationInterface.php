@@ -38,7 +38,7 @@ interface ToolInformationInterface
     /**
      * Obtain the platform requirements
      *
-     * @return string[]
+     * @return array<string, string>
      */
     public function getPlatformRequirements() : array;
 

@@ -11,6 +11,7 @@ use function getcwd;
 use function is_dir;
 use function mkdir;
 use function sprintf;
+use function sys_get_temp_dir;
 
 abstract class AbstractCommand extends Command
 {
@@ -35,7 +36,7 @@ abstract class AbstractCommand extends Command
             'x',
             InputOption::VALUE_REQUIRED,
             'Path to the phpcq cache directory',
-            getenv('HOME') . '/.cache/phpcq'
+            (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq'
         );
     }
 

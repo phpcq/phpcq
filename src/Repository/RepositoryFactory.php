@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
+use Phpcq\Exception\InvalidConfigException;
+use function is_array;
+
 class RepositoryFactory
 {
     /**
@@ -19,18 +22,22 @@ class RepositoryFactory
         $this->repositoryLoader = $repositoryLoader;
     }
 
-    public function buildPool(array $config): RepositoryPool
+    /**
+     * @psalm-param array<int, string|null> $repositories
+     *
+     * @param array $repositories
+     */
+    public function buildPool(array $repositories): RepositoryPool
     {
         $pool = new RepositoryPool();
-        if (!isset($config['repositories'])) {
-            return $pool;
-        }
-        foreach ($config['repositories'] as $repository) {
-            if (is_string($repository)) {
-                $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
-                continue;
+
+        foreach ($repositories as $repository) {
+            if (!is_string($repository)) {
+                throw new InvalidConfigException('Repository has to be a string');
+                // TODO: handle different repository types here.
             }
-            // TODO: handle different repository types here.
+
+            $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
         }
 
         return $pool;

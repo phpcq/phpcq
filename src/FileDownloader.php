@@ -48,6 +48,8 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
+     * @psalm-param array{type: string, value:string}|null $hash
+     *
      * @return string
      */
     public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string
@@ -72,10 +74,13 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
+     * @psalm-param array{type: string, value:string}|null $hash
+     *
      * @return array
      */
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
+        /** @var null|array $data */
         $data = json_decode($this->downloadFile($url, $baseDir, $force, $hash), true);
         if (null === $data) {
             throw new RuntimeException('Invalid repository ' . $url);
@@ -110,7 +115,9 @@ class FileDownloader
      * Check the hash for the passed cache file - return true if it is valid, false otherwise.
      *
      * @param string     $cacheFile The file to check
-     * @param array|null $hash      The hash to validate.
+     * @param array|null $hash      he hash to validate.
+     *
+     * @psalm-param array{type: string, value:string}|null $hash
      *
      * @return bool
      */
@@ -120,6 +127,7 @@ class FileDownloader
             return false;
         }
 
+        /** @var array<string, string> $hashMap */
         static $hashMap = [
             'sha-1'   => 'sha1',
             'sha-256' => 'sha256',

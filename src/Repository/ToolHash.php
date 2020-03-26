@@ -13,7 +13,10 @@ class ToolHash
     public const SHA_384 = 'sha-384';
     public const SHA_512 = 'sha-512';
 
+    /** @var string */
     private $type;
+
+    /** @var string */
     private $value;
 
     /**

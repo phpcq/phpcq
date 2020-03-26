@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace Platform;
 
 use Phpcq\Platform\PlatformInformation;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PlatformInformationTest extends TestCase
 {
+    public function testCustomValues(): void
+    {
+        $platformInformation = new PlatformInformation('7.1.0', ['ext-foo' => '1.1.0'], ['lib-foo' => '8.1.0']);
+
+        $this->assertSame('7.1.0', $platformInformation->getPhpVersion());
+        $this->assertSame(['ext-foo' => '1.1.0'], $platformInformation->getExtensions());
+        $this->assertSame(['lib-foo' => '8.1.0'], $platformInformation->getLibraries());
+    }
+
     public function testPhpVersion(): void
     {
-        $platformInformation = new PlatformInformation();
-
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
         $this->assertSame(phpversion(), $platformInformation->getPhpVersion());
     }
 
-    public function testExtensions(): void
+    public function testCurrentPlatformExtensions(): void
     {
-        $platformInformation = new PlatformInformation();
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
         $loadedExtensions = array_filter(
             get_loaded_extensions(),
             static function ($value) : bool {
@@ -31,9 +38,10 @@ class PlatformInformationTest extends TestCase
 
     }
 
-    public function testLibraries(): void
+    public function testCurrentPlatformInformation(): void
     {
-        $platformInformation = new PlatformInformation();
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
+
         $libraries = $platformInformation->getLibraries();
         $loadedExtensions = get_loaded_extensions();
 
@@ -46,44 +54,26 @@ class PlatformInformationTest extends TestCase
 
     public function testGetInstalledVersion(): void
     {
-        /** @var PlatformInformation|MockObject $mock */
-        $mock = $this->getMockBuilder(PlatformInformation::class)
-            ->onlyMethods(['getPhpVersion', 'getLibraries', 'getExtensions'])
-            ->getMock();
+        $platformInformation = new PlatformInformation(
+            '7.4.0',
+            [
+                'ext-json' => '1.0.0',
+                'ext-pdo'  => '7.2.0'
+            ],
+            [
+                'lib-ICU' => '1.0.0',
+                'lib-curl'=> '7.68.0'
+            ]
+        );
 
-        $mock
-            ->expects($this->once())
-            ->method('getPhpVersion')
-            ->willReturn('7.4.0');
+        $this->assertSame('7.4.0', $platformInformation->getInstalledVersion('php'));
 
-        $mock
-            ->expects($this->exactly(3))
-            ->method('getExtensions')
-            ->willReturn(
-                [
-                    'ext-json' => '1.0.0',
-                    'ext-pdo'  => '7.2.0'
-                ]
-            );
+        $this->assertSame('1.0.0', $platformInformation->getInstalledVersion('ext-json'));
+        $this->assertSame('7.2.0', $platformInformation->getInstalledVersion('ext-pdo'));
+        $this->assertNull($platformInformation->getInstalledVersion('ext-foo'));
 
-        $mock
-            ->expects($this->exactly(3))
-            ->method('getLibraries')
-            ->willReturn(
-                [
-                    'lib-ICU' => '1.0.0',
-                    'lib-curl'=> '7.68.0'
-                ]
-            );
-
-        $this->assertSame('7.4.0', $mock->getInstalledVersion('php'));
-
-        $this->assertSame('1.0.0', $mock->getInstalledVersion('ext-json'));
-        $this->assertSame('7.2.0', $mock->getInstalledVersion('ext-pdo'));
-        $this->assertNull($mock->getInstalledVersion('ext-foo'));
-
-        $this->assertSame('1.0.0', $mock->getInstalledVersion('lib-ICU'));
-        $this->assertSame('7.68.0', $mock->getInstalledVersion('lib-curl'));
-        $this->assertNull($mock->getInstalledVersion('lib-foo'));
+        $this->assertSame('1.0.0', $platformInformation->getInstalledVersion('lib-ICU'));
+        $this->assertSame('7.68.0', $platformInformation->getInstalledVersion('lib-curl'));
+        $this->assertNull($platformInformation->getInstalledVersion('lib-foo'));
     }
 }

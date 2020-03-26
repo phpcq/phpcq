@@ -14,6 +14,8 @@ use Phpcq\Repository\RepositoryFactory;
 use Phpcq\Repository\ToolInformation;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function assert;
+use function is_string;
 
 final class UpdateCommand extends AbstractCommand
 {
@@ -26,9 +28,11 @@ final class UpdateCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $phpcqPath = $input->getOption('tools');
+        assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
         $cachePath = $input->getOption('cache');
+        assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 
         if ($output->isVeryVerbose()) {
@@ -36,14 +40,15 @@ final class UpdateCommand extends AbstractCommand
             $output->writeln('Using CACHE: ' . $cachePath);
         }
 
-        $platformInformation = new PlatformInformation();
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
         $configFile       = $input->getOption('config');
+        assert(is_string($configFile));
         $config           = ConfigLoader::load($configFile);
         $downloader       = new FileDownloader($cachePath, $config['auth'] ?? []);
         $repositoryLoader = new JsonRepositoryLoader($platformInformation, $downloader, true);
         $factory          = new RepositoryFactory($repositoryLoader);
         // Download repositories
-        $pool = $factory->buildPool($config);
+        $pool = $factory->buildPool($config['repositories'] ?? []);
         // Download needed tools and add to local repository.
         $installed = new Repository($platformInformation);
         foreach ($config['tools'] as $toolName => $tool) {

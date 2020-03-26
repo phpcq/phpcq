@@ -13,6 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PlatformInformationCommand extends Command
 {
+    /**
+     * @return void
+     */
     protected function configure()
     {
         $this->setName('platform-information')->setDescription('Shows platform information');
@@ -24,7 +27,7 @@ class PlatformInformationCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
-        $platformInformation = new PlatformInformation();
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
 
         $table->setHeaders(['Name', 'Version']);
         $table->addRow(['PHP', $platformInformation->getPhpVersion()]);

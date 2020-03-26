@@ -7,14 +7,14 @@ namespace Phpcq\Repository;
 use IteratorAggregate;
 use Phpcq\Exception\ToolNotFoundException;
 
-final class RepositoryPool implements IteratorAggregate, RepositoryInterface
+final class RepositoryPool implements IteratorAggregate
 {
     /**
      * @var RepositoryInterface[]
      */
     private $repositories = [];
 
-    public function addRepository(RepositoryInterface $repository)
+    public function addRepository(RepositoryInterface $repository): void
     {
         $this->repositories[] = $repository;
     }
@@ -44,6 +44,8 @@ final class RepositoryPool implements IteratorAggregate, RepositoryInterface
      * Iterate over all repositories.
      *
      * @return RepositoryInterface[]|iterable
+     *
+     * @psalm-return \Traversable<int, RepositoryInterface>
      */
     public function getIterator(): iterable
     {

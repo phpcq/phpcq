@@ -6,7 +6,11 @@ namespace Phpcq\Output;
 
 class BufferedOutput implements OutputInterface
 {
-    /** @var mixed[][] */
+    /**
+     * @var mixed[][]
+     *
+     * @psalm-var list<array{0: bool, 1: array{0: string, 1: int, 2: int}}>
+     */
     private $buffer = [];
 
     /** @var OutputInterface */
@@ -36,8 +40,10 @@ class BufferedOutput implements OutputInterface
     {
         foreach ($this->buffer as $message) {
             if ($message[0]) {
+                /** @psalm-suppress PossiblyInvalidArgument */
                 $this->output->writeln(...$message[1]);
             } else {
+                /** @psalm-suppress PossiblyInvalidArgument */
                 $this->output->write(...$message[1]);
             }
         }

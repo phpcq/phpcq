@@ -6,8 +6,8 @@ namespace Phpcq\Plugin\Config;
 
 final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
 {
-    /** @var array<string, AbstractConfigOption>|AbstractConfigOption[] */
-    private $options;
+    /** @var array<string, ConfigOptionInterface> */
+    private $options = [];
 
     /**
      * {@inheritDoc}

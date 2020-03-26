@@ -27,7 +27,7 @@ class ToolInformation implements ToolInformationInterface
     private $bootstrap;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $platformRequirements;
 
@@ -44,13 +44,13 @@ class ToolInformation implements ToolInformationInterface
     /**
      * Create a new instance.
      *
-     * @param string             $name
-     * @param string             $version
-     * @param string             $pharUrl
-     * @param array              $platformRequirements
-     * @param BootstrapInterface $bootstrap
-     * @param ToolHash|null      $hash
-     * @param string|null        $signatureUrl
+     * @param string                $name
+     * @param string                $version
+     * @param string                $pharUrl
+     * @param array<string, string> $platformRequirements
+     * @param BootstrapInterface    $bootstrap
+     * @param ToolHash|null         $hash
+     * @param string|null           $signatureUrl
      */
     public function __construct(
         string $name,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
+use IteratorAggregate;
 use Phpcq\Exception\ToolNotFoundException;
 use Traversable;
 

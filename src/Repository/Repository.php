@@ -41,6 +41,7 @@ class Repository implements IteratorAggregate, RepositoryInterface
     public function __construct(PlatformInformationInterface $platformInformation)
     {
         $this->platformInformation = $platformInformation;
+        $this->parser = new VersionParser();
     }
 
     public function addVersion(ToolInformationInterface $toolVersion): void
@@ -66,7 +67,7 @@ class Repository implements IteratorAggregate, RepositoryInterface
     }
 
     /**
-     * @return ToolInformationInterface[]|Traversable
+     * @return Traversable<int, ToolInformationInterface>
      */
     public function getIterator()
     {
@@ -77,11 +78,13 @@ class Repository implements IteratorAggregate, RepositoryInterface
         }
     }
 
-    private function findMatchingVersions(string $name, string $versionConstraint)
+    /**
+     * @return ToolInformationInterface[]
+     *
+     * @psalm-return array<string, ToolInformationInterface>
+     */
+    private function findMatchingVersions(string $name, string $versionConstraint): array
     {
-        if (!$this->parser) {
-            $this->parser = new VersionParser();
-        }
         $constraint = $this->parser->parseConstraints($versionConstraint);
         $results    = [];
         foreach ($this->tools[$name] as $versionHunk) {

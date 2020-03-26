@@ -32,7 +32,7 @@ final class ConfigOptions implements IteratorAggregate, Countable
     }
 
     /**
-     * @return Traversable|ConfigOptionInterface[]
+     * @return Traversable
      */
     public function getIterator(): Traversable
     {

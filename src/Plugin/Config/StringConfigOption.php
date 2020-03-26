@@ -8,7 +8,7 @@ use function is_string;
 
 final class StringConfigOption extends AbstractConfigOption
 {
-    public function __construct(string $name, string $description, ?string $defaultValue, $required)
+    public function __construct(string $name, string $description, ?string $defaultValue, bool $required)
     {
         parent::__construct($name, $description, $defaultValue, $required);
     }

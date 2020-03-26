@@ -26,7 +26,7 @@ class TaskFactory
     private $phpcqPath;
 
     /**
-     * @var string
+     * @var string[]
      */
     private $phpArguments;
 

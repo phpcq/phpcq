@@ -10,6 +10,8 @@ use Phpcq\Platform\PlatformInformationInterface;
 
 /**
  * Load a json file.
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class JsonRepositoryLoader
 {
@@ -59,18 +61,24 @@ class JsonRepositoryLoader
             }
             // Include? - load it!
             if (['url', 'checksum'] === array_keys($versions)) {
+                /** @psalm-suppress PossiblyInvalidArgument */
                 $this->loadFile($versions['url'], $versions['checksum'], $baseDir);
                 continue;
             }
 
+            /** @psalm-suppress InvalidArgument */
             $this->handleVersionList($toolName, $versions, $bootstrapLookup, $baseDir);
         }
 
         return $this->repository;
     }
 
-    private function handleVersionList(string $toolName, array $versionList, array $bootstrapLookup, string $baseDir)
-    {
+    private function handleVersionList(
+        string $toolName,
+        array $versionList,
+        array $bootstrapLookup,
+        string $baseDir
+    ) : void {
         foreach ($versionList as $version) {
             if (is_string($bootstrap = $version['bootstrap'])) {
                 if (!isset($bootstrapLookup[$bootstrap])) {
@@ -90,6 +98,7 @@ class JsonRepositoryLoader
         }
     }
 
+    /** @param string|array $bootstrap */
     private function makeBootstrap($bootstrap, array $bootstrapLookup, string $baseDir): BootstrapInterface
     {
         if (is_string($bootstrap)) {

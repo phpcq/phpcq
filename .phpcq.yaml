@@ -13,6 +13,8 @@ phpcq:
       version: ^9.0
     phpmd:
       version: ^2.8.2
+    psalm:
+      version: ^3.0.0
 
 phpunit:
   custom_flags:
@@ -31,3 +33,5 @@ phpcpd:
 phploc:
 
 phpmd:
+
+psalm:
