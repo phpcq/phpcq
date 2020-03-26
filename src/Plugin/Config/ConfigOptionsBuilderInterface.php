@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
-
 interface ConfigOptionsBuilderInterface
 {
     public function describeArrayOption(string $name, string $description, ?array $defaultValue = null): self;
@@ -19,14 +17,7 @@ interface ConfigOptionsBuilderInterface
     public function describeOption(ConfigOptionInterface $configOption) : self;
 
     /**
-     * @param array $config
-     *
-     * @throws InvalidConfigException When configuration is not valid.
+     * @return ConfigOptions
      */
-    public function validateConfig(array $config): void;
-
-    /**
-     * @return AbstractConfigOption[]
-     */
-    public function getOptions(): iterable;
+    public function getOptions(): ConfigOptions;
 }

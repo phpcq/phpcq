@@ -151,7 +151,8 @@ final class RunCommand extends AbstractCommand
             $configuration       = $config[$name] ?? [];
 
             $plugin->describeOptions($configOptionsBuilder);
-            $configOptionsBuilder->validateConfig($configuration);
+            $options = $configOptionsBuilder->getOptions();
+            $options->validateConfig($configuration);
 
             foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
                 $taskList->add($task);

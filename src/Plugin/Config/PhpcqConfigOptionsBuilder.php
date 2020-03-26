@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Phpcq\Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
-use function array_values;
-
 final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
 {
     /** @var array<string, AbstractConfigOption>|AbstractConfigOption[] */
     private $options;
 
+    /**
+     * {@inheritDoc}
+     */
     public function describeArrayOption(
         string $name,
         string $description,
@@ -21,6 +21,9 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function describeIntOption(
         string $name,
         string $description,
@@ -30,6 +33,9 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this->describeOption(new IntConfigOption($name, $description, $defaultValue, $required));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function describeStringOption(
         string $name,
         string $description,
@@ -48,6 +54,9 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function describeFloatOption(
         string $name,
         string $description,
@@ -57,6 +66,9 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this->describeOption(new FloatConfigOption($name, $description, $defaultValue, $required));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function describeOption(ConfigOptionInterface $configOption) : ConfigOptionsBuilderInterface
     {
         $this->options[$configOption->getName()] = $configOption;
@@ -64,29 +76,11 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         return $this;
     }
 
-    public function validateConfig(array $config): void
-    {
-        // Fixme: We might need a better solution for tasks not supporting the directories config
-        if (!isset($this->options['directories'])) {
-            unset($config['directories']);
-        }
-
-        if ($diff = array_diff_key($config, $this->options)) {
-            throw new InvalidConfigException(
-                'Unknown config keys encountered: ' . implode(', ', array_keys($diff))
-            );
-        }
-
-        foreach ($this->options as $option) {
-            $option->validateValue($config[$option->getName()] ?? null);
-        }
-    }
-
     /**
-     * @return ConfigOptionInterface[]
+     * {@inheritDoc}
      */
-    public function getOptions(): iterable
+    public function getOptions(): ConfigOptions
     {
-        return array_values($this->options);
+        return new ConfigOptions($this->options);
     }
 }
