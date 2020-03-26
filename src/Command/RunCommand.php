@@ -51,13 +51,11 @@ final class RunCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $phpcqPath = $input->getOption('tools');
-        if (!is_dir($phpcqPath)) {
-            mkdir($phpcqPath, 0777, true);
-        }
+        $this->createDirectory($phpcqPath);
+
         $cachePath = $input->getOption('cache');
-        if (!is_dir($cachePath)) {
-            mkdir($cachePath, 0777, true);
-        }
+        $this->createDirectory($cachePath);
+
         if ($output->isVeryVerbose()) {
             $output->writeln('Using HOME: ' . $phpcqPath);
             $output->writeln('Using CACHE: ' . $cachePath);

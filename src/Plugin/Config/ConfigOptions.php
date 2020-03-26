@@ -12,6 +12,7 @@ use Traversable;
 use function array_diff_key;
 use function array_keys;
 use function implode;
+use function var_dump;
 
 final class ConfigOptions implements IteratorAggregate, Countable
 {
