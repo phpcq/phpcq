@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Plugin\Config;
 
 use Phpcq\Exception\InvalidConfigException;
-use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\StringConfigOption;
 use Phpcq\Plugin\Config\ConfigOptionInterface;
 use PHPUnit\Framework\TestCase;
@@ -58,7 +57,7 @@ final class StringConfigOptionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
 
-        $option = new ArrayConfigOption('param', 'Param description', ['bar'], true);
+        $option = new StringConfigOption('param', 'Param description', 'bar', true);
         $option->validateValue(null);
     }
 }

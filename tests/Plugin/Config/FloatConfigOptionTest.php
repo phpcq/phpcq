@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Plugin\Config;
 
 use Phpcq\Exception\InvalidConfigException;
-use Phpcq\Plugin\Config\ArrayConfigOption;
-use Phpcq\Plugin\Config\FloatConfigOption;
 use Phpcq\Plugin\Config\ConfigOptionInterface;
+use Phpcq\Plugin\Config\FloatConfigOption;
 use PHPUnit\Framework\TestCase;
 
 final class FloatConfigOptionTest extends TestCase
@@ -58,7 +57,7 @@ final class FloatConfigOptionTest extends TestCase
     {
         $this->expectException(InvalidConfigException::class);
 
-        $option = new ArrayConfigOption('param', 'Param description', ['bar'], true);
+        $option = new FloatConfigOption('param', 'Param description', 1.5, true);
         $option->validateValue(null);
     }
 }
