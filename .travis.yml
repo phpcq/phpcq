@@ -20,6 +20,8 @@ matrix:
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
+  - sudo apt-get -qq update
+  - sudo apt-get -y install gnupg2
   - pecl install gnupg
 
 install:
