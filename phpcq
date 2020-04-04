@@ -1,11 +1,13 @@
 #!/usr/bin/env php
 <?php
 
+use Phpcq\Command\ExecCommand;
 use Phpcq\Command\PlatformInformationCommand;
 use Phpcq\Command\RunCommand;
 use Phpcq\Command\UpdateCommand;
 use Phpcq\Command\ValidateCommand;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
 
 error_reporting(E_ALL & ~ E_USER_DEPRECATED);
 
@@ -27,7 +29,32 @@ $application->addCommands([
     new UpdateCommand(),
     new ValidateCommand(),
     new PlatformInformationCommand(),
+    new ExecCommand()
 ]);
 
+$argv = $_SERVER['argv'];
+$input = new ArgvInput($argv);
+if ($input->getFirstArgument() === 'exec') {
+    $application->setDefaultCommand('exec', true);
+    // strip the application name.
+    array_shift($argv);
+    // If no '--' is to be found in the args (used to separate options for phpcq from the args and options for the tool,
+    // insert it just before the tool name.
+    if (false === array_search('--', $argv)) {
+        $argPos = array_search('exec', $argv);
+        $tempInput = new ArgvInput(array_slice($argv, $argPos + 1));
+        if (null !== $toolName = $tempInput->getFirstArgument()) {
+            $toolPos = array_search($toolName, $argv);
+            $argv = array_merge(
+                array_slice($argv, 0, $argPos),
+                array_slice($argv, $argPos + 1, $toolPos - ($argPos + 1)),
+                ['--'],
+                array_slice($argv, $toolPos)
+            );
+        }
+    }
+    $input = new ArgvInput($argv);
+}
+
 $application->setAutoExit(true);
-$application->run();
+$application->run($input);
