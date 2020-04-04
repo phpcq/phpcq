@@ -28,16 +28,16 @@
     },
     "require": {
         "php": "^7.3",
-        "ext-json": "*",
         "ext-hash": "*",
+        "ext-json": "*",
         "ext-xml": "*",
-        "symfony/console": "^5.0",
-        "symfony/config": "^5.0",
-        "symfony/yaml": "^5.0",
-        "symfony/finder": "^5.0",
         "composer/semver": "^1.5",
-        "symfony/process": "^5.0",
-        "composer/xdebug-handler": "^1.4"
+        "composer/xdebug-handler": "^1.4",
+        "symfony/config": "^5.0.7",
+        "symfony/console": "^5.0.7",
+        "symfony/finder": "^5.0.7",
+        "symfony/process": "^5.0.7",
+        "symfony/yaml": "^5.0.7"
     },
     "autoload": {
         "psr-4": {
