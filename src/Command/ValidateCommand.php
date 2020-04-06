@@ -40,7 +40,7 @@ final class ValidateCommand extends AbstractCommand
         assert(is_string($configFile));
         $config     = ConfigLoader::load($configFile);
 
-        $plugins = PluginRegistry::buildFromPath($phpcqPath);
+        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
         $valid   = true;
 
         $output->writeln('Validate plugins:', OutputInterface::VERBOSITY_VERY_VERBOSE);

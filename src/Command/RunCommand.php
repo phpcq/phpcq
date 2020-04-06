@@ -79,7 +79,7 @@ final class RunCommand extends AbstractCommand
         // Create build configuration
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
         // Load bootstraps
-        $plugins = PluginRegistry::buildFromPath($phpcqPath);
+        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
 
         if ($toolName = $input->getArgument('tool')) {
             assert(is_string($toolName));

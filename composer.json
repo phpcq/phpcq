@@ -35,7 +35,6 @@
         "composer/xdebug-handler": "^1.4",
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
-        "symfony/finder": "^5.0.7",
         "symfony/process": "^5.0.7",
         "symfony/yaml": "^5.0.7"
     },
