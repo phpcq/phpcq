@@ -13,6 +13,7 @@ use Phpcq\Platform\PlatformInformation;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -23,6 +24,33 @@ use function is_string;
 
 final class ExecCommand extends AbstractCommand
 {
+    /**
+     * If no '--' is to be found in the args (used to separate options for phpcq from the args and options for the tool,
+     * insert it just before the tool name.
+     */
+    public static function prepare(array $argv): array
+    {
+        if (false !== array_search('--', $argv)) {
+            return $argv;
+        }
+        $argPos = array_search('exec', $argv);
+        assert(is_int($argPos));
+        // Use temp input to extract second argument which is the tool name we want.
+        $tempInput = new ArgvInput(array_slice($argv, $argPos));
+        if (null !== $toolName = $tempInput->getFirstArgument()) {
+            $toolPos = array_search($toolName, $argv);
+            assert(is_int($toolPos));
+            $argv = array_merge(
+                array_slice($argv, 0, $argPos),
+                array_slice($argv, $argPos, $toolPos - $argPos),
+                ['--'],
+                array_slice($argv, $toolPos)
+            );
+        }
+
+        return $argv;
+    }
+
     protected function configure(): void
     {
         $this->setName('exec')->setDescription('Execute a tool with the passed arguments');

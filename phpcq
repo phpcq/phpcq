@@ -35,24 +35,10 @@ $application->addCommands([
 $argv = $_SERVER['argv'];
 $input = new ArgvInput($argv);
 if ($input->getFirstArgument() === 'exec') {
-    $application->setDefaultCommand('exec', true);
+    $argv = ExecCommand::prepare($argv);
     // strip the application name.
     array_shift($argv);
-    // If no '--' is to be found in the args (used to separate options for phpcq from the args and options for the tool,
-    // insert it just before the tool name.
-    if (false === array_search('--', $argv)) {
-        $argPos = array_search('exec', $argv);
-        $tempInput = new ArgvInput(array_slice($argv, $argPos + 1));
-        if (null !== $toolName = $tempInput->getFirstArgument()) {
-            $toolPos = array_search($toolName, $argv);
-            $argv = array_merge(
-                array_slice($argv, 0, $argPos),
-                array_slice($argv, $argPos + 1, $toolPos - ($argPos + 1)),
-                ['--'],
-                array_slice($argv, $toolPos)
-            );
-        }
-    }
+    $application->setDefaultCommand('exec', true);
     $input = new ArgvInput($argv);
 }
 
