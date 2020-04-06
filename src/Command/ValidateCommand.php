@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
-use Phpcq\Exception\InvalidConfigException;
-use Phpcq\Plugin\Config\PhpcqConfigOptionsBuilder;
-use Phpcq\Plugin\ConfigurationPluginInterface;
+use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_keys;
@@ -75,7 +75,7 @@ final class ValidateCommand extends AbstractCommand
             return true;
         }
 
-        $configOptionsBuilder = new PhpcqConfigOptionsBuilder();
+        $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
         $configuration        = $config[$name] ?? [];
 
         $plugin->describeOptions($configOptionsBuilder);

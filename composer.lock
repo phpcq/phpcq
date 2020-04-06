@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08d39b9e33c7f17e839d99a15356b1e7",
+    "content-hash": "8dd999d986113a52b7c3e611815851a6",
     "packages": [
         {
             "name": "composer/semver",
@@ -116,6 +116,60 @@
                 }
             ],
             "time": "2020-03-01T12:26:26+00:00"
+        },
+        {
+            "name": "phpcq/plugin-api",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpcq/plugin-api.git",
+                "reference": "e09750be54093e9950ed92cb998ce43b03418c8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/e09750be54093e9950ed92cb998ce43b03418c8c",
+                "reference": "e09750be54093e9950ed92cb998ce43b03418c8c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Phpcq\\PluginApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Schiffler",
+                    "email": "c.schiffler@cyberspectrum.de",
+                    "homepage": "http://cyberspectrum.de",
+                    "role": "lead"
+                },
+                {
+                    "name": "David Molineus",
+                    "email": "david.molineus@netzmacht.de",
+                    "homepage": "https://netzmacht.de",
+                    "role": "lead"
+                },
+                {
+                    "name": "Stefan Heimes",
+                    "email": "stefan_heimes@hotmail.com",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP code quality project plugin API interfaces.",
+            "time": "2020-04-06T21:45:54+00:00"
         },
         {
             "name": "psr/container",
@@ -860,7 +914,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phpcq/plugin-api": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

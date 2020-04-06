@@ -6,7 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use function is_string;
 
-final class StringConfigOption extends AbstractConfigOption
+final class StringConfigOption extends AbstractConfigurationOption
 {
     public function __construct(string $name, string $description, ?string $defaultValue, bool $required)
     {

@@ -13,9 +13,9 @@ use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
 use Phpcq\Platform\PlatformInformation;
-use Phpcq\Plugin\Config\PhpcqConfigOptionsBuilder;
-use Phpcq\Plugin\ConfigurationPluginInterface;
+use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
@@ -162,7 +162,7 @@ final class RunCommand extends AbstractCommand
 
         // Initialize phar files
         if ($plugin instanceof ConfigurationPluginInterface) {
-            $configOptionsBuilder = new PhpcqConfigOptionsBuilder();
+            $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
             $configuration       = $config[$name] ?? [];
 
             $plugin->describeOptions($configOptionsBuilder);

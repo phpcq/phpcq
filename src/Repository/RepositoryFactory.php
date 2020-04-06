@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
-use Phpcq\Exception\InvalidConfigException;
-use function is_array;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 
 class RepositoryFactory
 {

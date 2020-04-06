@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq;
 
 use Phpcq\Config\PhpcqConfiguration;
-use Phpcq\Exception\InvalidConfigException;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
 use function array_keys;

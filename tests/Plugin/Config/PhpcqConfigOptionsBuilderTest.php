@@ -4,28 +4,30 @@ declare(strict_types=1);
 
 namespace Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
 use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\BoolConfigOption;
-use Phpcq\Plugin\Config\ConfigOptionInterface;
-use Phpcq\Plugin\Config\ConfigOptionsBuilderInterface;
 use Phpcq\Plugin\Config\FloatConfigOption;
 use Phpcq\Plugin\Config\IntConfigOption;
-use Phpcq\Plugin\Config\PhpcqConfigOptionsBuilder;
+use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\Config\StringConfigOption;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionsBuilderInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder
+ */
 final class PhpcqConfigOptionsBuilderTest extends TestCase
 {
     public function testInstantiation(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
-        $this->assertInstanceOf(ConfigOptionsBuilderInterface::class, $instance);
+        $instance = new PhpcqConfigurationOptionsBuilder();
+        $this->assertInstanceOf(ConfigurationOptionsBuilderInterface::class, $instance);
     }
 
     public function testDescribeArrayOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
+        $instance = new PhpcqConfigurationOptionsBuilder();
 
         $this->assertSame($instance, $instance->describeArrayOption('foo', 'Foo Option', ['bar'], true));
 
@@ -40,7 +42,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testDescribeBoolOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
+        $instance = new PhpcqConfigurationOptionsBuilder();
 
         $this->assertSame($instance, $instance->describeBoolOption('foo', 'Foo Option', false, true));
 
@@ -55,7 +57,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testDescribeIntOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
+        $instance = new PhpcqConfigurationOptionsBuilder();
 
         $this->assertSame($instance, $instance->describeIntOption('foo', 'Foo Option', 1, true));
 
@@ -70,7 +72,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testDescribeStringOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
+        $instance = new PhpcqConfigurationOptionsBuilder();
 
         $this->assertSame($instance, $instance->describeStringOption('foo', 'Foo Option', 'bar', true));
 
@@ -85,7 +87,7 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testDescribeFloatOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
+        $instance = new PhpcqConfigurationOptionsBuilder();
 
         $this->assertSame($instance, $instance->describeFloatOption('foo', 'Foo Option', 1.5, true));
 
@@ -100,8 +102,8 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testDescribeOption(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
-        $mock     = $this->createMock(ConfigOptionInterface::class);
+        $instance = new PhpcqConfigurationOptionsBuilder();
+        $mock     = $this->createMock(ConfigurationOptionInterface::class);
 
         $instance->describeOption($mock);
 
@@ -112,17 +114,17 @@ final class PhpcqConfigOptionsBuilderTest extends TestCase
 
     public function testGetOptions(): void
     {
-        $instance = new PhpcqConfigOptionsBuilder();
-        $mock1    = $this->createMock(ConfigOptionInterface::class);
-        $mock2    = $this->createMock(ConfigOptionInterface::class);
+        $instance = new PhpcqConfigurationOptionsBuilder();
+        $mock1    = $this->createMock(ConfigurationOptionInterface::class);
+        $mock2    = $this->createMock(ConfigurationOptionInterface::class);
 
         $mock1
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn('foo');
 
         $mock2
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getName')
             ->willReturn('bar');
 

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\RuntimeException;
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
 use Traversable;

@@ -6,7 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use function is_array;
 
-final class ArrayConfigOption extends AbstractConfigOption
+final class ArrayConfigOption extends AbstractConfigurationOption
 {
     public function __construct(string $name, string $description, ?array $defaultValue, bool $required)
     {

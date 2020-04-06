@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Phpcq\Plugin\Config;
 
-final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionsBuilderInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionsInterface;
+
+final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuilderInterface
 {
-    /** @var array<string, ConfigOptionInterface> */
+    /** @var array<string, ConfigurationOptionInterface> */
     private $options = [];
 
     /**
@@ -17,7 +21,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         string $description,
         ?array $defaultValue = null,
         bool $required = false
-    ) : ConfigOptionsBuilderInterface {
+    ) : ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -29,7 +33,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         string $description,
         ?int $defaultValue = null,
         bool $required = false
-    ) : ConfigOptionsBuilderInterface {
+    ) : ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new IntConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -41,7 +45,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         string $description,
         ?string $defaultValue = null,
         bool $required = false
-    ) : ConfigOptionsBuilderInterface {
+    ) : ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new StringConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -50,7 +54,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         string $description,
         ?bool $defaultValue = null,
         bool $required = false
-    ) : ConfigOptionsBuilderInterface {
+    ) : ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -62,14 +66,14 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
         string $description,
         ?float $defaultValue = null,
         bool $required = false
-    ) : ConfigOptionsBuilderInterface {
+    ) : ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new FloatConfigOption($name, $description, $defaultValue, $required));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function describeOption(ConfigOptionInterface $configOption) : ConfigOptionsBuilderInterface
+    public function describeOption(ConfigurationOptionInterface $configOption) : ConfigurationOptionsBuilderInterface
     {
         $this->options[$configOption->getName()] = $configOption;
 
@@ -79,7 +83,7 @@ final class PhpcqConfigOptionsBuilder implements ConfigOptionsBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function getOptions(): ConfigOptions
+    public function getOptions(): ConfigurationOptionsInterface
     {
         return new ConfigOptions($this->options);
     }

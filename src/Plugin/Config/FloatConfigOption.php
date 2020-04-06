@@ -6,7 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use function is_float;
 
-final class FloatConfigOption extends AbstractConfigOption
+final class FloatConfigOption extends AbstractConfigurationOption
 {
     public function __construct(string $name, string $description, ?float $defaultValue, bool $required)
     {

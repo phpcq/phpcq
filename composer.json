@@ -33,6 +33,7 @@
         "ext-xml": "*",
         "composer/semver": "^1.5",
         "composer/xdebug-handler": "^1.4",
+        "phpcq/plugin-api": "^1.0.0@dev",
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",

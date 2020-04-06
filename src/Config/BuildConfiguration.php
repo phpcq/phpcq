@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Config;
 
-use Phpcq\Task\TaskFactory;
+use Phpcq\PluginApi\Version10\BuildConfigInterface;
+use Phpcq\PluginApi\Version10\ProjectConfigInterface;
+use Phpcq\PluginApi\Version10\TaskFactoryInterface;
 
 class BuildConfiguration implements BuildConfigInterface
 {
@@ -14,7 +16,7 @@ class BuildConfiguration implements BuildConfigInterface
     private $projectConfiguration;
 
     /**
-     * @var TaskFactory
+     * @var TaskFactoryInterface
      */
     private $taskFactory;
 
@@ -25,12 +27,12 @@ class BuildConfiguration implements BuildConfigInterface
 
     /**
      * @param ProjectConfigInterface $projectConfiguration
-     * @param TaskFactory            $taskFactory
+     * @param TaskFactoryInterface   $taskFactory
      * @param string                 $tempDirectory
      */
     public function __construct(
         ProjectConfigInterface $projectConfiguration,
-        TaskFactory $taskFactory,
+        TaskFactoryInterface $taskFactory,
         string $tempDirectory
     ) {
         $this->projectConfiguration = $projectConfiguration;
@@ -43,7 +45,7 @@ class BuildConfiguration implements BuildConfigInterface
         return $this->projectConfiguration;
     }
 
-    public function getTaskFactory(): TaskFactory
+    public function getTaskFactory(): TaskFactoryInterface
     {
         return $this->taskFactory;
     }

@@ -6,6 +6,7 @@ use Generator;
 use IteratorAggregate;
 use LogicException;
 use Phpcq\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\PluginInterface;
 use function get_class;
 
 final class PluginRegistry implements IteratorAggregate

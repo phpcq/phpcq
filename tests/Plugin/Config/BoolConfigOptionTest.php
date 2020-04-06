@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
 use Phpcq\Plugin\Config\BoolConfigOption;
-use Phpcq\Plugin\Config\ConfigOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Plugin\Config\BoolConfigOption
+ */
 final class BoolConfigOptionTest extends TestCase
 {
     public function testInstantiation(): void
     {
         $option = new BoolConfigOption('param', 'Param description', false, true);
-        $this->assertInstanceOf(ConfigOptionInterface::class, $option);
+        $this->assertInstanceOf(ConfigurationOptionInterface::class, $option);
     }
 
     public function testInformation(): void

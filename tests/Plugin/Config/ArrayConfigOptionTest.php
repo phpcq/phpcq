@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
 use Phpcq\Plugin\Config\ArrayConfigOption;
-use Phpcq\Plugin\Config\ConfigOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Plugin\Config\ArrayConfigOption
+ */
 final class ArrayConfigOptionTest extends TestCase
 {
     public function testInstantiation(): void
     {
         $option = new ArrayConfigOption('param', 'Param description', ['foo', 'bar'], true);
-        $this->assertInstanceOf(ConfigOptionInterface::class, $option);
+        $this->assertInstanceOf(ConfigurationOptionInterface::class, $option);
     }
 
     public function testInformation(): void

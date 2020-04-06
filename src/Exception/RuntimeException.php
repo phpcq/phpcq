@@ -6,5 +6,4 @@ namespace Phpcq\Exception;
 
 class RuntimeException extends \RuntimeException implements Exception
 {
-
 }

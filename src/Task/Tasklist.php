@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+
 /**
  * Default task list implementation.
  */

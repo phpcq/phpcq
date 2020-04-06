@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Output;
 
+use Phpcq\PluginApi\Version10\OutputInterface;
+
 class BufferedOutput implements OutputInterface
 {
     /**

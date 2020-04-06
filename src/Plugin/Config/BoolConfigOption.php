@@ -6,7 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use function is_bool;
 
-final class BoolConfigOption extends AbstractConfigOption
+final class BoolConfigOption extends AbstractConfigurationOption
 {
     public function __construct(string $name, string $description, ?bool $defaultValue, bool $required)
     {

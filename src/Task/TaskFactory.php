@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\PluginApi\Version10\TaskFactoryInterface;
+use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\Repository\RepositoryInterface;
 
-class TaskFactory
+class TaskFactory implements TaskFactoryInterface
 {
     /**
      * The installed repository.
@@ -55,7 +57,7 @@ class TaskFactory
      *
      * @return TaskRunnerBuilder
      */
-    public function buildRunProcess(array $command): TaskRunnerBuilder
+    public function buildRunProcess(array $command): TaskRunnerBuilderInterface
     {
         return new TaskRunnerBuilder($command);
     }
@@ -66,7 +68,7 @@ class TaskFactory
      *
      * @return TaskRunnerBuilder
      */
-    public function buildRunPhar(string $pharName, array $arguments = []): TaskRunnerBuilder
+    public function buildRunPhar(string $pharName, array $arguments = []): TaskRunnerBuilderInterface
     {
         return $this->buildRunProcess(array_merge(
             [$this->phpCliBinary],

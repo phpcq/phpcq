@@ -6,7 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use function is_int;
 
-final class IntConfigOption extends AbstractConfigOption
+final class IntConfigOption extends AbstractConfigurationOption
 {
     public function __construct(string $name, string $description, ?int $defaultValue, bool $required)
     {

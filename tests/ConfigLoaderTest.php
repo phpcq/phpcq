@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Phpcq\ConfigLoader;
-use Phpcq\Exception\InvalidConfigException;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
 /**

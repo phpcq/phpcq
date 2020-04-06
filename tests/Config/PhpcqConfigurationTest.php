@@ -8,6 +8,9 @@ use Phpcq\Config\PhpcqConfiguration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
+/**
+ * @covers \Phpcq\Config\PhpcqConfiguration
+ */
 final class PhpcqConfigurationTest extends TestCase
 {
     public function testCreateTreeBuilder(): void
@@ -16,5 +19,4 @@ final class PhpcqConfigurationTest extends TestCase
 
         $this->assertInstanceOf(TreeBuilder::class, $configuration->getConfigTreeBuilder());
     }
-
 }

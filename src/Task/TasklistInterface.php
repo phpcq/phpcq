@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use IteratorAggregate;
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Traversable;
 
 interface TasklistInterface extends IteratorAggregate

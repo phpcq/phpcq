@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\Task\Tasklist;
-use Phpcq\Task\TaskRunnerInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

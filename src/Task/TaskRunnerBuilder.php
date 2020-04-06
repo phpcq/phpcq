@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Traversable;
 
-final class TaskRunnerBuilder
+final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 {
     /**
      * @var string[]
@@ -43,7 +45,7 @@ final class TaskRunnerBuilder
         $this->command = $command;
     }
 
-    public function withWorkingDirectory(string $cwd): self
+    public function withWorkingDirectory(string $cwd): TaskRunnerBuilderInterface
     {
         $this->cwd = $cwd;
 
@@ -53,7 +55,7 @@ final class TaskRunnerBuilder
     /**
      * @param string[] $env
      */
-    public function withEnv(array $env): self
+    public function withEnv(array $env): TaskRunnerBuilderInterface
     {
         $this->env = $env;
 
@@ -63,7 +65,7 @@ final class TaskRunnerBuilder
     /**
      * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no input
      */
-    public function withInput($input): self
+    public function withInput($input): TaskRunnerBuilderInterface
     {
         $this->input = $input;
 
@@ -73,7 +75,7 @@ final class TaskRunnerBuilder
     /**
      * @param int|float $timeout
      */
-    public function withTimeout($timeout): self
+    public function withTimeout($timeout): TaskRunnerBuilderInterface
     {
         $this->timeout = $timeout;
 

@@ -5,30 +5,33 @@ declare(strict_types=1);
 namespace Phpcq\Plugin\Config;
 
 use ArrayIterator;
-use Countable;
-use IteratorAggregate;
-use Phpcq\Exception\InvalidConfigException;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionsInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Traversable;
 use function array_diff_key;
 use function array_keys;
 use function implode;
-use function var_dump;
 
-final class ConfigOptions implements IteratorAggregate, Countable
+final class ConfigOptions implements ConfigurationOptionsInterface
 {
     /**
-     * @var array<string, ConfigOptionInterface>
+     * @var array<string, ConfigurationOptionInterface>
      */
     private $options;
 
     /**
      * ConfigOptions constructor.
      *
-     * @param array<string, ConfigOptionInterface> $options
+     * @param array<string, ConfigurationOptionInterface> $options
      */
     public function __construct(array $options)
     {
-        $this->options = $options;
+        $this->options = [];
+
+        foreach ($options as $option) {
+            $this->options[$option->getName()] = $option;
+        }
     }
 
     /**

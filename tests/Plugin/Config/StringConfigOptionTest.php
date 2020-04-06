@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
 use Phpcq\Plugin\Config\StringConfigOption;
-use Phpcq\Plugin\Config\ConfigOptionInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Plugin\Config\StringConfigOption
+ */
 final class StringConfigOptionTest extends TestCase
 {
     public function testInstantiation(): void
     {
         $option = new StringConfigOption('param', 'Param description', 'foo', true);
-        $this->assertInstanceOf(ConfigOptionInterface::class, $option);
+        $this->assertInstanceOf(ConfigurationOptionInterface::class, $option);
     }
 
     public function testInformation(): void

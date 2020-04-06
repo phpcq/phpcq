@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Phpcq\Plugin\Config;
 
-use Phpcq\Exception\InvalidConfigException;
+use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
 use function gettype;
 use function sprintf;
 
 /**
  * @psalm-template V
  */
-abstract class AbstractConfigOption implements ConfigOptionInterface
+abstract class AbstractConfigurationOption implements ConfigurationOptionInterface
 {
     /** @var string */
     private $name;
