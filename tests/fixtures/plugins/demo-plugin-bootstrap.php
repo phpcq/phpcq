@@ -1,15 +1,21 @@
 <?php
 
-use Phpcq\Config\BuildConfigInterface;
-use Phpcq\Exception\InvalidConfigException;
-use Phpcq\Plugin\ConfigurationPluginInterface;
-use Phpcq\Task\TaskRunnerInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\BuildConfigInterface;
+use Phpcq\PluginApi\Version10\ConfigurationOptionsBuilderInterface;
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
+use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 
 return new class implements ConfigurationPluginInterface {
     public function getName() : string
     {
         return 'demo-plugin';
+    }
+
+    public function describeOptions(ConfigurationOptionsBuilderInterface $configOptionsBuilder): void
+    {
+        $configOptionsBuilder->describeStringOption('demo-key', 'Some demo option');
     }
 
     public function validateConfig(array $config) : void
