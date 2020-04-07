@@ -1,0 +1,50 @@
+{
+  "phars": {
+    "phar-1": [
+      {
+        "version": "1.0.0",
+        "phar-url": "phar-1~1.0.0.phar",
+        "bootstrap": {
+          "plugin-version": "1.0.0",
+          "type": "file",
+          "url": "phar-1~1.0.0.php"
+        },
+        "requirements": {
+          "php": "^7.3",
+          "ext-dom": "*"
+        }
+      }
+    ],
+    "phar-2": [
+      {
+        "version": "1.1.0",
+        "phar-url": "phar-2~1.1.0.phar",
+        "bootstrap": {
+          "plugin-version": "1.0.0",
+          "type": "file",
+          "url": "phar-2~1.1.0.php"
+        },
+        "requirements": {
+          "php": "^7.3",
+          "ext-dom": "*",
+          "ext-json": "*"
+        }
+      }
+    ],
+    "phar-3": [
+      {
+        "version": "2.0.0",
+        "phar-url": "phar-3~2.0.0.phar",
+        "bootstrap": {
+          "plugin-version": "1.0.0",
+          "type": "file",
+          "url": "phar-3~2.0.0.php"
+        },
+        "requirements": {
+          "php": ">=5.3.9",
+          "ext-xml": "*"
+        }
+      }
+    ]
+  }
+}
