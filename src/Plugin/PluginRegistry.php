@@ -7,6 +7,8 @@ use IteratorAggregate;
 use LogicException;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
+use Phpcq\Repository\InstalledBootstrap;
+use Phpcq\Repository\RepositoryInterface;
 use function get_class;
 
 final class PluginRegistry implements IteratorAggregate
@@ -19,25 +21,44 @@ final class PluginRegistry implements IteratorAggregate
         $instance = new self();
 
         foreach (self::getBootstrapFileNames($installedJson) as $filePath) {
-            /**
-             * @psalm-suppress UnresolvableInclude
-             *
-             * @var PluginInterface
-             */
-            $plugin = require_once $filePath;
-            if (!$plugin instanceof PluginInterface) {
-                throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
-            }
-
-            /** @var string */
-            $name = $plugin->getName();
-            if (isset($instance->plugins[$name])) {
-                throw new RuntimeException('Plugin already registered: ' . $name);
-            }
-            $instance->plugins[$name] = $plugin;
+            $instance->loadPluginFile($filePath);
         }
 
         return $instance;
+    }
+
+    public static function buildFromInstalledRepository(RepositoryInterface $repository): self
+    {
+        $instance = new self();
+
+        foreach ($repository as $toolVersion) {
+            $bootstrap = $toolVersion->getBootstrap();
+            assert($bootstrap instanceof InstalledBootstrap);
+            $instance->loadPluginFile($bootstrap->getFilePath());
+        }
+
+        return $instance;
+    }
+
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
+    private function loadPluginFile(string $filePath): void
+    {
+        /**
+         * @psalm-suppress UnresolvableInclude
+         *
+         * @var PluginInterface
+         */
+        $plugin = require_once $filePath;
+        if (!$plugin instanceof PluginInterface) {
+            throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
+        }
+
+        /** @var string */
+        $name = $plugin->getName();
+        if (isset($this->plugins[$name])) {
+            throw new RuntimeException('Plugin already registered: ' . $name);
+        }
+        $this->plugins[$name] = $plugin;
     }
 
     public function getPluginByName(string $name): PluginInterface

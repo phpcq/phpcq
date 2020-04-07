@@ -8,7 +8,6 @@ use Phpcq\Config\BuildConfiguration;
 use Phpcq\Config\ProjectConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
@@ -16,7 +15,7 @@ use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\Repository\JsonRepositoryLoader;
+use Phpcq\Repository\InstalledRepositoryLoader;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
@@ -73,13 +72,13 @@ final class RunCommand extends AbstractCommand
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $phpcqPath,
-            $this->getInstalledRepository($phpcqPath, $cachePath),
+            $installed = $this->getInstalledRepository($phpcqPath),
             ...$this->findPhpCli()
         );
         // Create build configuration
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
         // Load bootstraps
-        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
         if ($toolName = $input->getArgument('tool')) {
             assert(is_string($toolName));
@@ -119,15 +118,12 @@ final class RunCommand extends AbstractCommand
         return $exitCode;
     }
 
-    private function getInstalledRepository(string $phpcqPath, string $cachePath): RepositoryInterface
+    private function getInstalledRepository(string $phpcqPath): RepositoryInterface
     {
         if (!is_file($phpcqPath . '/installed.json')) {
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
-        $loader = new JsonRepositoryLoader(
-            PlatformInformation::createFromCurrentPlatform(),
-            new FileDownloader($cachePath)
-        );
+        $loader = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
 
         return $loader->loadFile($phpcqPath . '/installed.json');
     }

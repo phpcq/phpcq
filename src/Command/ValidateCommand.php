@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
+use Phpcq\Exception\RuntimeException;
+use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\Repository\InstalledRepositoryLoader;
+use Phpcq\Repository\RepositoryInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_keys;
@@ -39,12 +43,12 @@ final class ValidateCommand extends AbstractCommand
         $configFile = $input->getOption('config');
         assert(is_string($configFile));
         $config     = ConfigLoader::load($configFile);
-
-        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
-        $valid   = true;
+        $installed  = $this->getInstalledRepository($phpcqPath);
+        $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $output->writeln('Validate plugins:', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
+        $valid = true;
         foreach (array_keys($config['tools']) as $toolName) {
             if (!$this->validatePlugin($plugins, $toolName, $config, $output)) {
                 $valid = false;
@@ -98,5 +102,17 @@ final class ValidateCommand extends AbstractCommand
 
             return false;
         }
+    }
+
+    private function getInstalledRepository(string $phpcqPath): RepositoryInterface
+    {
+        if (!is_file($phpcqPath . '/installed.json')) {
+            throw new RuntimeException('Please install the tools first ("phpcq update").');
+        }
+        $loader = new InstalledRepositoryLoader(
+            PlatformInformation::createFromCurrentPlatform()
+        );
+
+        return $loader->loadFile($phpcqPath . '/installed.json');
     }
 }
