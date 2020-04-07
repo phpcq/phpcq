@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
-use Phpcq\Repository\InstalledRepositoryLoader;
-use Phpcq\Repository\RepositoryInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function array_keys;
@@ -22,6 +18,8 @@ use function sprintf;
 
 final class ValidateCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     protected function configure(): void
     {
         $this->setName('validate')->setDescription('Validate the phpcq installation');
@@ -102,17 +100,5 @@ final class ValidateCommand extends AbstractCommand
 
             return false;
         }
-    }
-
-    private function getInstalledRepository(string $phpcqPath): RepositoryInterface
-    {
-        if (!is_file($phpcqPath . '/installed.json')) {
-            throw new RuntimeException('Please install the tools first ("phpcq update").');
-        }
-        $loader = new InstalledRepositoryLoader(
-            PlatformInformation::createFromCurrentPlatform()
-        );
-
-        return $loader->loadFile($phpcqPath . '/installed.json');
     }
 }

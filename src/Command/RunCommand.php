@@ -11,12 +11,9 @@ use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
-use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\Repository\InstalledRepositoryLoader;
-use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
@@ -30,6 +27,8 @@ use function is_string;
 
 final class RunCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     protected function configure(): void
     {
         $this->setName('run')->setDescription('Run configured build tasks');
@@ -111,16 +110,6 @@ final class RunCommand extends AbstractCommand
         }
 
         return $exitCode;
-    }
-
-    private function getInstalledRepository(string $phpcqPath): RepositoryInterface
-    {
-        if (!is_file($phpcqPath . '/installed.json')) {
-            throw new RuntimeException('Please install the tools first ("phpcq update").');
-        }
-        $loader = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
-
-        return $loader->loadFile($phpcqPath . '/installed.json');
     }
 
     /** @psalm-return array{0: string, 1: array} */
