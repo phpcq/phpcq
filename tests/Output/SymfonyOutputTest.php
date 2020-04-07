@@ -8,6 +8,9 @@ use Phpcq\Output\SymfonyOutput;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
+/**
+ * @covers \Phpcq\Output\SymfonyOutput
+ */
 class SymfonyOutputTest extends TestCase
 {
     public function testWrite()

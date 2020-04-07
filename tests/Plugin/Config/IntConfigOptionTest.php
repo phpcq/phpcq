@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \Phpcq\Plugin\Config\AbstractConfigurationOption
  * @covers \Phpcq\Plugin\Config\IntConfigOption
  */
 final class IntConfigOptionTest extends TestCase
@@ -41,11 +42,11 @@ final class IntConfigOptionTest extends TestCase
 
     public function testValidateValue() : void
     {
-        $this->expectNotToPerformAssertions();
-
         $option = new IntConfigOption('param', 'Param description', 1, false);
         $option->validateValue(1);
         $option->validateValue(null);
+        // Add to assertions that we passed validation.
+        $this->addToAssertionCount(2);
     }
 
     public function testThrowsOnInvalidValue() : void

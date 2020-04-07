@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \Phpcq\Plugin\Config\AbstractConfigurationOption
  * @covers \Phpcq\Plugin\Config\BoolConfigOption
  */
 final class BoolConfigOptionTest extends TestCase
@@ -41,12 +42,12 @@ final class BoolConfigOptionTest extends TestCase
 
     public function testValidateValue() : void
     {
-        $this->expectNotToPerformAssertions();
-
         $option = new BoolConfigOption('param', 'Param description', false, false);
         $option->validateValue(true);
         $option->validateValue(false);
         $option->validateValue(null);
+        // Add to assertions that we passed validation.
+        $this->addToAssertionCount(3);
     }
 
     public function testThrowsOnInvalidValue() : void

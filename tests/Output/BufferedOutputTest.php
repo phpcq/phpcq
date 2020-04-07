@@ -8,6 +8,9 @@ use Phpcq\Output\BufferedOutput;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Output\BufferedOutput
+ */
 class BufferedOutputTest extends TestCase
 {
     public function testWriteOnRelease(): void

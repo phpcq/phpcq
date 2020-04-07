@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \Phpcq\Plugin\Config\AbstractConfigurationOption
  * @covers \Phpcq\Plugin\Config\ArrayConfigOption
  */
 final class ArrayConfigOptionTest extends TestCase
@@ -41,13 +42,13 @@ final class ArrayConfigOptionTest extends TestCase
 
     public function testValidateValue() : void
     {
-        $this->expectNotToPerformAssertions();
-
         $option = new ArrayConfigOption('param', 'Param description', ['bar'], false);
         $option->validateValue(['bar']);
         $option->validateValue(['foo' => 'bar']);
         $option->validateValue(['foo' => 'bar', 1 => 'baz']);
         $option->validateValue(null);
+        // Add to assertions that we passed validation.
+        $this->addToAssertionCount(4);
     }
 
     public function testThrowsOnInvalidValue() : void

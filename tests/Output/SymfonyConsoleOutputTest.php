@@ -10,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @covers \Phpcq\Output\SymfonyConsoleOutput
+ */
 class SymfonyConsoleOutputTest extends TestCase
 {
     public function testWrite(): void
