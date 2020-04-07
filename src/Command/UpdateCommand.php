@@ -13,6 +13,7 @@ use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryFactory;
 use Phpcq\Repository\ToolInformation;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use function assert;
 use function is_string;
@@ -22,6 +23,13 @@ final class UpdateCommand extends AbstractCommand
     protected function configure(): void
     {
         $this->setName('update')->setDescription('Update the phpcq installation');
+        $this->addOption(
+            'cache',
+            'x',
+            InputOption::VALUE_REQUIRED,
+            'Path to the phpcq cache directory',
+            (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq'
+        );
         parent::configure();
     }
 
