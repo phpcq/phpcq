@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
+use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
 use Phpcq\Platform\PlatformInformation;
 use Phpcq\Repository\JsonRepositoryDumper;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryFactory;
+use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -65,6 +67,8 @@ final class UpdateCommand extends AbstractCommand
             $pharName = sprintf('%1$s~%2$s.phar', $toolInfo->getName(), $toolInfo->getVersion());
             $downloader->downloadFileTo($toolInfo->getPharUrl(), $phpcqPath . '/' . $pharName);
 
+            $this->validateHash($phpcqPath . '/' . $pharName, $toolInfo->getHash());
+
             $localTool = new ToolInformation(
                 $toolInfo->getName(),
                 $toolInfo->getVersion(),
@@ -82,5 +86,23 @@ final class UpdateCommand extends AbstractCommand
         $dumper->dump($installed, 'installed.json');
 
         return 0;
+    }
+
+    private function validateHash(string $pathToPhar, ?ToolHash $hash)
+    {
+        if (null === $hash) {
+            return;
+        }
+
+        static $hashMap = [
+            ToolHash::SHA_1   => 'sha1',
+            ToolHash::SHA_256 => 'sha256',
+            ToolHash::SHA_384 => 'sha384',
+            ToolHash::SHA_512 => 'sha512',
+        ];
+
+        if ($hash->getValue() !== hash_file($hashMap[$hash->getType()], $pathToPhar)) {
+            throw new RuntimeException('Invalid hash for file: ' . $pathToPhar);
+        }
     }
 }
