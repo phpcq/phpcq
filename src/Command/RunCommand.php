@@ -55,13 +55,8 @@ final class RunCommand extends AbstractCommand
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
-        $cachePath = $input->getOption('cache');
-        assert(is_string($cachePath));
-        $this->createDirectory($cachePath);
-
         if ($output->isVeryVerbose()) {
             $output->writeln('Using HOME: ' . $phpcqPath);
-            $output->writeln('Using CACHE: ' . $cachePath);
         }
         $configFile = $input->getOption('config');
         assert(is_string($configFile));
