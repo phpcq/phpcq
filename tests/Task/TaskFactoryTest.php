@@ -20,7 +20,7 @@ final class TaskFactoryTest extends TestCase
     {
         $factory = new TaskFactory(
             '/phpcq/path',
-            $installed = $this->getMockForAbstractClass(RepositoryInterface::class),
+            $this->getMockForAbstractClass(RepositoryInterface::class),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
