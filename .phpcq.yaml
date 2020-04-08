@@ -6,16 +6,18 @@ phpcq:
     - tests
   artifact: .phpcq/build
   tools:
-    phpcpd:
-      version: ^5.0
     phpunit:
       version: ^9.0
-    phpmd:
-      version: ^2.8.2
     psalm:
       version: ^3.10.0
     composer-require-checker:
       version: ^2.0.0
+    phpmd:
+      version: ^2.8.2
+    phpcpd:
+      version: ^5.0
+    phploc:
+      version: ^6.0
 
 phpunit:
   custom_flags:
