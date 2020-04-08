@@ -79,7 +79,7 @@ final class UpdateCommand extends AbstractCommand
         $calculator = new UpdateCalculator($this->getInstalledRepository($phpcqPath), $pool, $consoleOutput);
         $tasks = $calculator->calculate($config['tools']);
 
-        if ($input->hasOption('dry-run')) {
+        if ($input->getOption('dry-run')) {
             foreach ($tasks as $task) {
                 $output->writeln($task['message']);
             }
