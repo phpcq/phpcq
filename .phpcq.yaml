@@ -36,6 +36,11 @@ phpcpd:
 phploc:
 
 phpmd:
+  ruleset:
+    - codesize
+    - controversial
+    - naming
+    - unusedcode
 
 psalm:
 

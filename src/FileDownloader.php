@@ -100,9 +100,9 @@ class FileDownloader
             return $baseDir . '/' . $url;
         }
         // Perform URL check.
-        $path         = parse_url($url, PHP_URL_PATH);
-        $encoded_path = array_map('urlencode', explode('/', $path));
-        $url          = str_replace($path, implode('/', $encoded_path), $url);
+        $path        = parse_url($url, PHP_URL_PATH);
+        $encodedPath = array_map('urlencode', explode('/', $path));
+        $url         = str_replace($path, implode('/', $encodedPath), $url);
         if (filter_var($url, FILTER_VALIDATE_URL)) {
             return $url;
         }

@@ -139,7 +139,12 @@ class PlatformInformation implements PlatformInformationInterface
         return $extensions;
     }
 
-    /** @return array<string, string> */
+    /**
+     * @return array<string, string>
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private static function detectLibraries(): array
     {
         $libraries = [];
