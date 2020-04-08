@@ -8,16 +8,12 @@ use Phpcq\Config\BuildConfiguration;
 use Phpcq\Config\ProjectConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
-use Phpcq\Platform\PlatformInformation;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,6 +27,8 @@ use function is_string;
 
 final class RunCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     protected function configure(): void
     {
         $this->setName('run')->setDescription('Run configured build tasks');
@@ -56,13 +54,8 @@ final class RunCommand extends AbstractCommand
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
-        $cachePath = $input->getOption('cache');
-        assert(is_string($cachePath));
-        $this->createDirectory($cachePath);
-
         if ($output->isVeryVerbose()) {
             $output->writeln('Using HOME: ' . $phpcqPath);
-            $output->writeln('Using CACHE: ' . $cachePath);
         }
         $configFile = $input->getOption('config');
         assert(is_string($configFile));
@@ -73,13 +66,13 @@ final class RunCommand extends AbstractCommand
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $phpcqPath,
-            $this->getInstalledRepository($phpcqPath, $cachePath),
+            $installed = $this->getInstalledRepository($phpcqPath),
             ...$this->findPhpCli()
         );
         // Create build configuration
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
         // Load bootstraps
-        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
         if ($toolName = $input->getArgument('tool')) {
             assert(is_string($toolName));
@@ -117,19 +110,6 @@ final class RunCommand extends AbstractCommand
         }
 
         return $exitCode;
-    }
-
-    private function getInstalledRepository(string $phpcqPath, string $cachePath): RepositoryInterface
-    {
-        if (!is_file($phpcqPath . '/installed.json')) {
-            throw new RuntimeException('Please install the tools first ("phpcq update").');
-        }
-        $loader = new JsonRepositoryLoader(
-            PlatformInformation::createFromCurrentPlatform(),
-            new FileDownloader($cachePath)
-        );
-
-        return $loader->loadFile($phpcqPath . '/installed.json');
     }
 
     /** @psalm-return array{0: string, 1: array} */

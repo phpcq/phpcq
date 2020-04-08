@@ -18,6 +18,8 @@ use function sprintf;
 
 final class ValidateCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     protected function configure(): void
     {
         $this->setName('validate')->setDescription('Validate the phpcq installation');
@@ -39,12 +41,12 @@ final class ValidateCommand extends AbstractCommand
         $configFile = $input->getOption('config');
         assert(is_string($configFile));
         $config     = ConfigLoader::load($configFile);
-
-        $plugins = PluginRegistry::buildFromInstalledJson($phpcqPath . '/installed.json');
-        $valid   = true;
+        $installed  = $this->getInstalledRepository($phpcqPath);
+        $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $output->writeln('Validate plugins:', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
+        $valid = true;
         foreach (array_keys($config['tools']) as $toolName) {
             if (!$this->validatePlugin($plugins, $toolName, $config, $output)) {
                 $valid = false;

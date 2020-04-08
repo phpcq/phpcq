@@ -6,22 +6,41 @@ namespace Phpcq\Command;
 
 use Phpcq\ConfigLoader;
 use Phpcq\FileDownloader;
+use Phpcq\Output\SymfonyConsoleOutput;
+use Phpcq\Output\SymfonyOutput;
 use Phpcq\Platform\PlatformInformation;
-use Phpcq\Repository\JsonRepositoryDumper;
 use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryFactory;
-use Phpcq\Repository\ToolInformation;
+use Phpcq\ToolUpdate\UpdateCalculator;
+use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use function assert;
 use function is_string;
 
 final class UpdateCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     protected function configure(): void
     {
         $this->setName('update')->setDescription('Update the phpcq installation');
+        $this->addOption(
+            'cache',
+            'x',
+            InputOption::VALUE_REQUIRED,
+            'Path to the phpcq cache directory',
+            (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq'
+        );
+        $this->addOption(
+            'dry-run',
+            'd',
+            InputOption::VALUE_NONE,
+            'Dry run'
+        );
+
         parent::configure();
     }
 
@@ -49,29 +68,25 @@ final class UpdateCommand extends AbstractCommand
         $factory          = new RepositoryFactory($repositoryLoader);
         // Download repositories
         $pool = $factory->buildPool($config['repositories'] ?? []);
-        // Download needed tools and add to local repository.
-        $installed = new Repository($platformInformation);
-        foreach ($config['tools'] as $toolName => $tool) {
-            $toolInfo = $pool->getTool($toolName, $tool['version']);
-            // Download to destination path and add new information to installed repository.
-            $pharName = sprintf('%1$s~%2$s.phar', $toolInfo->getName(), $toolInfo->getVersion());
-            $downloader->downloadFileTo($toolInfo->getPharUrl(), $phpcqPath . '/' . $pharName);
 
-            $localTool = new ToolInformation(
-                $toolInfo->getName(),
-                $toolInfo->getVersion(),
-                $pharName,
-                $toolInfo->getPlatformRequirements(),
-                $toolInfo->getBootstrap(),
-                $toolInfo->getHash(),
-                $toolInfo->getSignatureUrl()
-            );
-
-            $installed->addVersion($localTool);
+        // Wrap console output
+        if ($output instanceof ConsoleOutputInterface) {
+            $consoleOutput = new SymfonyConsoleOutput($output);
+        } else {
+            $consoleOutput = new SymfonyOutput($output);
         }
-        // Save installed repository.
-        $dumper = new JsonRepositoryDumper($phpcqPath);
-        $dumper->dump($installed, 'installed.json');
+
+        $calculator = new UpdateCalculator($this->getInstalledRepository($phpcqPath), $pool, $consoleOutput);
+        $tasks = $calculator->calculate($config['tools']);
+
+        if ($input->hasOption('dry-run')) {
+            foreach ($tasks as $task) {
+                $output->writeln($task['message']);
+            }
+            return 0;
+        }
+        $executor = new UpdateExecutor($platformInformation, $downloader, $phpcqPath, $consoleOutput);
+        $executor->execute($tasks);
 
         return 0;
     }
