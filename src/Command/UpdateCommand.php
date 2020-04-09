@@ -76,7 +76,7 @@ final class UpdateCommand extends AbstractCommand
             $consoleOutput = new SymfonyOutput($output);
         }
 
-        $calculator = new UpdateCalculator($this->getInstalledRepository($phpcqPath), $pool, $consoleOutput);
+        $calculator = new UpdateCalculator($this->getInstalledRepository($phpcqPath, false), $pool, $consoleOutput);
         $tasks = $calculator->calculate($config['tools']);
 
         if ($input->getOption('dry-run')) {
