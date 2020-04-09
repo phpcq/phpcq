@@ -37,7 +37,8 @@
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",
-        "symfony/yaml": "^5.0.7"
+        "symfony/yaml": "^5.0.7",
+        "guzzlehttp/guzzle": "^6.0"
     },
     "autoload": {
         "psr-4": {
