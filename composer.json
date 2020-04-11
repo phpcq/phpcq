@@ -38,7 +38,13 @@
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",
         "symfony/yaml": "^5.0.7",
-        "guzzlehttp/guzzle": "^6.0"
+        "guzzlehttp/guzzle": "^6.0",
+        "php-http/guzzle6-adapter": "^2.0",
+        "php-http/message-factory": "^1.0",
+        "phar-io/filesystem": "^1.0@dev",
+        "phar-io/executor": "^1.0@dev",
+        "phar-io/gnupg": "^1.0@dev",
+        "php-http/message": "^1.8"
     },
     "autoload": {
         "psr-4": {

@@ -6,6 +6,7 @@ namespace Phpcq\ToolUpdate;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
+use Phpcq\GnuPG\SignatureVerifier;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
@@ -13,6 +14,8 @@ use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Phpcq\Repository\ToolInformationInterface;
+use function file_get_contents;
+use function sprintf;
 
 final class UpdateExecutor
 {
@@ -31,9 +34,15 @@ final class UpdateExecutor
      */
     private $output;
 
-    public function __construct(FileDownloader $downloader, string $phpcqPath, OutputInterface $output)
+    /**
+     * @var SignatureVerifier
+     */
+    private $verifier;
+
+    public function __construct(FileDownloader $downloader, SignatureVerifier $verifier, string $phpcqPath, OutputInterface $output)
     {
         $this->downloader = $downloader;
+        $this->verifier   = $verifier;
         $this->phpcqPath  = $phpcqPath;
         $this->output     = $output;
     }
@@ -94,6 +103,7 @@ final class UpdateExecutor
 
         $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
         $this->validateHash($pharPath, $tool->getHash());
+        $this->verifySignature($pharPath, $tool);
 
         return new ToolInformation(
             $tool->getName(),
@@ -140,6 +150,31 @@ final class UpdateExecutor
 
         if ($hash->getValue() !== hash_file($hashMap[$hash->getType()], $pathToPhar)) {
             throw new RuntimeException('Invalid hash for file: ' . $pathToPhar);
+        }
+    }
+
+    private function verifySignature(string $pharPath, ToolInformationInterface $tool): void
+    {
+        $signatureUrl = $tool->getSignatureUrl();
+        if (null === $signatureUrl) {
+            // TODO: How should we handle missing signatures:
+            // Show a warning or add a configuration how phpcq should deal with it?
+            return;
+        }
+
+        $signatureName = sprintf('%1$s~%2$s.asc', $tool->getName(), $tool->getVersion());
+        $signaturePath = $this->phpcqPath . '/' . $signatureName;
+        $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
+        $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+
+        if (! $result->isValid()) {
+            throw new RuntimeException(
+                sprintf(
+                    'Verify signature for tool "%s" failed with key fingerprint "%s"',
+                    $tool->getName(),
+                    $result->getFingerprint() ?: 'UNKOWN'
+                )
+            );
         }
     }
 }

@@ -18,6 +18,13 @@ phpcq:
       version: ^5.0
     phploc:
       version: ^6.0
+  trusted-keys:
+    # sb@sebastian-bergmann.de
+    - 4AA394086372C20A
+    # psalm
+    - 8A03EA3B385DBAA1
+    # magl@magll.net
+    - D2CCAC42F6295E7D
 
 phpunit:
   custom_flags:

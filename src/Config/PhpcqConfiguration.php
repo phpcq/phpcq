@@ -15,6 +15,7 @@ final class PhpcqConfiguration implements ConfigurationInterface
         $root        = $treeBuilder->getRootNode();
 
         $root
+            ->normalizeKeys(false)
             ->children()
                 ->arrayNode('directories')
                     ->scalarPrototype()->end()
@@ -35,6 +36,9 @@ final class PhpcqConfiguration implements ConfigurationInterface
                             ->scalarNode('runner-plugin')->end()
                         ->end()
                     ->end()
+                ->end()
+                ->arrayNode('trusted-keys')
+                    ->scalarPrototype()->end()
                 ->end()
             ->end();
 

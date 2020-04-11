@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
+use Http\Adapter\Guzzle6\Client;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Http\Message\UriFactory\GuzzleUriFactory;
 use Phpcq\FileDownloader;
+use Phpcq\GnuPG\GnuPGFactory;
+use Phpcq\GnuPG\KeyDownloader;
+use Phpcq\GnuPG\SignatureVerifier;
 use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryFactory;
@@ -69,9 +75,19 @@ final class UpdateCommand extends AbstractCommand
             }
             return 0;
         }
-        $executor = new UpdateExecutor($downloader, $this->phpcqPath, $consoleOutput);
+
+        $signatureVerifier = $this->createSignatureVerifier($this->phpcqPath, $this->config['trusted-keys']);
+        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput);
         $executor->execute($tasks);
 
         return 0;
+    }
+
+    protected function createSignatureVerifier(string $phpcqPath, array $trustedKeys) : SignatureVerifier
+    {
+        $httpClient        = new Client();
+        $keyDownloader     = new KeyDownloader($httpClient, new GuzzleMessageFactory(), new GuzzleUriFactory());
+
+        return new SignatureVerifier((new GnuPGFactory($phpcqPath))->create(), $keyDownloader, $trustedKeys);
     }
 }
