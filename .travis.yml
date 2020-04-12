@@ -46,4 +46,3 @@ git:
 
 cache:
   directories:
-    - vendor
