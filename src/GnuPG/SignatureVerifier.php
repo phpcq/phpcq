@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\GnuPG;
 
+use Phpcq\GnuPG\TrustedKeys\TrustedKeyCollectionInterface;
 use function in_array;
 
 final class SignatureVerifier
@@ -15,21 +16,18 @@ final class SignatureVerifier
     private $keyDownloader;
 
     /**
-     * @psalm-var list<string>
-     * @var string[]
+     * @var TrustedKeyCollectionInterface
      */
     private $trustedKeys;
 
     /**
      * Verifier constructor.
      *
-     * @psalm-param list<string> $trustedKeys
-     *
-     * @param GnuPGInterface $gnupg
-     * @param KeyDownloader  $keyDownloader
-     * @param string[]       $trustedKeys
+     * @param GnuPGInterface                $gnupg
+     * @param KeyDownloader                 $keyDownloader
+     * @param TrustedKeyCollectionInterface $trustedKeys
      */
-    public function __construct(GnuPGInterface $gnupg, KeyDownloader $keyDownloader, array $trustedKeys)
+    public function __construct(GnuPGInterface $gnupg, KeyDownloader $keyDownloader, TrustedKeyCollectionInterface $trustedKeys)
     {
         $this->gnupg         = $gnupg;
         $this->keyDownloader = $keyDownloader;
@@ -55,16 +53,6 @@ final class SignatureVerifier
         return $this->doVerify($content, $signature, $alwaysTrustKey);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    protected function isTrustedKey(string $key) : bool
-    {
-        return !in_array($key, $this->trustedKeys, true);
-    }
-
     private function doVerify(string $content, string $signature, bool $alwaysTrustKey): VerificationResult
     {
         $result = $this->gnupg->verify($content, $signature);
@@ -73,7 +61,7 @@ final class SignatureVerifier
             return VerificationResult::UNKOWN_ERROR();
         }
 
-        if (!$alwaysTrustKey && $this->isTrustedKey($result[0]['fingerprint'])) {
+        if (!$alwaysTrustKey && !$this->trustedKeys->contains($result[0]['fingerprint'])) {
             return VerificationResult::UNTRUSTED_KEY($result[0]['fingerprint']);
         }
 

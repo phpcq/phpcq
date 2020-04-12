@@ -39,12 +39,23 @@ final class UpdateExecutor
      */
     private $verifier;
 
-    public function __construct(FileDownloader $downloader, SignatureVerifier $verifier, string $phpcqPath, OutputInterface $output)
-    {
-        $this->downloader = $downloader;
-        $this->verifier   = $verifier;
-        $this->phpcqPath  = $phpcqPath;
-        $this->output     = $output;
+    /**
+     * @var callable
+     */
+    private $untrustedKeyStrategy;
+
+    public function __construct(
+        FileDownloader $downloader,
+        SignatureVerifier $verifier,
+        string $phpcqPath,
+        OutputInterface $output,
+        callable $untrustedKeyStrategy
+    ) {
+        $this->downloader           = $downloader;
+        $this->verifier             = $verifier;
+        $this->phpcqPath            = $phpcqPath;
+        $this->output               = $output;
+        $this->untrustedKeyStrategy = $untrustedKeyStrategy;
     }
 
     public function execute(array $tasks): void
@@ -169,6 +180,10 @@ final class UpdateExecutor
         $signaturePath = $this->phpcqPath . '/' . $signatureName;
         $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+
+        if ($result->isUntrustedKey() && ($this->untrustedKeyStrategy)($result->getFingerprint(), $tool)) {
+            $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+        }
 
         if (! $result->isValid()) {
             throw new RuntimeException(

@@ -11,12 +11,15 @@ use Phpcq\FileDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\KeyDownloader;
 use Phpcq\GnuPG\SignatureVerifier;
+use Phpcq\GnuPG\TrustedKeys\TrustedKeyStorage;
 use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryFactory;
+use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use function assert;
 use function is_string;
 
@@ -39,6 +42,13 @@ final class UpdateCommand extends AbstractCommand
             'd',
             InputOption::VALUE_NONE,
             'Dry run'
+        );
+
+        $this->addOption(
+            'trust-keys',
+            'k',
+            InputOption::VALUE_NONE,
+            'Add all keys to trusted key storage'
         );
 
         parent::configure();
@@ -76,8 +86,12 @@ final class UpdateCommand extends AbstractCommand
             return 0;
         }
 
+        $trustedKeyStorage    = new TrustedKeyStorage($this->phpcqPath . '/trusted-keys.json');
+        $untrustedKeyStrategy = $this->getUntrustedKeyHandler($trustedKeyStorage);
+
         $signatureVerifier = $this->createSignatureVerifier($downloader);
-        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput);
+        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput, $untrustedKeyStrategy);
+
         $executor->execute($tasks);
 
         return 0;
@@ -90,5 +104,37 @@ final class UpdateCommand extends AbstractCommand
             new KeyDownloader($downloader),
             $this->config['trusted-keys']
         );
+    }
+
+    /**
+     * @param TrustedKeyStorage $trustedKeyStorage
+     *
+     * @return \Closure
+     */
+    protected function getUntrustedKeyHandler(TrustedKeyStorage $trustedKeyStorage) : \Closure
+    {
+        if ($this->input->getOption('trust-keys')) {
+            return static function (string $fingerprint) use ($trustedKeyStorage) : bool {
+                $trustedKeyStorage->add($fingerprint);
+
+                return true;
+            };
+        }
+
+        return function (string $fingerprint, ToolInformationInterface $toolInformation) use ($trustedKeyStorage) : bool {
+            $helper   = $this->getHelper('question');
+            $question = new ConfirmationQuestion(
+                sprintf('Trust key "%s" (Tool %s) permanently? (y/n)', $fingerprint, $toolInformation->getName()),
+                false
+            );
+
+            if (!$helper->ask($this->input, $this->output, $question)) {
+                return false;
+            }
+
+            $trustedKeyStorage->add($fingerprint);
+
+            return true;
+        };
     }
 }
