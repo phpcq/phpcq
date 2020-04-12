@@ -6,8 +6,8 @@ phpcq:
     - tests
   artifact: .phpcq/build
   tools:
-    phpunit:
-      version: ^9.0
+#    phpunit:
+#      version: ^9.0
     psalm:
       version: ^3.10.0
     composer-require-checker:

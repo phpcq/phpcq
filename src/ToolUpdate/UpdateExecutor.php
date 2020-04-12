@@ -74,7 +74,7 @@ final class UpdateExecutor
 
     private function installTool(ToolInformationInterface $tool): ToolInformationInterface
     {
-        $this->output->writeln('Installing', OutputInterface::VERBOSITY_VERBOSE);
+        $this->output->writeln('Installing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
 
         return $this->installVersion($tool);
     }
@@ -103,7 +103,7 @@ final class UpdateExecutor
 
         $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
         $this->validateHash($pharPath, $tool->getHash());
-        $this->verifySignature($pharPath, $tool);
+        $signatureName = $this->verifySignature($pharPath, $tool);
 
         return new ToolInformation(
             $tool->getName(),
@@ -112,7 +112,7 @@ final class UpdateExecutor
             $tool->getPlatformRequirements(),
             $tool->getBootstrap(),
             $tool->getHash(),
-            $tool->getSignatureUrl()
+            $signatureName
         );
     }
 
@@ -122,6 +122,9 @@ final class UpdateExecutor
         $bootstrap = $tool->getBootstrap();
         if (!$bootstrap instanceof InstalledBootstrap) {
             throw new RuntimeException('Can only remove installed bootstrap files.');
+        }
+        if ($signatureUrl = $tool->getSignatureUrl()) {
+            $this->deleteFile($this->phpcqPath . '/' . $tool->getSignatureUrl());
         }
 
         $this->deleteFile($bootstrap->getFilePath());
@@ -153,13 +156,13 @@ final class UpdateExecutor
         }
     }
 
-    private function verifySignature(string $pharPath, ToolInformationInterface $tool): void
+    private function verifySignature(string $pharPath, ToolInformationInterface $tool): ?string
     {
         $signatureUrl = $tool->getSignatureUrl();
         if (null === $signatureUrl) {
             // TODO: How should we handle missing signatures:
             // Show a warning or add a configuration how phpcq should deal with it?
-            return;
+            return null;
         }
 
         $signatureName = sprintf('%1$s~%2$s.asc', $tool->getName(), $tool->getVersion());
@@ -176,5 +179,7 @@ final class UpdateExecutor
                 )
             );
         }
+
+        return $signatureName;
     }
 }
