@@ -76,18 +76,19 @@ final class UpdateCommand extends AbstractCommand
             return 0;
         }
 
-        $signatureVerifier = $this->createSignatureVerifier($this->phpcqPath, $this->config['trusted-keys']);
+        $signatureVerifier = $this->createSignatureVerifier($downloader);
         $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput);
         $executor->execute($tasks);
 
         return 0;
     }
 
-    protected function createSignatureVerifier(string $phpcqPath, array $trustedKeys) : SignatureVerifier
+    protected function createSignatureVerifier(FileDownloader $downloader) : SignatureVerifier
     {
-        $httpClient        = new Client();
-        $keyDownloader     = new KeyDownloader($httpClient, new GuzzleMessageFactory(), new GuzzleUriFactory());
-
-        return new SignatureVerifier((new GnuPGFactory($phpcqPath))->create(), $keyDownloader, $trustedKeys);
+        return new SignatureVerifier(
+            (new GnuPGFactory($this->phpcqPath))->create(),
+            new KeyDownloader($downloader),
+            $this->config['trusted-keys']
+        );
     }
 }

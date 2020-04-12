@@ -17,16 +17,19 @@ final class VerificationResult
         $this->fingerprint = $fingerprint;
     }
 
+    /** @SuppressWarnings(PHPMD.CamelCaseMethodName) */
     public static function UNKOWN_ERROR() : self
     {
         return new self('unknown');
     }
 
+    /** @SuppressWarnings(PHPMD.CamelCaseMethodName) */
     public static function UNTRUSTED_KEY(?string $fingerprint) : self
     {
         return new self('untrusted_key', $fingerprint);
     }
 
+    /** @SuppressWarnings(PHPMD.CamelCaseMethodName) */
     public static function VALID(?string $fingerprint): self
     {
         return new self('valid', $fingerprint);

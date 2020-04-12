@@ -7,6 +7,7 @@ namespace Phpcq;
 use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
+use function file_get_contents;
 
 class FileDownloader
 {

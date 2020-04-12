@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Phpcq\GnuPG;
 
-use GnuPG;
+use Gnupg;
 use Phpcq\Exception\GnuPGException;
 
 final class GnuPGDecorator implements GnuPGInterface
 {
-    /** @var GnuPG */
+    /** @var Gnupg */
     private $inner;
 
     /**
      * GnuPGDecorator constructor.
      *
-     * @param GnuPG $inner
+     * @param Gnupg $inner
      */
-    public function __construct(GnuPG $inner)
+    public function __construct(Gnupg $inner)
     {
         $this->inner = $inner;
     }

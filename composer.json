@@ -33,18 +33,15 @@
         "ext-xml": "*",
         "composer/semver": "^1.5",
         "composer/xdebug-handler": "^1.4",
+        "guzzlehttp/guzzle": "^6.0",
+        "phar-io/executor": "^1.0@dev",
+        "phar-io/filesystem": "^1.0@dev",
+        "phar-io/gnupg": "^1.0@dev",
         "phpcq/plugin-api": "^1.0.0@dev",
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",
-        "symfony/yaml": "^5.0.7",
-        "guzzlehttp/guzzle": "^6.0",
-        "php-http/guzzle6-adapter": "^2.0",
-        "php-http/message-factory": "^1.0",
-        "phar-io/filesystem": "^1.0@dev",
-        "phar-io/executor": "^1.0@dev",
-        "phar-io/gnupg": "^1.0@dev",
-        "php-http/message": "^1.8"
+        "symfony/yaml": "^5.0.7"
     },
     "autoload": {
         "psr-4": {
