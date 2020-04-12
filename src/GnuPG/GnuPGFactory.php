@@ -12,14 +12,20 @@ final class GnuPGFactory
     /** @var string */
     private $homeDirectory;
 
-    public function __construct(string $homeDirectory)
+    /**
+     * @var PharIoGnuPGFactory
+     */
+    private $factory;
+
+    public function __construct(string $homeDirectory, PharIoGnuPGFactory $factory = null)
     {
         $this->homeDirectory = $homeDirectory;
+        $this->factory       = $factory ?: new PharIoGnuPGFactory();
     }
 
     public function create() : GnuPGInterface
     {
-        $instance = (new PharIoGnuPGFactory())->createGnuPG(new Directory($this->homeDirectory));
+        $instance = $this->factory->createGnuPG(new Directory($this->homeDirectory));
 
         return new GnuPGDecorator($instance);
     }
