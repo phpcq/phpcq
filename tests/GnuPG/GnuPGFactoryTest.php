@@ -10,12 +10,15 @@ use Phpcq\GnuPG\GnuPGDecorator;
 use Phpcq\GnuPG\GnuPGFactory;
 use PHPUnit\Framework\TestCase;
 use function class_alias;
+use function class_exists;
 
 final class GnuPGFactoryTest extends TestCase
 {
     public function testCreate() : void
     {
-        class_alias(GnuPG::class, '\Gnupg');
+        if (!class_exists('\Gnupg')) {
+            class_alias(GnuPG::class, '\Gnupg');
+        }
 
         $gnupg = $this->createMock(GnuPG::class);
         $mock = $this->createMock(PharIoGnuPGFactory::class);
