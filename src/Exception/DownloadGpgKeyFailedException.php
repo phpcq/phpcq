@@ -7,7 +7,7 @@ namespace Phpcq\Exception;
 use Throwable;
 use function sprintf;
 
-final class DownloadGpgKeyFailedException extends RuntimeException
+final class DownloadGpgKeyFailedException extends GnuPGException
 {
     /**
      * @psalm-var list<string>
