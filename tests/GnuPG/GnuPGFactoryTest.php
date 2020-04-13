@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GnuPG;
+namespace Phpcq\Test\GnuPG;
 
 use PharIo\GnuPG\Factory as PharIoGnuPGFactory;
 use PharIo\GnuPG\GnuPG;

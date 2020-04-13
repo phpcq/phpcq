@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GnuPG;
+namespace Phpcq\Test\GnuPG;
 
 use Phpcq\GnuPG\VerificationResult;
 use PHPUnit\Framework\TestCase;
