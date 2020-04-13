@@ -16,11 +16,11 @@ final class GnuPGFactoryTest extends TestCase
 {
     public function testCreate() : void
     {
-        if (!class_exists('\Gnupg')) {
+        if (!class_exists('Gnupg')) {
             class_alias(GnuPG::class, '\Gnupg');
         }
 
-        $gnupg = $this->createMock(GnuPG::class);
+        $gnupg = $this->createMock(\Gnupg::class);
         $mock = $this->createMock(PharIoGnuPGFactory::class);
 
         $mock->expects($this->once())
