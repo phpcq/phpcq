@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
+use Closure;
 use Http\Adapter\Guzzle6\Client;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use Http\Message\UriFactory\GuzzleUriFactory;
@@ -86,12 +87,9 @@ final class UpdateCommand extends AbstractCommand
             return 0;
         }
 
-        $trustedKeyStorage    = new TrustedKeyStorage($this->phpcqPath . '/trusted-keys.json');
-        $untrustedKeyStrategy = $this->getUntrustedKeyHandler($trustedKeyStorage);
-
         $signatureVerifier = $this->createSignatureVerifier($downloader);
+        $untrustedKeyStrategy = $this->getUntrustedKeyStrategy();
         $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput, $untrustedKeyStrategy);
-
         $executor->execute($tasks);
 
         return 0;
@@ -106,25 +104,18 @@ final class UpdateCommand extends AbstractCommand
         );
     }
 
-    /**
-     * @param TrustedKeyStorage $trustedKeyStorage
-     *
-     * @return \Closure
-     */
-    protected function getUntrustedKeyHandler(TrustedKeyStorage $trustedKeyStorage) : \Closure
+    protected function getUntrustedKeyStrategy() : Closure
     {
         if ($this->input->getOption('trust-keys')) {
-            return static function (string $fingerprint) use ($trustedKeyStorage) : bool {
-                $trustedKeyStorage->add($fingerprint);
-
+            return static function () : bool {
                 return true;
             };
         }
 
-        return function (string $fingerprint, ToolInformationInterface $toolInformation) use ($trustedKeyStorage) : bool {
+        return function (string $fingerprint, ToolInformationInterface $toolInformation) : bool {
             $helper   = $this->getHelper('question');
             $question = new ConfirmationQuestion(
-                sprintf('Trust key "%s" (Tool %s) permanently? (y/n)', $fingerprint, $toolInformation->getName()),
+                sprintf('Trust key "%s" for tool %s? (y/n) ', $fingerprint, $toolInformation->getName()),
                 false
             );
 
@@ -132,7 +123,12 @@ final class UpdateCommand extends AbstractCommand
                 return false;
             }
 
-            $trustedKeyStorage->add($fingerprint);
+            $this->output->writeln(
+                sprintf(
+                    'Temporary accepted key "%s". For permanent acceptance add it to the trusted-keys section of your configuration.',
+                    $fingerprint
+                )
+            );
 
             return true;
         };

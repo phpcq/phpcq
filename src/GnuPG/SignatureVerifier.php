@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\GnuPG;
 
-use Phpcq\GnuPG\TrustedKeys\TrustedKeyCollectionInterface;
 use function in_array;
 
 final class SignatureVerifier
@@ -16,18 +15,22 @@ final class SignatureVerifier
     private $keyDownloader;
 
     /**
-     * @var TrustedKeyCollectionInterface
+     * @param-var list<string>
+     *
+     * @var string[]
      */
     private $trustedKeys;
 
     /**
      * Verifier constructor.
      *
+     * @param-param list<string> $trustedKeys
+     *
      * @param GnuPGInterface                $gnupg
      * @param KeyDownloader                 $keyDownloader
-     * @param TrustedKeyCollectionInterface $trustedKeys
+     * @param string[]                      $trustedKeys
      */
-    public function __construct(GnuPGInterface $gnupg, KeyDownloader $keyDownloader, TrustedKeyCollectionInterface $trustedKeys)
+    public function __construct(GnuPGInterface $gnupg, KeyDownloader $keyDownloader, array $trustedKeys)
     {
         $this->gnupg         = $gnupg;
         $this->keyDownloader = $keyDownloader;
@@ -61,7 +64,7 @@ final class SignatureVerifier
             return VerificationResult::UNKOWN_ERROR();
         }
 
-        if (!$alwaysTrustKey && !$this->trustedKeys->contains($result[0]['fingerprint'])) {
+        if (!$alwaysTrustKey && !in_array($result[0]['fingerprint'], $this->trustedKeys, true)) {
             return VerificationResult::UNTRUSTED_KEY($result[0]['fingerprint']);
         }
 

@@ -182,7 +182,7 @@ final class UpdateExecutor
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
 
         if ($result->isUntrustedKey() && ($this->untrustedKeyStrategy)($result->getFingerprint(), $tool)) {
-            $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+            $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath), true);
         }
 
         if (! $result->isValid()) {
