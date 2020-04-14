@@ -1,10 +1,5 @@
 dist: xenial
 
-addons:
-  apt:
-    packages:
-      - ant-optional
-
 language: php
 
 matrix:
