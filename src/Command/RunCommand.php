@@ -6,21 +6,15 @@ namespace Phpcq\Command;
 
 use Phpcq\Config\BuildConfiguration;
 use Phpcq\Config\ProjectConfiguration;
-use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
-use Phpcq\Output\SymfonyConsoleOutput;
-use Phpcq\Output\SymfonyOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use function assert;
 use function is_string;
@@ -48,25 +42,14 @@ final class RunCommand extends AbstractCommand
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function doExecute(): int
     {
-        $phpcqPath = $input->getOption('tools');
-        assert(is_string($phpcqPath));
-        $this->createDirectory($phpcqPath);
-
-        if ($output->isVeryVerbose()) {
-            $output->writeln('Using HOME: ' . $phpcqPath);
-        }
-        $configFile = $input->getOption('config');
-        assert(is_string($configFile));
-        $config     = ConfigLoader::load($configFile);
-
-        $projectConfig = new ProjectConfiguration(getcwd(), $config['directories'], $config['artifact']);
+        $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
         $taskList = new Tasklist();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
-            $phpcqPath,
-            $installed = $this->getInstalledRepository($phpcqPath),
+            $this->phpcqPath,
+            $installed = $this->getInstalledRepository(true),
             ...$this->findPhpCli()
         );
         // Create build configuration
@@ -74,32 +57,26 @@ final class RunCommand extends AbstractCommand
         // Load bootstraps
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
-        if ($toolName = $input->getArgument('tool')) {
+        if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
-            $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
+            $this->handlePlugin($plugins, $toolName, $this->config, $buildConfig, $taskList);
         } else {
-            foreach (array_keys($config['tools']) as $toolName) {
-                $this->handlePlugin($plugins, $toolName, $config, $buildConfig, $taskList);
+            foreach (array_keys($this->config['tools']) as $toolName) {
+                $this->handlePlugin($plugins, $toolName, $this->config, $buildConfig, $taskList);
             }
         }
 
-        // Wrap console output
-        if ($output instanceof ConsoleOutputInterface) {
-            $consoleOutput = new SymfonyConsoleOutput($output);
-        } else {
-            $consoleOutput = new SymfonyOutput($output);
-        }
-
+        $consoleOutput = $this->getWrappedOutput();
         // TODO: Parallelize tasks
         // Execute task list
         $exitCode = 0;
-        $keepGoing = $input->getOption('keep-going');
+        $keepGoing = $this->input->getOption('keep-going');
         foreach ($taskList->getIterator() as $task) {
             $taskOutput = new BufferedOutput($consoleOutput);
             try {
                 $task->run($taskOutput);
             } catch (RuntimeException $throwable) {
-                $taskOutput->writeln($throwable->getMessage(), SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
+                $taskOutput->writeln($throwable->getMessage(), BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STRERR);
                 if (!$keepGoing) {
                     $taskOutput->release();
                     return (int) $throwable->getCode();
@@ -131,7 +108,6 @@ final class RunCommand extends AbstractCommand
      * @param array $config
      * @param BuildConfiguration $buildConfig
      * @param Tasklist $taskList
-     * @param array[] $config
      *
      * @return void
      */

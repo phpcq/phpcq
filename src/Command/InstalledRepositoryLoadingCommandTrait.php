@@ -12,9 +12,10 @@ use Phpcq\Repository\RepositoryInterface;
 
 trait InstalledRepositoryLoadingCommandTrait
 {
-    private function getInstalledRepository(string $phpcqPath, bool $failIfNotExist = true): RepositoryInterface
-    {
-        if (!is_file($phpcqPath . '/installed.json')) {
+    private function getInstalledRepository(
+        bool $failIfNotExist
+    ): RepositoryInterface {
+        if (!is_file($this->phpcqPath . '/installed.json')) {
             if (!$failIfNotExist) {
                 return new Repository(PlatformInformation::createFromCurrentPlatform());
             }
@@ -22,6 +23,6 @@ trait InstalledRepositoryLoadingCommandTrait
         }
         $loader = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
 
-        return $loader->loadFile($phpcqPath . '/installed.json');
+        return $loader->loadFile($this->phpcqPath . '/installed.json');
     }
 }
