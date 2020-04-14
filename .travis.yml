@@ -7,10 +7,10 @@ matrix:
   include:
     # latest requirement test
     - php: nightly
+      env:
+        - PLATFORM_FLAGS="--ignore-platform-reqs"
     - php: 7.4
     - php: 7.3
-      env:
-        - COMPOSER_FLAGS=""
     # minimum requirement test
     - php: 7.3
       env:
@@ -25,12 +25,12 @@ install:
   - travis_retry composer self-update && composer --version
   - >
     if [ "x${TRAVIS_TAG}" != "x" ]; then
-      COMPOSER_ROOT_VERSION=${TRAVIS_TAG} travis_retry composer update --prefer-dist --no-interaction;
+      COMPOSER_ROOT_VERSION=${TRAVIS_TAG} travis_retry composer update $PLATFORM_FLAGS --prefer-dist --no-interaction;
     else
       COMPOSER_ROOT_VERSION=$([[ ${TRAVIS_BRANCH} =~ (release|hotfix)/([0-9.]*(-(alpha|beta|rc)[0-9]+)?) ]] \
         && echo ${BASH_REMATCH[2]} \
         || echo dev-${TRAVIS_BRANCH}) \
-        travis_retry composer update $COMPOSER_FLAGS --prefer-dist --no-interaction;
+        travis_retry composer update $COMPOSER_FLAGS $PLATFORM_FLAGS --prefer-dist --no-interaction;
     fi
   - ./phpcq update
 
