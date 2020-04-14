@@ -5,13 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
-use Phpcq\Platform\PlatformInformation;
-use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,6 +20,8 @@ use function is_string;
 
 final class ExecCommand extends AbstractCommand
 {
+    use InstalledRepositoryLoadingCommandTrait;
+
     /**
      * If no '--' is to be found in the args (used to separate options for phpcq from the args and options for the tool,
      * insert it just before the tool name.
@@ -75,19 +73,15 @@ final class ExecCommand extends AbstractCommand
         $phpcqPath = $input->getOption('tools');
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
-        $cachePath = $input->getOption('cache');
-        assert(is_string($cachePath));
-        $this->createDirectory($cachePath);
 
         if ($output->isVeryVerbose()) {
             $output->writeln('Using HOME: ' . $phpcqPath);
-            $output->writeln('Using CACHE: ' . $cachePath);
         }
 
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $phpcqPath,
-            $this->getInstalledRepository($phpcqPath, $cachePath),
+            $this->getInstalledRepository($phpcqPath),
             ...$this->findPhpCli()
         );
 
@@ -121,19 +115,6 @@ final class ExecCommand extends AbstractCommand
         $taskOutput->release();
 
         return $exitCode;
-    }
-
-    private function getInstalledRepository(string $phpcqPath, string $cachePath): RepositoryInterface
-    {
-        if (!is_file($phpcqPath . '/installed.json')) {
-            throw new RuntimeException('Please install the tools first ("phpcq update").');
-        }
-        $loader = new JsonRepositoryLoader(
-            PlatformInformation::createFromCurrentPlatform(),
-            new FileDownloader($cachePath)
-        );
-
-        return $loader->loadFile($phpcqPath . '/installed.json');
     }
 
     /** @psalm-return array{0: string, 1: array} */
