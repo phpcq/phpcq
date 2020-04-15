@@ -8,8 +8,7 @@ use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
 use function file_get_contents;
-use const CURLOPT_SSL_VERIFYHOST;
-use const CURLOPT_SSL_VERIFYPEER;
+use function file_put_contents;
 
 class FileDownloader
 {
