@@ -8,6 +8,8 @@ use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
 use function file_get_contents;
+use const CURLOPT_SSL_VERIFYHOST;
+use const CURLOPT_SSL_VERIFYPEER;
 
 class FileDownloader
 {
@@ -155,6 +157,11 @@ class FileDownloader
         // FIXME: Move cache layer here.
         return new Client([
             'base_uri' => $baseUrl,
+            // FIXME: WTF - Some keyservers uses self signed ceriticates. We have to handle it somehow better
+            'curl' => [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false
+            ]
         ]);
     }
 }

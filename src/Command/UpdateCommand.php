@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Closure;
-use Http\Adapter\Guzzle6\Client;
-use Http\Message\MessageFactory\GuzzleMessageFactory;
-use Http\Message\UriFactory\GuzzleUriFactory;
 use Phpcq\FileDownloader;
+use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
-use Phpcq\GnuPG\KeyDownloader;
-use Phpcq\GnuPG\SignatureVerifier;
-use Phpcq\GnuPG\TrustedKeys\TrustedKeyStorage;
+use Phpcq\GnuPG\Signature\AlwaysStrategy;
+use Phpcq\GnuPG\Signature\SignatureVerifier;
+use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
+use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryFactory;
-use Phpcq\Repository\ToolInformationInterface;
+use Phpcq\Signature\InteractiveQuestionKeyTrustStrategy;
+use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use function assert;
 use function is_string;
+use function sys_get_temp_dir;
 
 final class UpdateCommand extends AbstractCommand
 {
@@ -87,50 +86,29 @@ final class UpdateCommand extends AbstractCommand
             return 0;
         }
 
-        $signatureVerifier = $this->createSignatureVerifier($downloader);
-        $untrustedKeyStrategy = $this->getUntrustedKeyStrategy();
-        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput, $untrustedKeyStrategy);
+        $signatureVerifier = new SignatureVerifier(
+            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath),
+            new KeyDownloader(new SignatureFileDownloader($downloader)),
+            $this->getUntrustedKeyStrategy()
+        );
+
+        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput);
         $executor->execute($tasks);
 
         return 0;
     }
 
-    protected function createSignatureVerifier(FileDownloader $downloader) : SignatureVerifier
-    {
-        return new SignatureVerifier(
-            (new GnuPGFactory($this->phpcqPath))->create(),
-            new KeyDownloader($downloader),
-            $this->config['trusted-keys']
-        );
-    }
-
-    protected function getUntrustedKeyStrategy() : Closure
+    protected function getUntrustedKeyStrategy() : TrustKeyStrategyInterface
     {
         if ($this->input->getOption('trust-keys')) {
-            return static function () : bool {
-                return true;
-            };
+            return AlwaysStrategy::TRUST();
         }
 
-        return function (string $fingerprint, ToolInformationInterface $toolInformation) : bool {
-            $helper   = $this->getHelper('question');
-            $question = new ConfirmationQuestion(
-                sprintf('Trust key "%s" for tool %s? (y/n) ', $fingerprint, $toolInformation->getName()),
-                false
-            );
-
-            if (!$helper->ask($this->input, $this->output, $question)) {
-                return false;
-            }
-
-            $this->output->writeln(
-                sprintf(
-                    'Temporary accepted key "%s". For permanent acceptance add it to the trusted-keys section of your configuration.',
-                    $fingerprint
-                )
-            );
-
-            return true;
-        };
+        return new InteractiveQuestionKeyTrustStrategy(
+            new TrustedKeysStrategy($this->config['trusted-keys']),
+            $this->input,
+            $this->output,
+            $this->getHelper('question')
+        );
     }
 }

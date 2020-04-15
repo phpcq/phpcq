@@ -6,7 +6,7 @@ namespace Phpcq\ToolUpdate;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
-use Phpcq\GnuPG\SignatureVerifier;
+use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
@@ -39,23 +39,16 @@ final class UpdateExecutor
      */
     private $verifier;
 
-    /**
-     * @var callable
-     */
-    private $untrustedKeyStrategy;
-
     public function __construct(
         FileDownloader $downloader,
         SignatureVerifier $verifier,
         string $phpcqPath,
-        OutputInterface $output,
-        callable $untrustedKeyStrategy
+        OutputInterface $output
     ) {
         $this->downloader           = $downloader;
         $this->verifier             = $verifier;
         $this->phpcqPath            = $phpcqPath;
         $this->output               = $output;
-        $this->untrustedKeyStrategy = $untrustedKeyStrategy;
     }
 
     public function execute(array $tasks): void
@@ -181,16 +174,12 @@ final class UpdateExecutor
         $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
 
-        if ($result->isUntrustedKey() && ($this->untrustedKeyStrategy)($result->getFingerprint(), $tool)) {
-            $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath), true);
-        }
-
         if (! $result->isValid()) {
             throw new RuntimeException(
                 sprintf(
                     'Verify signature for tool "%s" failed with key fingerprint "%s"',
                     $tool->getName(),
-                    $result->getFingerprint() ?: 'UNKOWN'
+                    $result->getFingerprint() ?: 'UNKNOWN'
                 )
             );
         }
