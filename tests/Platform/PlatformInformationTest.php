@@ -87,7 +87,19 @@ class PlatformInformationTest extends TestCase
         }
 
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
-        // NOTE: as mysqlnd is bundled with php, we expect the same version here.
-        $this->assertSame(PHP_VERSION, $platformInformation->getInstalledVersion('ext-mysqlnd'));
+        if (version_compare(PHP_VERSION, '7.4.0', '>=')) {
+            // NOTE: as mysqlnd is bundled with php, we expect the same version here.
+            self::assertSame(PHP_VERSION, $platformInformation->getInstalledVersion('ext-mysqlnd'));
+            return;
+        }
+        // Allow to validate for older PHP versions.
+        self::assertContains($platformInformation->getInstalledVersion('ext-mysqlnd'), [
+            // Since PHP 7.4.0RC1
+            PHP_VERSION,
+            // Since PHP 7.0.0-alpha1: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
+            '5.0.12-dev',
+            // Since PHP 5.5.0-alpha1: "mysqlnd 5.0.11-dev - 20120503 - $Id$"
+            '5.0.11-dev',
+        ]);
     }
 }

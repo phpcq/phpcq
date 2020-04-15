@@ -127,10 +127,17 @@ class PlatformInformation implements PlatformInformationInterface
 
             $reflExt = new \ReflectionExtension($name);
             $prettyVersion = $reflExt->getVersion();
-            // "ext-mysqlnd" has an obscure version string: "mysqlnd 7.4.4".
-            // See: https://github.com/php/php-src/blob/1c334db4c818eb4175e9e246f3fc5d91bcfe1eef/ext/mysqlnd/mysqlnd.h#L22
+            // "ext-mysqlnd" has an obscure version string:
+            // - since PHP 7.4.0: "mysqlnd 7.4.4"
+            // - pre PHP 7.4.0: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
+            // See:
+            // - https://github.com/php/php-src/blob/1c334db4c818eb4175e9e246f3fc5d91bcfe1eef/ext/mysqlnd/mysqlnd.h#L22
+            // - https://github.com/php/php-src/blob/da1816c3d37da03c62d0086e6228625ac006abec/ext/mysqlnd/mysqlnd.h#L24
+            // We use strncmp here to be able to skip the heavy regex calculation for all other extensions.
             if (0 === strncmp($prettyVersion, 'mysqlnd ', 8)) {
-                $prettyVersion = substr($prettyVersion, 8);
+                if (preg_match('#mysqlnd ([^ ]*)#', $prettyVersion, $matches)) {
+                    $prettyVersion = $matches[1];
+                }
             }
 
             $extensions['ext-' . strtolower($name)] = $prettyVersion;
