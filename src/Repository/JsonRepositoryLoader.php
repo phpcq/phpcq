@@ -6,7 +6,7 @@ namespace Phpcq\Repository;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformInformationInterface;
+use Phpcq\Platform\PlatformRequirementCheckerInterface;
 
 /**
  * Load a json file.
@@ -31,27 +31,27 @@ class JsonRepositoryLoader
     private $bypassCache;
 
     /**
-     * @var PlatformInformationInterface
+     * @var PlatformRequirementCheckerInterface|null
      */
-    private $platformInformation;
+    private $requirementChecker;
 
     /**
      * Create a new instance.
      *
-     * @param PlatformInformationInterface $platformInformation
-     * @param FileDownloader $downloader
-     * @param bool $bypassCache
+     * @param PlatformRequirementCheckerInterface|null $requirementChecker
+     * @param FileDownloader                           $downloader
+     * @param bool                                     $bypassCache
      */
-    public function __construct(PlatformInformationInterface $platformInformation, FileDownloader $downloader, bool $bypassCache = false)
+    public function __construct(?PlatformRequirementCheckerInterface $requirementChecker, FileDownloader $downloader, bool $bypassCache = false)
     {
-        $this->platformInformation = $platformInformation;
+        $this->requirementChecker = $requirementChecker;
         $this->downloader = $downloader;
         $this->bypassCache = $bypassCache;
     }
 
     public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
-        $this->repository = new Repository($this->platformInformation);
+        $this->repository = new Repository($this->requirementChecker);
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache, $hash);
         $bootstrapLookup  = $data['bootstraps'] ?? [];

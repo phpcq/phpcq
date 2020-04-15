@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Repository;
 
-use Phpcq\Platform\PlatformInformationInterface;
+use Phpcq\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolInformationInterface;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +16,7 @@ class RepositoryTest extends TestCase
 {
     public function testAddsVersionAndCanRetrieveVersion(): void
     {
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $repository = new Repository($platformInformation);
+        $repository = new Repository();
 
         $version = $this->createMock(ToolInformationInterface::class);
         $version->method('getVersion')->willReturn('1.0.0');
@@ -31,8 +30,7 @@ class RepositoryTest extends TestCase
 
     public function testEnumeratesAllVersions(): void
     {
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $repository = new Repository($platformInformation);
+        $repository = new Repository();
 
         $version1 = $this->createMock(ToolInformationInterface::class);
         $version1->method('getVersion')->willReturn('1.0.0');
@@ -53,8 +51,16 @@ class RepositoryTest extends TestCase
 
     public function testAppliedPlatformInformation(): void
     {
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $platformInformation->method('getInstalledVersion')->willReturn('5.6');
+        $platformInformation = $this->createMock(PlatformRequirementCheckerInterface::class);
+        $platformInformation
+            ->method('isFulfilled')
+            ->willReturnCallback(function (string $name, string $constraint): bool {
+                if ('php' !== $name) {
+                    return false;
+                }
+
+                return $constraint === '^5.6';
+            });
 
         $repository = new Repository($platformInformation);
 

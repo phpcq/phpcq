@@ -6,7 +6,7 @@ namespace Phpcq\Test\Repository;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformInformationInterface;
+use Phpcq\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteBootstrap;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +27,6 @@ class JsonRepositoryLoaderTest extends TestCase
     public function testInvalidRepositoryThrows(): void
     {
         $fixture = __DIR__ . '/../fixtures/repositories/invalid/broken-url.json';
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
         $downloader = $this
             ->getMockBuilder(FileDownloader::class)
             ->disableOriginalConstructor()
@@ -47,7 +46,7 @@ class JsonRepositoryLoaderTest extends TestCase
                 throw new RuntimeException('Invalid URI passed: ' . $url);
             });
 
-        $loader = new JsonRepositoryLoader($platformInformation, $downloader);
+        $loader = new JsonRepositoryLoader(null, $downloader);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid URI passed: 123');
@@ -59,13 +58,13 @@ class JsonRepositoryLoaderTest extends TestCase
     {
         $this->markTestSkipped('Not working with guzzle at the moment - needs to be rewritten when having factory.');
         $downloader = new FileDownloader(sys_get_temp_dir() . '/phpcq-test');
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $platformInformation
-            ->method('getInstalledVersion')
-            ->willReturnArgument('php')
-            ->willReturn('5.6.1');
+        $requirementChecker = $this->createMock(PlatformRequirementCheckerInterface::class);
+        $requirementChecker
+            ->method('isFulfilled')
+            ->with('php', '5.6.1')
+            ->willReturn(true);
 
-        $loader = new JsonRepositoryLoader($platformInformation, $downloader);
+        $loader = new JsonRepositoryLoader($requirementChecker, $downloader);
         $repository = $loader->loadFile(__DIR__ . '/../fixtures/repositories/repository.json');
 
         // Test the included version exists.

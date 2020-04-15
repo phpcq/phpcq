@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformInformation;
+use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryFactory;
 use Phpcq\ToolUpdate\UpdateCalculator;
@@ -48,10 +48,12 @@ final class UpdateCommand extends AbstractCommand
             $this->output->writeln('Using CACHE: ' . $cachePath);
         }
 
-        $platformInformation = PlatformInformation::createFromCurrentPlatform();
+        $requirementChecker = !$this->input->getOption('ignore-platform-reqs')
+            ? PlatformRequirementChecker::create()
+            : PlatformRequirementChecker::createAlwaysFulfilling();
 
         $downloader       = new FileDownloader($cachePath, $this->config['auth'] ?? []);
-        $repositoryLoader = new JsonRepositoryLoader($platformInformation, $downloader, true);
+        $repositoryLoader = new JsonRepositoryLoader($requirementChecker, $downloader, true);
         $factory          = new RepositoryFactory($repositoryLoader);
         // Download repositories
         $pool = $factory->buildPool($this->config['repositories'] ?? []);
@@ -67,7 +69,7 @@ final class UpdateCommand extends AbstractCommand
             }
             return 0;
         }
-        $executor = new UpdateExecutor($platformInformation, $downloader, $this->phpcqPath, $consoleOutput);
+        $executor = new UpdateExecutor($downloader, $this->phpcqPath, $consoleOutput);
         $executor->execute($tasks);
 
         return 0;

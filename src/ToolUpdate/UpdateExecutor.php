@@ -6,7 +6,6 @@ namespace Phpcq\ToolUpdate;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
@@ -32,19 +31,8 @@ final class UpdateExecutor
      */
     private $output;
 
-    /**
-     * @var PlatformInformationInterface
-     */
-    private $platform;
-
-    public function __construct(
-        PlatformInformationInterface $platform,
-        FileDownloader $downloader,
-        string $phpcqPath,
-        OutputInterface $output
-    )
+    public function __construct(FileDownloader $downloader, string $phpcqPath, OutputInterface $output)
     {
-        $this->platform   = $platform;
         $this->downloader = $downloader;
         $this->phpcqPath  = $phpcqPath;
         $this->output     = $output;
@@ -52,7 +40,7 @@ final class UpdateExecutor
 
     public function execute(array $tasks): void
     {
-        $installed = new Repository($this->platform);
+        $installed = new Repository();
         foreach ($tasks as $task) {
             switch ($task['type']) {
                 case 'keep':

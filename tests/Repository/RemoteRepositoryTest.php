@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Test\Repository;
 
 use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteRepository;
 use PHPUnit\Framework\TestCase;
@@ -17,10 +16,9 @@ class RemoteRepositoryTest extends TestCase
 {
     public function testAddsVersionAndCanRetrieveVersion(): void
     {
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $downloader          = $this->createMock(FileDownloader::class);
-        $loader              = new JsonRepositoryLoader($platformInformation, $downloader);
-        $repository          = new RemoteRepository('http://dummy/repository.json', $loader);
+        $downloader = $this->createMock(FileDownloader::class);
+        $loader     = new JsonRepositoryLoader(null, $downloader);
+        $repository = new RemoteRepository('http://dummy/repository.json', $loader);
 
         $downloader
             ->expects($this->once())
@@ -54,10 +52,9 @@ class RemoteRepositoryTest extends TestCase
 
     public function testEnumeratesAllVersions(): void
     {
-        $downloader          = $this->createMock(FileDownloader::class);
-        $platformInformation = $this->createMock(PlatformInformationInterface::class);
-        $loader              = new JsonRepositoryLoader($platformInformation, $downloader);
-        $repository          = new RemoteRepository('http://dummy/repository.json', $loader);
+        $downloader = $this->createMock(FileDownloader::class);
+        $loader     = new JsonRepositoryLoader(null, $downloader);
+        $repository = new RemoteRepository('http://dummy/repository.json', $loader);
 
         $downloader
             ->expects($this->once())

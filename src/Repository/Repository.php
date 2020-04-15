@@ -8,7 +8,7 @@ use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\VersionParser;
 use IteratorAggregate;
 use Phpcq\Exception\ToolNotFoundException;
-use Phpcq\Platform\PlatformInformationInterface;
+use Phpcq\Platform\PlatformRequirementCheckerInterface;
 use Traversable;
 
 /**
@@ -29,18 +29,18 @@ class Repository implements IteratorAggregate, RepositoryInterface
     private $parser;
 
     /**
-     * @var PlatformInformationInterface
+     * @var PlatformRequirementCheckerInterface|null
      */
-    private $platformInformation;
+    private $requirementChecker;
 
     /**
      * Repository constructor.
      *
-     * @param PlatformInformationInterface $platformInformation
+     * @param PlatformRequirementCheckerInterface|null $requirementChecker
      */
-    public function __construct(PlatformInformationInterface $platformInformation)
+    public function __construct(?PlatformRequirementCheckerInterface $requirementChecker = null)
     {
-        $this->platformInformation = $platformInformation;
+        $this->requirementChecker = $requirementChecker;
         $this->parser = new VersionParser();
     }
 
@@ -107,17 +107,11 @@ class Repository implements IteratorAggregate, RepositoryInterface
 
     private function matchesPlatformRequirements(ToolInformationInterface $versionHunk) : bool
     {
+        if (null === $this->requirementChecker) {
+            return true;
+        }
         foreach ($versionHunk->getPlatformRequirements() as $requirement => $constraints) {
-            $installedVersion = $this->platformInformation->getInstalledVersion($requirement);
-
-            // Requirement is not available
-            if (null === $installedVersion) {
-                return false;
-            }
-
-            $constraints = $this->parser->parseConstraints($constraints);
-
-            if (!$constraints->matches(new Constraint('=', $this->parser->normalize($installedVersion)))) {
+            if (!$this->requirementChecker->isFulfilled($requirement, $constraints)) {
                 return false;
             }
         }

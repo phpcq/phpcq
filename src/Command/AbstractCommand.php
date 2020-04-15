@@ -72,6 +72,12 @@ abstract class AbstractCommand extends Command
             'Path to the phpcq tool directory',
             getcwd() . '/vendor/phpcq'
         );
+        $this->addOption(
+            'ignore-platform-reqs',
+            null,
+            InputOption::VALUE_NONE,
+            'Ignore platform requirements (php & ext- packages).'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
