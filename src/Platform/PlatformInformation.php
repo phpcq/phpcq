@@ -127,6 +127,11 @@ class PlatformInformation implements PlatformInformationInterface
 
             $reflExt = new \ReflectionExtension($name);
             $prettyVersion = $reflExt->getVersion();
+            // "ext-mysqlnd" has an obscure version string: "mysqlnd 7.4.4".
+            // See: https://github.com/php/php-src/blob/1c334db4c818eb4175e9e246f3fc5d91bcfe1eef/ext/mysqlnd/mysqlnd.h#L22
+            if (0 === strncmp($prettyVersion, 'mysqlnd ', 8)) {
+                $prettyVersion = substr($prettyVersion, 8);
+            }
 
             $extensions['ext-' . strtolower($name)] = $prettyVersion;
         }
