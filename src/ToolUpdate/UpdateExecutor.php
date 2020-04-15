@@ -127,11 +127,11 @@ final class UpdateExecutor
         if (!$bootstrap instanceof InstalledBootstrap) {
             throw new RuntimeException('Can only remove installed bootstrap files.');
         }
+        $this->deleteFile($bootstrap->getFilePath());
+
         if ($signatureUrl = $tool->getSignatureUrl()) {
             $this->deleteFile($this->phpcqPath . '/' . $signatureUrl);
         }
-
-        $this->deleteFile($bootstrap->getFilePath());
     }
 
     private function deleteFile(string $path): void
