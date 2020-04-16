@@ -36,6 +36,7 @@ final class PhpcqConfiguration implements ConfigurationInterface
                             ->scalarNode('runner-plugin')->end()
                             ->booleanNode('signed')
                                 ->defaultValue(true)
+                                ->info('If set to false no verified signature is required')
                             ->end()
                         ->end()
                     ->end()

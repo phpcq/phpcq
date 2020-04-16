@@ -7,7 +7,6 @@ namespace Phpcq;
 use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
-use function dirname;
 use function file_get_contents;
 use function file_put_contents;
 use function is_file;

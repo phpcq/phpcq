@@ -14,16 +14,4 @@
             <file name="src/Platform/PlatformInformation.php"/>
         </ignoreFiles>
     </projectFiles>
-    <issueHandlers>
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <referencedClass name="Gnupg"/>
-            </errorLevel>
-        </UndefinedClass>
-        <UndefinedDocblockClass>
-            <errorLevel type="suppress">
-                <referencedClass name="Gnupg"/>
-            </errorLevel>
-        </UndefinedDocblockClass>
-    </issueHandlers>
 </psalm>
