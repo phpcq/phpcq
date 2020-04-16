@@ -80,18 +80,18 @@ final class UpdateExecutor
         $dumper->dump($installed, 'installed.json');
     }
 
-    private function installTool(ToolInformationInterface $tool, bool $requireVerifiedSignature): ToolInformationInterface
+    private function installTool(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
     {
         $this->output->writeln('Installing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
 
-        return $this->installVersion($tool, $requireVerifiedSignature);
+        return $this->installVersion($tool, $requireSigned);
     }
 
-    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old, bool $requireVerifiedSignature): ToolInformationInterface
+    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old, bool $requireSigned): ToolInformationInterface
     {
         $this->output->writeln('Upgrading', OutputInterface::VERBOSITY_VERBOSE);
 
-        $new = $this->installVersion($tool, $requireVerifiedSignature);
+        $new = $this->installVersion($tool, $requireSigned);
         $this->deleteVersion($old);
 
         return $new;
@@ -103,7 +103,7 @@ final class UpdateExecutor
         $this->deleteVersion($tool);
     }
 
-    private function installVersion(ToolInformationInterface $tool, bool $requireVerifiedSignature): ToolInformationInterface
+    private function installVersion(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
     {
         $pharName = sprintf('%1$s~%2$s.phar', $tool->getName(), $tool->getVersion());
         $pharPath = $this->phpcqPath . '/' . $pharName;
@@ -111,7 +111,7 @@ final class UpdateExecutor
 
         $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
         $this->validateHash($pharPath, $tool->getHash());
-        $signatureName = $this->verifySignature($pharPath, $tool, $requireVerifiedSignature);
+        $signatureName = $this->verifySignature($pharPath, $tool, $requireSigned);
 
         return new ToolInformation(
             $tool->getName(),
@@ -164,11 +164,11 @@ final class UpdateExecutor
         }
     }
 
-    private function verifySignature(string $pharPath, ToolInformationInterface $tool, bool $requireVerifiedSignature): ?string
+    private function verifySignature(string $pharPath, ToolInformationInterface $tool, bool $requireSigned): ?string
     {
         $signatureUrl = $tool->getSignatureUrl();
         if (null === $signatureUrl) {
-            if (! $requireVerifiedSignature) {
+            if (! $requireSigned) {
                 return null;
             }
 
@@ -185,7 +185,7 @@ final class UpdateExecutor
         $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
 
-        if ($requireVerifiedSignature && ! $result->isValid()) {
+        if ($requireSigned && ! $result->isValid()) {
             throw new RuntimeException(
                 sprintf(
                     'Verify signature for tool "%s" failed with key fingerprint "%s"',
