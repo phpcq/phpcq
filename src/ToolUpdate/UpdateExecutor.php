@@ -172,9 +172,11 @@ final class UpdateExecutor
                 return null;
             }
 
+            $this->deleteFile($pharPath);
+
             throw new RuntimeException(
                 sprintf(
-                    'Install tool "%s" rejected. No signature given. You may consider disable required signature for this tool',
+                    'Install tool "%s" rejected. No signature given. You may have to disable signature verification for this tool',
                     $tool->getName(),
                 )
             );
@@ -186,6 +188,9 @@ final class UpdateExecutor
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
 
         if ($requireSigned && ! $result->isValid()) {
+            $this->deleteFile($pharPath);
+            $this->deleteFile($this->phpcqPath . '/' . $signatureName);
+
             throw new RuntimeException(
                 sprintf(
                     'Verify signature for tool "%s" failed with key fingerprint "%s"',
