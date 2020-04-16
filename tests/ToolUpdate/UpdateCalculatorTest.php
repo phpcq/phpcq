@@ -46,14 +46,14 @@ final class UpdateCalculatorTest extends TestCase
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
         $tasks = $calculator->calculate([
-            'foo' => ['version' => '^1.0.0']
+            'foo' => ['version' => '^1.0.0', 'trust-signature' => 'signed']
         ]);
 
         $this->assertSame([
             [
-                'type'    => 'keep',
-                'tool'    => $oldTool,
-                'message' => 'Will keep foo in version 1.0.0',
+                'type'            => 'keep',
+                'tool'            => $oldTool,
+                'message'         => 'Will keep foo in version 1.0.0'
             ]
         ], $tasks);
     }
@@ -89,14 +89,15 @@ final class UpdateCalculatorTest extends TestCase
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
         $tasks = $calculator->calculate([
-            'foo' => ['version' => '^1.0.0']
+            'foo' => ['version' => '^1.0.0', 'trust-signature' => 'signed']
         ]);
 
         $this->assertSame([
             [
-                'type'    => 'install',
-                'tool'    => $tool,
-                'message' => 'Will install foo in version 1.0.0',
+                'type'            => 'install',
+                'tool'            => $tool,
+                'message'         => 'Will install foo in version 1.0.0',
+                'trust-signature' => 'signed',
             ]
         ], $tasks);
     }
@@ -130,15 +131,16 @@ final class UpdateCalculatorTest extends TestCase
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
         $tasks = $calculator->calculate([
-            'foo' => ['version' => '^1.0.0']
+            'foo' => ['version' => '^1.0.0', 'trust-signature' => 'signed']
         ]);
 
         $this->assertSame([
             [
-                'type'    => 'upgrade',
-                'tool'    => $tool,
-                'old'     => $oldTool,
-                'message' => 'Will upgrade foo from version 1.0.0 to version 1.0.1',
+                'type'            => 'upgrade',
+                'tool'            => $tool,
+                'old'             => $oldTool,
+                'message'         => 'Will upgrade foo from version 1.0.0 to version 1.0.1',
+                'trust-signature' => 'signed',
             ]
         ], $tasks);
     }
@@ -172,15 +174,16 @@ final class UpdateCalculatorTest extends TestCase
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
         $tasks = $calculator->calculate([
-            'foo' => ['version' => '^1.0.0']
+            'foo' => ['version' => '^1.0.0', 'trust-signature' => 'signed']
         ]);
 
         $this->assertSame([
             [
-                'type'    => 'upgrade',
-                'tool'    => $tool,
-                'old'     => $oldTool,
-                'message' => 'Will downgrade foo from version 2.0.0 to version 1.0.1',
+                'type'            => 'upgrade',
+                'tool'            => $tool,
+                'old'             => $oldTool,
+                'message'         => 'Will downgrade foo from version 2.0.0 to version 1.0.1',
+                'trust-signature' => 'signed',
             ]
         ], $tasks);
     }

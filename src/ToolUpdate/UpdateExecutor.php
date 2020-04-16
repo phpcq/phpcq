@@ -19,6 +19,10 @@ use function sprintf;
 
 final class UpdateExecutor
 {
+    public const TRUST_SIGNED = 'signed';
+    public const TRUST_UNSIGNED = 'unsigned';
+    public const TRUST_UNKNOWN_KEY = 'unknown-key';
+
     /**
      * @var FileDownloader
      */
@@ -60,10 +64,10 @@ final class UpdateExecutor
                     $installed->addVersion($task['tool']);
                     break;
                 case 'install':
-                    $installed->addVersion($this->installTool($task['tool']));
+                    $installed->addVersion($this->installTool($task['tool'], $task['signed']));
                     break;
                 case 'upgrade':
-                    $installed->addVersion($this->upgradeTool($task['tool'], $task['old']));
+                    $installed->addVersion($this->upgradeTool($task['tool'], $task['old'], $task['signed']));
                     break;
                 case 'remove':
                     $this->removeTool($task['tool']);
@@ -76,18 +80,18 @@ final class UpdateExecutor
         $dumper->dump($installed, 'installed.json');
     }
 
-    private function installTool(ToolInformationInterface $tool): ToolInformationInterface
+    private function installTool(ToolInformationInterface $tool, bool $requireVerifiedSignature): ToolInformationInterface
     {
         $this->output->writeln('Installing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
 
-        return $this->installVersion($tool);
+        return $this->installVersion($tool, $requireVerifiedSignature);
     }
 
-    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old): ToolInformationInterface
+    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old, bool $requireVerifiedSignature): ToolInformationInterface
     {
         $this->output->writeln('Upgrading', OutputInterface::VERBOSITY_VERBOSE);
 
-        $new = $this->installVersion($tool);
+        $new = $this->installVersion($tool, $requireVerifiedSignature);
         $this->deleteVersion($old);
 
         return $new;
@@ -99,7 +103,7 @@ final class UpdateExecutor
         $this->deleteVersion($tool);
     }
 
-    private function installVersion(ToolInformationInterface $tool): ToolInformationInterface
+    private function installVersion(ToolInformationInterface $tool, bool $requireVerifiedSignature): ToolInformationInterface
     {
         $pharName = sprintf('%1$s~%2$s.phar', $tool->getName(), $tool->getVersion());
         $pharPath = $this->phpcqPath . '/' . $pharName;
@@ -107,7 +111,7 @@ final class UpdateExecutor
 
         $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
         $this->validateHash($pharPath, $tool->getHash());
-        $signatureName = $this->verifySignature($pharPath, $tool);
+        $signatureName = $this->verifySignature($pharPath, $tool, $requireVerifiedSignature);
 
         return new ToolInformation(
             $tool->getName(),
@@ -160,13 +164,20 @@ final class UpdateExecutor
         }
     }
 
-    private function verifySignature(string $pharPath, ToolInformationInterface $tool): ?string
+    private function verifySignature(string $pharPath, ToolInformationInterface $tool, bool $requireVerifiedSignature): ?string
     {
         $signatureUrl = $tool->getSignatureUrl();
         if (null === $signatureUrl) {
-            // TODO: How should we handle missing signatures:
-            // Show a warning or add a configuration how phpcq should deal with it?
-            return null;
+            if (! $requireVerifiedSignature) {
+                return null;
+            }
+
+            throw new RuntimeException(
+                sprintf(
+                    'Install tool "%s" rejected. No signature given. You may consider disable required signature for this tool',
+                    $tool->getName(),
+                )
+            );
         }
 
         $signatureName = sprintf('%1$s~%2$s.asc', $tool->getName(), $tool->getVersion());
@@ -174,7 +185,7 @@ final class UpdateExecutor
         $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
         $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
 
-        if (! $result->isValid()) {
+        if ($requireVerifiedSignature && ! $result->isValid()) {
             throw new RuntimeException(
                 sprintf(
                     'Verify signature for tool "%s" failed with key fingerprint "%s"',

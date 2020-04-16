@@ -37,12 +37,15 @@ final class ConfigLoaderTest extends TestCase
             [
                 'phpunit' => [
                     'version' => '^7.0',
+                    'trust-signature' => 'signed',
                 ],
                 'custom-task-tool' => [
                     'version' => '^1.0',
+                    'trust-signature' => 'signed',
                 ],
                 'local-tool' => [
-                    'runner-plugin' => '.phpcq/plugins/boot-local-tool.php'
+                    'runner-plugin' => '.phpcq/plugins/boot-local-tool.php',
+                    'trust-signature' => 'signed',
                 ],
             ],
             $config['tools']
@@ -69,8 +72,8 @@ final class ConfigLoaderTest extends TestCase
                 'repositories'      => [],
                 'artifact'          => '.phpcq/build',
                 'tools'             => [
-                    'author-validation' => ['version' => '^1.0'],
-                    'phpcpd'            => ['version' => '^2.0'],
+                    'author-validation' => ['version' => '^1.0', 'trust-signature' => 'signed'],
+                    'phpcpd'            => ['version' => '^2.0', 'trust-signature' => 'signed'],
                 ],
                 'trusted-keys' => [],
                 'author-validation' => [
