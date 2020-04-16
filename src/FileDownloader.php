@@ -7,8 +7,11 @@ namespace Phpcq;
 use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
+use function dirname;
 use function file_get_contents;
 use function file_put_contents;
+use function is_file;
+use function strpos;
 
 class FileDownloader
 {
@@ -62,9 +65,10 @@ class FileDownloader
         }
         $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
         if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
-            $client = $this->getClient($baseDir);
+            $url = $this->validateUrlOrFile($url, $baseDir);
+            $client = $this->getClient($baseDir, $url);
             // FIXME: apply auth.
-            $response = $client->request('GET', $this->validateUrlOrFile($url, $baseDir));
+            $response = $client->request('GET', $url);
             if (200 !== $response->getStatusCode()) {
                 throw new RuntimeException('Failed to download: ' . $url);
             }
@@ -151,16 +155,14 @@ class FileDownloader
         return $hash['value'] === hash_file($hashMap[$hash['type']], $cacheFile);
     }
 
-    private function getClient(string $baseUrl): Client
+    private function getClient(string $baseUrl, string $url): Client
     {
+        $options = ['base_uri' => $baseUrl];
+        if (!is_file($url) && strpos($url, 'https://hkps.pool.sks-keyservers.net') === 0) {
+            $options['verify'] = __DIR__ . '/Resources/certs/sks-keyservers.netCA.pem';
+        }
+
         // FIXME: Move cache layer here.
-        return new Client([
-            'base_uri' => $baseUrl,
-            // FIXME: WTF - Some keyservers uses self signed ceriticates. We have to handle it somehow better
-            'curl' => [
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false
-            ]
-        ]);
+        return new Client($options);
     }
 }
