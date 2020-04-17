@@ -65,14 +65,19 @@ class FileDownloader
         $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
         if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
             $url = $this->validateUrlOrFile($url, $baseDir);
-            $client = $this->getClient($baseDir, $url);
-            // FIXME: apply auth.
-            $response = $client->request('GET', $url);
-            if (200 !== $response->getStatusCode()) {
-                throw new RuntimeException('Failed to download: ' . $url);
-            }
 
-            file_put_contents($cacheFile, $response->getBody());
+            if (is_file($url)) {
+                file_put_contents($cacheFile, file_get_contents($url));
+            } else {
+                $client = $this->getClient($url);
+                // FIXME: apply auth.
+                $response = $client->request('GET', $url);
+                if (200 !== $response->getStatusCode()) {
+                    throw new RuntimeException('Failed to download: ' . $url);
+                }
+
+                file_put_contents($cacheFile, $response->getBody());
+            }
         }
 
         return file_get_contents($cacheFile);
@@ -154,9 +159,9 @@ class FileDownloader
         return $hash['value'] === hash_file($hashMap[$hash['type']], $cacheFile);
     }
 
-    private function getClient(string $baseUrl, string $url): Client
+    private function getClient(string $url): Client
     {
-        $options = ['base_uri' => $baseUrl];
+        $options = [];
         if (!is_file($url) && strpos($url, 'https://hkps.pool.sks-keyservers.net') === 0) {
             $options['verify'] = __DIR__ . '/Resources/certs/sks-keyservers.netCA.pem';
         }
