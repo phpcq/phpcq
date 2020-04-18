@@ -60,7 +60,7 @@ class JsonRepositoryLoaderTest extends TestCase
         $requirementChecker = $this->createMock(PlatformRequirementCheckerInterface::class);
         $requirementChecker
             ->method('isFulfilled')
-            ->with('php', '5.6.1')
+            ->with('php', '^5.3.9')
             ->willReturn(true);
 
         $loader = new JsonRepositoryLoader($requirementChecker, $downloader);
