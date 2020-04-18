@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Repository;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Platform\PlatformInformationInterface;
+use Phpcq\Platform\PlatformRequirementCheckerInterface;
 
 /**
  * Load a installed.json file.
@@ -20,23 +20,23 @@ class InstalledRepositoryLoader
     private $repository;
 
     /**
-     * @var PlatformInformationInterface
+     * @var PlatformRequirementCheckerInterface|null
      */
-    private $platformInformation;
+    private $requirementChecker;
 
     /**
      * Create a new instance.
      *
-     * @param PlatformInformationInterface $platformInformation
+     * @param PlatformRequirementCheckerInterface|null $requirementChecker
      */
-    public function __construct(PlatformInformationInterface $platformInformation)
+    public function __construct(?PlatformRequirementCheckerInterface $requirementChecker)
     {
-        $this->platformInformation = $platformInformation;
+        $this->requirementChecker = $requirementChecker;
     }
 
     public function loadFile(string $filePath, ?string $baseDir = null): RepositoryInterface
     {
-        $this->repository = new Repository($this->platformInformation);
+        $this->repository = new Repository($this->requirementChecker);
         $fileName         = basename($filePath);
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->readFile($fileName, $baseDir);

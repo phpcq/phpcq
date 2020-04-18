@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Repository;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Platform\PlatformInformation;
+use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\InstalledRepositoryLoader;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ class InstalledRepositoryLoaderTest extends TestCase
 {
     public function testLoading(): void
     {
-        $instance = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
+        $instance = new InstalledRepositoryLoader(PlatformRequirementChecker::create());
         $repository = $instance->loadFile(__DIR__ . '/../fixtures/repositories/installed-repository/installed.json');
 
         $this->assertTrue($repository->hasTool('phar-1', '^1.0.0'));
@@ -27,7 +27,7 @@ class InstalledRepositoryLoaderTest extends TestCase
 
     public function testLoadingFromRelativePath(): void
     {
-        $instance = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
+        $instance = new InstalledRepositoryLoader(PlatformRequirementChecker::create());
         $repository = $instance->loadFile('installed.json', __DIR__ . '/../fixtures/repositories/installed-repository');
 
         $this->assertTrue($repository->hasTool('phar-1', '^1.0.0'));
@@ -37,7 +37,7 @@ class InstalledRepositoryLoaderTest extends TestCase
 
     public function testLoadingForNonExistingRelativePath(): void
     {
-        $instance = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
+        $instance = new InstalledRepositoryLoader(PlatformRequirementChecker::create());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('File not found: ./installed.json');
@@ -47,7 +47,7 @@ class InstalledRepositoryLoaderTest extends TestCase
 
     public function testLoadingForNonExistingRelativePathWithBaseDir(): void
     {
-        $instance = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
+        $instance = new InstalledRepositoryLoader(PlatformRequirementChecker::create());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('File not found: /does/not/exist/installed.json');
@@ -57,7 +57,7 @@ class InstalledRepositoryLoaderTest extends TestCase
 
     public function testLoadingForNonExistingAbsolutePath(): void
     {
-        $instance = new InstalledRepositoryLoader(PlatformInformation::createFromCurrentPlatform());
+        $instance = new InstalledRepositoryLoader(PlatformRequirementChecker::create());
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('File not found: /does/not/exist/installed.json');

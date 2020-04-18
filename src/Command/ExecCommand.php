@@ -6,14 +6,9 @@ namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
-use Phpcq\Output\SymfonyConsoleOutput;
-use Phpcq\Output\SymfonyOutput;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use function assert;
 use function is_string;
@@ -68,47 +63,34 @@ final class ExecCommand extends AbstractCommand
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function doExecute(): int
     {
-        $phpcqPath = $input->getOption('tools');
-        assert(is_string($phpcqPath));
-        $this->createDirectory($phpcqPath);
-
-        if ($output->isVeryVerbose()) {
-            $output->writeln('Using HOME: ' . $phpcqPath);
-        }
-
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
-            $phpcqPath,
-            $this->getInstalledRepository($phpcqPath),
+            $this->phpcqPath,
+            $this->getInstalledRepository(true),
             ...$this->findPhpCli()
         );
 
-        $toolName = $input->getArgument('tool');
+        $toolName = $this->input->getArgument('tool');
         assert(is_string($toolName));
 
         /** @var array $toolArguments */
-        $toolArguments = $input->getArgument('args');
+        $toolArguments = $this->input->getArgument('args');
         $task = $taskFactory
             ->buildRunPhar($toolName, $toolArguments)
             ->withWorkingDirectory(getcwd())
             ->build();
 
         // Wrap console output
-        if ($output instanceof ConsoleOutputInterface) {
-            $consoleOutput = new SymfonyConsoleOutput($output);
-        } else {
-            $consoleOutput = new SymfonyOutput($output);
-        }
-
+        $consoleOutput = $this->getWrappedOutput();
         // Execute task.
         $exitCode = 0;
         $taskOutput = new BufferedOutput($consoleOutput);
         try {
             $task->run($taskOutput);
         } catch (RuntimeException $throwable) {
-            $taskOutput->writeln($throwable->getMessage(), SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
+            $taskOutput->writeln($throwable->getMessage(), BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STRERR);
             $taskOutput->release();
             return (int) $throwable->getCode();
         }

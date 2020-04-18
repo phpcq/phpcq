@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Plugin;
 
-use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\Repository\InstalledBootstrap;
@@ -19,9 +18,7 @@ class PluginRegistryTest extends TestCase
 {
     public function testLoadFromInstalledRepository(): void
     {
-        $platform = $this->getMockForAbstractClass(PlatformInformationInterface::class);
-
-        $repository = new Repository($platform);
+        $repository = new Repository();
         $repository->addVersion($tool1 = $this->getMockForAbstractClass(ToolInformationInterface::class));
         $repository->addVersion($tool2 = $this->getMockForAbstractClass(ToolInformationInterface::class));
 

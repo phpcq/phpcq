@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\ToolUpdate;
 
-use Phpcq\Platform\PlatformInformationInterface;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryInterface;
@@ -21,8 +20,8 @@ final class UpdateCalculatorTest extends TestCase
     public function testKeepsAlreadyCurrentTools(): void
     {
         $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class)));
-        $installed = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class));
+        $pool->addRepository($repository = new Repository());
+        $installed = new Repository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
         $output
@@ -105,8 +104,8 @@ final class UpdateCalculatorTest extends TestCase
     public function testUpgradesOutdatedTools(): void
     {
         $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class)));
-        $installed = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class));
+        $pool->addRepository($repository = new Repository());
+        $installed = new Repository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
         $output
@@ -147,8 +146,8 @@ final class UpdateCalculatorTest extends TestCase
     public function testDowngradesTools(): void
     {
         $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class)));
-        $installed = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class));
+        $pool->addRepository($repository = new Repository());
+        $installed = new Repository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
         $output
@@ -189,7 +188,7 @@ final class UpdateCalculatorTest extends TestCase
     public function testRemovesTools(): void
     {
         $pool = new RepositoryPool();
-        $installed = new Repository($this->getMockForAbstractClass(PlatformInformationInterface::class));
+        $installed = new Repository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
         $output

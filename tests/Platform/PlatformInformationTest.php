@@ -7,6 +7,9 @@ namespace Platform;
 use Phpcq\Platform\PlatformInformation;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Platform\PlatformInformation
+ */
 class PlatformInformationTest extends TestCase
 {
     public function testCustomValues(): void
@@ -75,5 +78,28 @@ class PlatformInformationTest extends TestCase
         $this->assertSame('1.0.0', $platformInformation->getInstalledVersion('lib-ICU'));
         $this->assertSame('7.68.0', $platformInformation->getInstalledVersion('lib-curl'));
         $this->assertNull($platformInformation->getInstalledVersion('lib-foo'));
+    }
+
+    public function testMysqlndWorkaround(): void
+    {
+        if (!in_array('mysqlnd', get_loaded_extensions())) {
+            $this->markTestSkipped('mysqlnd extension is not loaded, can not test.');
+        }
+
+        $platformInformation = PlatformInformation::createFromCurrentPlatform();
+        if (version_compare(PHP_VERSION, '7.4.0', '>=')) {
+            // NOTE: as mysqlnd is bundled with php, we expect the same version here.
+            self::assertSame(PHP_VERSION, $platformInformation->getInstalledVersion('ext-mysqlnd'));
+            return;
+        }
+        // Allow to validate for older PHP versions.
+        self::assertContains($platformInformation->getInstalledVersion('ext-mysqlnd'), [
+            // Since PHP 7.4.0RC1
+            PHP_VERSION,
+            // Since PHP 7.0.0-alpha1: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
+            '5.0.12-dev',
+            // Since PHP 5.5.0-alpha1: "mysqlnd 5.0.11-dev - 20120503 - $Id$"
+            '5.0.11-dev',
+        ]);
     }
 }

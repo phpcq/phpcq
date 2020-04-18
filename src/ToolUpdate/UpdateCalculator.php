@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\ToolUpdate;
 
-use Phpcq\Platform\PlatformInformation;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryInterface;
@@ -44,7 +43,7 @@ final class UpdateCalculator
 
     private function calculateDesiredTools(array $tools): RepositoryInterface
     {
-        $desired = new Repository(PlatformInformation::createFromCurrentPlatform());
+        $desired = new Repository();
         foreach ($tools as $toolName => $tool) {
             $desired->addVersion($toolVersion = $this->pool->getTool($toolName, $tool['version']));
             $this->output->writeln(
