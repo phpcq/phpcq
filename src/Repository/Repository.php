@@ -105,7 +105,7 @@ class Repository implements IteratorAggregate, RepositoryInterface
         return $results;
     }
 
-    private function matchesPlatformRequirements(ToolInformationInterface $versionHunk) : bool
+    private function matchesPlatformRequirements(ToolInformationInterface $versionHunk): bool
     {
         if (null === $this->requirementChecker) {
             return true;

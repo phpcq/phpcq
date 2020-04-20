@@ -63,7 +63,8 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     }
 
     /**
-     * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no input
+     * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no
+     *                                           input
      */
     public function withInput($input): TaskRunnerBuilderInterface
     {

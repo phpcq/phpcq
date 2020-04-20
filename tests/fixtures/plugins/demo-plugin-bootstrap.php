@@ -8,7 +8,7 @@ use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 
 return new class implements ConfigurationPluginInterface {
-    public function getName() : string
+    public function getName(): string
     {
         return 'demo-plugin';
     }
@@ -18,14 +18,14 @@ return new class implements ConfigurationPluginInterface {
         $configOptionsBuilder->describeStringOption('demo-key', 'Some demo option');
     }
 
-    public function validateConfig(array $config) : void
+    public function validateConfig(array $config): void
     {
         if (!isset($config['demo-key'])) {
             throw new InvalidConfigException('Invalid config, missing key demo-key');
         }
     }
 
-    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable
+    public function processConfig(array $config, BuildConfigInterface $buildConfig): iterable
     {
         yield new class ($config) implements TaskRunnerInterface {
             private $config;
@@ -35,7 +35,7 @@ return new class implements ConfigurationPluginInterface {
                 $this->config = $config;
             }
 
-            public function run(OutputInterface $output) : void
+            public function run(OutputInterface $output): void
             {
                 $output->writeln(var_export($this->config, true));
             }

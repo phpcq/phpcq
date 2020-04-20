@@ -18,5 +18,5 @@ trait RepositoryHasToolTrait
         }
     }
 
-    public abstract function getTool(string $name, string $versionConstraint): ToolInformationInterface;
+    abstract public function getTool(string $name, string $versionConstraint): ToolInformationInterface;
 }

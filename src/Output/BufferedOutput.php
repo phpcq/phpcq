@@ -28,13 +28,19 @@ class BufferedOutput implements OutputInterface
         $this->output = $output;
     }
 
-    public function write(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function write(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->buffer[] = [false, [$message, $verbosity, $channel]];
     }
 
-    public function writeln(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function writeln(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->buffer[] = [true, [$message, $verbosity, $channel]];
     }
 

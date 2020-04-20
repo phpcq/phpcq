@@ -6,6 +6,7 @@ namespace Phpcq\Plugin\Config;
 
 use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
+
 use function gettype;
 use function sprintf;
 
@@ -80,7 +81,7 @@ abstract class AbstractConfigurationOption implements ConfigurationOptionInterfa
         return $this->defaultValue;
     }
 
-    public function isRequired() : bool
+    public function isRequired(): bool
     {
         return $this->required;
     }
@@ -92,7 +93,7 @@ abstract class AbstractConfigurationOption implements ConfigurationOptionInterfa
      *
      * @throws InvalidConfigException Always the method is called.
      */
-    protected function throwException($value) : void
+    protected function throwException($value): void
     {
         throw new InvalidConfigException(
             sprintf(

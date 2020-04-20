@@ -40,7 +40,7 @@ final class ArrayConfigOptionTest extends TestCase
         $this->assertFalse($option->isRequired());
     }
 
-    public function testValidateValue() : void
+    public function testValidateValue(): void
     {
         $option = new ArrayConfigOption('param', 'Param description', ['bar'], false);
         $option->validateValue(['bar']);
@@ -51,7 +51,7 @@ final class ArrayConfigOptionTest extends TestCase
         $this->addToAssertionCount(4);
     }
 
-    public function testThrowsOnInvalidValue() : void
+    public function testThrowsOnInvalidValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 
@@ -59,7 +59,7 @@ final class ArrayConfigOptionTest extends TestCase
         $option->validateValue('1');
     }
 
-    public function testThrowsOnRequiredValue() : void
+    public function testThrowsOnRequiredValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 

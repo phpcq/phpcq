@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function getcwd;
 use function is_dir;
 use function mkdir;
@@ -94,7 +95,7 @@ abstract class AbstractCommand extends Command
         return $this->doExecute();
     }
 
-    protected abstract function doExecute(): int;
+    abstract protected function doExecute(): int;
 
     /**
      * Create a directory if not exists.
@@ -103,7 +104,7 @@ abstract class AbstractCommand extends Command
      *
      * @throws RuntimeException When creating directory fails
      */
-    protected function createDirectory(string $path) : void
+    protected function createDirectory(string $path): void
     {
         if (is_dir($path)) {
             return;

@@ -40,7 +40,7 @@ final class StringConfigOptionTest extends TestCase
         $this->assertFalse($option->isRequired());
     }
 
-    public function testValidateValue() : void
+    public function testValidateValue(): void
     {
         $option = new StringConfigOption('param', 'Param description', 'foo', false);
         $option->validateValue('bar');
@@ -49,7 +49,7 @@ final class StringConfigOptionTest extends TestCase
         $this->addToAssertionCount(2);
     }
 
-    public function testThrowsOnInvalidValue() : void
+    public function testThrowsOnInvalidValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 
@@ -57,7 +57,7 @@ final class StringConfigOptionTest extends TestCase
         $option->validateValue(1);
     }
 
-    public function testThrowsOnRequiredValue() : void
+    public function testThrowsOnRequiredValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 

@@ -32,13 +32,12 @@ class PlatformInformationTest extends TestCase
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
         $loadedExtensions = array_filter(
             get_loaded_extensions(),
-            static function ($value) : bool {
+            static function ($value): bool {
                 return !in_array($value, ['standard', 'Core']);
             }
         );
 
         $this->assertCount(count($loadedExtensions), $platformInformation->getExtensions());
-
     }
 
     public function testCurrentPlatformInformation(): void
@@ -64,8 +63,8 @@ class PlatformInformationTest extends TestCase
                 'ext-pdo'  => '7.2.0'
             ],
             [
-                'lib-ICU' => '1.0.0',
-                'lib-curl'=> '7.68.0'
+                'lib-ICU'  => '1.0.0',
+                'lib-curl' => '7.68.0',
             ]
         );
 

@@ -25,14 +25,15 @@ class JsonRepositoryDumper
         foreach ($repository as $tool) {
             /** @var ToolInformationInterface $tool */
             $name = $tool->getName();
-            if (!isset($data['phars'][$name]))
-            $data['phars'][$name][] = [
-                'version'       => $tool->getVersion(),
-                'phar-url'      => $tool->getPharUrl(),
-                'bootstrap'     => $this->dumpBootstrap($tool),
-                'requirements'  => $tool->getPlatformRequirements(),
-                'signature'     => $tool->getSignatureUrl(),
-            ];
+            if (!isset($data['phars'][$name])) {
+                $data['phars'][$name][] = [
+                    'version'       => $tool->getVersion(),
+                    'phar-url'      => $tool->getPharUrl(),
+                    'bootstrap'     => $this->dumpBootstrap($tool),
+                    'requirements'  => $tool->getPlatformRequirements(),
+                    'signature'     => $tool->getSignatureUrl(),
+                ];
+            }
         }
 
         file_put_contents($this->destinationPath . '/' . $filename, json_encode($data));

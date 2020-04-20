@@ -13,12 +13,12 @@ final class StringConfigOption extends AbstractConfigurationOption
         parent::__construct($name, $description, $defaultValue, $required);
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return 'string';
     }
 
-    public function validateValue($value) : void
+    public function validateValue($value): void
     {
         if (is_string($value)) {
             return;

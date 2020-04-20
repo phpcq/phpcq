@@ -37,5 +37,5 @@ interface PlatformInformationInterface
      *
      * @return string|null
      */
-    public function getInstalledVersion(string $name) : ?string;
+    public function getInstalledVersion(string $name): ?string;
 }

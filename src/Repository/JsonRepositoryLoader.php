@@ -42,8 +42,11 @@ class JsonRepositoryLoader
      * @param FileDownloader                           $downloader
      * @param bool                                     $bypassCache
      */
-    public function __construct(?PlatformRequirementCheckerInterface $requirementChecker, FileDownloader $downloader, bool $bypassCache = false)
-    {
+    public function __construct(
+        ?PlatformRequirementCheckerInterface $requirementChecker,
+        FileDownloader $downloader,
+        bool $bypassCache = false
+    ) {
         $this->requirementChecker = $requirementChecker;
         $this->downloader = $downloader;
         $this->bypassCache = $bypassCache;
@@ -78,7 +81,7 @@ class JsonRepositoryLoader
         array $versionList,
         array $bootstrapLookup,
         string $baseDir
-    ) : void {
+    ): void {
         foreach ($versionList as $version) {
             if (is_string($bootstrap = $version['bootstrap'])) {
                 if (!isset($bootstrapLookup[$bootstrap])) {
@@ -116,7 +119,12 @@ class JsonRepositoryLoader
                 // Static bootstrapper.
                 return new InlineBootstrap($bootstrap['plugin-version'], $bootstrap['code']);
             case 'file':
-                return new RemoteBootstrap($bootstrap['plugin-version'], $bootstrap['url'], $this->downloader, $baseDir);
+                return new RemoteBootstrap(
+                    $bootstrap['plugin-version'],
+                    $bootstrap['url'],
+                    $this->downloader,
+                    $baseDir
+                );
         }
         throw new RuntimeException('Invalid bootstrap definition: ' . json_encode($bootstrap));
     }

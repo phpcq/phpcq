@@ -9,6 +9,7 @@ use Phpcq\PluginApi\Version10\ConfigurationOptionInterface;
 use Phpcq\PluginApi\Version10\ConfigurationOptionsInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Traversable;
+
 use function array_diff_key;
 use function array_keys;
 use function implode;

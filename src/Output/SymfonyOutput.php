@@ -23,14 +23,20 @@ final class SymfonyOutput implements OutputInterface
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
-    public function write(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function write(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->output->write($message, false, $verbosity);
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
-    public function writeln(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function writeln(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->output->writeln($message, $verbosity);
     }
 }

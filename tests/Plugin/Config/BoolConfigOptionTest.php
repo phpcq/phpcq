@@ -40,7 +40,7 @@ final class BoolConfigOptionTest extends TestCase
         $this->assertFalse($option->isRequired());
     }
 
-    public function testValidateValue() : void
+    public function testValidateValue(): void
     {
         $option = new BoolConfigOption('param', 'Param description', false, false);
         $option->validateValue(true);
@@ -50,7 +50,7 @@ final class BoolConfigOptionTest extends TestCase
         $this->addToAssertionCount(3);
     }
 
-    public function testThrowsOnInvalidValue() : void
+    public function testThrowsOnInvalidValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 
@@ -58,7 +58,7 @@ final class BoolConfigOptionTest extends TestCase
         $option->validateValue('1');
     }
 
-    public function testThrowsOnRequiredValue() : void
+    public function testThrowsOnRequiredValue(): void
     {
         $this->expectException(InvalidConfigException::class);
 

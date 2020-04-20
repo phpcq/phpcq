@@ -12,7 +12,8 @@ use Phpcq\Repository\RepositoryInterface;
 
 trait InstalledRepositoryLoadingCommandTrait
 {
-    private function getInstalledRepository(bool $failIfNotExist): RepositoryInterface {
+    private function getInstalledRepository(bool $failIfNotExist): RepositoryInterface
+    {
         $requirementChecker = null;
         if (!$this->input->hasOption('ignore-platform-reqs') || !$this->input->getOption('ignore-platform-reqs')) {
             $requirementChecker = PlatformRequirementChecker::create();

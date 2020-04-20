@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
  */
 class SymfonyOutputTest extends TestCase
 {
-    public function testWrite()
+    public function testWrite(): void
     {
         $mock = $this->createMock(SymfonyOutputInterface::class);
 
@@ -26,7 +26,7 @@ class SymfonyOutputTest extends TestCase
         $output->write('Test');
     }
 
-    public function testWriteln()
+    public function testWriteln(): void
     {
         $mock = $this->createMock(SymfonyOutputInterface::class);
 

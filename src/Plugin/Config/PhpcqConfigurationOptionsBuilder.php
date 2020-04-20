@@ -21,7 +21,7 @@ final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuil
         string $description,
         ?array $defaultValue = null,
         bool $required = false
-    ) : ConfigurationOptionsBuilderInterface {
+    ): ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new ArrayConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -33,7 +33,7 @@ final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuil
         string $description,
         ?int $defaultValue = null,
         bool $required = false
-    ) : ConfigurationOptionsBuilderInterface {
+    ): ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new IntConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -45,7 +45,7 @@ final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuil
         string $description,
         ?string $defaultValue = null,
         bool $required = false
-    ) : ConfigurationOptionsBuilderInterface {
+    ): ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new StringConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -54,7 +54,7 @@ final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuil
         string $description,
         ?bool $defaultValue = null,
         bool $required = false
-    ) : ConfigurationOptionsBuilderInterface {
+    ): ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new BoolConfigOption($name, $description, $defaultValue, $required));
     }
 
@@ -66,14 +66,14 @@ final class PhpcqConfigurationOptionsBuilder implements ConfigurationOptionsBuil
         string $description,
         ?float $defaultValue = null,
         bool $required = false
-    ) : ConfigurationOptionsBuilderInterface {
+    ): ConfigurationOptionsBuilderInterface {
         return $this->describeOption(new FloatConfigOption($name, $description, $defaultValue, $required));
     }
 
     /**
      * {@inheritDoc}
      */
-    public function describeOption(ConfigurationOptionInterface $configOption) : ConfigurationOptionsBuilderInterface
+    public function describeOption(ConfigurationOptionInterface $configOption): ConfigurationOptionsBuilderInterface
     {
         $this->options[$configOption->getName()] = $configOption;
 

@@ -7,6 +7,7 @@ namespace Phpcq;
 use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
+
 use function file_get_contents;
 use function file_put_contents;
 use function is_file;
@@ -40,8 +41,12 @@ class FileDownloader
      *
      * @return void
      */
-    public function downloadFileTo(string $url, string $destinationFile, string $baseDir = '', bool $force = false): void
-    {
+    public function downloadFileTo(
+        string $url,
+        string $destinationFile,
+        string $baseDir = '',
+        bool $force = false
+    ): void {
         file_put_contents($destinationFile, $this->downloadFile($url, $baseDir, $force));
     }
 

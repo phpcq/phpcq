@@ -19,6 +19,8 @@ phpcq:
       version: ^5.0
     phploc:
       version: ^6.0
+    phpcs:
+      version: ^3.5
   trusted-keys:
     # sb@sebastian-bergmann.de
     - 4AA394086372C20A
@@ -26,6 +28,8 @@ phpcq:
     - 8A03EA3B385DBAA1
     # magl@magll.net
     - D2CCAC42F6295E7D
+    # PHP_CodeSniffer
+    - 31C7E470E2138192
 
 phpunit:
   custom_flags:
@@ -54,3 +58,6 @@ psalm:
 
 composer-require-checker:
   config_file: '.composer-require-checker.json'
+
+phpcs:
+  standard: PSR12
