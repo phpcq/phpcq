@@ -43,7 +43,9 @@ final class TaskFactoryTest extends TestCase
         $installed
             ->expects(self::atLeastOnce())
             ->method('getTool')
-            ->with('phar-name', '*')->willReturn($tool = $this->getMockForAbstractClass(ToolInformationInterface::class));
+            ->with('phar-name', '*')->willReturn(
+                $tool = $this->getMockForAbstractClass(ToolInformationInterface::class)
+            );
 
         $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('phar-file-name.phar');
 

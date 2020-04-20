@@ -19,7 +19,7 @@ final class SignatureFileDownloader implements FileDownloaderInterface
         $this->fileDownloader = $fileDownloader;
     }
 
-    public function downloadFile(string $url) : string
+    public function downloadFile(string $url): string
     {
         try {
             return $this->fileDownloader->downloadFile($url);

@@ -20,17 +20,23 @@ class SymfonyConsoleOutput implements OutputInterface
         $this->output = $output;
     }
 
-    public function write(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function write(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->output($message, false, $verbosity, $channel);
     }
 
-    public function writeln(string $message, int $verbosity = self::VERBOSITY_NORMAL, int $channel = self::CHANNEL_STDOUT) : void
-    {
+    public function writeln(
+        string $message,
+        int $verbosity = self::VERBOSITY_NORMAL,
+        int $channel = self::CHANNEL_STDOUT
+    ): void {
         $this->output($message, true, $verbosity, $channel);
     }
 
-    private function output(string $output, bool $newLine, int $verbosity, int $channel) : void
+    private function output(string $output, bool $newLine, int $verbosity, int $channel): void
     {
         switch ($channel) {
             case self::CHANNEL_STRERR:

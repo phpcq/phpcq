@@ -10,6 +10,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+
 use function sprintf;
 
 final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
@@ -38,7 +39,7 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
         $this->questionHelper = $questionHelper;
     }
 
-    public function isTrusted(string $fingerprint) : bool
+    public function isTrusted(string $fingerprint): bool
     {
         if ($this->trustedKeys->isTrusted($fingerprint)) {
             return true;
@@ -55,7 +56,8 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
 
         $this->output->writeln(
             sprintf(
-                'Temporary accepted key "%s". For permanent acceptance add it to the trusted-keys section of your configuration.',
+                'Temporary accepted key "%s". For permanent acceptance add it to the trusted-keys section of your '
+                . 'configuration.',
                 $fingerprint
             )
         );

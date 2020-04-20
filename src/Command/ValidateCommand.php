@@ -9,6 +9,7 @@ use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use function array_keys;
 use function sprintf;
 

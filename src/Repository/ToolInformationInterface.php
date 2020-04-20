@@ -40,7 +40,7 @@ interface ToolInformationInterface
      *
      * @return array<string, string>
      */
-    public function getPlatformRequirements() : array;
+    public function getPlatformRequirements(): array;
 
     /**
      * Obtain the hash for the tool (if any).

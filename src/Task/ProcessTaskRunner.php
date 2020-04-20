@@ -43,9 +43,12 @@ class ProcessTaskRunner implements TaskRunnerInterface
 
     /**
      * @param string[]                         $command The command to run and its arguments listed as separate entries
-     * @param string|null                      $cwd     The working directory or null to use the working dir of the current PHP process
-     * @param string[]|null                    $env     The environment variables or null to use the same environment as the current PHP process
-     * @param resource|string|Traversable|null $input   The input as stream resource, scalar or \Traversable, or null for no input
+     * @param string|null                      $cwd     The working directory or null to use the working dir of the
+     *                                                  current PHP process
+     * @param string[]|null                    $env     The environment variables or null to use the same environment as
+     *                                                  the current PHP process
+     * @param resource|string|Traversable|null $input   The input as stream resource, scalar or \Traversable, or null
+     *                                                  for no input
      * @param int|float|null                   $timeout The timeout in seconds or null to disable
      *
      * @throws LogicException When proc_open is not installed
@@ -68,7 +71,11 @@ class ProcessTaskRunner implements TaskRunnerInterface
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
-        $output->writeln('Executing: ' . $process->getCommandLine(), OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
+        $output->writeln(
+            'Executing: ' . $process->getCommandLine(),
+            OutputInterface::VERBOSITY_VERBOSE,
+            OutputInterface::CHANNEL_STRERR
+        );
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
 
         try {

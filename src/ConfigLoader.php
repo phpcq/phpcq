@@ -8,6 +8,7 @@ use Phpcq\Config\PhpcqConfiguration;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
+
 use function array_keys;
 
 final class ConfigLoader
@@ -47,7 +48,7 @@ final class ConfigLoader
         return $this->mergeConfig($processed);
     }
 
-    private function mergeConfig(array $config) : array
+    private function mergeConfig(array $config): array
     {
         $defaultDirs = [];
         foreach ($config['directories'] as $directory) {
@@ -63,8 +64,10 @@ final class ConfigLoader
                 continue;
             }
             foreach ($config['directories'] as $baseDir) {
-                if (array_key_exists($baseDir, $config[$tool]['directories'])
-                    && false === $config[$tool]['directories'][$baseDir]) {
+                if (
+                    array_key_exists($baseDir, $config[$tool]['directories'])
+                    && false === $config[$tool]['directories'][$baseDir]
+                ) {
                     unset($config[$tool]['directories'][$baseDir]);
                     continue;
                 }

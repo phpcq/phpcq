@@ -19,6 +19,7 @@ use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputOption;
+
 use function assert;
 use function is_string;
 use function sys_get_temp_dir;
@@ -98,7 +99,7 @@ final class UpdateCommand extends AbstractCommand
         return 0;
     }
 
-    protected function getUntrustedKeyStrategy() : TrustKeyStrategyInterface
+    protected function getUntrustedKeyStrategy(): TrustKeyStrategyInterface
     {
         if ($this->input->getOption('trust-keys')) {
             return AlwaysStrategy::TRUST();

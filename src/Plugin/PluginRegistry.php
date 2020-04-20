@@ -9,6 +9,7 @@ use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\RepositoryInterface;
+
 use function get_class;
 
 final class PluginRegistry implements IteratorAggregate
@@ -100,7 +101,9 @@ final class PluginRegistry implements IteratorAggregate
             // Bootstrap files are in the same dir as the installed.json.
             $path = realpath($baseDir . '/' . $bootstrap['url']);
             if (false === $path || !is_readable($path)) {
-                throw new RuntimeException('Invalid bootstrap path provided for tool ' . $toolName . ': ' . $bootstrap['url']);
+                throw new RuntimeException(
+                    'Invalid bootstrap path provided for tool ' . $toolName . ': ' . $bootstrap['url']
+                );
             }
 
             yield $path;

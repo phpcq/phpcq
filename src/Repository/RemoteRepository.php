@@ -13,7 +13,7 @@ class RemoteRepository implements IteratorAggregate, RepositoryInterface
     use RepositoryHasToolTrait;
 
     /**
-     * @var 
+     * @var string
      */
     private $url;
 

@@ -10,6 +10,7 @@ use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Process\PhpExecutableFinder;
+
 use function assert;
 use function is_string;
 
@@ -90,7 +91,11 @@ final class ExecCommand extends AbstractCommand
         try {
             $task->run($taskOutput);
         } catch (RuntimeException $throwable) {
-            $taskOutput->writeln($throwable->getMessage(), BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STRERR);
+            $taskOutput->writeln(
+                $throwable->getMessage(),
+                BufferedOutput::VERBOSITY_NORMAL,
+                BufferedOutput::CHANNEL_STRERR
+            );
             $taskOutput->release();
             return (int) $throwable->getCode();
         }

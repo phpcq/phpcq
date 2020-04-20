@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Phpcq\Test;
+
 use Phpcq\ConfigLoader;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
 use PHPUnit\Framework\TestCase;

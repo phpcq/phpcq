@@ -18,7 +18,10 @@ class InstalledBootstrapTest extends TestCase
         $instance = new InstalledBootstrap('1.0.0', __DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php');
         $this->assertSame('1.0.0', $instance->getPluginVersion());
         $this->assertSame(__DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php', $instance->getFilePath());
-        $this->assertSame(file_get_contents(__DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php'), $instance->getCode());
+        $this->assertSame(
+            file_get_contents(__DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php'),
+            $instance->getCode()
+        );
     }
 
     public function testThrowsForInvalidVersion(): void

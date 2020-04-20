@@ -13,12 +13,12 @@ final class ArrayConfigOption extends AbstractConfigurationOption
         parent::__construct($name, $description, $defaultValue, $required);
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return 'array';
     }
 
-    public function validateValue($value) : void
+    public function validateValue($value): void
     {
         if (is_array($value)) {
             return;

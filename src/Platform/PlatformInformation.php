@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Platform;
 
 use Composer\XdebugHandler\XdebugHandler;
+
 use function curl_version;
 use function defined;
 use function get_loaded_extensions;
@@ -19,6 +20,7 @@ use function preg_replace_callback;
 use function strlen;
 use function strpos;
 use function strtolower;
+
 use const ICONV_VERSION;
 use const INTL_ICU_VERSION;
 use const LIBXML_DOTTED_VERSION;
@@ -81,7 +83,7 @@ class PlatformInformation implements PlatformInformationInterface
     /**
      * @return array<string, string>
      */
-    public function getLibraries() : array
+    public function getLibraries(): array
     {
         return $this->libraries;
     }
@@ -89,7 +91,7 @@ class PlatformInformation implements PlatformInformationInterface
     /**
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    public function getInstalledVersion(string $name) : ?string
+    public function getInstalledVersion(string $name): ?string
     {
         if ($name === 'php') {
             return $this->getPhpVersion();
@@ -213,25 +215,29 @@ class PlatformInformation implements PlatformInformationInterface
                     break;
 
                 case 'openssl':
-                    $prettyVersion = preg_replace_callback('{^(?:OpenSSL|LibreSSL)?\s*([0-9.]+)([a-z]*).*}i', function ($match) {
-                        if (empty($match[2])) {
-                            return $match[1];
-                        }
+                    $prettyVersion = preg_replace_callback(
+                        '{^(?:OpenSSL|LibreSSL)?\s*([0-9.]+)([a-z]*).*}i',
+                        function ($match) {
+                            if (empty($match[2])) {
+                                return $match[1];
+                            }
 
-                        // OpenSSL versions add another letter when they reach Z.
-                        // e.g. OpenSSL 0.9.8zh 3 Dec 2015
+                            // OpenSSL versions add another letter when they reach Z.
+                            // e.g. OpenSSL 0.9.8zh 3 Dec 2015
 
-                        if (!preg_match('{^z*[a-z]$}', $match[2])) {
-                            // 0.9.8abc is garbage
-                            return 0;
-                        }
+                            if (!preg_match('{^z*[a-z]$}', $match[2])) {
+                                // 0.9.8abc is garbage
+                                return 0;
+                            }
 
-                        $len = strlen($match[2]);
-                        $patchVersion = ($len - 1) * 26; // All Z
-                        $patchVersion += ord($match[2][$len - 1]) - 96;
+                            $len = strlen($match[2]);
+                            $patchVersion = ($len - 1) * 26; // All Z
+                            $patchVersion += ord($match[2][$len - 1]) - 96;
 
-                        return $match[1].'.'.$patchVersion;
-                    }, OPENSSL_VERSION_TEXT);
+                            return $match[1] . '.' . $patchVersion;
+                        },
+                        OPENSSL_VERSION_TEXT
+                    );
 
                     break;
 

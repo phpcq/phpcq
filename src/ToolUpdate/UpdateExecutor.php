@@ -14,6 +14,7 @@ use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Phpcq\Repository\ToolInformationInterface;
+
 use function file_get_contents;
 use function sprintf;
 
@@ -82,13 +83,19 @@ final class UpdateExecutor
 
     private function installTool(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
     {
-        $this->output->writeln('Installing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
+        $this->output->writeln(
+            'Installing ' . $tool->getName() . ' version ' . $tool->getVersion(),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $this->installVersion($tool, $requireSigned);
     }
 
-    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old, bool $requireSigned): ToolInformationInterface
-    {
+    private function upgradeTool(
+        ToolInformationInterface $tool,
+        ToolInformationInterface $old,
+        bool $requireSigned
+    ): ToolInformationInterface {
         $this->output->writeln('Upgrading', OutputInterface::VERBOSITY_VERBOSE);
 
         $new = $this->installVersion($tool, $requireSigned);
@@ -99,7 +106,10 @@ final class UpdateExecutor
 
     private function removeTool(ToolInformationInterface $tool): void
     {
-        $this->output->writeln('Removing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
+        $this->output->writeln(
+            'Removing ' . $tool->getName() . ' version ' . $tool->getVersion(),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
         $this->deleteVersion($tool);
     }
 
@@ -176,7 +186,8 @@ final class UpdateExecutor
 
             throw new RuntimeException(
                 sprintf(
-                    'Install tool "%s" rejected. No signature given. You may have to disable signature verification for this tool',
+                    'Install tool "%s" rejected. No signature given. You may have to disable signature verification'
+                    . ' for this tool',
                     $tool->getName(),
                 )
             );
@@ -185,7 +196,7 @@ final class UpdateExecutor
         $signatureName = sprintf('%1$s~%2$s.asc', $tool->getName(), $tool->getVersion());
         $signaturePath = $this->phpcqPath . '/' . $signatureName;
         $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
-        $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+        $result = $this->verifier->verify(file_get_contents($pharPath), file_get_contents($signaturePath));
 
         if ($requireSigned && ! $result->isValid()) {
             $this->deleteFile($pharPath);

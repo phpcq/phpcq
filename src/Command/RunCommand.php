@@ -16,6 +16,7 @@ use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
+
 use function assert;
 use function is_string;
 
@@ -76,7 +77,11 @@ final class RunCommand extends AbstractCommand
             try {
                 $task->run($taskOutput);
             } catch (RuntimeException $throwable) {
-                $taskOutput->writeln($throwable->getMessage(), BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STRERR);
+                $taskOutput->writeln(
+                    $throwable->getMessage(),
+                    BufferedOutput::VERBOSITY_NORMAL,
+                    BufferedOutput::CHANNEL_STRERR
+                );
                 $exitCode = (int) $throwable->getCode();
                 $exitCode = $exitCode === 0 ? 1 : $exitCode;
 
@@ -105,16 +110,21 @@ final class RunCommand extends AbstractCommand
     }
 
     /**
-     * @param PluginRegistry $plugins
-     * @param string $toolName
-     * @param array $config
+     * @param PluginRegistry     $plugins
+     * @param string             $toolName
+     * @param array              $config
      * @param BuildConfiguration $buildConfig
-     * @param Tasklist $taskList
+     * @param Tasklist           $taskList
      *
      * @return void
      */
-    protected function handlePlugin(PluginRegistry $plugins, string $toolName, array $config, BuildConfiguration $buildConfig, Tasklist $taskList): void
-    {
+    protected function handlePlugin(
+        PluginRegistry $plugins,
+        string $toolName,
+        array $config,
+        BuildConfiguration $buildConfig,
+        Tasklist $taskList
+    ): void {
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();
 

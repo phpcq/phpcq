@@ -13,12 +13,12 @@ final class IntConfigOption extends AbstractConfigurationOption
         parent::__construct($name, $description, $defaultValue, $required);
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return 'int';
     }
 
-    public function validateValue($value) : void
+    public function validateValue($value): void
     {
         if (is_int($value)) {
             return;

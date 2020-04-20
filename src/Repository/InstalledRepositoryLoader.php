@@ -63,7 +63,8 @@ class InstalledRepositoryLoader
         return json_decode(file_get_contents($filePath), true);
     }
 
-    private function handleVersionList(string $toolName, array $versionList, string $baseDir) : void {
+    private function handleVersionList(string $toolName, array $versionList, string $baseDir): void
+    {
         foreach ($versionList as $version) {
             $this->repository->addVersion(new ToolInformation(
                 $toolName,
