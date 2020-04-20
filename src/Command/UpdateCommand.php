@@ -5,14 +5,23 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\FileDownloader;
+use Phpcq\GnuPG\Downloader\KeyDownloader;
+use Phpcq\GnuPG\GnuPGFactory;
+use Phpcq\GnuPG\Signature\AlwaysStrategy;
+use Phpcq\GnuPG\Signature\SignatureVerifier;
+use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
+use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RepositoryFactory;
+use Phpcq\Signature\InteractiveQuestionKeyTrustStrategy;
+use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputOption;
 use function assert;
 use function is_string;
+use function sys_get_temp_dir;
 
 final class UpdateCommand extends AbstractCommand
 {
@@ -33,6 +42,13 @@ final class UpdateCommand extends AbstractCommand
             'd',
             InputOption::VALUE_NONE,
             'Dry run'
+        );
+
+        $this->addOption(
+            'trust-keys',
+            'k',
+            InputOption::VALUE_NONE,
+            'Add all keys to trusted key storage'
         );
 
         parent::configure();
@@ -69,9 +85,30 @@ final class UpdateCommand extends AbstractCommand
             }
             return 0;
         }
-        $executor = new UpdateExecutor($downloader, $this->phpcqPath, $consoleOutput);
+
+        $signatureVerifier = new SignatureVerifier(
+            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath),
+            new KeyDownloader(new SignatureFileDownloader($downloader)),
+            $this->getUntrustedKeyStrategy()
+        );
+
+        $executor = new UpdateExecutor($downloader, $signatureVerifier, $this->phpcqPath, $consoleOutput);
         $executor->execute($tasks);
 
         return 0;
+    }
+
+    protected function getUntrustedKeyStrategy() : TrustKeyStrategyInterface
+    {
+        if ($this->input->getOption('trust-keys')) {
+            return AlwaysStrategy::TRUST();
+        }
+
+        return new InteractiveQuestionKeyTrustStrategy(
+            new TrustedKeysStrategy($this->config['trusted-keys']),
+            $this->input,
+            $this->output,
+            $this->getHelper('question')
+        );
     }
 }

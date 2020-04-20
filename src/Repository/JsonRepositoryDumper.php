@@ -27,10 +27,11 @@ class JsonRepositoryDumper
             $name = $tool->getName();
             if (!isset($data['phars'][$name]))
             $data['phars'][$name][] = [
-                'version'      => $tool->getVersion(),
-                'phar-url'     => $tool->getPharUrl(),
-                'bootstrap'    => $this->dumpBootstrap($tool),
-                'requirements' => $tool->getPlatformRequirements(),
+                'version'       => $tool->getVersion(),
+                'phar-url'      => $tool->getPharUrl(),
+                'bootstrap'     => $this->dumpBootstrap($tool),
+                'requirements'  => $tool->getPlatformRequirements(),
+                'signature'     => $tool->getSignatureUrl(),
             ];
         }
 

@@ -20,6 +20,9 @@ matrix:
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libgpgme11-dev
+  - pecl install gnupg
 
 install:
   - travis_retry composer self-update && composer --version
@@ -32,10 +35,10 @@ install:
         || echo dev-${TRAVIS_BRANCH}) \
         travis_retry composer update $COMPOSER_FLAGS $PLATFORM_FLAGS --prefer-dist --no-interaction;
     fi
-  - ./phpcq update $PLATFORM_FLAGS
+  - ./phpcq update -t ./.phpcq $PLATFORM_FLAGS
 
 script:
-  - ./phpcq run $PLATFORM_FLAGS
+  - ./phpcq run -t ./.phpcq $PLATFORM_FLAGS
 
 # Hack to make things work again - we can not use a shallow repository.
 git:

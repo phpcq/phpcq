@@ -7,6 +7,10 @@ namespace Phpcq;
 use GuzzleHttp\Client;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
+use function file_get_contents;
+use function file_put_contents;
+use function is_file;
+use function strpos;
 
 class FileDownloader
 {
@@ -60,14 +64,20 @@ class FileDownloader
         }
         $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
         if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
-            $client = $this->getClient($baseDir);
-            // FIXME: apply auth.
-            $response = $client->request('GET', $this->validateUrlOrFile($url, $baseDir));
-            if (200 !== $response->getStatusCode()) {
-                throw new RuntimeException('Failed to download: ' . $url);
-            }
+            $url = $this->validateUrlOrFile($url, $baseDir);
 
-            file_put_contents($cacheFile, $response->getBody());
+            if (is_file($url)) {
+                file_put_contents($cacheFile, file_get_contents($url));
+            } else {
+                $client = $this->getClient($url);
+                // FIXME: apply auth.
+                $response = $client->request('GET', $url);
+                if (200 !== $response->getStatusCode()) {
+                    throw new RuntimeException('Failed to download: ' . $url);
+                }
+
+                file_put_contents($cacheFile, $response->getBody());
+            }
         }
 
         return file_get_contents($cacheFile);
@@ -149,11 +159,14 @@ class FileDownloader
         return $hash['value'] === hash_file($hashMap[$hash['type']], $cacheFile);
     }
 
-    private function getClient(string $baseUrl): Client
+    private function getClient(string $url): Client
     {
+        $options = [];
+        if (!is_file($url) && strpos($url, 'https://hkps.pool.sks-keyservers.net') === 0) {
+            $options['verify'] = __DIR__ . '/Resources/certs/sks-keyservers.netCA.pem';
+        }
+
         // FIXME: Move cache layer here.
-        return new Client([
-            'base_uri' => $baseUrl,
-        ]);
+        return new Client($options);
     }
 }

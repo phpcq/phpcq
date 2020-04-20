@@ -6,6 +6,7 @@ namespace Phpcq\ToolUpdate;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
+use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
@@ -13,9 +14,15 @@ use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Phpcq\Repository\ToolInformationInterface;
+use function file_get_contents;
+use function sprintf;
 
 final class UpdateExecutor
 {
+    public const TRUST_SIGNED = 'signed';
+    public const TRUST_UNSIGNED = 'unsigned';
+    public const TRUST_UNKNOWN_KEY = 'unknown-key';
+
     /**
      * @var FileDownloader
      */
@@ -31,11 +38,21 @@ final class UpdateExecutor
      */
     private $output;
 
-    public function __construct(FileDownloader $downloader, string $phpcqPath, OutputInterface $output)
-    {
-        $this->downloader = $downloader;
-        $this->phpcqPath  = $phpcqPath;
-        $this->output     = $output;
+    /**
+     * @var SignatureVerifier
+     */
+    private $verifier;
+
+    public function __construct(
+        FileDownloader $downloader,
+        SignatureVerifier $verifier,
+        string $phpcqPath,
+        OutputInterface $output
+    ) {
+        $this->downloader           = $downloader;
+        $this->verifier             = $verifier;
+        $this->phpcqPath            = $phpcqPath;
+        $this->output               = $output;
     }
 
     public function execute(array $tasks): void
@@ -47,10 +64,10 @@ final class UpdateExecutor
                     $installed->addVersion($task['tool']);
                     break;
                 case 'install':
-                    $installed->addVersion($this->installTool($task['tool']));
+                    $installed->addVersion($this->installTool($task['tool'], $task['signed']));
                     break;
                 case 'upgrade':
-                    $installed->addVersion($this->upgradeTool($task['tool'], $task['old']));
+                    $installed->addVersion($this->upgradeTool($task['tool'], $task['old'], $task['signed']));
                     break;
                 case 'remove':
                     $this->removeTool($task['tool']);
@@ -63,18 +80,18 @@ final class UpdateExecutor
         $dumper->dump($installed, 'installed.json');
     }
 
-    private function installTool(ToolInformationInterface $tool): ToolInformationInterface
+    private function installTool(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
     {
-        $this->output->writeln('Installing', OutputInterface::VERBOSITY_VERBOSE);
+        $this->output->writeln('Installing ' . $tool->getName() . ' version ' . $tool->getVersion(), OutputInterface::VERBOSITY_VERBOSE);
 
-        return $this->installVersion($tool);
+        return $this->installVersion($tool, $requireSigned);
     }
 
-    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old): ToolInformationInterface
+    private function upgradeTool(ToolInformationInterface $tool, ToolInformationInterface $old, bool $requireSigned): ToolInformationInterface
     {
         $this->output->writeln('Upgrading', OutputInterface::VERBOSITY_VERBOSE);
 
-        $new = $this->installVersion($tool);
+        $new = $this->installVersion($tool, $requireSigned);
         $this->deleteVersion($old);
 
         return $new;
@@ -86,7 +103,7 @@ final class UpdateExecutor
         $this->deleteVersion($tool);
     }
 
-    private function installVersion(ToolInformationInterface $tool): ToolInformationInterface
+    private function installVersion(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
     {
         $pharName = sprintf('%1$s~%2$s.phar', $tool->getName(), $tool->getVersion());
         $pharPath = $this->phpcqPath . '/' . $pharName;
@@ -94,6 +111,7 @@ final class UpdateExecutor
 
         $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
         $this->validateHash($pharPath, $tool->getHash());
+        $signatureName = $this->verifySignature($pharPath, $tool, $requireSigned);
 
         return new ToolInformation(
             $tool->getName(),
@@ -102,7 +120,7 @@ final class UpdateExecutor
             $tool->getPlatformRequirements(),
             $tool->getBootstrap(),
             $tool->getHash(),
-            $tool->getSignatureUrl()
+            $signatureName
         );
     }
 
@@ -113,8 +131,11 @@ final class UpdateExecutor
         if (!$bootstrap instanceof InstalledBootstrap) {
             throw new RuntimeException('Can only remove installed bootstrap files.');
         }
-
         $this->deleteFile($bootstrap->getFilePath());
+
+        if ($signatureUrl = $tool->getSignatureUrl()) {
+            $this->deleteFile($this->phpcqPath . '/' . $signatureUrl);
+        }
     }
 
     private function deleteFile(string $path): void
@@ -141,5 +162,44 @@ final class UpdateExecutor
         if ($hash->getValue() !== hash_file($hashMap[$hash->getType()], $pathToPhar)) {
             throw new RuntimeException('Invalid hash for file: ' . $pathToPhar);
         }
+    }
+
+    private function verifySignature(string $pharPath, ToolInformationInterface $tool, bool $requireSigned): ?string
+    {
+        $signatureUrl = $tool->getSignatureUrl();
+        if (null === $signatureUrl) {
+            if (! $requireSigned) {
+                return null;
+            }
+
+            $this->deleteFile($pharPath);
+
+            throw new RuntimeException(
+                sprintf(
+                    'Install tool "%s" rejected. No signature given. You may have to disable signature verification for this tool',
+                    $tool->getName(),
+                )
+            );
+        }
+
+        $signatureName = sprintf('%1$s~%2$s.asc', $tool->getName(), $tool->getVersion());
+        $signaturePath = $this->phpcqPath . '/' . $signatureName;
+        $this->downloader->downloadFileTo($signatureUrl, $signaturePath);
+        $result = $this->verifier->verify(file_get_contents($pharPath),  file_get_contents($signaturePath));
+
+        if ($requireSigned && ! $result->isValid()) {
+            $this->deleteFile($pharPath);
+            $this->deleteFile($this->phpcqPath . '/' . $signatureName);
+
+            throw new RuntimeException(
+                sprintf(
+                    'Verify signature for tool "%s" failed with key fingerprint "%s"',
+                    $tool->getName(),
+                    $result->getFingerprint() ?: 'UNKNOWN'
+                )
+            );
+        }
+
+        return $signatureName;
     }
 }

@@ -77,11 +77,13 @@ final class RunCommand extends AbstractCommand
                 $task->run($taskOutput);
             } catch (RuntimeException $throwable) {
                 $taskOutput->writeln($throwable->getMessage(), BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STRERR);
+                $exitCode = (int) $throwable->getCode();
+                $exitCode = $exitCode === 0 ? 1 : $exitCode;
+
                 if (!$keepGoing) {
                     $taskOutput->release();
-                    return (int) $throwable->getCode();
+                    return $exitCode;
                 }
-                $exitCode = (int) $throwable->getCode();
             }
             $taskOutput->release();
         }

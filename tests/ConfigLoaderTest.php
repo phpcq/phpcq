@@ -35,17 +35,29 @@ final class ConfigLoaderTest extends TestCase
         $this->assertArrayHasKey('tools', $config);
         $this->assertEquals(
             [
-                'phpunit' => [
+                'phpunit'          => [
                     'version' => '^7.0',
+                    'signed'  => true,
                 ],
                 'custom-task-tool' => [
                     'version' => '^1.0',
+                    'signed'  => true,
                 ],
-                'local-tool' => [
-                    'runner-plugin' => '.phpcq/plugins/boot-local-tool.php'
+                'local-tool'       => [
+                    'runner-plugin' => '.phpcq/plugins/boot-local-tool.php',
+                    'signed'        => true,
                 ],
             ],
             $config['tools']
+        );
+
+        $this->assertEquals(
+            [
+                '4AA394086372C20A',
+                '8A03EA3B385DBAA1',
+                'D2CCAC42F6295E7D'
+            ],
+            $config['trusted-keys']
         );
     }
 
@@ -60,9 +72,10 @@ final class ConfigLoaderTest extends TestCase
                 'repositories'      => [],
                 'artifact'          => '.phpcq/build',
                 'tools'             => [
-                    'author-validation' => ['version' => '^1.0'],
-                    'phpcpd'            => ['version' => '^2.0'],
+                    'author-validation' => ['version' => '^1.0', 'signed' => true],
+                    'phpcpd'            => ['version' => '^2.0', 'signed' => true],
                 ],
+                'trusted-keys' => [],
                 'author-validation' => [
                     'directories' => ['src' => null, 'examples' => null
                     ]

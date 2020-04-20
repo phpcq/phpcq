@@ -15,6 +15,7 @@ final class PhpcqConfiguration implements ConfigurationInterface
         $root        = $treeBuilder->getRootNode();
 
         $root
+            ->normalizeKeys(false)
             ->children()
                 ->arrayNode('directories')
                     ->scalarPrototype()->end()
@@ -33,8 +34,15 @@ final class PhpcqConfiguration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('version')->end()
                             ->scalarNode('runner-plugin')->end()
+                            ->booleanNode('signed')
+                                ->defaultValue(true)
+                                ->info('If set to false no verified signature is required')
+                            ->end()
                         ->end()
                     ->end()
+                ->end()
+                ->arrayNode('trusted-keys')
+                    ->scalarPrototype()->end()
                 ->end()
             ->end();
 

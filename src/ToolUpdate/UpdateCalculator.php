@@ -38,7 +38,7 @@ final class UpdateCalculator
     {
         $desired = $this->calculateDesiredTools($tools);
 
-        return $this->calculateTasksToExecute($desired);
+        return $this->calculateTasksToExecute($desired, $tools);
     }
 
     private function calculateDesiredTools(array $tools): RepositoryInterface
@@ -55,7 +55,7 @@ final class UpdateCalculator
         return $desired;
     }
 
-    private function calculateTasksToExecute(RepositoryInterface $desired): array
+    private function calculateTasksToExecute(RepositoryInterface $desired, array $tools): array
     {
         // Determine diff to current installation.
         $tasks = [];
@@ -70,6 +70,7 @@ final class UpdateCalculator
                     'type' => 'install',
                     'tool' => $tool,
                     'message' => $message,
+                    'signed' => $tools[$tool->getName()]['signed']
                 ];
                 continue;
             }
@@ -89,6 +90,7 @@ final class UpdateCalculator
                     'tool' => $tool,
                     'old'  => $this->installed->getTool($name, '*'),
                     'message' => $message,
+                    'signed' => $tools[$tool->getName()]['signed']
                 ];
                 continue;
             }
