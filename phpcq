@@ -37,8 +37,10 @@ $input = new ArgvInput($argv);
 if ($input->getFirstArgument() === 'exec') {
     $argv = ExecCommand::prepare($argv);
     // strip the application name.
-    array_shift($argv);
-    $application->setDefaultCommand('exec', true);
+    if ($argv[0] === 'exec') {
+        array_shift($argv);
+        $application->setDefaultCommand('exec', true);
+    }
     $input = new ArgvInput($argv);
 }
 

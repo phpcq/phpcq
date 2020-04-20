@@ -35,6 +35,26 @@ class ExecCommandTest extends TestCase
                 'expected' => ['/path/to/phpcq', 'exec', '-q', '--', 'phpunit', '--help'],
                 'argv'     => ['/path/to/phpcq', 'exec', '-q', '--', 'phpunit', '--help'],
             ],
+            'application options and missing tool name' => [
+                'expected' => ['/path/to/phpcq', '--no-ansi', 'exec'],
+                'argv'     => ['/path/to/phpcq', '--no-ansi', 'exec'],
+            ],
+            'application options and plain exec command' => [
+                'expected' => ['/path/to/phpcq', '--no-ansi', 'exec', '--', 'phpunit'],
+                'argv'     => ['/path/to/phpcq', '--no-ansi', 'exec', 'phpunit'],
+            ],
+            'application options and phpcq options' => [
+                'expected' => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', '--', 'phpunit'],
+                'argv'     => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', 'phpunit'],
+            ],
+            'application options and prefix options for phpcq and suffix option(s) for tool' => [
+                'expected' => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', '--', 'phpunit', '--help'],
+                'argv'     => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', 'phpunit', '--help'],
+            ],
+            'application options and "--" already provided' => [
+                'expected' => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', '--', 'phpunit', '--help'],
+                'argv'     => ['/path/to/phpcq', '--no-ansi', 'exec', '-q', '--', 'phpunit', '--help'],
+            ],
         ];
     }
 
