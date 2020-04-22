@@ -60,10 +60,10 @@ final class RunCommand extends AbstractCommand
 
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
-            $this->handlePlugin($plugins, $toolName, $this->config, $buildConfig, $taskList);
+            $this->handlePlugin($plugins, $toolName, $buildConfig, $taskList);
         } else {
             foreach (array_keys($this->config['tools']) as $toolName) {
-                $this->handlePlugin($plugins, $toolName, $this->config, $buildConfig, $taskList);
+                $this->handlePlugin($plugins, $toolName, $buildConfig, $taskList);
             }
         }
 
@@ -112,7 +112,6 @@ final class RunCommand extends AbstractCommand
     /**
      * @param PluginRegistry     $plugins
      * @param string             $toolName
-     * @param array              $config
      * @param BuildConfiguration $buildConfig
      * @param Tasklist           $taskList
      *
@@ -121,7 +120,6 @@ final class RunCommand extends AbstractCommand
     protected function handlePlugin(
         PluginRegistry $plugins,
         string $toolName,
-        array $config,
         BuildConfiguration $buildConfig,
         Tasklist $taskList
     ): void {
@@ -131,7 +129,7 @@ final class RunCommand extends AbstractCommand
         // Initialize phar files
         if ($plugin instanceof ConfigurationPluginInterface) {
             $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-            $configuration       = $config[$name] ?? [];
+            $configuration       = $this->config['tool-config'][$name] ?? [];
 
             $plugin->describeOptions($configOptionsBuilder);
             $options = $configOptionsBuilder->getOptions();

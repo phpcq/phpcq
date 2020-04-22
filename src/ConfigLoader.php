@@ -55,23 +55,24 @@ final class ConfigLoader
             $defaultDirs[$directory] = null;
         }
         foreach (array_keys($config['tools']) as $tool) {
-            if (!isset($config[$tool])) {
-                $config[$tool] = [];
+            if (!isset($config['tool-config'][$tool])) {
+                $config['tool-config'][$tool] = [];
             }
 
-            if (!isset($config[$tool]['directories'])) {
-                $config[$tool]['directories'] = $defaultDirs;
+            if (!isset($config['tool-config'][$tool]['directories'])) {
+                $config['tool-config'][$tool]['directories'] = $defaultDirs;
                 continue;
             }
             foreach ($config['directories'] as $baseDir) {
                 if (
-                    array_key_exists($baseDir, $config[$tool]['directories'])
-                    && false === $config[$tool]['directories'][$baseDir]
+                    array_key_exists($baseDir, $config['tool-config'][$tool]['directories'])
+                    && false === $config['tool-config'][$tool]['directories'][$baseDir]
                 ) {
-                    unset($config[$tool]['directories'][$baseDir]);
+                    unset($config['tool-config'][$tool]['directories'][$baseDir]);
                     continue;
                 }
-                $config[$tool]['directories'] = [$baseDir => null] + $config[$tool]['directories'];
+                $config['tool-config'][$tool]['directories'] = [$baseDir => null]
+                    + $config['tool-config'][$tool]['directories'];
             }
         }
 

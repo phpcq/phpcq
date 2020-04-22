@@ -78,23 +78,25 @@ final class ConfigLoaderTest extends TestCase
                     'phpcpd'            => ['version' => '^2.0', 'signed' => true],
                 ],
                 'trusted-keys' => [],
-                'author-validation' => [
-                    'directories' => ['src' => null, 'examples' => null
-                    ]
-                ],
-                'phpcpd'            => [
-                    'customflags' => '',
-                    'directories' => [
-                        'src'   => null,
-                        'tests' => null,
-                        'a'     => null,
-                        'b'     => null,
-                        'xyz'   => [
-                            'excluded'    => [
-                                '... a (string)',
-                                '... b (string)'
-                            ],
-                            'customflags' => null
+                'tool-config' => [
+                    'author-validation' => [
+                        'directories' => ['src' => null, 'examples' => null
+                        ]
+                    ],
+                    'phpcpd'            => [
+                        'customflags' => '',
+                        'directories' => [
+                            'src'   => null,
+                            'tests' => null,
+                            'a'     => null,
+                            'b'     => null,
+                            'xyz'   => [
+                                'excluded'    => [
+                                    '... a (string)',
+                                    '... b (string)'
+                                ],
+                                'customflags' => null
+                            ]
                         ]
                     ]
                 ]

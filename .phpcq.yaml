@@ -31,33 +31,34 @@ phpcq:
     # PHP_CodeSniffer
     - 31C7E470E2138192
 
-phpunit:
-  custom_flags:
+tool-config:
+  phpunit:
+    custom_flags:
 
-phpcpd:
-#  exclude:
-#  names:
-#  names_exclude:
-#  regexps_exclude:
-#  log:
-#  min_lines:
-#  min_tokens:
-#  fuzzy: true
-#  custom_flags:
+  phpcpd:
+  #  exclude:
+  #  names:
+  #  names_exclude:
+  #  regexps_exclude:
+  #  log:
+  #  min_lines:
+  #  min_tokens:
+  #  fuzzy: true
+  #  custom_flags:
 
-phploc:
+  phploc:
 
-phpmd:
-  ruleset:
-    - codesize
-    - controversial
-    - naming
-    - unusedcode
+  phpmd:
+    ruleset:
+      - codesize
+      - controversial
+      - naming
+      - unusedcode
 
-psalm:
+  psalm:
 
-composer-require-checker:
-  config_file: '.composer-require-checker.json'
+  composer-require-checker:
+    config_file: '.composer-require-checker.json'
 
-phpcs:
-  standard: PSR12
+  phpcs:
+    standard: PSR12
