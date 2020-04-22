@@ -21,6 +21,8 @@ phpcq:
       version: ^6.0
     phpcs:
       version: ^3.5
+    phpcbf:
+      version: ^3.5
   trusted-keys:
     # sb@sebastian-bergmann.de
     - 4AA394086372C20A
@@ -32,6 +34,8 @@ phpcq:
     - 31C7E470E2138192
 
   chains:
+    fix:
+      phpcbf: ~
     composer: &composer
       composer-require-checker: ~
     tests: &tests
@@ -76,5 +80,8 @@ tool-config:
   composer-require-checker:
     config_file: '.composer-require-checker.json'
 
-  phpcs:
+  phpcs: &phpcs
     standard: PSR12
+
+  phpcbf:
+    <<: *phpcs
