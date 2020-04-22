@@ -9,6 +9,7 @@ use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
 
+use function array_fill_keys;
 use function array_keys;
 
 final class ConfigLoader
@@ -45,7 +46,13 @@ final class ConfigLoader
         unset($config['phpcq']);
         $processed = array_merge($processed, $config);
 
-        return $this->mergeConfig($processed);
+        $merged = $this->mergeConfig($processed);
+
+        if (!isset($merged['chains']['default']) || $merged['chains']['default'] === null) {
+            $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
+        }
+
+        return $merged;
     }
 
     private function mergeConfig(array $config): array

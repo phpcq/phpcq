@@ -39,6 +39,21 @@ final class ValidateCommand extends AbstractCommand
             }
         }
 
+        $this->output->writeln('Validate chains:', OutputInterface::VERBOSITY_VERY_VERBOSE);
+
+        $valid = true;
+        foreach ($this->config['chains'] as $chainName => $chainTools) {
+            foreach ($chainTools as $toolName => $toolConfig) {
+                if (null === $toolConfig) {
+                    continue;
+                }
+
+                if (!$this->validatePlugin($plugins, $toolName, $chainName)) {
+                    $valid = false;
+                }
+            }
+        }
+
         return $valid ? 0 : 1;
     }
 
@@ -49,10 +64,11 @@ final class ValidateCommand extends AbstractCommand
      *
      * @param PluginRegistry $plugins  The plugin registry.
      * @param string         $toolName The tool name being validated.
+     * @param string|null    $chain    Chain
      *
      * @return bool
      */
-    protected function validatePlugin(PluginRegistry $plugins, string $toolName): bool
+    protected function validatePlugin(PluginRegistry $plugins, string $toolName, ?string $chain = null): bool
     {
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();
@@ -62,7 +78,13 @@ final class ValidateCommand extends AbstractCommand
         }
 
         $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-        $configuration        = $this->config[$name] ?? [];
+        $configuration        = $chain
+            ? $this->config['chains'][$chain][$name]
+            : null;
+
+        if (null == $configuration) {
+            $configuration = $this->config['tools-config'][$name] ?? [];
+        }
 
         $plugin->describeOptions($configOptionsBuilder);
         $options = $configOptionsBuilder->getOptions();

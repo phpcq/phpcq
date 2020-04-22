@@ -29,6 +29,13 @@ final class RunCommand extends AbstractCommand
         $this->setName('run')->setDescription('Run configured build tasks');
 
         $this->addArgument(
+            'chain',
+            InputArgument::OPTIONAL,
+            'Define the tool chain. Using default chain if none passed',
+            'default'
+        );
+
+        $this->addArgument(
             'tool',
             InputArgument::OPTIONAL,
             'Define a specific tool which should be run'
@@ -58,12 +65,19 @@ final class RunCommand extends AbstractCommand
         // Load bootstraps
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
+        $chain = $this->input->getArgument('chain');
+        assert(is_string($chain));
+
+        if (!isset($this->config['chains'][$chain])) {
+            throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
+        }
+
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
-            $this->handlePlugin($plugins, $toolName, $buildConfig, $taskList);
+            $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
         } else {
-            foreach (array_keys($this->config['tools']) as $toolName) {
-                $this->handlePlugin($plugins, $toolName, $buildConfig, $taskList);
+            foreach (array_keys($this->config['chains'][$chain]) as $toolName) {
+                $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
             }
         }
 
@@ -111,6 +125,7 @@ final class RunCommand extends AbstractCommand
 
     /**
      * @param PluginRegistry     $plugins
+     * @param string             $chain
      * @param string             $toolName
      * @param BuildConfiguration $buildConfig
      * @param Tasklist           $taskList
@@ -119,6 +134,7 @@ final class RunCommand extends AbstractCommand
      */
     protected function handlePlugin(
         PluginRegistry $plugins,
+        string $chain,
         string $toolName,
         BuildConfiguration $buildConfig,
         Tasklist $taskList
@@ -129,7 +145,8 @@ final class RunCommand extends AbstractCommand
         // Initialize phar files
         if ($plugin instanceof ConfigurationPluginInterface) {
             $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-            $configuration       = $this->config['tool-config'][$name] ?? [];
+            $configuration       = $this->config['chains'][$chain][$name]
+                ?? ($this->config['tool-config'][$name] ?: []);
 
             $plugin->describeOptions($configOptionsBuilder);
             $options = $configOptionsBuilder->getOptions();

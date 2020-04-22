@@ -31,6 +31,22 @@ phpcq:
     # PHP_CodeSniffer
     - 31C7E470E2138192
 
+  chains:
+    composer: &composer
+      composer-require-checker: ~
+    tests: &tests
+      phpunit: ~
+    code-style: &style
+      phpcpd: ~
+      phpmd: ~
+      phpcs: ~
+      psalm: ~
+    default:
+      <<: *composer
+      <<: *style
+      <<: *tests
+      phploc: ~
+
 tool-config:
   phpunit:
     custom_flags:
