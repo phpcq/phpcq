@@ -21,11 +21,6 @@
             "role": "lead"
         }
     ],
-    "extra": {
-        "branch-alias": {
-            "dev-dev-3.0": "3.x-dev"
-        }
-    },
     "require": {
         "php": "^7.3",
         "ext-hash": "*",
@@ -34,12 +29,17 @@
         "composer/semver": "^1.5",
         "composer/xdebug-handler": "^1.4",
         "guzzlehttp/guzzle": "^6.0",
-        "phpcq/plugin-api": "^1.0.0@dev",
         "phpcq/gnupg": "^1.0@dev",
+        "phpcq/plugin-api": "^1.0.0@dev",
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",
         "symfony/yaml": "^5.0.7"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-dev-3.0": "3.x-dev"
+        }
     },
     "autoload": {
         "psr-4": {
