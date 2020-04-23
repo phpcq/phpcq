@@ -36,20 +36,18 @@ phpcq:
   chains:
     fix:
       phpcbf: ~
-    composer: &composer
+    verify: &verify
       composer-require-checker: ~
-    tests: &tests
-      phpunit: ~
-    code-style: &style
+    analyze: &analyze
+      phploc: ~
       phpcpd: ~
       phpmd: ~
       phpcs: ~
       psalm: ~
+      phpunit: ~
     default:
-      <<: *composer
-      <<: *style
-      <<: *tests
-      phploc: ~
+      <<: *verify
+      <<: *analyze
 
 tool-config:
   phpunit:
