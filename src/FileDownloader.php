@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
 
@@ -76,7 +77,12 @@ class FileDownloader
             } else {
                 $client = $this->getClient($url);
                 // FIXME: apply auth.
-                $response = $client->request('GET', $url);
+                try {
+                    $response = $client->request('GET', $url);
+                } catch (RequestException $exception) {
+                    throw new RuntimeException('Failed to download: ' . $url, (int) $exception->getCode(), $exception);
+                }
+
                 if (200 !== $response->getStatusCode()) {
                     throw new RuntimeException('Failed to download: ' . $url);
                 }
