@@ -10,6 +10,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
 
 use function array_fill_keys;
+use function array_key_exists;
 use function array_keys;
 
 final class ConfigLoader
@@ -48,7 +49,7 @@ final class ConfigLoader
 
         $merged = $this->mergeConfig($processed);
 
-        if (!isset($merged['chains']['default']) || $merged['chains']['default'] === null) {
+        if (!array_key_exists('default', $merged['chains'])) {
             $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
         }
 
