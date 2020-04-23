@@ -52,6 +52,33 @@ final class ConfigLoaderTest extends TestCase
             ],
             $config['tools']
         );
+        
+        $this->assertEquals(
+            [
+                'default' => [
+                    'phpcpd' => null,
+                    'author-validation' => null,
+                    'autoload-validation' => null,
+                    'branch-alias-validation' => null,
+                    'composer-validate' => null,
+                    'pdepend' => null,
+                    'phpcs' => null,
+                    'phplint' => null,
+                    'phploc' => null,
+                    'phpmd' => null,
+                    'phpspec' => null,
+                    'travis-configuration-check' => null,
+                ],
+                'tests' => [
+                    'phpunit' => [
+                        'directories' => [
+                            'foo' => null
+                        ]
+                    ]
+                ]
+            ],
+            $config['chains']
+        );
 
         $this->assertEquals(
             [

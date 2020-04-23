@@ -33,6 +33,25 @@ phpcq:
     # magl@magll.net
     - D2CCAC42F6295E7D
 
+  chains:
+    default:
+      phpcpd: ~
+      author-validation: ~
+      autoload-validation: ~
+      branch-alias-validation: ~
+      composer-validate: ~
+      pdepend: ~
+      phpcs: ~
+      phplint: ~
+      phploc: ~
+      phpmd: ~
+      phpspec: ~
+      travis-configuration-check: ~
+    tests:
+      phpunit:
+        directories:
+          foo: ~
+
 tool-config:
   # Read by config parser and passed to ConfigurationPluginInterface
   phpunit:
