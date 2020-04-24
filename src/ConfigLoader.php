@@ -9,6 +9,8 @@ use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Yaml\Yaml;
 
+use function array_fill_keys;
+use function array_key_exists;
 use function array_keys;
 
 final class ConfigLoader
@@ -45,7 +47,13 @@ final class ConfigLoader
         unset($config['phpcq']);
         $processed = array_merge($processed, $config);
 
-        return $this->mergeConfig($processed);
+        $merged = $this->mergeConfig($processed);
+
+        if (!array_key_exists('default', $merged['chains'])) {
+            $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
+        }
+
+        return $merged;
     }
 
     private function mergeConfig(array $config): array
@@ -55,23 +63,24 @@ final class ConfigLoader
             $defaultDirs[$directory] = null;
         }
         foreach (array_keys($config['tools']) as $tool) {
-            if (!isset($config[$tool])) {
-                $config[$tool] = [];
+            if (!isset($config['tool-config'][$tool])) {
+                $config['tool-config'][$tool] = [];
             }
 
-            if (!isset($config[$tool]['directories'])) {
-                $config[$tool]['directories'] = $defaultDirs;
+            if (!isset($config['tool-config'][$tool]['directories'])) {
+                $config['tool-config'][$tool]['directories'] = $defaultDirs;
                 continue;
             }
             foreach ($config['directories'] as $baseDir) {
                 if (
-                    array_key_exists($baseDir, $config[$tool]['directories'])
-                    && false === $config[$tool]['directories'][$baseDir]
+                    array_key_exists($baseDir, $config['tool-config'][$tool]['directories'])
+                    && false === $config['tool-config'][$tool]['directories'][$baseDir]
                 ) {
-                    unset($config[$tool]['directories'][$baseDir]);
+                    unset($config['tool-config'][$tool]['directories'][$baseDir]);
                     continue;
                 }
-                $config[$tool]['directories'] = [$baseDir => null] + $config[$tool]['directories'];
+                $config['tool-config'][$tool]['directories'] = [$baseDir => null]
+                    + $config['tool-config'][$tool]['directories'];
             }
         }
 

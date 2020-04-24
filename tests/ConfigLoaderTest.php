@@ -52,6 +52,33 @@ final class ConfigLoaderTest extends TestCase
             ],
             $config['tools']
         );
+        
+        $this->assertEquals(
+            [
+                'default' => [
+                    'phpcpd' => null,
+                    'author-validation' => null,
+                    'autoload-validation' => null,
+                    'branch-alias-validation' => null,
+                    'composer-validate' => null,
+                    'pdepend' => null,
+                    'phpcs' => null,
+                    'phplint' => null,
+                    'phploc' => null,
+                    'phpmd' => null,
+                    'phpspec' => null,
+                    'travis-configuration-check' => null,
+                ],
+                'tests' => [
+                    'phpunit' => [
+                        'directories' => [
+                            'foo' => null
+                        ]
+                    ]
+                ]
+            ],
+            $config['chains']
+        );
 
         $this->assertEquals(
             [
@@ -78,23 +105,29 @@ final class ConfigLoaderTest extends TestCase
                     'phpcpd'            => ['version' => '^2.0', 'signed' => true],
                 ],
                 'trusted-keys' => [],
-                'author-validation' => [
-                    'directories' => ['src' => null, 'examples' => null
-                    ]
-                ],
-                'phpcpd'            => [
-                    'customflags' => '',
-                    'directories' => [
-                        'src'   => null,
-                        'tests' => null,
-                        'a'     => null,
-                        'b'     => null,
-                        'xyz'   => [
-                            'excluded'    => [
-                                '... a (string)',
-                                '... b (string)'
-                            ],
-                            'customflags' => null
+                'chains' => ['default' => [
+                    'author-validation' => null,
+                    'phpcpd'            => null,
+                ]],
+                'tool-config' => [
+                    'author-validation' => [
+                        'directories' => ['src' => null, 'examples' => null
+                        ]
+                    ],
+                    'phpcpd'            => [
+                        'customflags' => '',
+                        'directories' => [
+                            'src'   => null,
+                            'tests' => null,
+                            'a'     => null,
+                            'b'     => null,
+                            'xyz'   => [
+                                'excluded'    => [
+                                    '... a (string)',
+                                    '... b (string)'
+                                ],
+                                'customflags' => null
+                            ]
                         ]
                     ]
                 ]

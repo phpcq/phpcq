@@ -33,68 +33,88 @@ phpcq:
     # magl@magll.net
     - D2CCAC42F6295E7D
 
-# Read by config parser and passed to ConfigurationPluginInterface
-phpunit:
- customflags:
+  chains:
+    default:
+      phpcpd: ~
+      author-validation: ~
+      autoload-validation: ~
+      branch-alias-validation: ~
+      composer-validate: ~
+      pdepend: ~
+      phpcs: ~
+      phplint: ~
+      phploc: ~
+      phpmd: ~
+      phpspec: ~
+      travis-configuration-check: ~
+    tests:
+      phpunit:
+        directories:
+          foo: ~
 
-phpcpd:
-  customflags: #flags for all directories
-  directories:
-    a: # no special flags
-    b:
-    xyz:
-      excluded:
-        - ... a (string)
-        - ... b (string)
-      customflags: # flags for xyz only
+tool-config:
+  # Read by config parser and passed to ConfigurationPluginInterface
+  phpunit:
+   customflags:
 
-author-validation:
-  composer: false
-  bower: false
-  packages: false
-  php-files: true
-  directories:
-    src: # nothing special
+  phpcpd:
+    customflags: #flags for all directories
+    directories:
+      a: # no special flags
+      b:
+      xyz:
+        excluded:
+          - ... a (string)
+          - ... b (string)
+        customflags: # flags for xyz only
+
+  author-validation:
+    composer: false
+    bower: false
+    packages: false
+    php-files: true
+    directories:
+      src: # nothing special
 
 
-autoload-validation:
-  customflags: false
-  excluded: false
+  autoload-validation:
+    customflags: false
+    excluded: false
 
-branch-alias-validation: ~
+  branch-alias-validation: ~
 
-composer-validate: ~
+  composer-validate: ~
 
-pdepend:
-  src: ~
-  excluded: ~
-  output: ~
+  pdepend:
+    src: ~
+    excluded: ~
+    output: ~
 
-phpcs:
-  standard: ~
-  excluded: ~
-  src: ~
-  customflags: ~
+  phpcs:
+    standard: ~
+    excluded: ~
+    src: ~
+    customflags: ~
 
-phplint:
-  src: ~
+  phplint:
+    src: ~
 
-phploc:
-  excluded: ~
-  src: ~
-  output: ~
+  phploc:
+    excluded: ~
+    src: ~
+    output: ~
 
-phpmd:
-  src: ~
-  excluded: ~
-  format: ~
-  ruleset: ~
-  customflags: ~
+  phpmd:
+    src: ~
+    excluded: ~
+    format: ~
+    ruleset: ~
+    customflags: ~
 
-phpspec:
-  config: ~
-  format: ~
+  phpspec:
+    config: ~
+    format: ~
 
-travis-configuration-check:
-  customflags: ~
+  travis-configuration-check:
+    customflags: ~
 

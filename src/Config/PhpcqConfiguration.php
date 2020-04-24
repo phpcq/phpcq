@@ -44,6 +44,13 @@ final class PhpcqConfiguration implements ConfigurationInterface
                 ->arrayNode('trusted-keys')
                     ->scalarPrototype()->end()
                 ->end()
+                ->arrayNode('chains')
+                    ->normalizeKeys(false)
+                    ->arrayPrototype()
+                        ->normalizeKeys(false)
+                        ->ignoreExtraKeys(false)
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

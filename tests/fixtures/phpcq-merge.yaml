@@ -9,24 +9,25 @@ phpcq:
     phpcpd:
       version: ^2.0
 
-author-validation:
-  directories:
-    tests: false
-    examples:
+tool-config:
+  author-validation:
+    directories:
+      tests: false
+      examples:
 
-# Example merge
-#author-validation:
-#  directories:
-#    src:
-#    examples:
+  # Example merge
+  #author-validation:
+  #  directories:
+  #    src:
+  #    examples:
 
-phpcpd:
-  customflags: #flags for all directories
-  directories:
-    a: # no special flags
-    b:
-    xyz:
-      excluded:
-        - ... a (string)
-        - ... b (string)
-      customflags: # flags for xyz only
+  phpcpd:
+    customflags: #flags for all directories
+    directories:
+      a: # no special flags
+      b:
+      xyz:
+        excluded:
+          - ... a (string)
+          - ... b (string)
+        customflags: # flags for xyz only

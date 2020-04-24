@@ -21,6 +21,10 @@ phpcq:
       version: ^6.0
     phpcs:
       version: ^3.5
+    phpcbf:
+      version: ^3.5
+    composer-normalize:
+      version: ^2.1
   trusted-keys:
     # sb@sebastian-bergmann.de
     - 4AA394086372C20A
@@ -30,34 +34,59 @@ phpcq:
     - D2CCAC42F6295E7D
     # PHP_CodeSniffer
     - 31C7E470E2138192
+    # Composer normalize
+    - C00543248C87FB13
 
-phpunit:
-  custom_flags:
+  chains:
+    fix:
+      composer-normalize:
+        dry_run: false
+      phpcbf: ~
+    verify: &verify
+      composer-require-checker: ~
+      composer-normalize: ~
+    analyze: &analyze
+      phploc: ~
+      phpcpd: ~
+      phpmd: ~
+      phpcs: ~
+      psalm: ~
+      phpunit: ~
+    default:
+      <<: *verify
+      <<: *analyze
 
-phpcpd:
-#  exclude:
-#  names:
-#  names_exclude:
-#  regexps_exclude:
-#  log:
-#  min_lines:
-#  min_tokens:
-#  fuzzy: true
-#  custom_flags:
+tool-config:
+  phpunit:
+    custom_flags:
 
-phploc:
+  phpcpd:
+  #  exclude:
+  #  names:
+  #  names_exclude:
+  #  regexps_exclude:
+  #  log:
+  #  min_lines:
+  #  min_tokens:
+  #  fuzzy: true
+  #  custom_flags:
 
-phpmd:
-  ruleset:
-    - codesize
-    - controversial
-    - naming
-    - unusedcode
+  phploc:
 
-psalm:
+  phpmd:
+    ruleset:
+      - codesize
+      - controversial
+      - naming
+      - unusedcode
 
-composer-require-checker:
-  config_file: '.composer-require-checker.json'
+  psalm:
 
-phpcs:
-  standard: PSR12
+  composer-require-checker:
+    config_file: '.composer-require-checker.json'
+
+  phpcs: &phpcs
+    standard: PSR12
+
+  phpcbf:
+    <<: *phpcs

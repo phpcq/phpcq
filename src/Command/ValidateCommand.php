@@ -10,7 +10,10 @@ use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\InvalidConfigException;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function array_key_exists;
 use function array_keys;
+use function md5;
+use function serialize;
 use function sprintf;
 
 final class ValidateCommand extends AbstractCommand
@@ -30,12 +33,14 @@ final class ValidateCommand extends AbstractCommand
         $installed  = $this->getInstalledRepository(true);
         $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
-        $this->output->writeln('Validate plugins:', OutputInterface::VERBOSITY_VERY_VERBOSE);
-
         $valid = true;
-        foreach (array_keys($this->config['tools']) as $toolName) {
-            if (!$this->validatePlugin($plugins, $toolName)) {
-                $valid = false;
+        foreach ($this->config['chains'] as $chainName => $chainTools) {
+            $this->output->writeln('Validate chain "' . $chainName . '":', OutputInterface::VERBOSITY_VERY_VERBOSE);
+
+            foreach (array_keys($chainTools) as $toolName) {
+                if (!$this->validatePlugin($plugins, $toolName, $chainName)) {
+                    $valid = false;
+                }
             }
         }
 
@@ -49,11 +54,14 @@ final class ValidateCommand extends AbstractCommand
      *
      * @param PluginRegistry $plugins  The plugin registry.
      * @param string         $toolName The tool name being validated.
+     * @param string|null    $chain    Chain
      *
      * @return bool
      */
-    protected function validatePlugin(PluginRegistry $plugins, string $toolName): bool
+    protected function validatePlugin(PluginRegistry $plugins, string $toolName, ?string $chain = null): bool
     {
+        static $cache = [];
+
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();
 
@@ -62,7 +70,23 @@ final class ValidateCommand extends AbstractCommand
         }
 
         $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-        $configuration        = $this->config[$name] ?? [];
+        $configuration        = $chain
+            ? $this->config['chains'][$chain][$name]
+            : null;
+
+        if (null === $configuration) {
+            $configuration = $this->config['tools-config'][$name] ?? [];
+        }
+
+        $hash = md5(serialize($configuration));
+        if (isset($cache[$toolName]) && array_key_exists($hash, $cache[$toolName])) {
+            $this->output->writeln(
+                sprintf(' - %s: <info>configuration already validated</info>', $toolName),
+                OutputInterface::VERBOSITY_VERY_VERBOSE
+            );
+
+            return $cache[$toolName][$hash];
+        }
 
         $plugin->describeOptions($configOptionsBuilder);
         $options = $configOptionsBuilder->getOptions();
@@ -75,14 +99,14 @@ final class ValidateCommand extends AbstractCommand
                 OutputInterface::VERBOSITY_VERY_VERBOSE
             );
 
-            return true;
+            return $cache[$toolName][$hash] = true;
         } catch (InvalidConfigException $exception) {
             $this->output->writeln(
                 sprintf(' - %s: <error>Invalid configuration (%s)</error>', $toolName, $exception->getMessage()),
                 OutputInterface::VERBOSITY_VERBOSE
             );
 
-            return false;
+            return $cache[$toolName][$hash] = false;
         }
     }
 }

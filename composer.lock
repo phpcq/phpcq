@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03bb6fc04f1cf29cfba3d95154eace12",
+    "content-hash": "099e5f1262b462bff9c463a7a2a168cb",
     "packages": [
         {
             "name": "composer/semver",
@@ -1345,8 +1345,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "phpcq/plugin-api": 20,
-        "phpcq/gnupg": 20
+        "phpcq/gnupg": 20,
+        "phpcq/plugin-api": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
