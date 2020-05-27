@@ -66,7 +66,7 @@ class JsonRepositoryLoader
         return $this->repository;
     }
 
-    public function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
+    private function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
     {
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache, $hash);
