@@ -130,9 +130,13 @@ class FileDownloader
         // Perform URL check.
         $path        = parse_url($url, PHP_URL_PATH);
         $encodedPath = array_map('urlencode', explode('/', $path));
-        $url         = str_replace($path, implode('/', $encodedPath), $url);
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
-            return $url;
+        $newUrl      = str_replace($path, implode('/', $encodedPath), $url);
+        if (filter_var($newUrl, FILTER_VALIDATE_URL)) {
+            return $newUrl;
+        }
+        $newUrl = $baseDir . '/' . $newUrl;
+        if (filter_var($newUrl, FILTER_VALIDATE_URL)) {
+            return $newUrl;
         }
 
         // Did not understand.
