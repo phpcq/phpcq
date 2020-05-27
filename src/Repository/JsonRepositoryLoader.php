@@ -8,6 +8,12 @@ use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
 use Phpcq\Platform\PlatformRequirementCheckerInterface;
 
+use function array_keys;
+use function dirname;
+use function is_array;
+use function strpos;
+use function substr;
+
 /**
  * Load a json file.
  *
@@ -55,6 +61,13 @@ class JsonRepositoryLoader
     public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
         $this->repository = new Repository($this->requirementChecker);
+        $this->includeFile($filePath, $hash, $baseDir);
+
+        return $this->repository;
+    }
+
+    public function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
+    {
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache, $hash);
         $bootstrapLookup  = $data['bootstraps'] ?? [];
@@ -65,15 +78,17 @@ class JsonRepositoryLoader
             // Include? - load it!
             if (['url', 'checksum'] === array_keys($versions)) {
                 /** @psalm-suppress PossiblyInvalidArgument */
-                $this->loadFile($versions['url'], $versions['checksum'], $baseDir);
+                $this->includeFile(
+                    $this->determineAbsolutePath($versions['url'], $filePath),
+                    $versions['checksum'],
+                    $baseDir
+                );
                 continue;
             }
 
             /** @psalm-suppress InvalidArgument */
             $this->handleVersionList($toolName, $versions, $bootstrapLookup, $baseDir);
         }
-
-        return $this->repository;
     }
 
     private function handleVersionList(
@@ -127,5 +142,16 @@ class JsonRepositoryLoader
                 );
         }
         throw new RuntimeException('Invalid bootstrap definition: ' . json_encode($bootstrap));
+    }
+
+    private function determineAbsolutePath(string $url, string $baseUrl): string
+    {
+        if (strpos($url, './') === 0) {
+            return dirname($baseUrl) . substr($url, 1);
+        }
+
+        // TODO: Do we need to support paths like ../foo/bar.json?
+
+        return $url;
     }
 }
