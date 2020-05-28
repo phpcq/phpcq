@@ -9,15 +9,15 @@ use SimpleXMLElement;
 final class Report
 {
     /**
-     * @psalm-var array<string,File>
-     * @var File[]
+     * @psalm-var array<string,CheckstyleFile>
+     * @var CheckstyleFile[]
      */
     private $files = [];
 
-    public function file(string $fileName): File
+    public function checkstyle(string $fileName): CheckstyleFile
     {
         if (!isset($this->files[$fileName])) {
-            $this->files[$fileName] = new File($fileName);
+            $this->files[$fileName] = new CheckstyleFile($fileName);
         }
 
         return $this->files[$fileName];

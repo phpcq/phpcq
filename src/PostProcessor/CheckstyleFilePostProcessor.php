@@ -25,12 +25,12 @@ final class CheckstyleFilePostProcessor implements PostProcessorInterface
         $this->toolName = $toolName;
     }
 
-    public function process(Report $report, OutputInterface $output): void
+    public function process(Report $report, array $consoleOutput, OutputInterface $output): void
     {
         $xml = simplexml_load_file($this->fileName);
 
         foreach ($xml->children() as $fileNode) {
-            $file = $report->file($fileNode['name']->__toString());
+            $file = $report->checkstyle($fileNode['name']->__toString());
 
             foreach ($fileNode->children() as $errorNode) {
                 $file->add(

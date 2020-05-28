@@ -6,6 +6,9 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+use Phpcq\PostProcessor\CheckstyleFilePostProcessor;
+use Phpcq\PostProcessor\PostProcessorInterface;
+use Phpcq\Report\Report;
 use Traversable;
 
 final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
@@ -36,13 +39,24 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     private $timeout = null;
 
     /**
+     * @var PostProcessorInterface|null
+     */
+    private $postProcessor;
+
+    /**
+     * @var Report
+     */
+    private $report;
+
+    /**
      * Create a new instance.
      *
      * @param string[] $command
      */
-    public function __construct(array $command)
+    public function __construct(array $command, Report $report)
     {
         $this->command = $command;
+        $this->report = $report;
     }
 
     public function withWorkingDirectory(string $cwd): TaskRunnerBuilderInterface
@@ -83,8 +97,32 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return $this;
     }
 
+    public function withPostProcessor(PostProcessorInterface $postProcessor): TaskRunnerBuilderInterface
+    {
+        $this->postProcessor = $postProcessor;
+
+        return $this;
+    }
+
+    public function withCheckstyleFilePostProcessor(
+        string $toolName,
+        string $checkstyleFile
+    ): TaskRunnerBuilderInterface {
+        $this->postProcessor = new CheckstyleFilePostProcessor($toolName, $checkstyleFile);
+
+        return $this;
+    }
+
     public function build(): TaskRunnerInterface
     {
-        return new ProcessTaskRunner($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
+        return new ProcessTaskRunner(
+            $this->command,
+            $this->report,
+            $this->postProcessor,
+            $this->cwd,
+            $this->env,
+            $this->input,
+            $this->timeout
+        );
     }
 }

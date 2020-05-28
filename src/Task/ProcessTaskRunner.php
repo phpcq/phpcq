@@ -7,6 +7,8 @@ namespace Phpcq\Task;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+use Phpcq\PostProcessor\PostProcessorInterface;
+use Phpcq\Report\Report;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
 use Traversable;
@@ -42,6 +44,16 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $timeout;
 
     /**
+     * @var Report
+     */
+    private $report;
+
+    /**
+     * @var PostProcessorInterface|null
+     */
+    private $postProcessor;
+
+    /**
      * @param string[]                         $command The command to run and its arguments listed as separate entries
      * @param string|null                      $cwd     The working directory or null to use the working dir of the
      *                                                  current PHP process
@@ -55,16 +67,20 @@ class ProcessTaskRunner implements TaskRunnerInterface
      */
     public function __construct(
         array $command,
+        Report $report,
+        ?PostProcessorInterface $postProcessor = null,
         string $cwd = null,
         array $env = null,
         $input = null,
         ?float $timeout = 60
     ) {
-        $this->command = $command;
-        $this->cwd     = $cwd;
-        $this->env     = $env;
-        $this->input   = $input;
-        $this->timeout = $timeout;
+        $this->command       = $command;
+        $this->cwd           = $cwd;
+        $this->env           = $env;
+        $this->input         = $input;
+        $this->timeout       = $timeout;
+        $this->report        = $report;
+        $this->postProcessor = $postProcessor;
     }
 
     public function run(OutputInterface $output): void
@@ -77,18 +93,24 @@ class ProcessTaskRunner implements TaskRunnerInterface
             OutputInterface::CHANNEL_STRERR
         );
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
+        $consoleOutput = [];
 
         try {
-            $process->mustRun(static function (string $type, string $data) use ($output) {
+            $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
                 switch ($type) {
                     case Process::ERR:
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
                         return;
                     case Process::OUT:
                         $output->write($data);
+                        $consoleOutput[] = $data;
                         return;
                 }
             });
+
+            if ($this->postProcessor) {
+                $this->postProcessor->process($this->report, $consoleOutput, $output);
+            }
         } catch (\Throwable $exception) {
             throw new RuntimeException(
                 'Process failed with exit code ' . (string) $process->getExitCode() . ': ' . $process->getCommandLine(),

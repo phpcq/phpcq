@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\Report\Report;
 use Phpcq\Task\ProcessTaskRunner;
 use Phpcq\Task\TaskRunnerBuilder;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ final class TaskRunnerBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
-        $builder = new TaskRunnerBuilder(['foo', 'bar', 'baz']);
+        $builder = new TaskRunnerBuilder(['foo', 'bar', 'baz'], new Report());
 
         $builder
             ->withWorkingDirectory('/path/to/working-directory')

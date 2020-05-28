@@ -9,5 +9,5 @@ use Phpcq\Report\Report;
 
 interface PostProcessorInterface
 {
-    public function process(Report $report, OutputInterface $output): void;
+    public function process(Report $report, array $consoleOutput, OutputInterface $output): void;
 }

@@ -9,7 +9,7 @@ use IteratorAggregate;
 use SimpleXMLElement;
 use Traversable;
 
-final class File implements IteratorAggregate
+final class CheckstyleFile implements IteratorAggregate
 {
     /** @var string */
     private $fileName;

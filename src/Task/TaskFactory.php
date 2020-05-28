@@ -6,9 +6,6 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\TaskFactoryInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
-use Phpcq\PluginApi\Version10\TaskRunnerInterface;
-use Phpcq\PostProcessor\CheckstyleFilePostProcessor;
-use Phpcq\PostProcessor\PostProcessorInterface;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 
@@ -70,7 +67,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(array $command): TaskRunnerBuilderInterface
     {
-        return new TaskRunnerBuilder($command);
+        return new TaskRunnerBuilder($command, $this->report);
     }
 
     /**
@@ -87,19 +84,5 @@ class TaskFactory implements TaskFactoryInterface
             [$this->phpcqPath . '/' . $this->installed->getTool($pharName, '*')->getPharUrl()],
             $arguments
         ));
-    }
-
-    // TODO: Do we need a PostProcessorTaskRunnerBuilder?
-    public function buildPostProcessor(PostProcessorInterface $postProcessor): TaskRunnerInterface
-    {
-        return new PostProcessTaskRunner($postProcessor, $this->report);
-    }
-
-    public function buildCheckStyleFilePostProcessor(string $toolName, string $checkFilePath): TaskRunnerInterface
-    {
-        return new PostProcessTaskRunner(
-            new CheckstyleFilePostProcessor($toolName, $checkFilePath),
-            $this->report
-        );
     }
 }
