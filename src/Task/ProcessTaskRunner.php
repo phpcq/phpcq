@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
-use Phpcq\PostProcessor\PostProcessorInterface;
 use Phpcq\Report\Report;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
@@ -49,7 +49,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $report;
 
     /**
-     * @var PostProcessorInterface|null
+     * @var PostProcessorInterface
      */
     private $postProcessor;
 
@@ -68,7 +68,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
     public function __construct(
         array $command,
         Report $report,
-        ?PostProcessorInterface $postProcessor = null,
+        PostProcessorInterface $postProcessor,
         string $cwd = null,
         array $env = null,
         $input = null,
@@ -107,16 +107,14 @@ class ProcessTaskRunner implements TaskRunnerInterface
                         return;
                 }
             });
-
-            if ($this->postProcessor) {
-                $this->postProcessor->process($this->report, $consoleOutput, $output);
-            }
         } catch (\Throwable $exception) {
             throw new RuntimeException(
                 'Process failed with exit code ' . (string) $process->getExitCode() . ': ' . $process->getCommandLine(),
                 (int) $exception->getCode(),
                 $exception
             );
+        } finally {
+            $this->postProcessor->process($this->report, $consoleOutput, (int) $process->getExitCode(), $output);
         }
     }
 }

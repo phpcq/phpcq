@@ -11,6 +11,7 @@ use Phpcq\Output\BufferedOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
+use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Report\Report;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
@@ -43,10 +44,10 @@ final class RunCommand extends AbstractCommand
             'Define a specific tool which should be run'
         );
         $this->addOption(
-            'keep-going',
-            'k',
+            'fast-finish',
+            'f',
             InputOption::VALUE_NONE,
-            'Keep going and execute all tasks.'
+            'Do not keep going and execute all tasks but break on first error',
         );
 
         parent::configure();
@@ -89,12 +90,12 @@ final class RunCommand extends AbstractCommand
         // TODO: Parallelize tasks
         // Execute task list
         $exitCode = 0;
-        $keepGoing = $this->input->getOption('keep-going');
+        $fastFinish = $this->input->getOption('fast-finish');
         foreach ($taskList->getIterator() as $task) {
             $taskOutput = new BufferedOutput($consoleOutput);
             try {
                 $task->run($taskOutput);
-            } catch (RuntimeException $throwable) {
+            } catch (PluginApiRuntimeException $throwable) {
                 $taskOutput->writeln(
                     $throwable->getMessage(),
                     BufferedOutput::VERBOSITY_NORMAL,
@@ -103,15 +104,16 @@ final class RunCommand extends AbstractCommand
                 $exitCode = (int) $throwable->getCode();
                 $exitCode = $exitCode === 0 ? 1 : $exitCode;
 
-                if (!$keepGoing) {
+                if ($fastFinish) {
                     $taskOutput->release();
-                    return $exitCode;
+                    break;
                 }
             }
             $taskOutput->release();
         }
 
-        $report->asXML(getcwd() . '/' . $projectConfig->getArtifactOutputPath() . '/checkstyle.xml');
+        $report->complete($exitCode === 0 ? $report::STATUS_PASSED : $report::STATUS_FAILED);
+        $report->save(getcwd() . '/' . $projectConfig->getArtifactOutputPath());
 
         return $exitCode;
     }

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Phpcq\Report;
 
 use ArrayIterator;
+use DOMElement;
+use DOMNode;
 use IteratorAggregate;
-use SimpleXMLElement;
+use Phpcq\PluginApi\Version10\CheckstyleFileInterface;
 use Traversable;
 
-final class CheckstyleFile implements IteratorAggregate
+final class CheckstyleFile implements IteratorAggregate, CheckstyleFileInterface
 {
     /** @var string */
     private $fileName;
@@ -43,10 +45,10 @@ final class CheckstyleFile implements IteratorAggregate
         return new ArrayIterator($this->errors);
     }
 
-    public function appendToXml(SimpleXMLElement $element): void
+    public function appendToXml(DOMNode $node): void
     {
-        $fileElement = $element->addChild('file');
-        $fileElement->addAttribute('name', $this->getName());
+        $fileElement = $node->appendChild(new DOMElement('file'));
+        $fileElement->setAttribute('name', $this->getName());
 
         foreach ($this->errors as $error) {
             $error->appendToXml($fileElement);

@@ -65,23 +65,23 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskRunnerBuilder
      */
-    public function buildRunProcess(array $command): TaskRunnerBuilderInterface
+    public function buildRunProcess(string $toolName, array $command): TaskRunnerBuilderInterface
     {
-        return new TaskRunnerBuilder($command, $this->report);
+        return new TaskRunnerBuilder($toolName, $command, $this->report);
     }
 
     /**
-     * @param string   $pharName
+     * @param string   $toolName
      * @param string[] $arguments
      *
      * @return TaskRunnerBuilder
      */
-    public function buildRunPhar(string $pharName, array $arguments = []): TaskRunnerBuilderInterface
+    public function buildRunPhar(string $toolName, array $arguments = []): TaskRunnerBuilderInterface
     {
-        return $this->buildRunProcess(array_merge(
+        return $this->buildRunProcess($toolName, array_merge(
             [$this->phpCliBinary],
             $this->phpArguments,
-            [$this->phpcqPath . '/' . $this->installed->getTool($pharName, '*')->getPharUrl()],
+            [$this->phpcqPath . '/' . $this->installed->getTool($toolName, '*')->getPharUrl()],
             $arguments
         ));
     }

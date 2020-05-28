@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PostProcessor\CheckstyleFilePostProcessor;
-use Phpcq\PostProcessor\PostProcessorInterface;
+use Phpcq\PostProcessor\ConsoleOutputToolReportProcessor;
 use Phpcq\Report\Report;
 use Traversable;
 
 final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 {
+    /**
+     * @var string
+     */
+    private $toolName;
+
     /**
      * @var string[]
      */
@@ -53,8 +59,9 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @param string[] $command
      */
-    public function __construct(array $command, Report $report)
+    public function __construct(string $toolName, array $command, Report $report)
     {
+        $this->toolName = $toolName;
         $this->command = $command;
         $this->report = $report;
     }
@@ -104,21 +111,21 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return $this;
     }
 
-    public function withCheckstyleFilePostProcessor(
-        string $toolName,
-        string $checkstyleFile
-    ): TaskRunnerBuilderInterface {
-        $this->postProcessor = new CheckstyleFilePostProcessor($toolName, $checkstyleFile);
+    public function withCheckstyleFilePostProcessor(string $checkstyleFile): TaskRunnerBuilderInterface
+    {
+        $this->postProcessor = new CheckstyleFilePostProcessor($this->toolName, $checkstyleFile);
 
         return $this;
     }
 
     public function build(): TaskRunnerInterface
     {
+        $postProcessor = $this->postProcessor ?: new ConsoleOutputToolReportProcessor($this->toolName);
+
         return new ProcessTaskRunner(
             $this->command,
             $this->report,
-            $this->postProcessor,
+            $postProcessor,
             $this->cwd,
             $this->env,
             $this->input,

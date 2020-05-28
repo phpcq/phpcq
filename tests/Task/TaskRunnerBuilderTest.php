@@ -17,7 +17,7 @@ final class TaskRunnerBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
-        $builder = new TaskRunnerBuilder(['foo', 'bar', 'baz'], new Report());
+        $builder = new TaskRunnerBuilder('tool-name', ['foo', 'bar', 'baz'], new Report());
 
         $builder
             ->withWorkingDirectory('/path/to/working-directory')

@@ -27,7 +27,7 @@ final class TaskFactoryTest extends TestCase
             ['php', 'arguments']
         );
 
-        $builder = $factory->buildRunProcess(['command', 'arg1', 'arg2']);
+        $builder = $factory->buildRunProcess('tool-name', ['command', 'arg1', 'arg2']);
 
         $this->assertInstanceOf(TaskRunnerBuilder::class, $builder);
         $this->assertPrivateProperty(['command', 'arg1', 'arg2'], 'command', $builder);

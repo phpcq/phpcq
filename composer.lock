@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b0a57d47d52afa4efeb500df910548f",
+    "content-hash": "c7309b63d92d1bd4f3121d798337d14a",
     "packages": [
         {
             "name": "composer/semver",
@@ -372,16 +372,16 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "dev-master",
+            "version": "dev-feature/checkstyle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "2de27f6604b2879c2235c69e6f9ed58a6487741d"
+                "reference": "47c54212ba2a3bfa3014fff4f007dce3687a4be6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/2de27f6604b2879c2235c69e6f9ed58a6487741d",
-                "reference": "2de27f6604b2879c2235c69e6f9ed58a6487741d",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/47c54212ba2a3bfa3014fff4f007dce3687a4be6",
+                "reference": "47c54212ba2a3bfa3014fff4f007dce3687a4be6",
                 "shasum": ""
             },
             "require": {
@@ -422,7 +422,7 @@
                 }
             ],
             "description": "PHP code quality project plugin API interfaces.",
-            "time": "2020-05-22T10:10:50+00:00"
+            "time": "2020-05-28T08:37:15+00:00"
         },
         {
             "name": "psr/container",
@@ -1269,20 +1269,20 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v2.0.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "144c5e51266b281231e947b51223ba14acf1a749"
+                "reference": "66a8f0957a3ca54e4f724e49028ab19d75a8918b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/144c5e51266b281231e947b51223ba14acf1a749",
-                "reference": "144c5e51266b281231e947b51223ba14acf1a749",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/66a8f0957a3ca54e4f724e49028ab19d75a8918b",
+                "reference": "66a8f0957a3ca54e4f724e49028ab19d75a8918b",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2.5",
+                "php": ">=7.2.5",
                 "psr/container": "^1.0"
             },
             "suggest": {
@@ -1291,7 +1291,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "2.1-dev"
                 }
             },
             "autoload": {
@@ -1323,7 +1323,21 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-11-18T17:27:11+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-20T17:43:50+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -1410,9 +1424,9 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.3",
+        "ext-dom": "*",
         "ext-hash": "*",
         "ext-json": "*",
-        "ext-simplexml": "*",
         "ext-xml": "*"
     },
     "platform-dev": [],

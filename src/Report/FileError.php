@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-use SimpleXMLElement;
+use DOMElement;
+use DOMNode;
 
 use function sprintf;
 
@@ -79,24 +80,24 @@ final class FileError
         return $this->tool;
     }
 
-    public function appendToXml(SimpleXMLElement $element): void
+    public function appendToXml(DOMNode $element): void
     {
-        $node = $element->addChild('error');
-        $node->addAttribute('severity', $this->getSeverity());
-        $node->addAttribute('message', $this->getMessage());
+        $node = $element->appendChild(new DOMElement('error'));
+        $node->setAttribute('severity', $this->getSeverity());
+        $node->setAttribute('message', $this->getMessage());
 
         if ($source = $this->getSource()) {
-            $node->addAttribute('source', sprintf('%s: %s', $this->getTool(), $source));
+            $node->setAttribute('source', sprintf('%s: %s', $this->getTool(), $source));
         } else {
-            $node->addAttribute('source', $this->getTool());
+            $node->setAttribute('source', $this->getTool());
         }
 
         if ($line = $this->getLine()) {
-            $node->addAttribute('line', (string) $line);
+            $node->setAttribute('line', (string) $line);
         }
 
         if ($column = $this->getColumn()) {
-            $node->addAttribute('column', (string) $column);
+            $node->setAttribute('column', (string) $column);
         }
     }
 }
