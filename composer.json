@@ -25,6 +25,7 @@
         "php": "^7.3",
         "ext-hash": "*",
         "ext-json": "*",
+        "ext-simplexml": "*",
         "ext-xml": "*",
         "composer/semver": "^1.5",
         "composer/xdebug-handler": "^1.4",

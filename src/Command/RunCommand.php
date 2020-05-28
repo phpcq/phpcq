@@ -11,6 +11,7 @@ use Phpcq\Output\BufferedOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
+use Phpcq\Report\Report;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function assert;
+use function getcwd;
 use function is_string;
 
 final class RunCommand extends AbstractCommand
@@ -54,10 +56,12 @@ final class RunCommand extends AbstractCommand
     {
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
         $taskList = new Tasklist();
+        $report = new Report();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $installed = $this->getInstalledRepository(true),
+            $report,
             ...$this->findPhpCli()
         );
         // Create build configuration
@@ -106,6 +110,8 @@ final class RunCommand extends AbstractCommand
             }
             $taskOutput->release();
         }
+
+        $report->asXML(getcwd() . '/' . $projectConfig->getArtifactOutputPath() . '/checkstyle.xml');
 
         return $exitCode;
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\Task\TaskFactory;
@@ -21,6 +22,7 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $this->getMockForAbstractClass(RepositoryInterface::class),
+            new Report(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -36,6 +38,7 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $installed = $this->getMockForAbstractClass(RepositoryInterface::class),
+            new Report(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );

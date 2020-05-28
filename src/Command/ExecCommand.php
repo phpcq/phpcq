@@ -6,6 +6,7 @@ namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
+use Phpcq\Report\Report;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -66,10 +67,12 @@ final class ExecCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
+        $report = new Report();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $this->getInstalledRepository(true),
+            $report,
             ...$this->findPhpCli()
         );
 
@@ -100,6 +103,9 @@ final class ExecCommand extends AbstractCommand
             return (int) $throwable->getCode();
         }
         $taskOutput->release();
+
+        // Fixme: Save/Handle output
+        //$report->asXML(getcwd() . '/' . $this->c->getArtifactOutputPath() . '/checkstyle.xml');
 
         return $exitCode;
     }
