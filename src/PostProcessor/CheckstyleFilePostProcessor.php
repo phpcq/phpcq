@@ -12,6 +12,10 @@ use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\Report\Report;
 
+use function strlen;
+use function strpos;
+use function substr;
+
 final class CheckstyleFilePostProcessor implements PostProcessorInterface
 {
     /**
@@ -24,10 +28,16 @@ final class CheckstyleFilePostProcessor implements PostProcessorInterface
      */
     private $fileName;
 
-    public function __construct(string $toolName, string $fileName)
+    /**
+     * @var string
+     */
+    private $rootDir;
+
+    public function __construct(string $toolName, string $fileName, string $rootDir)
     {
         $this->fileName = $fileName;
         $this->toolName = $toolName;
+        $this->rootDir  = $rootDir;
     }
 
     /**
@@ -51,7 +61,12 @@ final class CheckstyleFilePostProcessor implements PostProcessorInterface
                 continue;
             }
 
-            $file = $report->addCheckstyle($childNode->getAttribute('name'));
+            $fileName = $childNode->getAttribute('name');
+            if (strpos($fileName, $this->rootDir) === 0) {
+                $fileName = substr($fileName, strlen($this->rootDir) + 1);
+            }
+
+            $file = $report->addCheckstyle($fileName);
 
             foreach ($childNode->childNodes as $errorNode) {
                 if (!$errorNode instanceof DOMElement) {

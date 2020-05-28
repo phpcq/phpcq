@@ -113,7 +113,8 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     public function withCheckstyleFilePostProcessor(string $checkstyleFile): TaskRunnerBuilderInterface
     {
-        $this->postProcessor = new CheckstyleFilePostProcessor($this->toolName, $checkstyleFile);
+        // Fixme: We depend on the cwd here which might be added later
+        $this->postProcessor = new CheckstyleFilePostProcessor($this->toolName, $checkstyleFile, (string) $this->cwd);
 
         return $this;
     }
