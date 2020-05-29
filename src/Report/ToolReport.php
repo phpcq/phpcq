@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-use DOMElement;
-use DOMNode;
-use DOMText;
-
 final class ToolReport
 {
     /** @var string */
@@ -24,14 +20,6 @@ final class ToolReport
     /** @var string[] */
     private $attachments = [];
 
-    /**
-     * ToolOutput constructor.
-     *
-     * @param string   $toolName
-     * @param string   $status
-     * @param string   $output
-     * @param string[] $attachments
-     */
     public function __construct(string $toolName)
     {
         $this->command     = $toolName;
@@ -95,23 +83,5 @@ final class ToolReport
     public function getAttachments(): array
     {
         return $this->attachments;
-    }
-
-    public function appendToXml(DOMNode $node): DOMElement
-    {
-        $domElement = $node->appendChild(new DOMElement('tool'));
-        $domElement->setAttribute('name', $this->getCommand());
-        $domElement->setAttribute('status', $this->getStatus());
-
-        foreach ($this->getOutput() as $output) {
-            $outputElement = $domElement->appendChild(new DOMElement('output'));
-            $outputElement->appendChild(new DOMText($output));
-        }
-
-        foreach ($this->getAttachments() as $attachment) {
-            $domElement->appendChild(new DOMElement('attachment', $attachment));
-        }
-
-        return $domElement;
     }
 }

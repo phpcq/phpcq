@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Phpcq\Report;
 
 use ArrayIterator;
-use DOMElement;
-use DOMNode;
 use IteratorAggregate;
 use Phpcq\PluginApi\Version10\CheckstyleFileInterface;
 use Traversable;
 
+/**
+ * @template-implements IteratorAggregate<int, FileError>
+ */
 final class CheckstyleFile implements IteratorAggregate, CheckstyleFileInterface
 {
     /** @var string */
@@ -40,18 +41,12 @@ final class CheckstyleFile implements IteratorAggregate, CheckstyleFileInterface
         $this->errors[] = new FileError($severity, $message, $toolName, $line, $column, $source);
     }
 
+    /**
+     * @return Traversable|FileError[]
+     * @psalm-return Traversable<int, FileError>
+     */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->errors);
-    }
-
-    public function appendToXml(DOMNode $node): void
-    {
-        $fileElement = $node->appendChild(new DOMElement('file'));
-        $fileElement->setAttribute('name', $this->getName());
-
-        foreach ($this->errors as $error) {
-            $error->appendToXml($fileElement);
-        }
     }
 }

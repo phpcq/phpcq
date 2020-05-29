@@ -13,6 +13,7 @@ use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Report\Report;
+use Phpcq\Report\ReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
@@ -113,7 +114,7 @@ final class RunCommand extends AbstractCommand
         }
 
         $report->complete($exitCode === 0 ? $report::STATUS_PASSED : $report::STATUS_FAILED);
-        $report->save(getcwd() . '/' . $projectConfig->getArtifactOutputPath());
+        ReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
 
         return $exitCode;
     }
