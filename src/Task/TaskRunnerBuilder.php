@@ -111,14 +111,6 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return $this;
     }
 
-    public function withCheckstyleFilePostProcessor(string $checkstyleFile): TaskRunnerBuilderInterface
-    {
-        // Fixme: We depend on the cwd here which might be added later
-        $this->postProcessor = new CheckstyleFilePostProcessor($this->toolName, $checkstyleFile, (string) $this->cwd);
-
-        return $this;
-    }
-
     public function build(): TaskRunnerInterface
     {
         $postProcessor = $this->postProcessor ?: new ConsoleOutputToolReportProcessor($this->toolName);
