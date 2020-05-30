@@ -6,10 +6,7 @@ namespace Phpcq\PostProcessor;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\PostProcessorInterface;
-use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\Report\Report;
-
-use function implode;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 
 final class ConsoleOutputToolReportProcessor implements PostProcessorInterface
 {
@@ -31,12 +28,16 @@ final class ConsoleOutputToolReportProcessor implements PostProcessorInterface
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function process(ReportInterface $report, array $consoleOutput, int $exitCode, OutputInterface $output): void
-    {
-        $report->addToolReport(
-            $this->toolName,
-            $exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED,
-            implode("\n", $consoleOutput),
-        );
+    public function process(
+        ToolReportInterface $report,
+        string $consoleOutput,
+        int $exitCode,
+        OutputInterface $output
+    ): void {
+        if (0 !== $exitCode) {
+            $report->addError('error', $consoleOutput);
+        }
+
+        $report->finish(0 === $exitCode ? ToolReportInterface::STATUS_PASSED : ToolReportInterface::STATUS_FAILED);
     }
 }

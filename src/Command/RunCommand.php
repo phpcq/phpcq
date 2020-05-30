@@ -12,8 +12,10 @@ use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use Phpcq\Report\Writer\CheckstyleReportWriter;
+use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
-use Phpcq\Report\ReportWriter;
+use Phpcq\Report\Writer\ReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
@@ -57,17 +59,18 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
+        $tempDirectory = sys_get_temp_dir();
         $taskList = new Tasklist();
-        $report = new Report();
+        $report = new ReportBuffer();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $installed = $this->getInstalledRepository(true),
-            $report,
+            new Report($report, $tempDirectory),
             ...$this->findPhpCli()
         );
         // Create build configuration
-        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, sys_get_temp_dir());
+        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
         // Load bootstraps
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
@@ -113,9 +116,11 @@ final class RunCommand extends AbstractCommand
             $taskOutput->release();
         }
 
-        $report->complete($exitCode === 0 ? $report::STATUS_PASSED : $report::STATUS_FAILED);
+        $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         ReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
 
+        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STRERR);
         return $exitCode;
     }
 

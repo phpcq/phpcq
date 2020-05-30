@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Config;
 
 use Phpcq\PluginApi\Version10\BuildConfigInterface;
+use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
 use Phpcq\PluginApi\Version10\TaskFactoryInterface;
 
@@ -53,5 +54,18 @@ class BuildConfiguration implements BuildConfigInterface
     public function getBuildTempDir(): string
     {
         return $this->tempDirectory;
+    }
+
+    public function getUniqueTempFile(?PluginInterface $plugin = null, ?string $prefix = null): string
+    {
+        $fileNamePrefix = '';
+        if (null !== $plugin) {
+            $fileNamePrefix .= $plugin->getName();
+        }
+        if (!empty($prefix)) {
+            $fileNamePrefix .= '-' . $prefix;
+        }
+
+        return $this->getBuildTempDir() . '/' . uniqid($fileNamePrefix) . '.xml';
     }
 }

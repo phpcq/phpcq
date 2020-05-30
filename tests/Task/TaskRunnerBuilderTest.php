@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\Report\Report;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Task\ProcessTaskRunner;
 use Phpcq\Task\TaskRunnerBuilder;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,11 @@ final class TaskRunnerBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
-        $builder = new TaskRunnerBuilder('tool-name', ['foo', 'bar', 'baz'], new Report());
+        $builder = new TaskRunnerBuilder(
+            'tool-name',
+            ['foo', 'bar', 'baz'],
+            $this->getMockForAbstractClass(ToolReportInterface::class)
+        );
 
         $builder
             ->withWorkingDirectory('/path/to/working-directory')

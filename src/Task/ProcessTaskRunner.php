@@ -8,8 +8,7 @@ use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
-use Phpcq\Report\Report;
-use Symfony\Component\Process\Exception\LogicException;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Symfony\Component\Process\Process;
 use Traversable;
 
@@ -44,7 +43,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $timeout;
 
     /**
-     * @var Report
+     * @var ToolReportInterface
      */
     private $report;
 
@@ -55,6 +54,8 @@ class ProcessTaskRunner implements TaskRunnerInterface
 
     /**
      * @param string[]                         $command The command to run and its arguments listed as separate entries
+     * @param ToolReportInterface              $report
+     * @param PostProcessorInterface           $postProcessor
      * @param string|null                      $cwd     The working directory or null to use the working dir of the
      *                                                  current PHP process
      * @param string[]|null                    $env     The environment variables or null to use the same environment as
@@ -63,11 +64,10 @@ class ProcessTaskRunner implements TaskRunnerInterface
      *                                                  for no input
      * @param int|float|null                   $timeout The timeout in seconds or null to disable
      *
-     * @throws LogicException When proc_open is not installed
      */
     public function __construct(
         array $command,
-        Report $report,
+        ToolReportInterface $report,
         PostProcessorInterface $postProcessor,
         string $cwd = null,
         array $env = null,
@@ -93,17 +93,21 @@ class ProcessTaskRunner implements TaskRunnerInterface
             OutputInterface::CHANNEL_STRERR
         );
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
-        $consoleOutput = [];
+        $consoleOutput = [
+            OutputInterface::CHANNEL_STDOUT => '',
+            OutputInterface::CHANNEL_STRERR => '',
+        ];
 
         try {
             $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
                 switch ($type) {
                     case Process::ERR:
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
+                        $consoleOutput[OutputInterface::CHANNEL_STRERR] .= $data;
                         return;
                     case Process::OUT:
                         $output->write($data);
-                        $consoleOutput[] = $data;
+                        $consoleOutput[OutputInterface::CHANNEL_STDOUT] .= $data;
                         return;
                 }
             });
@@ -114,7 +118,15 @@ class ProcessTaskRunner implements TaskRunnerInterface
                 $exception
             );
         } finally {
-            $this->postProcessor->process($this->report, $consoleOutput, (int) $process->getExitCode(), $output);
+            // FIXME: we should not buffer these as attachment - the post processor should do it!
+            if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STRERR])) {
+                $this->report->addBufferAsAttachment($stdOut, 'stderr.log');
+            }
+            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {
+                $this->report->addBufferAsAttachment($stdErr, 'stdout.log');
+            }
+            // FIXME: we have to pass stdErr also.
+            $this->postProcessor->process($this->report, $stdOut, (int) $process->getExitCode(), $output);
         }
     }
 }

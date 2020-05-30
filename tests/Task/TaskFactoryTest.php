@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
@@ -22,7 +23,7 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            new Report(),
+            $this->mockReport(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -38,7 +39,7 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $installed = $this->getMockForAbstractClass(RepositoryInterface::class),
-            new Report(),
+            $this->mockReport(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -61,6 +62,11 @@ final class TaskFactoryTest extends TestCase
             '/phpcq/path/phar-file-name.phar',
             'phar-arg1', 'phar-arg2',
         ], 'command', $builder);
+    }
+
+    private function mockReport(): Report
+    {
+        return new Report(new ReportBuffer(), sys_get_temp_dir());
     }
 
     private static function assertPrivateProperty($expected, string $property, object $instance): void

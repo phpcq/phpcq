@@ -7,9 +7,8 @@ namespace Phpcq\Task;
 use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
-use Phpcq\PostProcessor\CheckstyleFilePostProcessor;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\PostProcessor\ConsoleOutputToolReportProcessor;
-use Phpcq\Report\Report;
 use Traversable;
 
 final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
@@ -50,7 +49,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     private $postProcessor;
 
     /**
-     * @var Report
+     * @var ToolReportInterface
      */
     private $report;
 
@@ -59,7 +58,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @param string[] $command
      */
-    public function __construct(string $toolName, array $command, Report $report)
+    public function __construct(string $toolName, array $command, ToolReportInterface $report)
     {
         $this->toolName = $toolName;
         $this->command = $command;

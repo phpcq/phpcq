@@ -6,6 +6,7 @@ namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
+use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -67,12 +68,12 @@ final class ExecCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
-        $report = new Report();
+        $report = new ReportBuffer();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $this->getInstalledRepository(true),
-            $report,
+            new Report($report, sys_get_temp_dir()),
             ...$this->findPhpCli()
         );
 

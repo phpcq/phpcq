@@ -6,6 +6,7 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\TaskFactoryInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 
@@ -67,7 +68,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskRunnerBuilderInterface
     {
-        return new TaskRunnerBuilder($toolName, $command, $this->report);
+        return new TaskRunnerBuilder($toolName, $command, $this->createToolReport($toolName));
     }
 
     /**
@@ -84,5 +85,10 @@ class TaskFactory implements TaskFactoryInterface
             [$this->phpcqPath . '/' . $this->installed->getTool($toolName, '*')->getPharUrl()],
             $arguments
         ));
+    }
+
+    public function createToolReport(string $toolName): ToolReportInterface
+    {
+        return $this->report->addToolReport($toolName);
     }
 }
