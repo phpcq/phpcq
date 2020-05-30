@@ -35,7 +35,8 @@
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/process": "^5.0.7",
-        "symfony/yaml": "^5.0.7"
+        "symfony/yaml": "^5.0.7",
+        "symfony/filesystem": "^5.0"
     },
     "extra": {
         "branch-alias": {

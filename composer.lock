@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c7309b63d92d1bd4f3121d798337d14a",
+    "content-hash": "f9c38ffc516fa8d98136940ed6d5eac3",
     "packages": [
         {
             "name": "composer/semver",
@@ -376,12 +376,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "47c54212ba2a3bfa3014fff4f007dce3687a4be6"
+                "reference": "95419af468417b16361b73f2d00a0ef5dc04fdc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/47c54212ba2a3bfa3014fff4f007dce3687a4be6",
-                "reference": "47c54212ba2a3bfa3014fff4f007dce3687a4be6",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/95419af468417b16361b73f2d00a0ef5dc04fdc4",
+                "reference": "95419af468417b16361b73f2d00a0ef5dc04fdc4",
                 "shasum": ""
             },
             "require": {
@@ -422,7 +422,7 @@
                 }
             ],
             "description": "PHP code quality project plugin API interfaces.",
-            "time": "2020-05-28T08:37:15+00:00"
+            "time": "2020-05-30T03:50:27+00:00"
         },
         {
             "name": "psr/container",
