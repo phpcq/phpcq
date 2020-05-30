@@ -36,6 +36,8 @@ final class ConsoleOutputToolReportProcessor implements PostProcessorInterface
     ): void {
         if (0 !== $exitCode) {
             $report->addError('error', $consoleOutput);
+        } else {
+            $report->addError('info', $consoleOutput);
         }
 
         $report->finish(0 === $exitCode ? ToolReportInterface::STATUS_PASSED : ToolReportInterface::STATUS_FAILED);
