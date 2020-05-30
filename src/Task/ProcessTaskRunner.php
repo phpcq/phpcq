@@ -11,6 +11,7 @@ use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Symfony\Component\Process\Process;
 use Traversable;
+use function var_dump;
 
 /**
  * This task runner executes a process.
@@ -119,11 +120,11 @@ class ProcessTaskRunner implements TaskRunnerInterface
             );
         } finally {
             // FIXME: we should not buffer these as attachment - the post processor should do it!
-            if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STRERR])) {
-                $this->report->addBufferAsAttachment($stdOut, 'stderr.log');
+            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STRERR])) {
+                $this->report->addBufferAsAttachment($stdErr, 'stderr.log');
             }
-            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {
-                $this->report->addBufferAsAttachment($stdErr, 'stdout.log');
+            if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {
+                $this->report->addBufferAsAttachment($stdOut, 'stdout.log');
             }
             // FIXME: we have to pass stdErr also.
             $this->postProcessor->process($this->report, $stdOut, (int) $process->getExitCode(), $output);
