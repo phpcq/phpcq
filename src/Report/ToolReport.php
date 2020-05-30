@@ -4,84 +4,68 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-final class ToolReport
+use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\ToolReportBuffer;
+use Symfony\Component\Filesystem\Filesystem;
+
+class ToolReport implements ToolReportInterface
 {
+    public const UNKNOWN_FILE = 'unknown-file';
+
     /** @var string */
-    private $command;
+    private $toolName;
 
-    /**
-     * @var string
-     */
-    private $status;
+    /** @var ToolReportBuffer */
+    private $report;
 
-    /** @var string[] */
-    private $output = [];
+    /** @var string */
+    private $tempDir;
 
-    /** @var string[] */
-    private $attachments = [];
+    /** @var Filesystem */
+    private $filesystem;
 
-    public function __construct(string $toolName)
-    {
-        $this->command     = $toolName;
-        $this->status      = Report::STATUS_STARTED;
+    public function __construct(
+        string $toolName,
+        ToolReportBuffer $report,
+        string $tempDir,
+        Filesystem $filesystem = null
+    ) {
+        $this->toolName   = $toolName;
+        $this->report     = $report;
+        $this->tempDir    = $tempDir;
+        $this->filesystem = $filesystem ?: new Filesystem();
     }
 
-    /**
-     * Get toolName.
-     *
-     * @return string
-     */
-    public function getCommand(): string
-    {
-        return $this->command;
+    public function addError(
+        string $severity,
+        string $message,
+        ?string $file = null,
+        ?int $line = null,
+        ?int $column = null,
+        ?string $source = null
+    ): void {
+        $this->report
+            // FIXME: if we would know the root dir, we could strip it here.
+            ->getFile($file ?? self::UNKNOWN_FILE)
+            ->addError($severity, $message, $source, $line, $column);
     }
 
-    public function setStatus(string $status): void
+    public function addAttachment(string $filePath, ?string $name = null): void
     {
-        if ($this->status === Report::STATUS_FAILED) {
-            return;
-        }
-
-        $this->status = $status;
+        $this->report->addAttachment($filePath, $name);
     }
 
-    /**
-     * Get status
-     *
-     * @return string
-     */
-    public function getStatus(): string
+    public function addBufferAsAttachment(string $buffer, string $name): void
     {
-        return $this->status;
+        $filePath = $this->tempDir . '/' . uniqid($name);
+
+        $this->filesystem->dumpFile($filePath, $buffer);
+
+        $this->addAttachment($filePath, $name);
     }
 
-    public function addOutput(string $output): void
+    public function finish(string $status): void
     {
-        $this->output[] = $output;
-    }
-
-    /**
-     * Get output.
-     *
-     * @return string[]
-     */
-    public function getOutput(): array
-    {
-        return $this->output;
-    }
-
-    public function addAttachment(string $attachment): void
-    {
-        $this->attachments[] = $attachment;
-    }
-
-    /**
-     * Get attachments.
-     *
-     * @return string[]
-     */
-    public function getAttachments(): array
-    {
-        return $this->attachments;
+        $this->report->setStatus($status);
     }
 }
