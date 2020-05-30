@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="https://phpcq.github.io/v1/report.xsd"
+           xmlns:tns="https://phpcq.github.io/v1/report.xsd"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="report" type="tns:reportFile">
+    <xs:annotation>
+      <xs:documentation>
+        The root element for reports.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:complexType name="reportFile">
+    <xs:sequence>
+      <xs:element name="tools" type="tns:toolListType">
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="status" type="tns:reportStatusType" />
+    <xs:attribute name="started_at" type="xs:dateTime"/>
+    <xs:attribute name="completed_at" type="xs:dateTime"/>
+    <xs:attribute name="checkstyleFile" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:simpleType name="reportStatusType">
+    <xs:annotation>
+      <xs:documentation>
+        The status of the execution.
+        Either "passed" or "failed".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="passed" />
+      <xs:enumeration value="failed" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="toolListType">
+    <xs:annotation>
+      <xs:documentation>
+        The list of all tool reports.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="tool" minOccurs="0" maxOccurs="unbounded" type="tns:toolReportType">
+        <!-- FIXME: unique condition does somehow not work out... :/ -->
+        <xs:unique name="unique_tool">
+          <xs:selector xpath="."/>
+          <xs:field xpath="@tns:name"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolReportType">
+    <xs:annotation>
+      <xs:documentation>
+        Report information of a single tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="errors" type="tns:toolErrorListType" />
+      <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="tns:nonEmptyStringType">
+      <xs:annotation>
+        <xs:documentation>The name of the executed tool</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="status" type="tns:toolStatusType" />
+  </xs:complexType>
+
+  <xs:simpleType name="toolStatusType">
+    <xs:annotation>
+      <xs:documentation>
+        The exit status of the tool execution. Either "passed" or "failed".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="passed" />
+      <xs:enumeration value="failed" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="toolErrorListType">
+    <xs:annotation>
+      <xs:documentation>
+        The found errors by the tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="error" type="tns:toolErrorType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolErrorType">
+    <xs:annotation>
+      <xs:documentation>
+        An error found by a tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="tns:nonEmptyStringCollapsedType">
+        <xs:attribute type="xs:int" name="line" />
+        <xs:attribute type="xs:int" name="column" />
+        <xs:attribute type="xs:string" name="file" use="required" />
+        <xs:attribute type="tns:toolErrorSeverityType" name="severity" use="required" />
+        <xs:attribute type="tns:nonEmptyStringType" name="source" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="toolErrorSeverityType">
+    <xs:annotation>
+      <xs:documentation>
+        The severity of the error.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="tns:nonEmptyStringType">
+      <xs:enumeration value="info">
+        <xs:annotation>
+          <xs:documentation>An non issue - strictly informational.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="warning">
+        <xs:annotation>
+          <xs:documentation>An issue that should be fixed.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="error">
+        <xs:annotation>
+          <xs:documentation>An issue that MUST be fixed.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="toolAttachmentListType">
+    <xs:annotation>
+      <xs:documentation>The attachments produced by the tool.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="attachment" type="tns:toolAttachmentType" maxOccurs="unbounded" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolAttachmentType">
+    <xs:annotation>
+      <xs:documentation>The attachment body</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="filename" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="nonEmptyStringType">
+    <xs:annotation>
+      <xs:documentation>A non empty string.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value=".*[^\s].*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="nonEmptyStringCollapsedType">
+    <xs:annotation>
+      <xs:documentation>A non empty string with collapsed whitespace.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="tns:nonEmptyStringType">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
