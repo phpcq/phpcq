@@ -138,4 +138,5 @@ class ToolReportTest extends TestCase
         $report->finish('passed');
 
         $this->assertSame('passed', $buffer->getStatus());
-    }}
+    }
+}
