@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\OutputTransformer\ConsoleOutputTransformerFactory;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\PostProcessor\ConsoleOutputTransformerFactory;
 use Traversable;
 
 final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
