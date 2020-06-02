@@ -52,11 +52,11 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             {
                 $this->data->push($data);
                 if (OutputInterface::CHANNEL_STDOUT === $channel) {
-                    $this->stdOut .= $channel;
+                    $this->stdOut .= $data;
                     return;
                 }
                 if (OutputInterface::CHANNEL_STDERR === $channel) {
-                    $this->stdErr .= $channel;
+                    $this->stdErr .= $data;
                     return;
                 }
             }
