@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\PostProcessor;
 
+use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
@@ -33,6 +34,10 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             private $report;
             /** @var BufferedLineReader */
             private $data;
+            /** @var string */
+            private $stdErr = '';
+            /** @var string */
+            private $stdOut ='';
 
             /**
              * Create a new instance.
@@ -46,6 +51,14 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             public function write(string $data, int $channel): void
             {
                 $this->data->push($data);
+                if (OutputInterface::CHANNEL_STDOUT === $channel) {
+                    $this->stdOut .= $channel;
+                    return;
+                }
+                if (OutputInterface::CHANNEL_STDERR === $channel) {
+                    $this->stdErr .= $channel;
+                    return;
+                }
             }
 
             public function finish(int $exitCode): void
@@ -57,6 +70,14 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
 
                 [$status, $severity] = $this->calculateStatusAndSeverity($exitCode);
                 $this->report->addDiagnostic($severity, $content);
+
+                if ('' !== $this->stdErr) {
+                    $this->report->addBufferAsAttachment($this->stdErr, 'stderr.log');
+                }
+                if ('' !== $this->stdOut) {
+                    $this->report->addBufferAsAttachment($this->stdOut, 'stdout.log');
+                }
+
                 $this->report->finish($status);
             }
 

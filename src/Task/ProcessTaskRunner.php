@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Symfony\Component\Process\Process;
+use Throwable;
 use Traversable;
 
 /**
@@ -92,29 +93,23 @@ class ProcessTaskRunner implements TaskRunnerInterface
             OutputInterface::CHANNEL_STDERR
         );
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
-        $consoleOutput = [
-            OutputInterface::CHANNEL_STDOUT => '',
-            OutputInterface::CHANNEL_STDERR => '',
-        ];
 
         $transformer = $this->transformer->createFor($this->report);
         try {
             // Fixme: Move fail handling to the processor
-            $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput, $transformer) {
+            $process->mustRun(function (string $type, string $data) use ($output, $transformer) {
                 switch ($type) {
                     case Process::ERR:
                         $transformer->write($data, OutputInterface::CHANNEL_STDERR);
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STDERR);
-                        $consoleOutput[OutputInterface::CHANNEL_STDERR] .= $data;
                         return;
                     case Process::OUT:
                         $transformer->write($data, OutputInterface::CHANNEL_STDOUT);
                         $output->write($data);
-                        $consoleOutput[OutputInterface::CHANNEL_STDOUT] .= $data;
                         return;
                 }
             });
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new RuntimeException(
                 'Process failed with exit code ' . (string) $process->getExitCode() . ': ' . $process->getCommandLine(),
                 (int) $exception->getCode(),
@@ -122,13 +117,6 @@ class ProcessTaskRunner implements TaskRunnerInterface
             );
         } finally {
             $transformer->finish($process->getExitCode());
-            // FIXME: we should not buffer these as attachment - the post processor should do it!
-            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDERR])) {
-                $this->report->addBufferAsAttachment($stdErr, 'stderr.log');
-            }
-            if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {
-                $this->report->addBufferAsAttachment($stdOut, 'stdout.log');
-            }
         }
     }
 }
