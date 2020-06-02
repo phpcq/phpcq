@@ -8,7 +8,7 @@ use Phpcq\Report\Buffer\SourceFileDiagnostic;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Report\Buffer\SourceFileDiagnostic */
-class SourceFileErrorTest extends TestCase
+class SourceFileDiagnosticTest extends TestCase
 {
     public function testConstructionCreatesWithFilePosition(): void
     {
