@@ -81,13 +81,13 @@ final class ReportWriter
         $tool->setAttribute('name', $report->getToolName());
         $tool->setAttribute('status', $report->getStatus());
 
-        $errors = $this->xml->createElement('errors', $tool);
+        $errors = $this->xml->createElement('diagnostics', $tool);
         // FIXME: sort by file name.
         foreach ($report->getFiles() as $file) {
             $filePath = $file->getFilePath();
             // FIXME: sort by line number and column.
             foreach ($file as $error) {
-                $errorElement = $this->xml->createElement('error', $errors);
+                $errorElement = $this->xml->createElement('diagnostic', $errors);
 
                 if ($line = $error->getLine()) {
                     $this->xml->setAttribute($errorElement, 'line', (string)$line);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report;
 
 use Phpcq\Report\Buffer\AttachmentBuffer;
-use Phpcq\Report\Buffer\SourceFileError;
+use Phpcq\Report\Buffer\SourceFileDiagnostic;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Phpcq\Report\ToolReport;
 use PHPUnit\Framework\TestCase;
@@ -29,7 +29,7 @@ class ToolReportTest extends TestCase
         $buffer = new ToolReportBuffer('tool-name');
         $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
 
-        $report->addError(
+        $report->addDiagnostic(
             'error',
             'This is an error',
             'some/file.php',
@@ -40,7 +40,7 @@ class ToolReportTest extends TestCase
 
         $errors = iterator_to_array($buffer->getFile('some/file.php'));
         $this->assertCount(1, $errors);
-        /** @var SourceFileError $error */
+        /** @var SourceFileDiagnostic $error */
         $error = $errors[0];
 
         $this->assertSame('error', $error->getSeverity());
@@ -55,11 +55,11 @@ class ToolReportTest extends TestCase
         $buffer = new ToolReportBuffer('tool-name');
         $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
 
-        $report->addError('error', 'This is an error');
+        $report->addDiagnostic('error', 'This is an error');
 
         $errors = iterator_to_array($buffer->getFile(ToolReport::UNKNOWN_FILE));
         $this->assertCount(1, $errors);
-        /** @var SourceFileError $error */
+        /** @var SourceFileDiagnostic $error */
         $error = $errors[0];
 
         $this->assertSame('error', $error->getSeverity());

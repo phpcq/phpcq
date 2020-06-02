@@ -8,7 +8,7 @@ use DOMElement;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Buffer\SourceFileError;
+use Phpcq\Report\Buffer\SourceFileDiagnostic;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 
 /**
@@ -19,10 +19,10 @@ final class CheckstyleReportWriter
     public const ROOT_NODE_NAME = 'checkstyle';
 
     /**
-     * @var SourceFileError[][][]|string[][][]
-     * @psalm-var array<string,array<int,array{error: SourceFileError, tool: string}>>
+     * @var SourceFileDiagnostic[][][]|string[][][]
+     * @psalm-var array<string,array<int,array{diagnostic: SourceFileDiagnostic, tool: string}>>
      */
-    private $errors = [];
+    private $diagnostics = [];
 
     /**
      * @var ReportBuffer
@@ -56,15 +56,15 @@ final class CheckstyleReportWriter
             $this->getErrorsFromToolReport($output);
         }
 
-        ksort($this->errors);
+        ksort($this->diagnostics);
         // Now dump them.
-        foreach ($this->errors as $filePath => $errors) {
+        foreach ($this->diagnostics as $filePath => $errors) {
             $fileElement = $this->xml->createElement('file', $this->xml->getDocumentElement());
             $this->xml->setAttribute($fileElement, 'name', $filePath);
             // Sort errors ascending by line number and column.
             usort($errors, function (array $tupel1, array $tupel2) {
-                $error1 = $tupel1['error'];
-                $error2 = $tupel2['error'];
+                $error1 = $tupel1['diagnostic'];
+                $error2 = $tupel2['diagnostic'];
 
                 if (($line1 = $error1->getLine()) !== ($line2 = $error2->getLine())) {
                     return $line1 <=> $line2;
@@ -72,7 +72,7 @@ final class CheckstyleReportWriter
                 return $error1->getColumn() <=> $error2->getColumn();
             });
             foreach ($errors as $tupel) {
-                $this->writeError($fileElement, $tupel['error'], $tupel['tool']);
+                $this->writeError($fileElement, $tupel['diagnostic'], $tupel['tool']);
             }
         }
 
@@ -84,16 +84,16 @@ final class CheckstyleReportWriter
         $toolName = $report->getToolName();
         foreach ($report->getFiles() as $file) {
             $filePath = $file->getFilePath();
-            if (!isset($this->errors[$filePath])) {
-                $this->errors[$filePath] = [];
+            if (!isset($this->diagnostics[$filePath])) {
+                $this->diagnostics[$filePath] = [];
             }
             foreach ($file as $error) {
-                $this->errors[$filePath][] = ['error' => $error, 'tool' => $toolName];
+                $this->diagnostics[$filePath][] = ['diagnostic' => $error, 'tool' => $toolName];
             }
         }
     }
 
-    private function writeError(DOMElement $fileElement, SourceFileError $error, string $toolName): void
+    private function writeError(DOMElement $fileElement, SourceFileDiagnostic $error, string $toolName): void
     {
         $node = $this->xml->createElement('error', $fileElement);
 

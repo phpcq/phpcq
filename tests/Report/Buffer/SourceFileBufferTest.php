@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Buffer;
 
 use Phpcq\Report\Buffer\SourceFileBuffer;
-use Phpcq\Report\Buffer\SourceFileError;
+use Phpcq\Report\Buffer\SourceFileDiagnostic;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Report\Buffer\SourceFileBuffer */
@@ -22,14 +22,14 @@ class SourceFileBufferTest extends TestCase
     {
         $buffer = new SourceFileBuffer('src/some/php/file.php');
 
-        $buffer->addError('error', 'This is an error', 'tool-name: section', 10, 20);
+        $buffer->addDiagnostic('error', 'This is an error', 'tool-name: section', 10, 20);
 
         $errors = iterator_to_array($buffer->getIterator());
         $this->assertCount(1, $errors);
         $this->arrayHasKey(0);
         $error = $errors[0];
-        $this->assertInstanceOf(SourceFileError::class, $error);
-        /** @var SourceFileError $error */
+        $this->assertInstanceOf(SourceFileDiagnostic::class, $error);
+        /** @var SourceFileDiagnostic $error */
 
 
         $this->assertSame('error', $error->getSeverity());
@@ -43,14 +43,14 @@ class SourceFileBufferTest extends TestCase
     {
         $buffer = new SourceFileBuffer('src/some/php/file.php');
 
-        $buffer->addError('error', 'This is an error', null, null, null);
+        $buffer->addDiagnostic('error', 'This is an error', null, null, null);
 
         $errors = iterator_to_array($buffer->getIterator());
         $this->assertCount(1, $errors);
         $this->arrayHasKey(0);
         $error = $errors[0];
-        $this->assertInstanceOf(SourceFileError::class, $error);
-        /** @var SourceFileError $error */
+        $this->assertInstanceOf(SourceFileDiagnostic::class, $error);
+        /** @var SourceFileDiagnostic $error */
 
         $this->assertSame('error', $error->getSeverity());
         $this->assertSame('This is an error', $error->getMessage());

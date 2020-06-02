@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Buffer;
 
-use Phpcq\Report\Buffer\SourceFileError;
+use Phpcq\Report\Buffer\SourceFileDiagnostic;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Buffer\SourceFileError */
+/** @covers \Phpcq\Report\Buffer\SourceFileDiagnostic */
 class SourceFileErrorTest extends TestCase
 {
     public function testConstructionCreatesWithFilePosition(): void
     {
-        $error = new SourceFileError('error', 'This is an error', 'tool-name: section', 10, 20);
+        $error = new SourceFileDiagnostic('error', 'This is an error', 'tool-name: section', 10, 20);
         $this->assertSame('error', $error->getSeverity());
         $this->assertSame('This is an error', $error->getMessage());
         $this->assertSame('tool-name: section', $error->getSource());
@@ -22,7 +22,7 @@ class SourceFileErrorTest extends TestCase
 
     public function testConstructionCreatesWithEmptyFilePosition(): void
     {
-        $error = new SourceFileError('error', 'This is an error', 'tool-name: section', null, null);
+        $error = new SourceFileDiagnostic('error', 'This is an error', 'tool-name: section', null, null);
 
         $this->assertSame('error', $error->getSeverity());
         $this->assertSame('This is an error', $error->getMessage());

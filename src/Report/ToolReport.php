@@ -36,7 +36,7 @@ class ToolReport implements ToolReportInterface
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
-    public function addError(
+    public function addDiagnostic(
         string $severity,
         string $message,
         ?string $file = null,
@@ -47,7 +47,7 @@ class ToolReport implements ToolReportInterface
         $this->report
             // FIXME: if we would know the root dir, we could strip it here.
             ->getFile($file ?? self::UNKNOWN_FILE)
-            ->addError($severity, $message, $source, $line, $column);
+            ->addDiagnostic($severity, $message, $source, $line, $column);
     }
 
     public function addAttachment(string $filePath, ?string $name = null): void

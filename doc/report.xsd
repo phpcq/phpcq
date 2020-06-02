@@ -60,7 +60,7 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="errors" type="tns:toolErrorListType" />
+      <xs:element name="diagnostics" type="tns:toolDiagnosticListType" />
       <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0" />
     </xs:sequence>
     <xs:attribute name="name" type="tns:nonEmptyStringType">
@@ -83,21 +83,21 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="toolErrorListType">
+  <xs:complexType name="toolDiagnosticListType">
     <xs:annotation>
       <xs:documentation>
-        The found errors by the tool.
+        The found diagnostics by the tool.
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="error" type="tns:toolErrorType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="diagnostic" type="tns:toolDiagnosticType" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="toolErrorType">
+  <xs:complexType name="toolDiagnosticType">
     <xs:annotation>
       <xs:documentation>
-        An error found by a tool.
+        An diagnostic entry found by a tool.
       </xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
@@ -105,16 +105,16 @@
         <xs:attribute type="xs:int" name="line" />
         <xs:attribute type="xs:int" name="column" />
         <xs:attribute type="xs:string" name="file" use="required" />
-        <xs:attribute type="tns:toolErrorSeverityType" name="severity" use="required" />
+        <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required" />
         <xs:attribute type="tns:nonEmptyStringType" name="source" />
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
 
-  <xs:simpleType name="toolErrorSeverityType">
+  <xs:simpleType name="toolDiagnosticSeverityType">
     <xs:annotation>
       <xs:documentation>
-        The severity of the error.
+        The severity of the diagnostic.
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="tns:nonEmptyStringType">

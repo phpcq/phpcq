@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Report\Buffer;
 
-final class SourceFileError
+final class SourceFileDiagnostic
 {
     /** @var string */
     private $severity;
