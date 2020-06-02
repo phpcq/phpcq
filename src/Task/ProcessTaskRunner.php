@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
@@ -48,27 +49,26 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $report;
 
     /**
-     * @var OutputTransformerInterface
+     * @var OutputTransformerFactoryInterface
      */
     private $transformer;
 
     /**
-     * @param string[]                         $command The command to run and its arguments listed as separate entries
-     * @param ToolReportInterface              $report
-     * @param OutputTransformerInterface       $transformer
-     * @param string|null                      $cwd     The working directory or null to use the working dir of the
-     *                                                  current PHP process
-     * @param string[]|null                    $env     The environment variables or null to use the same environment as
-     *                                                  the current PHP process
-     * @param resource|string|Traversable|null $input   The input as stream resource, scalar or \Traversable, or null
-     *                                                  for no input
-     * @param int|float|null                   $timeout The timeout in seconds or null to disable
-     *
+     * @param string[]                          $command The command to run and its arguments listed as separate entries
+     * @param ToolReportInterface               $report
+     * @param OutputTransformerFactoryInterface $transformer
+     * @param string|null                       $cwd     The working directory or null to use the working dir of the
+     *                                                   current PHP process
+     * @param string[]|null                     $env     The environment variables or null to use the same environment as
+     *                                                   the current PHP process
+     * @param resource|string|Traversable|null  $input   The input as stream resource, scalar or \Traversable, or null
+     *                                                   for no input
+     * @param int|float|null                    $timeout The timeout in seconds or null to disable
      */
     public function __construct(
         array $command,
         ToolReportInterface $report,
-        OutputTransformerInterface $transformer,
+        OutputTransformerFactoryInterface $transformer,
         string $cwd = null,
         array $env = null,
         $input = null,
@@ -98,18 +98,18 @@ class ProcessTaskRunner implements TaskRunnerInterface
             OutputInterface::CHANNEL_STDERR => '',
         ];
 
+        $transformer = $this->transformer->createFor($this->report);
         try {
-            $this->transformer->attach($this->report);
             // Fixme: Move fail handling to the processor
-            $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
+            $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput, $transformer) {
                 switch ($type) {
                     case Process::ERR:
-                        $this->transformer->write($data, OutputInterface::CHANNEL_STDERR);
+                        $transformer->write($data, OutputInterface::CHANNEL_STDERR);
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STDERR);
                         $consoleOutput[OutputInterface::CHANNEL_STDERR] .= $data;
                         return;
                     case Process::OUT:
-                        $this->transformer->write($data, OutputInterface::CHANNEL_STDOUT);
+                        $transformer->write($data, OutputInterface::CHANNEL_STDOUT);
                         $output->write($data);
                         $consoleOutput[OutputInterface::CHANNEL_STDOUT] .= $data;
                         return;
@@ -122,7 +122,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
                 $exception
             );
         } finally {
-            $this->transformer->detach($process->getExitCode());
+            $transformer->finish($process->getExitCode());
             // FIXME: we should not buffer these as attachment - the post processor should do it!
             if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDERR])) {
                 $this->report->addBufferAsAttachment($stdErr, 'stderr.log');

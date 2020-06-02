@@ -6,6 +6,7 @@ namespace Phpcq\Task;
 
 use Phpcq\Output\SymfonyOutput;
 use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\PostProcessorInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
@@ -47,12 +48,13 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     private $timeout = null;
 
     /**
-     * @var OutputTransformerInterface|null
+     * @var OutputTransformerFactoryInterface|null
      */
-    private $outputTransformer;
+    private $transformerFactory;
 
     /**
      * @var PostProcessorInterface|null
+     * @deprecated
      */
     private $postProcessor;
 
@@ -111,13 +113,14 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return $this;
     }
 
-    public function withOutputTransformer(OutputTransformerInterface $transformer): TaskRunnerBuilderInterface
+    public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskRunnerBuilderInterface
     {
-        $this->outputTransformer = $transformer;
+        $this->transformerFactory = $factory;
 
         return $this;
     }
 
+    /** @deprecated */
     public function withPostProcessor(PostProcessorInterface $postProcessor): TaskRunnerBuilderInterface
     {
         $this->postProcessor = $postProcessor;
@@ -127,18 +130,11 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     public function build(): TaskRunnerInterface
     {
-        $outputTransformer = $this->outputTransformer;
-        if (null === $outputTransformer) {
+        $transformerFactory = $this->transformerFactory;
+        if (null === $transformerFactory) {
             $postProcessor = $this->postProcessor ?: new ConsoleOutputToolReportProcessor($this->toolName);
-            $outputTransformer = new class($postProcessor) implements OutputTransformerInterface {
-                /** @var ToolReportInterface */
-                private $report;
 
-                private $data = [
-                    OutputInterface::CHANNEL_STDOUT => '',
-                    OutputInterface::CHANNEL_STDERR => '',
-                ];
-
+            $transformerFactory = new class ($postProcessor) implements OutputTransformerFactoryInterface {
                 private $postProcessor;
 
                 public function __construct(PostProcessorInterface $postProcessor)
@@ -146,26 +142,42 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
                     $this->postProcessor = $postProcessor;
                 }
 
-                public function attach(ToolReportInterface $report): void
+                public function createFor(ToolReportInterface $report): OutputTransformerInterface
                 {
-                    $this->report = $report;
-                }
+                    return new class($this->postProcessor, $report) implements OutputTransformerInterface {
+                        /** @var ToolReportInterface */
+                        private $report;
 
-                public function write(string $data, int $channel): void
-                {
-                    $this->data[$channel] .= $data;
-                }
+                        private $data = [
+                            OutputInterface::CHANNEL_STDOUT => '',
+                            OutputInterface::CHANNEL_STDERR => '',
+                        ];
 
-                public function detach(int $exitCode): void
-                {
-                    $this->postProcessor->process(
-                        $this->report,
-                        $this->data[OutputInterface::CHANNEL_STDOUT],
-                        $exitCode,
-                        // FIXME: this kills the output from the post processors - need to handle better or remove post processors.
-                        new SymfonyOutput(new \Symfony\Component\Console\Output\BufferedOutput())
-                    );
-                    $this->report = null;
+                        private $postProcessor;
+
+                        public function __construct(PostProcessorInterface $postProcessor, ToolReportInterface $report)
+                        {
+                            $this->postProcessor = $postProcessor;
+                            $this->report        = $report;
+                        }
+
+                        public function write(string $data, int $channel): void
+                        {
+                            $this->data[$channel] .= $data;
+                        }
+
+                        public function finish(int $exitCode): void
+                        {
+                            $this->postProcessor->process(
+                                $this->report,
+                                $this->data[OutputInterface::CHANNEL_STDOUT],
+                                $exitCode,
+                                // FIXME: this kills the output from the post processors - need to handle better or remove post processors.
+                                new SymfonyOutput(new \Symfony\Component\Console\Output\BufferedOutput())
+                            );
+                            $this->report = null;
+                        }
+                    };
                 }
             };
         }
@@ -173,7 +185,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return new ProcessTaskRunner(
             $this->command,
             $this->report,
-            $outputTransformer,
+            $transformerFactory,
             $this->cwd,
             $this->env,
             $this->input,
