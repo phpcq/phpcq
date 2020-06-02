@@ -8,7 +8,6 @@ use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Buffer\SourceFileBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Phpcq\Report\ToolReport;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -155,10 +154,10 @@ final class ConsoleWriter
     {
         switch ($severity) {
             case ToolReport::SEVERITY_INFO:
-                return '<fg=yellow>[' . $severity . ']</>';
+                return '<fg=white>[' . $severity . ']</>';
 
             case ToolReport::SEVERITY_WARNING:
-                return '<fg=orange>[' . $severity . ']</>';
+                return '<fg=yellow>[' . $severity . ']</>';
 
             case ToolReport::SEVERITY_ERROR:
                 return '<fg=red>[' . $severity . ']</>';
