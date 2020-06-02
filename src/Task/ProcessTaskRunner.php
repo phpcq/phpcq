@@ -6,7 +6,6 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
