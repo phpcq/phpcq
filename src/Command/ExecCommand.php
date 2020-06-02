@@ -98,7 +98,7 @@ final class ExecCommand extends AbstractCommand
             $taskOutput->writeln(
                 $throwable->getMessage(),
                 BufferedOutput::VERBOSITY_NORMAL,
-                BufferedOutput::CHANNEL_STRERR
+                BufferedOutput::CHANNEL_STDERR
             );
             $taskOutput->release();
             return (int) $throwable->getCode();

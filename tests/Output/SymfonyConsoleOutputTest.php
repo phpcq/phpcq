@@ -44,7 +44,7 @@ class SymfonyConsoleOutputTest extends TestCase
             ->willReturn($errorOutput);
 
         $output = new SymfonyConsoleOutput($mock);
-        $output->write('Test', SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
+        $output->write('Test', SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STDERR);
     }
 
     public function testWriteln(): void
@@ -77,6 +77,6 @@ class SymfonyConsoleOutputTest extends TestCase
             ->willReturn($errorOutput);
 
         $output = new SymfonyConsoleOutput($mock);
-        $output->writeln('Test', SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STRERR);
+        $output->writeln('Test', SymfonyOutput::VERBOSITY_NORMAL, SymfonyOutput::CHANNEL_STDERR);
     }
 }

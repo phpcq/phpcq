@@ -86,16 +86,16 @@ class ProcessTaskRunner implements TaskRunnerInterface
     public function run(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
-        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
+        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $output->writeln(
             'Executing: ' . $process->getCommandLine(),
             OutputInterface::VERBOSITY_VERBOSE,
-            OutputInterface::CHANNEL_STRERR
+            OutputInterface::CHANNEL_STDERR
         );
-        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STRERR);
+        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $consoleOutput = [
             OutputInterface::CHANNEL_STDOUT => '',
-            OutputInterface::CHANNEL_STRERR => '',
+            OutputInterface::CHANNEL_STDERR => '',
         ];
 
         try {
@@ -103,8 +103,8 @@ class ProcessTaskRunner implements TaskRunnerInterface
             $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
                 switch ($type) {
                     case Process::ERR:
-                        $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STRERR);
-                        $consoleOutput[OutputInterface::CHANNEL_STRERR] .= $data;
+                        $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STDERR);
+                        $consoleOutput[OutputInterface::CHANNEL_STDERR] .= $data;
                         return;
                     case Process::OUT:
                         $output->write($data);
@@ -120,7 +120,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
             );
         } finally {
             // FIXME: we should not buffer these as attachment - the post processor should do it!
-            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STRERR])) {
+            if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDERR])) {
                 $this->report->addBufferAsAttachment($stdErr, 'stderr.log');
             }
             if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {

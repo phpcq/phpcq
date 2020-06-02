@@ -39,7 +39,7 @@ class SymfonyConsoleOutput implements OutputInterface
     private function output(string $output, bool $newLine, int $verbosity, int $channel): void
     {
         switch ($channel) {
-            case self::CHANNEL_STRERR:
+            case self::CHANNEL_STDERR:
                 $this->output->getErrorOutput()->write($output, $newLine, $verbosity);
                 break;
 

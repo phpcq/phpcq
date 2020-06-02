@@ -104,7 +104,7 @@ final class RunCommand extends AbstractCommand
                 $taskOutput->writeln(
                     $throwable->getMessage(),
                     BufferedOutput::VERBOSITY_NORMAL,
-                    BufferedOutput::CHANNEL_STRERR
+                    BufferedOutput::CHANNEL_STDERR
                 );
                 $exitCode = (int) $throwable->getCode();
                 $exitCode = $exitCode === 0 ? 1 : $exitCode;
@@ -122,7 +122,7 @@ final class RunCommand extends AbstractCommand
         CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
         ConsoleWriter::writeReport($this->output, $report);
 
-        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STRERR);
+        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
         return $exitCode;
     }
 
