@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\PostProcessorInterface;
+use Phpcq\PluginApi\Version10\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
@@ -48,14 +48,14 @@ class ProcessTaskRunner implements TaskRunnerInterface
     private $report;
 
     /**
-     * @var PostProcessorInterface
+     * @var OutputTransformerInterface
      */
-    private $postProcessor;
+    private $transformer;
 
     /**
      * @param string[]                         $command The command to run and its arguments listed as separate entries
      * @param ToolReportInterface              $report
-     * @param PostProcessorInterface           $postProcessor
+     * @param OutputTransformerInterface       $transformer
      * @param string|null                      $cwd     The working directory or null to use the working dir of the
      *                                                  current PHP process
      * @param string[]|null                    $env     The environment variables or null to use the same environment as
@@ -68,19 +68,19 @@ class ProcessTaskRunner implements TaskRunnerInterface
     public function __construct(
         array $command,
         ToolReportInterface $report,
-        PostProcessorInterface $postProcessor,
+        OutputTransformerInterface $transformer,
         string $cwd = null,
         array $env = null,
         $input = null,
         ?float $timeout = 60
     ) {
-        $this->command       = $command;
-        $this->cwd           = $cwd;
-        $this->env           = $env;
-        $this->input         = $input;
-        $this->timeout       = $timeout;
-        $this->report        = $report;
-        $this->postProcessor = $postProcessor;
+        $this->command     = $command;
+        $this->cwd         = $cwd;
+        $this->env         = $env;
+        $this->input       = $input;
+        $this->timeout     = $timeout;
+        $this->report      = $report;
+        $this->transformer = $transformer;
     }
 
     public function run(OutputInterface $output): void
@@ -99,14 +99,17 @@ class ProcessTaskRunner implements TaskRunnerInterface
         ];
 
         try {
+            $this->transformer->attach($this->report);
             // Fixme: Move fail handling to the processor
             $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
                 switch ($type) {
                     case Process::ERR:
+                        $this->transformer->write($data, OutputInterface::CHANNEL_STDERR);
                         $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STDERR);
                         $consoleOutput[OutputInterface::CHANNEL_STDERR] .= $data;
                         return;
                     case Process::OUT:
+                        $this->transformer->write($data, OutputInterface::CHANNEL_STDOUT);
                         $output->write($data);
                         $consoleOutput[OutputInterface::CHANNEL_STDOUT] .= $data;
                         return;
@@ -119,6 +122,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
                 $exception
             );
         } finally {
+            $this->transformer->detach($process->getExitCode());
             // FIXME: we should not buffer these as attachment - the post processor should do it!
             if ('' !== ($stdErr = $consoleOutput[OutputInterface::CHANNEL_STDERR])) {
                 $this->report->addBufferAsAttachment($stdErr, 'stderr.log');
@@ -126,8 +130,6 @@ class ProcessTaskRunner implements TaskRunnerInterface
             if ('' !== ($stdOut = $consoleOutput[OutputInterface::CHANNEL_STDOUT])) {
                 $this->report->addBufferAsAttachment($stdOut, 'stdout.log');
             }
-            // FIXME: we have to pass stdErr also.
-            $this->postProcessor->process($this->report, $stdOut, (int) $process->getExitCode(), $output);
         }
     }
 }
