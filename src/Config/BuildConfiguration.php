@@ -56,16 +56,13 @@ class BuildConfiguration implements BuildConfigInterface
         return $this->tempDirectory;
     }
 
-    public function getUniqueTempFile(?PluginInterface $plugin = null, ?string $prefix = null): string
+    public function getUniqueTempFile(?PluginInterface $plugin = null, ?string $suffix = null): string
     {
-        $fileNamePrefix = '';
-        if (null !== $plugin) {
-            $fileNamePrefix .= $plugin->getName();
-        }
-        if (!empty($prefix)) {
-            $fileNamePrefix .= '-' . $prefix;
+        $fileName = uniqid($plugin ? $plugin->getName() : '');
+        if (!empty($suffix)) {
+            $fileName .= '.' . $suffix;
         }
 
-        return $this->getBuildTempDir() . '/' . uniqid($fileNamePrefix) . '.xml';
+        return $this->getBuildTempDir() . '/' . $fileName;
     }
 }
