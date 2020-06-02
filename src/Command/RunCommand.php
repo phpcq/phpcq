@@ -15,6 +15,7 @@ use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
+use Phpcq\Report\Writer\ConsoleWriter;
 use Phpcq\Report\Writer\ReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
@@ -119,6 +120,7 @@ final class RunCommand extends AbstractCommand
         $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         ReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
         CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        ConsoleWriter::writeReport($this->output, $report);
 
         $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STRERR);
         return $exitCode;

@@ -34,9 +34,9 @@
         "phpcq/plugin-api": "dev-feature/checkstyle",
         "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
+        "symfony/filesystem": "^5.0",
         "symfony/process": "^5.0.7",
-        "symfony/yaml": "^5.0.7",
-        "symfony/filesystem": "^5.0"
+        "symfony/yaml": "^5.0.7"
     },
     "extra": {
         "branch-alias": {

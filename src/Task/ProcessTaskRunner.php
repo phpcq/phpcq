@@ -11,7 +11,6 @@ use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Symfony\Component\Process\Process;
 use Traversable;
-use function var_dump;
 
 /**
  * This task runner executes a process.
@@ -100,6 +99,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
         ];
 
         try {
+            // Fixme: Move fail handling to the processor
             $process->mustRun(function (string $type, string $data) use ($output, &$consoleOutput) {
                 switch ($type) {
                     case Process::ERR:

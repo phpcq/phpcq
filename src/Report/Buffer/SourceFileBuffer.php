@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Report\Buffer;
 
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use Traversable;
 
@@ -13,7 +14,7 @@ use Traversable;
  *
  * @template-implements IteratorAggregate<int, SourceFileError>
  */
-final class SourceFileBuffer implements IteratorAggregate
+final class SourceFileBuffer implements IteratorAggregate, Countable
 {
     /** @var SourceFileError[] */
     private $errors = [];
@@ -36,6 +37,11 @@ final class SourceFileBuffer implements IteratorAggregate
     public function addError(string $severity, string $message, ?string $source, ?int $line, ?int $column): void
     {
         $this->errors[] = new SourceFileError($severity, $message, $source, $line, $column);
+    }
+
+    public function count(): int
+    {
+        return count($this->errors);
     }
 
     /**
