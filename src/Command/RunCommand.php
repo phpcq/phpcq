@@ -49,7 +49,7 @@ final class RunCommand extends AbstractCommand
         );
         $this->addOption(
             'fast-finish',
-            'f',
+            'ff',
             InputOption::VALUE_NONE,
             'Do not keep going and execute all tasks but break on first error',
         );
