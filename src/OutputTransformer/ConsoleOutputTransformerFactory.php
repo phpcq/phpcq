@@ -27,6 +27,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
         $this->toolName = $toolName;
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
     public function createFor(ToolReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
@@ -37,7 +38,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             /** @var string */
             private $stdErr = '';
             /** @var string */
-            private $stdOut ='';
+            private $stdOut = '';
 
             /**
              * Create a new instance.
