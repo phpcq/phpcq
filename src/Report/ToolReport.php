@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
+use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ToolReport implements ToolReportInterface
 {
-    public const UNKNOWN_FILE = 'unknown-file';
-
     /** @var string */
     private $toolName;
 
@@ -23,6 +23,9 @@ class ToolReport implements ToolReportInterface
 
     /** @var Filesystem */
     private $filesystem;
+
+    /** @var DiagnosticBuilder[] */
+    private $pendingDiagnostics = [];
 
     public function __construct(
         string $toolName,
@@ -36,18 +39,18 @@ class ToolReport implements ToolReportInterface
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
-    public function addDiagnostic(
-        string $severity,
-        string $message,
-        ?string $file = null,
-        ?int $line = null,
-        ?int $column = null,
-        ?string $source = null
-    ): void {
-        $this->report
-            // FIXME: if we would know the root dir, we could strip it here.
-            ->getFile($file ?? self::UNKNOWN_FILE)
-            ->addDiagnostic($severity, $message, $source, $line, $column);
+    public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
+    {
+        $builder = new DiagnosticBuilder(
+            $this,
+            $severity,
+            $message,
+            function (DiagnosticBuffer $diagnostic, DiagnosticBuilder $builder) {
+                $this->report->addDiagnostic($diagnostic);
+                unset($this->pendingDiagnostics[spl_object_hash($builder)]);
+            }
+        );
+        return $this->pendingDiagnostics[spl_object_hash($builder)] = $builder;
     }
 
     public function addAttachment(string $filePath, ?string $name = null): void
@@ -66,6 +69,10 @@ class ToolReport implements ToolReportInterface
 
     public function finish(string $status): void
     {
+        foreach ($this->pendingDiagnostics as $pendingBuilder) {
+            $pendingBuilder->end();
+        }
+
         $this->report->setStatus($status);
     }
 }

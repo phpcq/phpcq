@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Phpcq\Report\Writer;
 
+use Generator;
+use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Buffer\SourceFileBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
 use Phpcq\Report\ToolReport;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Terminal;
 
 use function explode;
 use function str_repeat;
@@ -19,17 +21,22 @@ use function wordwrap;
 
 final class ConsoleWriter
 {
-    /**
-     * @var OutputInterface
-     */
+    /** @var OutputInterface */
     private $output;
 
-    /**
-     * @var ReportBuffer
-     */
+    /** @var int */
+    private $wrapWidth;
+
+    /** @var ReportBuffer */
     private $report;
 
-    public static function writeReport(OutputInterface $output, ReportBuffer $report) : void
+    /**
+     * @var Generator|DiagnosticIteratorEntry[]
+     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     */
+    private $diagnostics;
+
+    public static function writeReport(OutputInterface $output, ReportBuffer $report): void
     {
         $instance = new self($output, $report);
         $instance->write();
@@ -37,28 +44,39 @@ final class ConsoleWriter
 
     public function __construct(OutputInterface $output, ReportBuffer $report)
     {
-        $this->output = $output;
-        $this->report = $report;
+        $this->output      = $output;
+        $this->report      = $report;
+        $this->diagnostics = DiagnosticIterator::sortByTool($this->report)->thenSortByFileAndRange()->getIterator();
+
+        $this->wrapWidth = 80;
+        if ($output instanceof ConsoleOutputInterface) {
+            $terminal = new Terminal();
+            $this->wrapWidth = $terminal->getWidth();
+        }
     }
 
-    public function write() : void
+    public function write(): void
     {
         $this->writeHeadline();
         $this->writeToolOverview();
 
-        foreach ($this->report->getToolReports() as $toolReport) {
-            $this->writeToolReport($toolReport);
+        if (!$this->output->isVerbose()) {
+            return;
+        }
+
+        while ($this->diagnostics->valid()) {
+            $this->writeToolReport();
         }
     }
 
-    private function writeHeadline() : void
+    private function writeHeadline(): void
     {
         $this->output->writeln('');
         $this->output->writeln(sprintf('PHP Code Quality check finished with state "%s"', $this->report->getStatus()));
         $this->output->writeln('');
     }
 
-    private function writeToolOverview() : void
+    private function writeToolOverview(): void
     {
         $this->writeSectionHeadline('Tool overview');
 
@@ -72,69 +90,94 @@ final class ConsoleWriter
         $this->output->writeln('');
     }
 
-    private function writeToolReport(ToolReportBuffer $report) : void
+    private function writeToolReport(): void
     {
+        /** @var DiagnosticIteratorEntry $entry */
+        $entry = $this->diagnostics->current();
+        $report = $entry->getTool();
         $this->writeSectionHeadline(
             sprintf('Tool report "%s": %s', $report->getToolName(), $this->renderToolStatus($report->getStatus()))
         );
 
-        foreach ($report->getFiles() as $file) {
-            $this->writeFileReport($file);
-        }
+        do {
+            $this->writeFileReport();
+        } while ($this->diagnostics->valid() && $report === $this->diagnostics->current()->getTool());
     }
 
-    private function writeFileReport(SourceFileBuffer $file) : void
+    private function writeFileReport(): void
     {
-        if ($file->count() === 0) {
-            return;
+        /** @var DiagnosticIteratorEntry $entry */
+        $entry = $this->diagnostics->current();
+
+        $fileName = null;
+        if ($range = $entry->getRange()) {
+            $fileName = $range->getFile();
+            $this->writeSectionHeadline('File <href= ' . $fileName . '>' . $fileName . '</>');
+        } else {
+            $this->writeSectionHeadline('Generic diagnostics');
         }
 
-        $this->writeSectionHeadline('File <href= ' . $file->getFilePath() . '>' . $file->getFilePath() . '</>', '-');
-
-        foreach ($file as $error) {
-            $severity  = $this->renderErrorSeverity($error->getSeverity());
-            $severity .= str_repeat(' ', 8 - strlen($error->getSeverity()));
+        do {
+            $diagnostic = $entry->getDiagnostic();
+            $severity  = $this->renderDiagnosticSeverity($diagnostic->getSeverity());
+            $severity .= str_repeat(' ', 8 - strlen($diagnostic->getSeverity()));
             $ident     = str_repeat(' ', 10); // Warning is the longest severity
 
             $this->output->write($severity);
-            $this->renderMultiline($error->getMessage(), $ident);
+            $this->renderMultiline($diagnostic->getMessage(), $ident);
 
-            if ($error->getSource() || $error->getLine()) {
+            $range  = $entry->getRange();
+            $source = $diagnostic->getSource();
+            if ($source || null !== $range) {
                 $this->output->write($ident);
-            }
-
-            if ($error->getSource()) {
-                $this->output->write('Source: ' . $error->getSource() . ' ');
-            }
-
-            if ($error->getLine()) {
-                $this->output->write('[');
-                $this->output->write($error->getLine());
-
-                if ($error->getColumn() !== null) {
-                    $this->output->write(':' . $error->getColumn());
+                if ($source) {
+                    $this->output->write('Source: ' . $source . ' ');
                 }
-                $this->output->write(']');
-            }
-
-            if ($error->getSource() || $error->getLine()) {
+                if ($range) {
+                    $this->output->write($this->renderRange($range));
+                }
                 $this->output->writeln('');
             }
 
             $this->output->writeln('');
-        }
+
+            $this->diagnostics->next();
+            if (!$this->diagnostics->valid()) {
+                break;
+            }
+            $entry = $this->diagnostics->current();
+        } while ($entry->getFileName() === $fileName);
 
         $this->output->writeln('');
     }
 
-    private function writeSectionHeadline(string $headline, $character = '=') : void
+    private function renderRange(FileRangeBuffer $range): string
+    {
+        if (null === $value = $range->getStartLine()) {
+            return '';
+        }
+        $result = '[' . (string) $value;
+        if (null !== $value = $range->getStartColumn()) {
+            $result .= ':' . (string) $value;
+        }
+        if (null !== $value = $range->getEndLine()) {
+            $result .= ' - ' . (string) $value;
+            if (null !== $value = $range->getEndColumn()) {
+                $result .= ':' . (string) $value;
+            }
+        }
+
+        return $result . ']';
+    }
+
+    private function writeSectionHeadline(string $headline): void
     {
         $this->output->writeln($headline);
         $this->output->writeln(str_repeat('-', strlen(strip_tags($headline))));
         $this->output->writeln('');
     }
 
-    private function renderToolStatus(string $status) : string
+    private function renderToolStatus(string $status): string
     {
         switch ($status) {
             case ToolReport::STATUS_STARTED:
@@ -150,7 +193,7 @@ final class ConsoleWriter
         return $status;
     }
 
-    private function renderErrorSeverity(string $severity) : string
+    private function renderDiagnosticSeverity(string $severity): string
     {
         switch ($severity) {
             case ToolReport::SEVERITY_INFO:
@@ -167,15 +210,11 @@ final class ConsoleWriter
     }
 
 
-    private function renderMultiline(string $message, string $prefix) : void
+    private function renderMultiline(string $message, string $prefix): void
     {
         $lines = explode("\n", $message);
         if (count($lines) === 1) {
-            $lines = explode("\n", wordwrap($lines[0]));
-        }
-
-        if ($lines === false) {
-            return;
+            $lines = explode("\n", wordwrap($lines[0], $this->wrapWidth));
         }
 
         $this->output->writeln($lines[0]);

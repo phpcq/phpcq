@@ -17,10 +17,21 @@
       <xs:element name="tools" type="tns:toolListType">
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="status" type="tns:reportStatusType" />
-    <xs:attribute name="started_at" type="xs:dateTime"/>
-    <xs:attribute name="completed_at" type="xs:dateTime"/>
-    <xs:attribute name="checkstyleFile" type="xs:string"/>
+    <xs:attribute name="status" type="tns:reportStatusType" use="required"/>
+    <xs:attribute name="started_at" type="xs:dateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Date/time when the phpcq run has been started.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="completed_at" type="xs:dateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Date/time when the phpcq run has been completed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:simpleType name="reportStatusType">
@@ -31,8 +42,8 @@
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:enumeration value="passed" />
-      <xs:enumeration value="failed" />
+      <xs:enumeration value="passed"/>
+      <xs:enumeration value="failed"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -60,15 +71,15 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="diagnostics" type="tns:toolDiagnosticListType" />
-      <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0" />
+      <xs:element name="diagnostics" type="tns:toolDiagnosticListType"/>
+      <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="name" type="tns:nonEmptyStringType">
       <xs:annotation>
         <xs:documentation>The name of the executed tool</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="status" type="tns:toolStatusType" />
+    <xs:attribute name="status" type="tns:toolStatusType"/>
   </xs:complexType>
 
   <xs:simpleType name="toolStatusType">
@@ -78,8 +89,8 @@
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:enumeration value="passed" />
-      <xs:enumeration value="failed" />
+      <xs:enumeration value="passed"/>
+      <xs:enumeration value="failed"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -90,23 +101,55 @@
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="diagnostic" type="tns:toolDiagnosticType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="diagnostic" type="tns:toolDiagnosticType" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="toolDiagnosticType">
     <xs:annotation>
       <xs:documentation>
-        An diagnostic entry found by a tool.
+        A diagnostic entry found by a tool.
       </xs:documentation>
     </xs:annotation>
     <xs:simpleContent>
       <xs:extension base="tns:nonEmptyStringCollapsedType">
-        <xs:attribute type="xs:int" name="line" />
-        <xs:attribute type="xs:int" name="column" />
-        <xs:attribute type="xs:string" name="file" use="required" />
-        <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required" />
-        <xs:attribute type="tns:nonEmptyStringType" name="source" />
+        <xs:attribute type="xs:int" name="line">
+          <xs:annotation>
+            <xs:documentation>
+              Optional line number within the file denoted by "file" the diagnostic begins on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="column">
+          <xs:annotation>
+            <xs:documentation>
+              Optional column on the line denoted by "line" within the file denoted by "file" the diagnostic begins on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="line_end">
+          <xs:annotation>
+            <xs:documentation>
+              Optional line number within the file denoted by "file" the diagnostic ends on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="column_end">
+          <xs:annotation>
+            <xs:documentation>
+              Optional column on the line denoted by "line_end" within the file denoted by "file" the diagnostic ends on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" name="file">
+          <xs:annotation>
+            <xs:documentation>
+              Optional file name the diagnostic relates to.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required"/>
+        <xs:attribute type="tns:nonEmptyStringType" name="source"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
@@ -141,7 +184,7 @@
       <xs:documentation>The attachments produced by the tool.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="attachment" type="tns:toolAttachmentType" maxOccurs="unbounded" nillable="true" />
+      <xs:element name="attachment" type="tns:toolAttachmentType" maxOccurs="unbounded" nillable="true"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -170,7 +213,7 @@
       <xs:documentation>A non empty string.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:pattern value=".*[^\s].*" />
+      <xs:pattern value=".*[^\s].*"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -179,7 +222,7 @@
       <xs:documentation>A non empty string with collapsed whitespace.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="tns:nonEmptyStringType">
-      <xs:whiteSpace value="collapse" />
+      <xs:whiteSpace value="collapse"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

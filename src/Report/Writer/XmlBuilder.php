@@ -74,6 +74,19 @@ final class XmlBuilder
         $element->setAttribute($name, $value);
     }
 
+    public function getAttribute(DOMElement $element, string $name): ?string
+    {
+        if ((null !== $this->rootNameSpace) && ($element->namespaceURI !== $this->rootNameSpace)) {
+            return $element->hasAttributeNS($this->rootNameSpace, $name)
+                ? $element->getAttributeNS($this->rootNameSpace, $name)
+                : null;
+        }
+
+        return $element->hasAttribute($name)
+            ? $element->getAttribute($name)
+            : null;
+    }
+
     public function setTextContent(DOMElement $element, string $value): void
     {
         if ('' === $value) {

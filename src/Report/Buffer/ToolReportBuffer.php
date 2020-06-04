@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Report\Buffer;
 
+use Generator;
 use Phpcq\PluginApi\Version10\ReportInterface;
 
 final class ToolReportBuffer
@@ -14,8 +15,8 @@ final class ToolReportBuffer
     /** @var string */
     private $status;
 
-    /** @var SourceFileBuffer[] */
-    private $files = [];
+    /** @var DiagnosticBuffer[] */
+    private $diagnostics = [];
 
     /** @var AttachmentBuffer[] */
     private $attachments = [];
@@ -55,26 +56,20 @@ final class ToolReportBuffer
         return $this->status;
     }
 
-    /**
-     * Get a file buffer (file path is relative to project root).
-     */
-    public function getFile(string $filePath): SourceFileBuffer
+    public function addDiagnostic(DiagnosticBuffer $diagnostic): void
     {
-        if (!isset($this->files[$filePath])) {
-            $this->files[$filePath] = new SourceFileBuffer($filePath);
-        }
-
-        return $this->files[$filePath];
+        $this->diagnostics[] = $diagnostic;
     }
 
     /**
-     * @return SourceFileBuffer[]|iterable
-     *
-     * @psalm-return list<SourceFileBuffer>
+     * @return Generator|DiagnosticBuffer[]
+     * @psalm-return Generator<int, DiagnosticBuffer>
      */
-    public function getFiles(): iterable
+    public function getDiagnostics(): Generator
     {
-        return array_values($this->files);
+        foreach ($this->diagnostics as $diagnostic) {
+            yield $diagnostic;
+        }
     }
 
     public function addAttachment(string $filePath, ?string $name = null): void

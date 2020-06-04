@@ -16,7 +16,7 @@ class ToolReportBufferTest extends TestCase
         $buffer = new ToolReportBuffer('tool-name');
         $this->assertSame('tool-name', $buffer->getToolName());
         $this->assertSame('started', $buffer->getStatus());
-        $this->assertSame([], $buffer->getFiles());
+        $this->assertSame([], iterator_to_array($buffer->getDiagnostics()));
         $this->assertSame([], $buffer->getAttachments());
     }
 
@@ -46,25 +46,6 @@ class ToolReportBufferTest extends TestCase
         $buffer->setStatus('passed');
 
         $this->assertSame('failed', $buffer->getStatus());
-    }
-
-    public function testAddsFiles(): void
-    {
-        $buffer = new ToolReportBuffer('tool-name');
-
-        $file = $buffer->getFile('some/file');
-
-        $this->assertSame([$file], $buffer->getFiles());
-    }
-
-    public function testAddsFilesOnlyOnce(): void
-    {
-        $buffer = new ToolReportBuffer('tool-name');
-
-        $file1 = $buffer->getFile('some/file');
-        $file2 = $buffer->getFile('some/file');
-
-        $this->assertSame($file1, $file2);
     }
 
     public function testAddsAttachment(): void

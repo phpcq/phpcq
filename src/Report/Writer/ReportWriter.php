@@ -6,6 +6,7 @@ namespace Phpcq\Report\Writer;
 
 use DateTimeImmutable;
 use DOMElement;
+use Generator;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -36,6 +37,12 @@ final class ReportWriter
     /** @var Filesystem */
     private $filesystem;
 
+    /**
+     * @var Generator|DiagnosticIteratorEntry[]
+     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     */
+    private $diagnostics;
+
     public static function writeReport(string $targetPath, ReportBuffer $report): void
     {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {
@@ -53,6 +60,7 @@ final class ReportWriter
         $this->xml        = new XmlBuilder($targetPath, 'phpcq:' . static::ROOT_NODE_NAME, static::XML_NAMESPACE);
         $this->filesystem = new Filesystem();
         $this->filesystem->mkdir($this->targetPath);
+        $this->diagnostics = DiagnosticIterator::sortByTool($this->report)->thenSortByFileAndRange()->getIterator();
     }
 
     protected function save(): void
@@ -68,45 +76,64 @@ final class ReportWriter
         $this->xml->setAttribute($rootNode, 'completed_at', $completedAt->format(DATE_ATOM));
 
         $outputNode = $this->xml->createElement('tools', $rootNode);
-        foreach ($this->report->getToolReports() as $output) {
-            $this->appendToolReport($outputNode, $output);
+
+        if ($this->diagnostics->valid()) {
+            do {
+                $this->appendToolReport($outputNode);
+            } while ($this->diagnostics->valid());
         }
 
         $this->xml->write('/report.xml');
     }
 
-    private function appendToolReport(DOMElement $node, ToolReportBuffer $report): void
+    private function appendToolReport(DOMElement $node): void
     {
+        /** @var DiagnosticIteratorEntry $entry */
+        $entry = $this->diagnostics->current();
+        $report = $entry->getTool();
+
         $tool = $this->xml->createElement('tool', $node);
         $tool->setAttribute('name', $report->getToolName());
         $tool->setAttribute('status', $report->getStatus());
-
-        $errors = $this->xml->createElement('diagnostics', $tool);
-        // FIXME: sort by file name.
-        foreach ($report->getFiles() as $file) {
-            $filePath = $file->getFilePath();
-            // FIXME: sort by line number and column.
-            foreach ($file as $error) {
-                $errorElement = $this->xml->createElement('diagnostic', $errors);
-
-                if ($line = $error->getLine()) {
-                    $this->xml->setAttribute($errorElement, 'line', (string)$line);
-                }
-
-                if ($column = $error->getColumn()) {
-                    $this->xml->setAttribute($errorElement, 'column', (string)$column);
-                }
-                $this->xml->setAttribute($errorElement, 'file', $filePath);
-
-                $this->xml->setAttribute($errorElement, 'severity', $error->getSeverity());
-                if (null !== $source = $error->getSource()) {
-                    $this->xml->setAttribute($errorElement, 'source', $source);
-                }
-                $this->xml->setTextContent($errorElement, $error->getMessage());
+        $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
+        do {
+            $diagnosticElement = $this->xml->createElement('diagnostic', $diagnosticsElement);
+            $this->handleRange($diagnosticElement, $entry);
+            $diagnostic = $entry->getDiagnostic();
+            $this->xml->setAttribute($diagnosticElement, 'severity', $diagnostic->getSeverity());
+            if (null !== $source = $diagnostic->getSource()) {
+                $this->xml->setAttribute($diagnosticElement, 'source', $source);
             }
-        }
+            $this->xml->setTextContent($diagnosticElement, $diagnostic->getMessage());
+
+            $this->diagnostics->next();
+            if (!$this->diagnostics->valid()) {
+                break;
+            }
+            $entry = $this->diagnostics->current();
+        } while ($this->diagnostics->valid() && $report === $entry->getTool());
 
         $this->appendAttachments($tool, $report);
+    }
+
+    private function handleRange(DOMElement $diagnosticElement, DiagnosticIteratorEntry $entry): void
+    {
+        if (null === $range = $entry->getRange()) {
+            return;
+        }
+        if (null !== $int = $range->getStartLine()) {
+            $this->xml->setAttribute($diagnosticElement, 'line', (string)$int);
+        }
+        if (null !== $int = $range->getStartColumn()) {
+            $this->xml->setAttribute($diagnosticElement, 'column', (string)$int);
+        }
+        if (null !== $int = $range->getEndLine()) {
+            $this->xml->setAttribute($diagnosticElement, 'line_end', (string)$int);
+        }
+        if (null !== $int = $range->getEndColumn()) {
+            $this->xml->setAttribute($diagnosticElement, 'column_end', (string)$int);
+        }
+        $this->xml->setAttribute($diagnosticElement, 'file', $range->getFile());
     }
 
     private function appendAttachments(DOMElement $toolNode, ToolReportBuffer $report): void

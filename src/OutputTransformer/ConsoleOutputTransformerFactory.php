@@ -69,7 +69,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 }
 
                 [$status, $severity] = $this->calculateStatusAndSeverity($exitCode);
-                $this->report->addDiagnostic($severity, $content);
+                $this->report->addDiagnostic($severity, $content)->end();
 
                 if ('' !== $this->stdErr) {
                     $this->report->addBufferAsAttachment($this->stdErr, 'stderr.log');
