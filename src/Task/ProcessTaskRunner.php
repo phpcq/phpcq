@@ -59,8 +59,8 @@ class ProcessTaskRunner implements TaskRunnerInterface
      * @param OutputTransformerFactoryInterface $transformer
      * @param string|null                       $cwd     The working directory or null to use the working dir of the
      *                                                   current PHP process
-     * @param string[]|null                     $env     The environment variables or null to use the same environment as
-     *                                                   the current PHP process
+     * @param string[]|null $env                         The environment variables or null to use the same environment
+     *                                                   as the current PHP process
      * @param resource|string|Traversable|null  $input   The input as stream resource, scalar or \Traversable, or null
      *                                                   for no input
      * @param int|float|null                    $timeout The timeout in seconds or null to disable
@@ -97,7 +97,7 @@ class ProcessTaskRunner implements TaskRunnerInterface
         $transformer = $this->transformer->createFor($this->report);
         try {
             // Fixme: Move fail handling to the processor
-            $process->mustRun(function (string $type, string $data) use ($output, $transformer) {
+            $process->run(function (string $type, string $data) use ($output, $transformer) {
                 switch ($type) {
                     case Process::ERR:
                         $transformer->write($data, OutputInterface::CHANNEL_STDERR);
@@ -116,7 +116,14 @@ class ProcessTaskRunner implements TaskRunnerInterface
                 $exception
             );
         } finally {
-            $transformer->finish($process->getExitCode());
+            $transformer->finish((int) $process->getExitCode());
+        }
+
+        if (! $process->isSuccessful()) {
+            throw new RuntimeException(
+                'Process failed with exit code ' . (string) $process->getExitCode() . ': ' . $process->getCommandLine(),
+                (int) $process->getExitCode()
+            );
         }
     }
 }
