@@ -23,8 +23,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
 
+use function array_flip;
+use function array_key_exists;
+use function array_values;
 use function assert;
 use function getcwd;
+use function in_array;
 use function is_string;
 
 final class RunCommand extends AbstractCommand
@@ -52,6 +56,13 @@ final class RunCommand extends AbstractCommand
             'ff',
             InputOption::VALUE_NONE,
             'Do not keep going and execute all tasks but break on first error',
+        );
+
+        $this->addOption(
+            'report',
+            'r',
+            InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+            'Set the report formats which should be created. Available options are tool-report and checkstyle',
         );
 
         parent::configure();
@@ -118,8 +129,8 @@ final class RunCommand extends AbstractCommand
         }
 
         $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
-        ToolReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
-        CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        $this->writeReports($report, $projectConfig);
+
         ConsoleWriter::writeReport($this->output, $report);
 
         $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
@@ -171,6 +182,19 @@ final class RunCommand extends AbstractCommand
             foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
                 $taskList->add($task);
             }
+        }
+    }
+
+    private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
+    {
+        $reports = (array) $this->input->getOption('report');
+
+        if (in_array('tool-report', $reports, true)) {
+            ToolReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        }
+
+        if (in_array('tool-report', $reports, true)) {
+            CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
         }
     }
 }
