@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="https://phpcq.github.io/v1/report.xsd"
-           xmlns:tns="https://phpcq.github.io/v1/report.xsd"
+<xs:schema targetNamespace="https://phpcq.github.io/v1/tool-report.xsd"
+           xmlns:tns="https://phpcq.github.io/v1/tool-report.xsd"
            elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="report" type="tns:reportFile">
+  <xs:element name="tool-report" type="tns:reportFile">
     <xs:annotation>
       <xs:documentation>
         The root element for reports.

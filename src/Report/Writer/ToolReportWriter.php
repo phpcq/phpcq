@@ -20,10 +20,10 @@ use const DATE_ATOM;
 /**
  * Write reports to a file.
  */
-final class ReportWriter
+final class ToolReportWriter
 {
-    public const XML_NAMESPACE = 'https://phpcq.github.io/v1/report.xsd';
-    public const ROOT_NODE_NAME = 'report';
+    public const XML_NAMESPACE = 'https://phpcq.github.io/v1/tool-report.xsd';
+    public const ROOT_NODE_NAME = 'tool-report';
 
     /** @var ReportBuffer */
     protected $report;
@@ -65,7 +65,6 @@ final class ReportWriter
 
     protected function save(): void
     {
-
         $completedAt = $this->report->getCompletedAt();
         assert($completedAt instanceof DateTimeImmutable);
 
@@ -83,7 +82,7 @@ final class ReportWriter
             } while ($this->diagnostics->valid());
         }
 
-        $this->xml->write('/report.xml');
+        $this->xml->write('/tool-report.xml');
     }
 
     private function appendToolReport(DOMElement $node): void
