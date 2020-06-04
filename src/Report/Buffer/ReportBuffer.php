@@ -39,8 +39,7 @@ final class ReportBuffer
                 $reportName = $toolName . '-' . ++$number;
             } while (isset($this->toolReports[$reportName]));
         }
-        // FIXME: do we rather want to keep the tool name and add the report name as second argument?
-        return $this->toolReports[$reportName] = new ToolReportBuffer($reportName);
+        return $this->toolReports[$reportName] = new ToolReportBuffer($toolName, $reportName);
     }
 
     public function complete(string $status): void

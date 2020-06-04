@@ -21,10 +21,14 @@ final class ToolReportBuffer
     /** @var AttachmentBuffer[] */
     private $attachments = [];
 
-    public function __construct(string $toolName)
+    /** @var string */
+    private $reportName;
+
+    public function __construct(string $toolName, string $reportName)
     {
-        $this->toolName = $toolName;
-        $this->status   = ReportInterface::STATUS_STARTED;
+        $this->toolName   = $toolName;
+        $this->reportName = $reportName;
+        $this->status     = ReportInterface::STATUS_STARTED;
     }
 
     /**
@@ -35,6 +39,11 @@ final class ToolReportBuffer
     public function getToolName(): string
     {
         return $this->toolName;
+    }
+
+    public function getReportName(): string
+    {
+        return $this->reportName;
     }
 
     public function setStatus(string $status): void

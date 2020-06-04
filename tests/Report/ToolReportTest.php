@@ -17,7 +17,7 @@ class ToolReportTest extends TestCase
     {
         new ToolReport(
             'tool-name',
-            new ToolReportBuffer('tool-name'),
+            new ToolReportBuffer('tool-name', 'report-name'),
             sys_get_temp_dir()
         );
         $this->expectNotToPerformAssertions();
@@ -76,7 +76,7 @@ class ToolReportTest extends TestCase
 
     public function testAddsAttachmentIsDelegated(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
         $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
 
         $report->addAttachment('/some/file', 'local');
@@ -93,7 +93,7 @@ class ToolReportTest extends TestCase
 
     public function testAddsAttachmentIsDelegatedWhenCalledWithoutNameOverride(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
         $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
 
         $report->addAttachment('/some/file');
@@ -112,7 +112,7 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
 
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
         $report = new ToolReport('tool-name', $buffer, '/path/to/temp/directory', $filesystem);
 
         $filesystem
@@ -137,7 +137,7 @@ class ToolReportTest extends TestCase
 
     public function testFinishSetsTheStatus(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
         $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
 
         $report->finish('passed');

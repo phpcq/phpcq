@@ -13,7 +13,7 @@ class ToolReportBufferTest extends TestCase
 {
     public function testConstructionCreatesEmpty(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
         $this->assertSame('tool-name', $buffer->getToolName());
         $this->assertSame('started', $buffer->getStatus());
         $this->assertSame([], iterator_to_array($buffer->getDiagnostics()));
@@ -22,7 +22,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testSetsStatusToPassed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
 
         $buffer->setStatus('passed');
 
@@ -31,7 +31,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testSetsStatusToFailed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
 
         $buffer->setStatus('failed');
 
@@ -40,7 +40,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testDoesNotSetStatusToPassedWhenAlreadyFailed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
 
         $buffer->setStatus('failed');
         $buffer->setStatus('passed');
@@ -50,7 +50,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testAddsAttachment(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
 
         $buffer->addAttachment('/some/file', 'local');
 
@@ -66,7 +66,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testAddsAttachmentWithNulledName(): void
     {
-        $buffer = new ToolReportBuffer('tool-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
 
         $buffer->addAttachment('/some/file');
 

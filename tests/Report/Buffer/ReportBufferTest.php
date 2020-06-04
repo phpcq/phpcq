@@ -51,8 +51,8 @@ class ReportBufferTest extends TestCase
 
         $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer1);
         $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer2);
-        $this->assertSame('tool-name', $toolBuffer1->getToolName());
-        $this->assertSame('tool-name-1', $toolBuffer2->getToolName());
+        $this->assertSame('tool-name', $toolBuffer1->getReportName());
+        $this->assertSame('tool-name-1', $toolBuffer2->getReportName());
         $this->assertSame([$toolBuffer1, $toolBuffer2], $buffer->getToolReports());
     }
 }
