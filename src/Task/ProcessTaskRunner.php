@@ -101,11 +101,11 @@ class ProcessTaskRunner implements TaskRunnerInterface
                 switch ($type) {
                     case Process::ERR:
                         $transformer->write($data, OutputInterface::CHANNEL_STDERR);
-                        $output->write($data, OutputInterface::VERBOSITY_NORMAL, OutputInterface::CHANNEL_STDERR);
+                        $output->write($data, OutputInterface::VERBOSITY_VERY_VERBOSE, OutputInterface::CHANNEL_STDERR);
                         return;
                     case Process::OUT:
                         $transformer->write($data, OutputInterface::CHANNEL_STDOUT);
-                        $output->write($data);
+                        $output->write($data, OutputInterface::VERBOSITY_VERY_VERBOSE);
                         return;
                 }
             });
