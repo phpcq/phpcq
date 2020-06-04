@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="https://phpcq.github.io/v1/file-report.xsd"
+           xmlns:tns="https://phpcq.github.io/v1/file-report.xsd"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="file-report" type="tns:reportFile">
+    <xs:annotation>
+      <xs:documentation>
+        The root element for file reports.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <!-- FIXME: Implement xsd -->
+</xs:schema>

@@ -16,6 +16,7 @@ use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\ConsoleWriter;
+use Phpcq\Report\Writer\FileReportWriter;
 use Phpcq\Report\Writer\ToolReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
@@ -23,9 +24,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
 
-use function array_flip;
-use function array_key_exists;
-use function array_values;
 use function assert;
 use function getcwd;
 use function in_array;
@@ -193,7 +191,11 @@ final class RunCommand extends AbstractCommand
             ToolReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
         }
 
-        if (in_array('tool-report', $reports, true)) {
+        if (in_array('file-report', $reports, true)) {
+            FileReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        }
+
+        if (in_array('checkstyle', $reports, true)) {
             CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
         }
     }
