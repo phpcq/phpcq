@@ -112,7 +112,7 @@ final class RunCommand extends AbstractCommand
             } catch (PluginApiRuntimeException $throwable) {
                 $taskOutput->writeln(
                     $throwable->getMessage(),
-                    BufferedOutput::VERBOSITY_NORMAL,
+                    BufferedOutput::VERBOSITY_VERBOSE,
                     BufferedOutput::CHANNEL_STDERR
                 );
                 $exitCode = (int) $throwable->getCode();
