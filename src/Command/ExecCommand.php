@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Output\BufferedOutput;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -68,12 +67,11 @@ final class ExecCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
-        $report = new ReportBuffer();
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $this->getInstalledRepository(true),
-            new Report($report, sys_get_temp_dir()),
+            null,
             ...$this->findPhpCli()
         );
 
@@ -94,19 +92,17 @@ final class ExecCommand extends AbstractCommand
         $taskOutput = new BufferedOutput($consoleOutput);
         try {
             $task->run($taskOutput);
-        } catch (RuntimeException $throwable) {
+        } catch (PluginApiRuntimeException $throwable) {
+            $exitCode = (int) $throwable->getCode();
+            $exitCode = $exitCode === 0 ? 1 : $exitCode;
             $taskOutput->writeln(
                 $throwable->getMessage(),
                 BufferedOutput::VERBOSITY_NORMAL,
                 BufferedOutput::CHANNEL_STDERR
             );
-            $taskOutput->release();
-            return (int) $throwable->getCode();
         }
-        $taskOutput->release();
 
-        // Fixme: Save/Handle output
-        //$report->asXML(getcwd() . '/' . $this->c->getArtifactOutputPath() . '/checkstyle.xml');
+        $taskOutput->release();
 
         return $exitCode;
     }

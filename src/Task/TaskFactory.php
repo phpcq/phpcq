@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskFactoryInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
@@ -35,7 +36,7 @@ class TaskFactory implements TaskFactoryInterface
     private $phpArguments;
 
     /**
-     * @var Report
+     * @var Report|null
      */
     private $report;
 
@@ -50,7 +51,7 @@ class TaskFactory implements TaskFactoryInterface
     public function __construct(
         string $phpcqPath,
         RepositoryInterface $installed,
-        Report $report,
+        ?Report $report,
         string $phpCliBinary,
         array $phpArguments
     ) {
@@ -68,7 +69,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskRunnerBuilderInterface
     {
-        return new TaskRunnerBuilder($toolName, $command, $this->createToolReport($toolName));
+        return new TaskRunnerBuilder($toolName, $command, $this->report ? $this->createToolReport($toolName) : null);
     }
 
     /**
@@ -89,6 +90,11 @@ class TaskFactory implements TaskFactoryInterface
 
     public function createToolReport(string $toolName): ToolReportInterface
     {
+        // Fixme: We need to tell the plugin if we transform the output.
+        if ($this->report === null) {
+            throw new RuntimeException(sprintf('No report assigned. Creating a tool report is not possible.'));
+        }
+
         return $this->report->addToolReport($toolName);
     }
 }

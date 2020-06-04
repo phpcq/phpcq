@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
@@ -62,6 +64,34 @@ final class TaskFactoryTest extends TestCase
             '/phpcq/path/phar-file-name.phar',
             'phar-arg1', 'phar-arg2',
         ], 'command', $builder);
+    }
+
+    public function testBuildToolReport(): void
+    {
+        $factory = new TaskFactory(
+            '/phpcq/path',
+            $this->getMockForAbstractClass(RepositoryInterface::class),
+            $this->mockReport(),
+            '/path/to/php-cli',
+            ['php', 'arguments']
+        );
+
+        $toolReport = $factory->createToolReport('tool');
+        $this->assertInstanceOf(ToolReportInterface::class, $toolReport);
+    }
+
+    public function testBuildToolReportNotAvailable(): void
+    {
+        $factory = new TaskFactory(
+            '/phpcq/path',
+            $this->getMockForAbstractClass(RepositoryInterface::class),
+            null,
+            '/path/to/php-cli',
+            ['php', 'arguments']
+        );
+
+        $this->expectException(RuntimeException::class);
+        $factory->createToolReport('tool');
     }
 
     private function mockReport(): Report

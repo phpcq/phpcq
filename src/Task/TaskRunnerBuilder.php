@@ -6,10 +6,13 @@ namespace Phpcq\Task;
 
 use Phpcq\OutputTransformer\ConsoleOutputTransformerFactory;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
+use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Traversable;
+
+use function assert;
 
 final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 {
@@ -49,7 +52,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     private $transformerFactory;
 
     /**
-     * @var ToolReportInterface
+     * @var ToolReportInterface|null
      */
     private $report;
 
@@ -58,7 +61,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @param string[] $command
      */
-    public function __construct(string $toolName, array $command, ToolReportInterface $report)
+    public function __construct(string $toolName, array $command, ?ToolReportInterface $report)
     {
         $this->toolName = $toolName;
         $this->command = $command;
@@ -112,6 +115,17 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     public function build(): TaskRunnerInterface
     {
+        if ($this->report === null) {
+            return $this->buildExecTaskRunner();
+        }
+
+        return $this->buildProcessTaskRunner();
+    }
+
+    private function buildProcessTaskRunner(): TaskRunnerInterface
+    {
+        assert($this->report instanceof ReportInterface);
+
         $transformerFactory = $this->transformerFactory;
         if (null === $transformerFactory) {
             $transformerFactory = new ConsoleOutputTransformerFactory($this->toolName);
@@ -121,6 +135,17 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
             $this->command,
             $this->report,
             $transformerFactory,
+            $this->cwd,
+            $this->env,
+            $this->input,
+            $this->timeout
+        );
+    }
+
+    private function buildExecTaskRunner(): TaskRunnerInterface
+    {
+        return new ExecTaskRunner(
+            $this->command,
             $this->cwd,
             $this->env,
             $this->input,
