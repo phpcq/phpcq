@@ -93,10 +93,7 @@ final class UpdateCalculator
             // Installed in another version => upgrade.
             if ($forceReinstall || !$this->installed->hasTool($name, $tool->getVersion())) {
                 $oldVersion = $this->installed->getTool($name, '*');
-
-                $message = 'Will ' . $this->describeUpgradeDirection($oldVersion, $tool) . ' ' . $name
-                    . ' from version ' . $oldVersion->getVersion() . ' to version ' . $tool->getVersion();
-                
+                $message = $this->getTaskMessage($oldVersion, $tool);
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
                 $tasks[] = [
                     'type' => 'upgrade',
@@ -132,20 +129,23 @@ final class UpdateCalculator
         return $tasks;
     }
 
-    private function describeUpgradeDirection(
+    private function getTaskMessage(
         ToolInformationInterface $oldVersion,
         ToolInformationInterface $tool
     ): string {
+
         switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
             case 0:
-                return 'reinstall';
+                return 'Will reinstall ' . $tool->getName() . ' in version ' . $tool->getVersion();
 
             case 1:
-                return 'downgrade';
+                return 'Will downgrade ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $tool->getVersion();
 
             case -1:
             default:
-                return 'upgrade';
+                return 'Will upgrade ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $tool->getVersion();
         }
     }
 }
