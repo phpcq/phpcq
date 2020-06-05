@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
+use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -26,6 +28,9 @@ class ToolReport implements ToolReportInterface
 
     /** @var DiagnosticBuilder[] */
     private $pendingDiagnostics = [];
+
+    /** @var AttachmentBuilder[] */
+    private $pendingAttachments = [];
 
     public function __construct(
         string $toolName,
@@ -53,23 +58,27 @@ class ToolReport implements ToolReportInterface
         return $this->pendingDiagnostics[spl_object_hash($builder)] = $builder;
     }
 
-    public function addAttachment(string $filePath, ?string $name = null): void
+    public function addAttachment(string $name): AttachmentBuilderInterface
     {
-        $this->report->addAttachment($filePath, $name);
-    }
-
-    public function addBufferAsAttachment(string $buffer, string $name): void
-    {
-        $filePath = $this->tempDir . '/' . uniqid($name);
-
-        $this->filesystem->dumpFile($filePath, $buffer);
-
-        $this->addAttachment($filePath, $name);
+        $builder = new AttachmentBuilder(
+            $name,
+            $this,
+            $this->tempDir,
+            $this->filesystem,
+            function (AttachmentBuffer $attachment, AttachmentBuilder $builder) {
+                $this->report->addAttachment($attachment);
+                unset($this->pendingAttachments[spl_object_hash($builder)]);
+            }
+        );
+        return $this->pendingAttachments[spl_object_hash($builder)] = $builder;
     }
 
     public function finish(string $status): void
     {
         foreach ($this->pendingDiagnostics as $pendingBuilder) {
+            $pendingBuilder->end();
+        }
+        foreach ($this->pendingAttachments as $pendingBuilder) {
             $pendingBuilder->end();
         }
 

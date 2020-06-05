@@ -82,9 +82,9 @@ final class ToolReportBuffer
         }
     }
 
-    public function addAttachment(string $filePath, ?string $name = null): void
+    public function addAttachment(AttachmentBuffer $buffer): void
     {
-        $this->attachments[] = new AttachmentBuffer($filePath, $name);
+        $this->attachments[] = $buffer;
     }
 
     /**

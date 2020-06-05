@@ -17,14 +17,18 @@ class AttachmentBuffer
     /** @var string */
     private $localName;
 
-    public function __construct(string $absolutePath, ?string $localName)
+    /** @var string|null */
+    private $mimeType;
+
+    public function __construct(string $absolutePath, string $localName, ?string $mimeType)
     {
         if ('/' !== $absolutePath[0]) {
             throw new RuntimeException('Absolute path expected but got: "' . $absolutePath . '"');
         }
 
         $this->absolutePath = $absolutePath;
-        $this->localName    = $localName ?: basename($absolutePath);
+        $this->localName    = $localName;
+        $this->mimeType     = $mimeType;
     }
 
     public function getAbsolutePath(): string
@@ -35,5 +39,10 @@ class AttachmentBuffer
     public function getLocalName(): string
     {
         return $this->localName;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
     }
 }

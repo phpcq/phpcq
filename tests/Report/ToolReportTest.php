@@ -73,13 +73,13 @@ class ToolReportTest extends TestCase
         $this->assertNull($error->getSource());
         */
     }
-
-    public function testAddsAttachmentIsDelegated(): void
+    public function testAddsAttachment(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
+        $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $report     = new ToolReport('tool-name', $buffer, sys_get_temp_dir(), $filesystem);
 
-        $report->addAttachment('/some/file', 'local');
+        $this->assertSame($report, $report->addAttachment('local')->fromFile('/some/file')->end());
 
         $attachments = $buffer->getAttachments();
 
@@ -89,50 +89,28 @@ class ToolReportTest extends TestCase
         $this->assertInstanceOf(AttachmentBuffer::class, $attachment);
         $this->assertSame('/some/file', $attachment->getAbsolutePath());
         $this->assertSame('local', $attachment->getLocalName());
+        $this->assertNull($attachment->getMimeType());
     }
 
-    public function testAddsAttachmentIsDelegatedWhenCalledWithoutNameOverride(): void
-    {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
-
-        $report->addAttachment('/some/file');
-
-        $attachments = $buffer->getAttachments();
-
-        $this->assertCount(1, $attachments);
-        $this->arrayHasKey(0);
-        $attachment = $attachments[0];
-        $this->assertInstanceOf(AttachmentBuffer::class, $attachment);
-        $this->assertSame('/some/file', $attachment->getAbsolutePath());
-        $this->assertSame('file', $attachment->getLocalName());
-    }
-
-    public function testAddsBufferAsAttachment(): void
+    public function testEndIsCalledForPendingAttachmentBuilderFromFinish(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $report     = new ToolReport('tool-name', $buffer, '/our/temp/dir', $filesystem);
 
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, '/path/to/temp/directory', $filesystem);
+        // "forgotten" end calls on file builders.
+        $report->addAttachment('foo')->fromFile('/some/dir/file.foo')->setMimeType('application/foo');
+        $report->addAttachment('bar')->fromFile('/some/dir/file.bar');
 
-        $filesystem
-            ->expects($this->once())
-            ->method('dumpFile')
-            ->willReturnCallback(function (string $filePath, string $data) {
-                $this->assertStringStartsWith('/path/to/temp/directory/local-name', $filePath);
-                $this->assertSame('file contents', $data);
-            });
+        $report->finish(ToolReport::STATUS_PASSED);
 
-        $report->addBufferAsAttachment('file contents', 'local-name');
-
-        $attachments = $buffer->getAttachments();
-
-        $this->assertCount(1, $attachments);
-        $this->arrayHasKey(0);
-        $attachment = $attachments[0];
-        $this->assertInstanceOf(AttachmentBuffer::class, $attachment);
-        $this->assertStringStartsWith('/path/to/temp/directory/local-name', $attachment->getAbsolutePath());
-        $this->assertSame('local-name', $attachment->getLocalName());
+        $this->assertEquals(
+            [
+                new AttachmentBuffer('/some/dir/file.foo', 'foo', 'application/foo'),
+                new AttachmentBuffer('/some/dir/file.bar', 'bar', null),
+            ],
+            $buffer->getAttachments()
+        );
     }
 
     public function testFinishSetsTheStatus(): void

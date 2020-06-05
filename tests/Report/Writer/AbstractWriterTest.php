@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Report\Writer;
 
 use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -18,7 +19,7 @@ abstract class AbstractWriterTest extends TestCase
         $report = new ReportBuffer();
         $toolReport = $report->createToolReport('tool');
         $toolReport->setStatus(ToolReportInterface::STATUS_PASSED);
-        $toolReport->addAttachment(tempnam(sys_get_temp_dir(), ''), 'foo.xml');
+        $toolReport->addAttachment(new AttachmentBuffer(tempnam(sys_get_temp_dir(), ''), 'foo.xml', 'application/xml'));
         $report->complete(Report::STATUS_PASSED);
 
         $report->createToolReport('tool2')->setStatus(ToolReportInterface::STATUS_FAILED);

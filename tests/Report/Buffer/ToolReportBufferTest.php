@@ -51,31 +51,11 @@ class ToolReportBufferTest extends TestCase
     public function testAddsAttachment(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
-
-        $buffer->addAttachment('/some/file', 'local');
-
-        $attachments = $buffer->getAttachments();
-
-        $this->assertCount(1, $attachments);
-        $this->arrayHasKey(0);
-        $attachment = $attachments[0];
-        $this->assertInstanceOf(AttachmentBuffer::class, $attachment);
-        $this->assertSame('/some/file', $attachment->getAbsolutePath());
-        $this->assertSame('local', $attachment->getLocalName());
-    }
-
-    public function testAddsAttachmentWithNulledName(): void
-    {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
-
-        $buffer->addAttachment('/some/file');
+        $buffer->addAttachment($attachment = new AttachmentBuffer('/some/file', 'local', null));
 
         $attachments = $buffer->getAttachments();
         $this->assertCount(1, $attachments);
         $this->arrayHasKey(0);
-        $attachment = $attachments[0];
-        $this->assertInstanceOf(AttachmentBuffer::class, $attachment);
-        $this->assertSame('/some/file', $attachment->getAbsolutePath());
-        $this->assertSame('file', $attachment->getLocalName());
+        $this->assertSame($attachment, $attachments[0]);
     }
 }
