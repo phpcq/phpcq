@@ -12,5 +12,245 @@
     </xs:annotation>
   </xs:element>
 
-  <!-- FIXME: Implement xsd -->
+  <xs:complexType name="reportFile">
+    <xs:sequence>
+      <xs:element name="abstract" type="tns:abstractListType"/>
+      <xs:element name="global" type="tns:globalDiagnosticListType"/>
+      <xs:element name="files" type="tns:fileListType"/>
+    </xs:sequence>
+    <xs:attribute name="status" type="tns:reportStatusType" use="required"/>
+    <xs:attribute name="started_at" type="xs:dateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Date/time when the phpcq run has been started.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="completed_at" type="xs:dateTime" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Date/time when the phpcq run has been completed.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="abstractListType">
+    <xs:annotation>
+      <xs:documentation>
+        The list of all tool report abstracts.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="tool" minOccurs="0" maxOccurs="unbounded" type="tns:toolAbstractType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolAbstractType">
+    <xs:annotation>
+      <xs:documentation>
+        Report information of a single tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="tns:nonEmptyStringType">
+      <xs:annotation>
+        <xs:documentation>The name of the executed tool</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="status" type="tns:toolStatusType"/>
+  </xs:complexType>
+
+  <xs:complexType name="globalDiagnosticListType">
+    <xs:annotation>
+      <xs:documentation>
+        The found diagnostics by the tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="diagnostic" type="tns:toolDiagnosticType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fileListType">
+    <xs:annotation>
+      <xs:documentation>
+        The found diagnostics by a file.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="file" minOccurs="0" maxOccurs="unbounded" type="tns:fileType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fileType">
+    <xs:annotation>
+      <xs:documentation>
+        Report information for a single file.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="diagnostic" type="tns:toolDiagnosticType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="tns:nonEmptyStringType">
+      <xs:annotation>
+        <xs:documentation>The filename</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="toolDiagnosticType">
+    <xs:annotation>
+      <xs:documentation>
+        A diagnostic entry found by a tool.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="tns:nonEmptyStringCollapsedType">
+        <xs:attribute type="xs:string" name="tool" use="required">
+          <xs:annotation>
+            <xs:documentation>
+              Optional file name the diagnostic relates to.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="line">
+          <xs:annotation>
+            <xs:documentation>
+              Optional line number within the file denoted by "file" the diagnostic begins on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="column">
+          <xs:annotation>
+            <xs:documentation>
+              Optional column on the line denoted by "line" within the file denoted by "file" the diagnostic begins on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="line_end">
+          <xs:annotation>
+            <xs:documentation>
+              Optional line number within the file denoted by "file" the diagnostic ends on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:int" name="column_end">
+          <xs:annotation>
+            <xs:documentation>
+              Optional column on the line denoted by "line_end" within the file denoted by "file" the diagnostic ends on.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="xs:string" name="file">
+          <xs:annotation>
+            <xs:documentation>
+              Optional file name the diagnostic relates to.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required"/>
+        <xs:attribute type="tns:nonEmptyStringType" name="source"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="toolDiagnosticSeverityType">
+    <xs:annotation>
+      <xs:documentation>
+        The severity of the diagnostic.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="tns:nonEmptyStringType">
+      <xs:enumeration value="info">
+        <xs:annotation>
+          <xs:documentation>An non issue - strictly informational.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="warning">
+        <xs:annotation>
+          <xs:documentation>An issue that should be fixed.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="error">
+        <xs:annotation>
+          <xs:documentation>An issue that MUST be fixed.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="reportStatusType">
+    <xs:annotation>
+      <xs:documentation>
+        The status of the execution.
+        Either "passed" or "failed".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="passed"/>
+      <xs:enumeration value="failed"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="toolStatusType">
+    <xs:annotation>
+      <xs:documentation>
+        The exit status of the tool execution. Either "passed" or "failed".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="passed"/>
+      <xs:enumeration value="failed"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="toolAttachmentListType">
+    <xs:annotation>
+      <xs:documentation>The attachments produced by the tool.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="attachment" type="tns:toolAttachmentType" maxOccurs="unbounded" nillable="true"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolAttachmentType">
+    <xs:annotation>
+      <xs:documentation>The attachment body</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="filename" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="nonEmptyStringType">
+    <xs:annotation>
+      <xs:documentation>A non empty string.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value=".*[^\s].*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="nonEmptyStringCollapsedType">
+    <xs:annotation>
+      <xs:documentation>A non empty string with collapsed whitespace.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="tns:nonEmptyStringType">
+      <xs:whiteSpace value="collapse"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

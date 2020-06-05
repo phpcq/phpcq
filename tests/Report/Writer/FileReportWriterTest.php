@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Report\Writer;
 
+use DOMDocument;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
@@ -135,9 +136,8 @@ XML;
     private function assertSchemaValidate(string $fileName): void
     {
         $this->markTestSkipped('Schema not implemented yet');
-        // FIXME: Validate schema
-        // $dom = new DOMDocument('1.0');
-        // $dom->load($fileName);
-        // $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../doc/file-report.xsd'));
+        $dom = new DOMDocument('1.0');
+        $dom->load($fileName);
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../doc/file-report.xsd'));
     }
 }
