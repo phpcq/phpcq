@@ -126,7 +126,7 @@ abstract class AbstractReportWriter
             $this->xml->setAttribute($node, 'name', $attachment->getLocalName());
             $this->xml->setAttribute($node, 'filename', $fileName = $filePrefix . $attachment->getLocalName());
 
-            $this->filesystem->rename($attachment->getAbsolutePath(), $this->targetPath . '/' . $fileName, true);
+            $this->filesystem->copy($absolutePath, $this->targetPath . '/' . $fileName, true);
             // FIXME: better embedd the file instead of copy to the target dir?
             // $this->xml->setTextContent($node, file_get_contents($attachment->getAbsolutePath()));
         }

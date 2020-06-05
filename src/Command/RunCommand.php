@@ -23,6 +23,7 @@ use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function assert;
@@ -205,6 +206,14 @@ final class RunCommand extends AbstractCommand
 
         if (in_array('checkstyle', $reports, true)) {
             CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+        }
+
+        // Clean up attachments.
+        $fileSystem = new Filesystem();
+        foreach ($report->getToolReports() as $toolReport) {
+            foreach ($toolReport->getAttachments() as $attachment) {
+                $fileSystem->remove($attachment->getAbsolutePath());
+            }
         }
     }
 }
