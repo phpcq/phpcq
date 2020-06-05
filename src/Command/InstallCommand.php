@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
+use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\Platform\PlatformRequirementChecker;
 use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\RepositoryFactory;
+use Phpcq\Repository\RemoteRepository;
+use Phpcq\Repository\Repository;
+use Phpcq\Repository\RepositoryPool;
 use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Input\InputOption;
 
-use function assert;
-use function is_string;
-use function sys_get_temp_dir;
-
-final class UpdateCommand extends AbstractCommand
+final class InstallCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
     use LockFileRepositoryTrait;
@@ -28,7 +27,8 @@ final class UpdateCommand extends AbstractCommand
 
     protected function configure(): void
     {
-        $this->setName('update')->setDescription('Update the phpcq installation');
+        $this->setName('install');
+        $this->setDescription('Install the phpcq installation from existing .phpcq.lock file');
         $this->addOption(
             'cache',
             'x',
@@ -36,25 +36,12 @@ final class UpdateCommand extends AbstractCommand
             'Path to the phpcq cache directory',
             (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq'
         );
-        $this->addOption(
-            'dry-run',
-            'd',
-            InputOption::VALUE_NONE,
-            'Dry run'
-        );
 
         $this->addOption(
             'trust-keys',
             'k',
             InputOption::VALUE_NONE,
             'Add all keys to trusted key storage'
-        );
-
-        $this->addOption(
-            'force-reinstall',
-            'f',
-            InputOption::VALUE_NONE,
-            'Force to reinstall existing tools'
         );
 
         parent::configure();
@@ -76,23 +63,32 @@ final class UpdateCommand extends AbstractCommand
 
         $downloader       = new FileDownloader($cachePath, $this->config['auth'] ?? []);
         $repositoryLoader = new JsonRepositoryLoader($requirementChecker, $downloader, true);
-        $factory          = new RepositoryFactory($repositoryLoader);
-        // Download repositories
-        $pool = $factory->buildPool($this->config['repositories'] ?? []);
+        $consoleOutput    = $this->getWrappedOutput();
 
-        $consoleOutput = $this->getWrappedOutput();
-        $lockFileRepository = $this->loadLockFileRepository($repositoryLoader);
-
-        $force = $lockFileRepository === null || $this->input->getOption('force-reinstall');
-        $calculator = new UpdateCalculator($this->getInstalledRepository(false), $pool, $consoleOutput);
-        $tasks = $calculator->calculate($this->config['tools'], $force);
-
-        if ($this->input->getOption('dry-run')) {
-            foreach ($tasks as $task) {
-                $this->output->writeln($task['message']);
-            }
-            return 0;
+        // Check if lockfile exists.
+        $lockRepository = $this->loadLockFileRepository($repositoryLoader);
+        if (null === $lockRepository) {
+            throw new RuntimeException('No .phpcq.lock file found in current working directory.');
         }
+
+        // Check if installed.json exists
+        try {
+            $this->getInstalledRepository(true);
+            $alreadyInstalled = true;
+        } catch (RuntimeException $exception) {
+            $alreadyInstalled = false;
+        }
+
+        if ($alreadyInstalled) {
+            // Fixme: Auto run an update
+            throw new RuntimeException('PHPCQ seems already being installed. You might want to perform an update');
+        }
+
+        $pool = new RepositoryPool();
+        $pool->addRepository($lockRepository);
+
+        $calculator = new UpdateCalculator(new Repository(), $pool, $consoleOutput);
+        $tasks      = $calculator->calculateTasksToExecute($lockRepository, $this->config['tools']);
 
         $signatureVerifier = new SignatureVerifier(
             (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath),
@@ -105,7 +101,7 @@ final class UpdateCommand extends AbstractCommand
             $signatureVerifier,
             $this->phpcqPath,
             $consoleOutput,
-            $lockFileRepository
+            $lockRepository
         );
         $executor->execute($tasks);
 

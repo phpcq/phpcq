@@ -2,6 +2,7 @@
 <?php
 
 use Phpcq\Command\ExecCommand;
+use Phpcq\Command\InstallCommand;
 use Phpcq\Command\PlatformInformationCommand;
 use Phpcq\Command\RunCommand;
 use Phpcq\Command\UpdateCommand;
@@ -27,6 +28,7 @@ $application = new Application();
 $application->addCommands([
     new RunCommand(),
     new UpdateCommand(),
+    new InstallCommand(),
     new ValidateCommand(),
     new PlatformInformationCommand(),
     new ExecCommand()

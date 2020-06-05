@@ -34,11 +34,15 @@ final class UpdateCalculator
         $this->output    = $output;
     }
 
-    public function calculate(array $tools): array
+    /**
+     * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
+     *                             tools.
+     */
+    public function calculate(array $tools, bool $forceReinstall = false): array
     {
         $desired = $this->calculateDesiredTools($tools);
 
-        return $this->calculateTasksToExecute($desired, $tools);
+        return $this->calculateTasksToExecute($desired, $tools, $forceReinstall);
     }
 
     private function calculateDesiredTools(array $tools): RepositoryInterface
@@ -56,13 +60,19 @@ final class UpdateCalculator
     }
 
     /**
+     * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
+     *                             tools.
+     *
      * @return (ToolInformationInterface|mixed|string)[][]
      *
      * @psalm-return list<array{type: string, tool: ToolInformationInterface, old?: ToolInformationInterface,
      * message: string, signed?: mixed}>
      */
-    private function calculateTasksToExecute(RepositoryInterface $desired, array $tools): array
-    {
+    public function calculateTasksToExecute(
+        RepositoryInterface $desired,
+        array $tools,
+        bool $forceReinstall = false
+    ): array {
         // Determine diff to current installation.
         $tasks = [];
         foreach ($desired as $tool) {
@@ -81,14 +91,11 @@ final class UpdateCalculator
                 continue;
             }
             // Installed in another version => upgrade.
-            if (!$this->installed->hasTool($name, $tool->getVersion())) {
+            if ($forceReinstall || !$this->installed->hasTool($name, $tool->getVersion())) {
                 $oldVersion = $this->installed->getTool($name, '*');
 
-                $message = 'Will ' . (
-                    version_compare($oldVersion->getVersion(), $tool->getVersion(), '<')
-                        ? 'upgrade '
-                        : 'downgrade '
-                    ) . $name . ' from version ' . $oldVersion->getVersion() . ' to version ' . $tool->getVersion();
+                $message = 'Will ' . $this->describeUpgradeDirection($oldVersion, $tool) . ' ' . $name
+                    . ' from version ' . $oldVersion->getVersion() . ' to version ' . $tool->getVersion();
                 
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
                 $tasks[] = [
@@ -123,5 +130,22 @@ final class UpdateCalculator
         }
 
         return $tasks;
+    }
+
+    private function describeUpgradeDirection(
+        ToolInformationInterface $oldVersion,
+        ToolInformationInterface $tool
+    ): string {
+        switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
+            case 0:
+                return 'reinstall';
+
+            case 1:
+                return 'downgrade';
+
+            case -1:
+            default:
+                return 'upgrade';
+        }
     }
 }
