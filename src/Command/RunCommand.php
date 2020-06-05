@@ -6,6 +6,7 @@ namespace Phpcq\Command;
 
 use Phpcq\Config\BuildConfiguration;
 use Phpcq\Config\ProjectConfiguration;
+use Phpcq\Exception\Exception;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
@@ -139,11 +140,8 @@ final class RunCommand extends AbstractCommand
             try {
                 $task->run($taskOutput);
             } catch (PluginApiRuntimeException $throwable) {
-                $taskOutput->writeln(
-                    $throwable->getMessage(),
-                    BufferedOutput::VERBOSITY_VERBOSE,
-                    BufferedOutput::CHANNEL_STDERR
-                );
+                $this->renderException($taskOutput, $throwable);
+
                 $exitCode = (int) $throwable->getCode();
                 $exitCode = $exitCode === 0 ? 1 : $exitCode;
 
@@ -156,6 +154,41 @@ final class RunCommand extends AbstractCommand
         }
 
         return $exitCode;
+    }
+
+    private function renderException(BufferedOutput $taskOutput, PluginApiRuntimeException $exception): void
+    {
+        // Log internal exceptions on level normal - these indicate an error in phpcq caused from within a plugin.
+        if ($exception instanceof Exception) {
+            $taskOutput->writeln('', BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STDERR);
+            $taskOutput->writeln(
+                'WARNING: task execution caused internal error: "' . $exception->getMessage() . '"',
+                BufferedOutput::VERBOSITY_NORMAL,
+                BufferedOutput::CHANNEL_STDERR
+            );
+            $taskOutput->writeln(
+                'This is most certainly caused by a plugin misbehaving.',
+                BufferedOutput::VERBOSITY_NORMAL,
+                BufferedOutput::CHANNEL_STDERR
+            );
+            $taskOutput->writeln(
+                $exception->getFile() . ' on line ' . $exception->getLine(),
+                BufferedOutput::VERBOSITY_VERBOSE,
+                BufferedOutput::CHANNEL_STDERR
+            );
+            $taskOutput->writeln(
+                $exception->getTraceAsString(),
+                BufferedOutput::VERBOSITY_VERBOSE,
+                BufferedOutput::CHANNEL_STDERR
+            );
+        }
+
+        // Normal plugin exception.
+        $taskOutput->writeln(
+            $exception->getMessage(),
+            BufferedOutput::VERBOSITY_VERBOSE,
+            BufferedOutput::CHANNEL_STDERR
+        );
     }
 
     /** @psalm-return array{0: string, 1: array} */
