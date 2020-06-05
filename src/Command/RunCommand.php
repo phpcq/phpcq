@@ -60,7 +60,9 @@ final class RunCommand extends AbstractCommand
             'report',
             'r',
             InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-            'Set the report formats which should be created. Available options are tool-report and checkstyle',
+            'Set the report formats which should be created. Available options are "file-report", '
+            . '"tool-report" and "checkstyle".',
+            ['file-report']
         );
 
         parent::configure();
