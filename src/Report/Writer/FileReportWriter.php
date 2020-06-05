@@ -26,9 +26,9 @@ final class FileReportWriter extends AbstractReportWriter
      */
     private $fileElements = [];
 
-    protected function __construct(string $targetPath, ReportBuffer $report)
+    protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
-        parent::__construct($targetPath, $report);
+        parent::__construct($targetPath, $report, $minimumSeverity);
 
         $this->diagnostics = DiagnosticIterator::sortByFileAndRange($this->report)->getIterator();
     }
@@ -53,6 +53,11 @@ final class FileReportWriter extends AbstractReportWriter
             do {
                 /** @var DiagnosticIteratorEntry $entry */
                 $entry = $this->diagnostics->current();
+
+                if (!$this->wantsToReport($entry)) {
+                    $this->diagnostics->next();
+                    continue;
+                }
 
                 if (null !== ($fileName = $entry->getFileName())) {
                     $this->appendDiagnostic($entry, $this->getFileElement($fileName, $filesNode));

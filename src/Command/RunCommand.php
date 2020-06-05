@@ -13,6 +13,7 @@ use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
@@ -66,6 +67,19 @@ final class RunCommand extends AbstractCommand
             'Set the report formats which should be created. Available options are "file-report", '
             . '"tool-report" and "checkstyle".',
             ['file-report']
+        );
+
+        $this->addOption(
+            'threshold',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Set the minimum threshold for diagnostics to be reported, Available options are (in ascending order): "' .
+            implode('", "', [
+                ToolReportInterface::SEVERITY_INFO,
+                ToolReportInterface::SEVERITY_NOTICE,
+                ToolReportInterface::SEVERITY_WARNING,
+                ToolReportInterface::SEVERITY_ERROR,
+            ]) . '"',
         );
 
         parent::configure();
@@ -201,17 +215,20 @@ final class RunCommand extends AbstractCommand
         );
 
         $reports = (array) $this->input->getOption('report');
+        /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
+        $threshold  = (string) $this->input->getOption('threshold');
+        $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();
 
         if (in_array('tool-report', $reports, true)) {
-            ToolReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+            ToolReportWriter::writeReport($targetPath, $report, $threshold);
         }
 
         if (in_array('file-report', $reports, true)) {
-            FileReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+            FileReportWriter::writeReport($targetPath, $report, $threshold);
         }
 
         if (in_array('checkstyle', $reports, true)) {
-            CheckstyleReportWriter::writeReport(getcwd() . '/' . $projectConfig->getArtifactOutputPath(), $report);
+            CheckstyleReportWriter::writeReport($targetPath, $report);
         }
 
         // Clean up attachments.
