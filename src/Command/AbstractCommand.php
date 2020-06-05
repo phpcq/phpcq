@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Terminal;
 
 use function getcwd;
 use function is_dir;
@@ -134,5 +135,14 @@ abstract class AbstractCommand extends Command
         }
 
         return $phpcqPath;
+    }
+
+    protected function getWrapWidth(): int
+    {
+        if ($this->output instanceof ConsoleOutputInterface) {
+            return (new Terminal())->getWidth();
+        }
+
+        return 80;
     }
 }

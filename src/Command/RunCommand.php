@@ -22,6 +22,7 @@ use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\PhpExecutableFinder;
 
 use function assert;
@@ -131,8 +132,6 @@ final class RunCommand extends AbstractCommand
         $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($report, $projectConfig);
 
-        ConsoleWriter::writeReport($this->output, $report);
-
         $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
         return $exitCode;
     }
@@ -187,6 +186,13 @@ final class RunCommand extends AbstractCommand
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
     {
+        ConsoleWriter::writeReport(
+            $this->output,
+            new SymfonyStyle($this->input, $this->output),
+            $report,
+            $this->getWrapWidth()
+        );
+
         $reports = (array) $this->input->getOption('report');
 
         if (in_array('tool-report', $reports, true)) {

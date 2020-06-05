@@ -86,13 +86,11 @@ class ProcessTaskRunner implements TaskRunnerInterface
     public function run(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
-        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $output->writeln(
             'Executing: ' . $process->getCommandLine(),
             OutputInterface::VERBOSITY_VERBOSE,
             OutputInterface::CHANNEL_STDERR
         );
-        $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
 
         $transformer = $this->transformer->createFor($this->report);
         try {
