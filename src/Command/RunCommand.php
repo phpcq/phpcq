@@ -80,6 +80,7 @@ final class RunCommand extends AbstractCommand
                 ToolReportInterface::SEVERITY_WARNING,
                 ToolReportInterface::SEVERITY_ERROR,
             ]) . '"',
+            ToolReportInterface::SEVERITY_INFO
         );
 
         parent::configure();
