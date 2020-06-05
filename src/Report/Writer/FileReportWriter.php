@@ -6,8 +6,6 @@ namespace Phpcq\Report\Writer;
 
 use DOMElement;
 use Generator;
-use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 final class FileReportWriter extends AbstractReportWriter
@@ -28,17 +26,7 @@ final class FileReportWriter extends AbstractReportWriter
      */
     private $fileElements = [];
 
-    public static function writeReport(string $targetPath, ReportBuffer $report): void
-    {
-        if ($report->getStatus() === ReportInterface::STATUS_STARTED) {
-            throw new RuntimeException('Only completed reports may be saved');
-        }
-
-        $instance = new static($targetPath, $report);
-        $instance->save();
-    }
-
-    private function __construct(string $targetPath, ReportBuffer $report)
+    protected function __construct(string $targetPath, ReportBuffer $report)
     {
         parent::__construct($targetPath, $report);
 
