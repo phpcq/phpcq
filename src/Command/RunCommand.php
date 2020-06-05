@@ -11,6 +11,7 @@ use Phpcq\Output\BufferedOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
+use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -105,10 +106,19 @@ final class RunCommand extends AbstractCommand
         }
 
         $consoleOutput = $this->getWrappedOutput();
+        $exitCode = $this->runTasks($taskList, $consoleOutput, (bool) $this->input->getOption('fast-finish'));
+
+        $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
+        $this->writeReports($report, $projectConfig);
+
+        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
+        return $exitCode;
+    }
+
+    private function runTasks(Tasklist $taskList, OutputInterface $consoleOutput, bool $fastFinish): int
+    {
         // TODO: Parallelize tasks
-        // Execute task list
         $exitCode = 0;
-        $fastFinish = $this->input->getOption('fast-finish');
         foreach ($taskList->getIterator() as $task) {
             $taskOutput = new BufferedOutput($consoleOutput);
             try {
@@ -130,10 +140,6 @@ final class RunCommand extends AbstractCommand
             $taskOutput->release();
         }
 
-        $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
-        $this->writeReports($report, $projectConfig);
-
-        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
         return $exitCode;
     }
 
