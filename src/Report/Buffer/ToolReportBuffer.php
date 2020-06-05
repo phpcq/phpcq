@@ -71,8 +71,9 @@ final class ToolReportBuffer
     }
 
     /**
-     * @return Generator|DiagnosticBuffer[]
-     * @psalm-return Generator<int, DiagnosticBuffer>
+     * @return Generator
+     *
+     * @psalm-return Generator<int, DiagnosticBuffer, mixed, void>
      */
     public function getDiagnostics(): Generator
     {
@@ -90,6 +91,7 @@ final class ToolReportBuffer
      * Get attachments.
      *
      * @return AttachmentBuffer[]
+     * @psalm-return list<AttachmentBuffer>
      */
     public function getAttachments(): array
     {

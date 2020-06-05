@@ -43,9 +43,9 @@ final class RepositoryPool implements IteratorAggregate
     /**
      * Iterate over all repositories.
      *
-     * @return RepositoryInterface[]|iterable
+     * @return \Generator
      *
-     * @psalm-return \Traversable<int, RepositoryInterface>
+     * @psalm-return \Generator<array-key, RepositoryInterface, mixed, void>
      */
     public function getIterator(): iterable
     {

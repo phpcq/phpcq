@@ -37,6 +37,8 @@ final class ConfigOptions implements ConfigurationOptionsInterface
 
     /**
      * @return Traversable
+     *
+     * @psalm-return ArrayIterator<string, ConfigurationOptionInterface>
      */
     public function getIterator(): Traversable
     {

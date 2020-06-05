@@ -55,6 +55,12 @@ final class UpdateCalculator
         return $desired;
     }
 
+    /**
+     * @return (ToolInformationInterface|mixed|string)[][]
+     *
+     * @psalm-return list<array{type: string, tool: ToolInformationInterface, old?: ToolInformationInterface,
+     * message: string, signed?: mixed}>
+     */
     private function calculateTasksToExecute(RepositoryInterface $desired, array $tools): array
     {
         // Determine diff to current installation.

@@ -68,6 +68,9 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         $this->report = $report;
     }
 
+    /**
+     * @return self
+     */
     public function withWorkingDirectory(string $cwd): TaskRunnerBuilderInterface
     {
         $this->cwd = $cwd;
@@ -77,6 +80,8 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     /**
      * @param string[] $env
+     *
+     * @return self
      */
     public function withEnv(array $env): TaskRunnerBuilderInterface
     {
@@ -88,6 +93,8 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     /**
      * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no
      *                                           input
+     *
+     * @return self
      */
     public function withInput($input): TaskRunnerBuilderInterface
     {
@@ -98,6 +105,8 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     /**
      * @param int|float $timeout
+     *
+     * @return self
      */
     public function withTimeout($timeout): TaskRunnerBuilderInterface
     {
@@ -106,6 +115,9 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
         return $this;
     }
 
+    /**
+     * @return self
+     */
     public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskRunnerBuilderInterface
     {
         $this->transformerFactory = $factory;

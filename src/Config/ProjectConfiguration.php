@@ -42,6 +42,11 @@ class ProjectConfiguration implements ProjectConfigInterface
         return $this->rootPath;
     }
 
+    /**
+     * @return string[]
+     *
+     * @psalm-return array<array-key, string>
+     */
     public function getDirectories(): array
     {
         return $this->directories;

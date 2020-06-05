@@ -40,6 +40,11 @@ class JsonRepositoryDumper
         file_put_contents($this->destinationPath . '/' . $filename, json_encode($data));
     }
 
+    /**
+     * @return string[]
+     *
+     * @psalm-return array{plugin-version: string, type: string, url: string}
+     */
     private function dumpBootstrap(ToolInformationInterface $tool): array
     {
         $bootFile = sprintf('%1$s~%2$s.php', $tool->getName(), $tool->getVersion());

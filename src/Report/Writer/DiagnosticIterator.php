@@ -179,6 +179,8 @@ final class DiagnosticIterator implements IteratorAggregate
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
+     * @psalm-return Generator<int, DiagnosticIteratorEntry, mixed, void>
      */
     private function iterateSorted(): Generator
     {

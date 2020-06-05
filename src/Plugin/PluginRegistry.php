@@ -73,13 +73,18 @@ final class PluginRegistry implements IteratorAggregate
     /**
      * @return PluginInterface[]|iterable
      *
-     * @psalm-return \Generator<string, PluginInterface>
+     * @psalm-return Generator<string, PluginInterface, mixed, void>
      */
     public function getIterator(): iterable
     {
         yield from $this->plugins;
     }
 
+    /**
+     * @return Generator
+     *
+     * @psalm-return Generator<int, string, mixed, void>
+     */
     private static function getBootstrapFileNames(string $jsonFile): Generator
     {
         $realFile = realpath($jsonFile);

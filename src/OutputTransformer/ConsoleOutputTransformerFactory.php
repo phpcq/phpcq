@@ -82,6 +82,11 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 $this->report->finish($status);
             }
 
+            /**
+             * @return string[]
+             *
+             * @psalm-return array{0: string, 1: string}
+             */
             private function calculateStatusAndSeverity(int $exitCode): array
             {
                 if (0 === $exitCode) {

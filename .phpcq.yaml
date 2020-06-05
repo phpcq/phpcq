@@ -81,6 +81,7 @@ tool-config:
       - unusedcode
 
   psalm:
+    custom_flags: '--report-show-info=false'
 
   composer-require-checker:
     config_file: '.composer-require-checker.json'

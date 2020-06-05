@@ -20,6 +20,8 @@ class Repository implements IteratorAggregate, RepositoryInterface
 
     /**
      * @var ToolInformationInterface[][]
+     *
+     * @psalm-var array<string,list<ToolInformationInterface>>
      */
     private $tools = [];
 
@@ -68,6 +70,8 @@ class Repository implements IteratorAggregate, RepositoryInterface
 
     /**
      * @return Traversable<int, ToolInformationInterface>
+     *
+     * @psalm-return \Generator<int, ToolInformationInterface, mixed, void>
      */
     public function getIterator()
     {

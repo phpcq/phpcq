@@ -24,7 +24,7 @@ class Tasklist implements TasklistInterface
     /**
      * @return TaskRunnerInterface[]|iterable
      *
-     * @psalm-return \Traversable<int, TaskRunnerInterface>
+     * @psalm-return \Generator<array-key, TaskRunnerInterface, mixed, void>
      */
     public function getIterator(): iterable
     {

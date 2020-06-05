@@ -36,6 +36,9 @@ final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
         $this->callback = $callback;
     }
 
+    /**
+     * @return self
+     */
     public function forRange(
         int $startLine,
         ?int $startColumn = null,

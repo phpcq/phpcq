@@ -116,7 +116,9 @@ class JsonRepositoryLoader
         }
     }
 
-    /** @param string|array $bootstrap */
+    /**
+     * @param string|array $bootstrap
+     */
     private function makeBootstrap($bootstrap, array $bootstrapLookup, string $baseDir): BootstrapInterface
     {
         if (is_string($bootstrap)) {
