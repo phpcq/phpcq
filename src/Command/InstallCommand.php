@@ -5,106 +5,60 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
-use Phpcq\GnuPG\Downloader\KeyDownloader;
-use Phpcq\GnuPG\GnuPGFactory;
-use Phpcq\GnuPG\Signature\SignatureVerifier;
-use Phpcq\Platform\PlatformRequirementChecker;
-use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\RemoteRepository;
 use Phpcq\Repository\Repository;
+use Phpcq\Repository\RepositoryFactory;
 use Phpcq\Repository\RepositoryPool;
-use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateCalculator;
-use Phpcq\ToolUpdate\UpdateExecutor;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
-final class InstallCommand extends AbstractCommand
+final class InstallCommand extends AbstractUpdateCommand
 {
-    use InstalledRepositoryLoadingCommandTrait;
-    use LockFileRepositoryTrait;
-    use UntrustedKeyStrategyTrait;
-
     protected function configure(): void
     {
         $this->setName('install');
         $this->setDescription('Install the phpcq installation from existing .phpcq.lock file');
-        $this->addOption(
-            'cache',
-            'x',
-            InputOption::VALUE_REQUIRED,
-            'Path to the phpcq cache directory',
-            (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq'
-        );
-
-        $this->addOption(
-            'trust-keys',
-            'k',
-            InputOption::VALUE_NONE,
-            'Add all keys to trusted key storage'
-        );
 
         parent::configure();
     }
 
     protected function doExecute(): int
     {
-        $cachePath = $this->input->getOption('cache');
-        assert(is_string($cachePath));
-        $this->createDirectory($cachePath);
-
-        if ($this->output->isVeryVerbose()) {
-            $this->output->writeln('Using CACHE: ' . $cachePath);
+        if ($this->isAlreadyInstalled()) {
+            $this->output->writeln('Nothing to install.');
+            return 0;
         }
 
-        $requirementChecker = !$this->input->getOption('ignore-platform-reqs')
-            ? PlatformRequirementChecker::create()
-            : PlatformRequirementChecker::createAlwaysFulfilling();
+        return parent::doExecute();
+    }
 
-        $downloader       = new FileDownloader($cachePath, $this->config['auth'] ?? []);
-        $repositoryLoader = new JsonRepositoryLoader($requirementChecker, $downloader, true);
-        $consoleOutput    = $this->getWrappedOutput();
+    protected function calculateTasks(): array
+    {
+        if (null !== $this->lockFileRepository) {
+            $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
 
-        // Check if lockfile exists.
-        $lockRepository = $this->loadLockFileRepository($repositoryLoader);
-        if (null === $lockRepository) {
-            throw new RuntimeException('No .phpcq.lock file found in current working directory.');
+            $pool = new RepositoryPool();
+            $pool->addRepository($this->lockFileRepository);
+            $calculator = new UpdateCalculator(new Repository(), $pool, $this->getWrappedOutput());
+
+            return $calculator->calculateTasksToExecute($this->lockFileRepository, $this->config['tools']);
         }
 
-        // Check if installed.json exists
+        $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
+
+        // Download repositories
+        $pool       = (new RepositoryFactory($this->repositoryLoader))->buildPool($this->config['repositories'] ?? []);
+        $calculator = new UpdateCalculator(new Repository(), $pool, $this->getWrappedOutput());
+
+        return $calculator->calculate($this->config['tools'], true);
+    }
+
+    private function isAlreadyInstalled(): bool
+    {
         try {
             $this->getInstalledRepository(true);
-            $alreadyInstalled = true;
+            return true;
         } catch (RuntimeException $exception) {
-            $alreadyInstalled = false;
+            return false;
         }
-
-        if ($alreadyInstalled) {
-            // Fixme: Auto run an update
-            throw new RuntimeException('PHPCQ seems already being installed. You might want to perform an update');
-        }
-
-        $pool = new RepositoryPool();
-        $pool->addRepository($lockRepository);
-
-        $calculator = new UpdateCalculator(new Repository(), $pool, $consoleOutput);
-        $tasks      = $calculator->calculateTasksToExecute($lockRepository, $this->config['tools']);
-
-        $signatureVerifier = new SignatureVerifier(
-            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath),
-            new KeyDownloader(new SignatureFileDownloader($downloader)),
-            $this->getUntrustedKeyStrategy()
-        );
-
-        $executor = new UpdateExecutor(
-            $downloader,
-            $signatureVerifier,
-            $this->phpcqPath,
-            $consoleOutput,
-            $lockRepository
-        );
-        $executor->execute($tasks);
-
-        return 0;
     }
 }
