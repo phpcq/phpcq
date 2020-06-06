@@ -35,11 +35,6 @@ final class ConfigOptions implements ConfigurationOptionsInterface
         }
     }
 
-    /**
-     * @return Traversable
-     *
-     * @psalm-return ArrayIterator<string, ConfigurationOptionInterface>
-     */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->options);
