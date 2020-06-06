@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Buffer;
 
 use Phpcq\Report\Buffer\AttachmentBuffer;
+use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +15,7 @@ class ToolReportBufferTest extends TestCase
     public function testConstructionCreatesEmpty(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $this->assertSame('report-name', $buffer->getReportName());
         $this->assertSame('tool-name', $buffer->getToolName());
         $this->assertSame('started', $buffer->getStatus());
         $this->assertSame([], iterator_to_array($buffer->getDiagnostics()));
@@ -46,6 +48,17 @@ class ToolReportBufferTest extends TestCase
         $buffer->setStatus('passed');
 
         $this->assertSame('failed', $buffer->getStatus());
+    }
+
+    public function testAddsDiagnostic(): void
+    {
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer->addDiagnostic($diagnostic = new DiagnosticBuffer('error', 'test message', null, null));
+
+        $diagnostics = iterator_to_array($buffer->getDiagnostics());
+        $this->assertCount(1, $diagnostics);
+        $this->arrayHasKey(0);
+        $this->assertSame($diagnostic, $diagnostics[0]);
     }
 
     public function testAddsAttachment(): void
