@@ -219,4 +219,49 @@ final class UpdateCalculatorTest extends TestCase
             ]
         ], $tasks);
     }
+
+
+    public function testReinstallTool(): void
+    {
+        $pool = new RepositoryPool();
+        $pool->addRepository($repository = new Repository());
+        $installed = new Repository();
+        $output    = $this->getMockForAbstractClass(OutputInterface::class);
+
+        $output
+            ->expects(self::atLeastOnce())
+            ->method('writeln')
+            ->withConsecutive(
+                ['Want foo in version 2.0.0'],
+                ['Will reinstall foo in version 2.0.0'],
+            );
+
+        $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
+        $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
+        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+
+        $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
+        $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
+        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+
+        $repository->addVersion($tool);
+        $installed->addVersion($oldTool);
+
+        $calculator = new UpdateCalculator($installed, $pool, $output);
+
+        $tasks = $calculator->calculate(
+            ['foo' => ['version' => '^2.0.0', 'signed' => true]],
+            true
+        );
+
+        $this->assertSame([
+            [
+                'type'    => 'upgrade',
+                'tool'    => $tool,
+                'old'     => $oldTool,
+                'message' => 'Will reinstall foo in version 2.0.0',
+                'signed'  => true,
+            ]
+        ], $tasks);
+    }
 }

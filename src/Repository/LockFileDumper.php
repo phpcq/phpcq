@@ -37,12 +37,16 @@ class LockFileDumper
             $name = $tool->getName();
 
             if (!isset($data['phars'][$name])) {
+                $hash = $tool->getHash();
                 $data['phars'][$name][] = [
-                    'version'       => $tool->getVersion(),
-                    'phar-url'      => $tool->getPharUrl(),
-                    'bootstrap'     => $this->dumpBootstrap($tool, $data['bootstraps']),
-                    'requirements'  => $tool->getPlatformRequirements(),
-                    'signature'     => $tool->getSignatureUrl(),
+                    'version'      => $tool->getVersion(),
+                    'phar-url'     => $tool->getPharUrl(),
+                    'bootstrap'    => $this->dumpBootstrap($tool, $data['bootstraps']),
+                    'requirements' => $tool->getPlatformRequirements(),
+                    'hash'         => $hash
+                        ? ['type'  => $hash->getType(), 'value' => $hash->getValue()]
+                        : null,
+                    'signature'    => $tool->getSignatureUrl(),
                 ];
             }
         }
