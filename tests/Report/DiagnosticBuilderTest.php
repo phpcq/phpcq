@@ -111,6 +111,26 @@ final class DiagnosticBuilderTest extends TestCase
         $builder->end();
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+    public function testCallingEndCallsCallback(): void
+    {
+        $called = false;
+        $report = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $builder = new DiagnosticBuilder(
+            $report,
+            'error',
+            'This is an error',
+            function (DiagnosticBuffer $diagnostic, DiagnosticBuilder $sender) use (&$builder, &$called) {
+                $this->assertSame($builder, $sender);
+                $called = true;
+            }
+        );
+
+        $builder->end();
+
+        $this->assertTrue($called, 'Callback was not called.');
+    }
+
     private function assertDiagnosticIs(
         string $expectedSeverity,
         string $expectedMessage,
