@@ -10,6 +10,11 @@ use Traversable;
 
 interface TasklistInterface extends IteratorAggregate
 {
+    /**
+     * Adds a task to the list.
+     *
+     * @param TaskRunnerInterface $taskRunner The task to add.
+     */
     public function add(TaskRunnerInterface $taskRunner): void;
 
     /**
