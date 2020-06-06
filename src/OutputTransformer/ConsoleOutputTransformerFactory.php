@@ -46,7 +46,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             public function __construct(ToolReportInterface $report)
             {
                 $this->report = $report;
-                $this->data   = new BufferedLineReader();
+                $this->data   = BufferedLineReader::create();
             }
 
             public function write(string $data, int $channel): void
