@@ -4,33 +4,52 @@ declare(strict_types=1);
 
 namespace Phpcq\Report\Writer;
 
+use CallbackFilterIterator;
 use Generator;
+use Iterator;
 use IteratorAggregate;
 use LogicException;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 final class DiagnosticIterator implements IteratorAggregate
 {
+    private const SEVERITY_LOOKUP = [
+        ToolReportInterface::SEVERITY_INFO    => 0,
+        ToolReportInterface::SEVERITY_NOTICE  => 1,
+        ToolReportInterface::SEVERITY_WARNING => 2,
+        ToolReportInterface::SEVERITY_ERROR   => 3,
+    ];
+
     /**
-     * @var DiagnosticIterator|Generator
-     * @psalm-var DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>
+     * @var DiagnosticIterator|Generator|Iterator
+     * @psalm-var DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator
      */
     private $previous;
 
     /**
-     * @var callable
-     * @psalm-var callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
+     * @var callable|null
+     * @psalm-var null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
      */
     private $sortCallback;
 
+    public static function filterByMinimumSeverity(ReportBuffer $report, string $minimumSeverity): DiagnosticIterator
+    {
+        if (self::SEVERITY_LOOKUP[$minimumSeverity] === 0) {
+            return new self(self::reportIterator($report), null);
+        }
+
+        return static::createFiltered($report, self::minimumSeverityFilter($minimumSeverity));
+    }
+
     public static function sortByTool(ReportBuffer $report): DiagnosticIterator
     {
-        return static::create($report, self::toolSorter());
+        return static::createSorted($report, self::toolSorter());
     }
 
     public static function sortByFileAndRange(ReportBuffer $report): DiagnosticIterator
     {
-        return static::sortBy(static::create($report, self::fileNameSorter()), self::fileRangeSorter());
+        return static::sortBy(static::createSorted($report, self::fileNameSorter()), self::fileRangeSorter());
     }
 
     public function thenSortByTool(): self
@@ -102,11 +121,31 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
+     * @psalm-return callable(DiagnosticIteratorEntry): bool
+     */
+    private static function minimumSeverityFilter(string $minimumSeverity): callable
+    {
+        $threshold = self::SEVERITY_LOOKUP[$minimumSeverity] ?? 0;
+
+        return static function (DiagnosticIteratorEntry $entry) use ($threshold): bool {
+            return self::SEVERITY_LOOKUP[$entry->getDiagnostic()->getSeverity()] >= $threshold;
+        };
+    }
+
+    /**
      * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
-    private static function create(ReportBuffer $report, callable $callback): DiagnosticIterator
+    private static function createSorted(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
         return new self(self::reportIterator($report), $callback);
+    }
+
+    /**
+     * @psalm-param callable(DiagnosticIteratorEntry): bool $callback
+     */
+    private static function createFiltered(ReportBuffer $report, callable $callback): DiagnosticIterator
+    {
+        return new self(new CallbackFilterIterator(self::reportIterator($report), $callback), null);
     }
 
     /**
@@ -118,11 +157,11 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @param DiagnosticIterator|Generator $previous
-     * @psalm-param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry> $previous
-     * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param DiagnosticIterator|Generator|Iterator $previous
+     * @psalm-param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator $previous
+     * @psalm-param null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
-    private function __construct($previous, callable $callback)
+    private function __construct($previous, ?callable $callback)
     {
         $this->previous     = $previous;
         $this->sortCallback = $callback;
@@ -148,12 +187,15 @@ final class DiagnosticIterator implements IteratorAggregate
     private function compare(DiagnosticIteratorEntry $left, DiagnosticIteratorEntry $right): int
     {
         // If parent is sorting, then test if it already determines the result order.
-        if ($this->previous instanceof DiagnosticIterator) {
+        if ($this->previous instanceof DiagnosticIterator && null !== $this->previous->sortCallback) {
             if (0 !== $result = $this->previous->compare($left, $right)) {
                 return $result;
             }
         }
 
+        /** @psalm-suppress PossiblyNullFunctionCall - getIterator() checks if methods exist. Invoking compare form
+         * other place is not allowed.
+         */
         return call_user_func($this->sortCallback, $left, $right);
     }
 
@@ -163,8 +205,13 @@ final class DiagnosticIterator implements IteratorAggregate
      */
     public function getIterator(): Generator
     {
-        if ($this->previous instanceof self) {
+        if ($this->previous instanceof self && $this->previous->sortCallback) {
             yield from $this->iterateSorted();
+            return;
+        }
+
+        if (null === $this->sortCallback) {
+            yield from $this->previous;
             return;
         }
 
@@ -217,6 +264,7 @@ final class DiagnosticIterator implements IteratorAggregate
             }
             $partition[] = $entry1;
             // Partition boundary reached - sort elements, emit them and start over.
+            /** @psalm-suppress PossiblyNullArgument - iterateSorted is only called then sortCallback exists */
             usort($partition, $this->sortCallback);
             foreach ($partition as $item) {
                 yield $item;
@@ -231,6 +279,7 @@ final class DiagnosticIterator implements IteratorAggregate
         }
         $partition[] = $entry1;
         // End of list reached - sort elements and emit them.
+        /** @psalm-suppress PossiblyNullArgument - iterateSorted is only called then sortCallback exists */
         usort($partition, $this->sortCallback);
         foreach ($partition as $item) {
             yield $item;

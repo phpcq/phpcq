@@ -23,13 +23,6 @@ abstract class AbstractReportWriter
     public const ROOT_NODE_NAME = '';
     public const REPORT_FILE = '';
 
-    private const SEVERITY_LOOKUP = [
-        ToolReportInterface::SEVERITY_INFO    => 0,
-        ToolReportInterface::SEVERITY_NOTICE  => 1,
-        ToolReportInterface::SEVERITY_WARNING => 2,
-        ToolReportInterface::SEVERITY_ERROR   => 3,
-    ];
-
     /** @var ReportBuffer */
     protected $report;
 
@@ -41,9 +34,6 @@ abstract class AbstractReportWriter
 
     /** @var Filesystem */
     private $filesystem;
-
-    /** @var int */
-    private $minimumSeverity;
 
     public static function writeReport(
         string $targetPath,
@@ -58,14 +48,14 @@ abstract class AbstractReportWriter
         $instance->save();
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) - Implementations my use the parameter */
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
-        $this->targetPath = $targetPath;
-        $this->report     = $report;
-        $this->xml        = new XmlBuilder($targetPath, 'phpcq:' . static::ROOT_NODE_NAME, static::XML_NAMESPACE);
-        $this->filesystem = new Filesystem();
+        $this->targetPath  = $targetPath;
+        $this->report      = $report;
+        $this->xml         = new XmlBuilder($targetPath, 'phpcq:' . static::ROOT_NODE_NAME, static::XML_NAMESPACE);
+        $this->filesystem  = new Filesystem();
         $this->filesystem->mkdir($this->targetPath);
-        $this->minimumSeverity = self::SEVERITY_LOOKUP[$minimumSeverity];
     }
 
     protected function save(): void
@@ -103,11 +93,6 @@ abstract class AbstractReportWriter
         if (null !== $int = $range->getEndColumn()) {
             $this->xml->setAttribute($diagnosticElement, 'column_end', (string)$int);
         }
-    }
-
-    protected function wantsToReport(DiagnosticIteratorEntry $entry): bool
-    {
-        return self::SEVERITY_LOOKUP[$entry->getDiagnostic()->getSeverity()] >= $this->minimumSeverity;
     }
 
     protected function createDiagnosticElement(

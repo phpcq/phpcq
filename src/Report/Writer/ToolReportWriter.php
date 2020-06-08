@@ -27,7 +27,10 @@ final class ToolReportWriter extends AbstractReportWriter
     {
         parent::__construct($targetPath, $report, $minimumSeverity);
 
-        $this->diagnostics = DiagnosticIterator::sortByTool($this->report)->thenSortByFileAndRange()->getIterator();
+        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
+            ->thenSortByTool()
+            ->thenSortByFileAndRange()
+            ->getIterator();
     }
 
     protected function appendReportXml(DOMElement $rootNode): void
@@ -61,12 +64,6 @@ final class ToolReportWriter extends AbstractReportWriter
         $tool->setAttribute('status', $report->getStatus());
         $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
         do {
-            if (!$this->wantsToReport($entry)) {
-                $this->diagnostics->next();
-                $entry = $this->diagnostics->current();
-                continue;
-            }
-
             $this->createDiagnosticElement($diagnosticsElement, $entry);
 
             $this->diagnostics->next();

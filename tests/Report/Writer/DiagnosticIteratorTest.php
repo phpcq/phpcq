@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Writer;
 
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Writer\DiagnosticIterator;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Writer\DiagnosticIterator */
+/**
+ * @covers \Phpcq\Report\Writer\DiagnosticIterator
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class DiagnosticIteratorTest extends TestCase
 {
     public function iterateEmptyProvider(): array
@@ -60,6 +64,34 @@ class DiagnosticIteratorTest extends TestCase
         $this->assertSame(
             [
                 'tool1.error1.no-file',
+                'tool1.info1.info',
+                'tool1.error2.no-file',
+                'tool1.error3.file1',
+                'tool1.error3.file2-2.1-3.1',
+                'tool2.error1.no-file',
+                'tool2.error2.no-file',
+                'tool2.error3.file1',
+                'tool2.error3.file2-1.1-2.1',
+            ],
+            $elements
+        );
+    }
+
+    public function testFilterByMinimumSeverityIterateByTool(): void
+    {
+        $iterator = DiagnosticIterator::filterByMinimumSeverity(
+            $this->createReport(),
+            ToolReportInterface::SEVERITY_ERROR
+        )->thenSortByTool();
+
+        $elements = [];
+        foreach ($iterator as $element) {
+            $elements[] = $element->getDiagnostic()->getMessage();
+        }
+
+        $this->assertSame(
+            [
+                'tool1.error1.no-file',
                 'tool1.error2.no-file',
                 'tool1.error3.file1',
                 'tool1.error3.file2-2.1-3.1',
@@ -84,6 +116,7 @@ class DiagnosticIteratorTest extends TestCase
         $this->assertSame(
             [
                 'tool1.error1.no-file',
+                'tool1.info1.info',
                 'tool1.error2.no-file',
                 'tool2.error1.no-file',
                 'tool2.error2.no-file',
@@ -91,6 +124,60 @@ class DiagnosticIteratorTest extends TestCase
                 'tool2.error3.file1',
                 'tool2.error3.file2-1.1-2.1',
                 'tool1.error3.file2-2.1-3.1',
+            ],
+            $elements
+        );
+    }
+
+    public function testFilterByMinimumSeverityIterateByFileAndRangeThenTool(): void
+    {
+        $iterator = DiagnosticIterator::filterByMinimumSeverity(
+            $this->createReport(),
+            ToolReportInterface::SEVERITY_ERROR
+        )->thenSortByFileAndRange()->thenSortByTool();
+
+        $elements = [];
+        foreach ($iterator as $element) {
+            $elements[] = $element->getDiagnostic()->getMessage();
+        }
+
+        $this->assertSame(
+            [
+                'tool1.error1.no-file',
+                'tool1.error2.no-file',
+                'tool2.error1.no-file',
+                'tool2.error2.no-file',
+                'tool1.error3.file1',
+                'tool2.error3.file1',
+                'tool2.error3.file2-1.1-2.1',
+                'tool1.error3.file2-2.1-3.1',
+            ],
+            $elements
+        );
+    }
+
+    public function testFilterByMinimumSeverityIterateByToolThenByFileAndRange(): void
+    {
+        $iterator = DiagnosticIterator::filterByMinimumSeverity(
+            $this->createReport(),
+            ToolReportInterface::SEVERITY_ERROR
+        )->thenSortByTool()->thenSortByFileAndRange();
+
+        $elements = [];
+        foreach ($iterator as $element) {
+            $elements[] = $element->getDiagnostic()->getMessage();
+        }
+
+        $this->assertSame(
+            [
+                'tool1.error1.no-file',
+                'tool1.error2.no-file',
+                'tool1.error3.file1',
+                'tool1.error3.file2-2.1-3.1',
+                'tool2.error1.no-file',
+                'tool2.error2.no-file',
+                'tool2.error3.file1',
+                'tool2.error3.file2-1.1-2.1',
             ],
             $elements
         );
@@ -108,6 +195,7 @@ class DiagnosticIteratorTest extends TestCase
         $this->assertSame(
             [
                 'tool1.error1.no-file',
+                'tool1.info1.info',
                 'tool1.error2.no-file',
                 'tool1.error3.file1',
                 'tool1.error3.file2-2.1-3.1',
@@ -115,6 +203,33 @@ class DiagnosticIteratorTest extends TestCase
                 'tool2.error2.no-file',
                 'tool2.error3.file1',
                 'tool2.error3.file2-1.1-2.1',
+            ],
+            $elements
+        );
+    }
+
+    public function testIterateUnsortedFilteredByMinimumSeverity(): void
+    {
+        $iterator = DiagnosticIterator::filterByMinimumSeverity(
+            $this->createReport(),
+            ToolReportInterface::SEVERITY_ERROR
+        );
+
+        $elements = [];
+        foreach ($iterator as $element) {
+            $elements[] = $element->getDiagnostic()->getMessage();
+        }
+
+        $this->assertSame(
+            [
+                'tool2.error1.no-file',
+                'tool2.error2.no-file',
+                'tool2.error3.file1',
+                'tool2.error3.file2-1.1-2.1',
+                'tool1.error1.no-file',
+                'tool1.error2.no-file',
+                'tool1.error3.file1',
+                'tool1.error3.file2-2.1-3.1',
             ],
             $elements
         );
@@ -200,6 +315,7 @@ class DiagnosticIteratorTest extends TestCase
         $tool1 = $report->createToolReport('tool1');
 
         $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error1.no-file'));
+        $tool1->addDiagnostic($this->diagnostic('info', 'tool1.info1.info'));
         $tool2->addDiagnostic($this->diagnostic('error', 'tool2.error1.no-file'));
         $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error2.no-file'));
         $tool2->addDiagnostic($this->diagnostic('error', 'tool2.error2.no-file'));

@@ -30,7 +30,9 @@ final class FileReportWriter extends AbstractReportWriter
     {
         parent::__construct($targetPath, $report, $minimumSeverity);
 
-        $this->diagnostics = DiagnosticIterator::sortByFileAndRange($this->report)->getIterator();
+        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
+            ->thenSortByFileAndRange()
+            ->getIterator();
     }
 
     protected function appendReportXml(DOMElement $rootNode): void
@@ -53,11 +55,6 @@ final class FileReportWriter extends AbstractReportWriter
             do {
                 /** @var DiagnosticIteratorEntry $entry */
                 $entry = $this->diagnostics->current();
-
-                if (!$this->wantsToReport($entry)) {
-                    $this->diagnostics->next();
-                    continue;
-                }
 
                 if (null !== ($fileName = $entry->getFileName())) {
                     $this->appendDiagnostic($entry, $this->getFileElement($fileName, $filesNode));
