@@ -6,6 +6,7 @@ namespace Phpcq\Report;
 
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
+use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
@@ -43,6 +44,15 @@ class ToolReport implements ToolReportInterface
 
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
+        if (
+            !in_array(
+                $severity,
+                [self::SEVERITY_INFO, self::SEVERITY_NOTICE, self::SEVERITY_WARNING, self::SEVERITY_ERROR]
+            )
+        ) {
+            throw new RuntimeException('Invalid severity passed: ' . $severity);
+        }
+
         $builder = new DiagnosticBuilder(
             $this,
             $severity,
