@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;
 
-final class ExecTaskRunner implements TaskRunnerInterface
+final class ConsoleWritingExecTaskRunner implements TaskRunnerInterface
 {
     /**
      * @var string[]

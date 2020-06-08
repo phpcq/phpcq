@@ -16,7 +16,7 @@ use Traversable;
 /**
  * This task runner executes a process.
  */
-class ProcessTaskRunner implements TaskRunnerInterface
+class ReportWritingProcessTaskRunner implements TaskRunnerInterface
 {
     /**
      * @var string[]

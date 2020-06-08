@@ -143,7 +143,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
             $transformerFactory = new ConsoleOutputTransformerFactory($this->toolName);
         }
 
-        return new ProcessTaskRunner(
+        return new ReportWritingProcessTaskRunner(
             $this->command,
             $this->report,
             $transformerFactory,
@@ -156,7 +156,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
 
     private function buildExecTaskRunner(): TaskRunnerInterface
     {
-        return new ExecTaskRunner(
+        return new ConsoleWritingExecTaskRunner(
             $this->command,
             $this->cwd,
             $this->env,

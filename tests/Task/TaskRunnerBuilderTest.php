@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Test\Task;
 
 use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Task\ExecTaskRunner;
-use Phpcq\Task\ProcessTaskRunner;
+use Phpcq\Task\ConsoleWritingExecTaskRunner;
+use Phpcq\Task\ReportWritingProcessTaskRunner;
 use Phpcq\Task\TaskRunnerBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -32,7 +32,7 @@ final class TaskRunnerBuilderTest extends TestCase
 
         $runner = $builder->build();
 
-        $this->assertInstanceOf(ProcessTaskRunner::class, $runner);
+        $this->assertInstanceOf(ReportWritingProcessTaskRunner::class, $runner);
 
         // This is ugly as hell but no idea how to check otherwise...
         $this->assertPrivateProperty(['foo', 'bar', 'baz'], 'command', $runner);
@@ -58,7 +58,7 @@ final class TaskRunnerBuilderTest extends TestCase
 
         $runner = $builder->build();
 
-        $this->assertInstanceOf(ExecTaskRunner::class, $runner);
+        $this->assertInstanceOf(ConsoleWritingExecTaskRunner::class, $runner);
 
         // This is ugly as hell but no idea how to check otherwise...
         $this->assertPrivateProperty(['foo', 'bar', 'baz'], 'command', $runner);
