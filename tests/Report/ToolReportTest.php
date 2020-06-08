@@ -105,7 +105,7 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name');
-        $report     = new ToolReport('tool-name', $buffer, sys_get_temp_dir(), $filesystem);
+        $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
 
         $this->assertSame($report, $report->addDiff('local')->fromFile('/some/patch-file.diff')->end());
 
@@ -123,13 +123,13 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name');
-        $report     = new ToolReport('tool-name', $buffer, '/our/temp/dir', $filesystem);
+        $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
         $report->addDiff('foo')->fromFile('/some/dir/file.diff');
         $report->addDiff('bar')->fromFile('/some/dir/file.diff');
 
-        $report->finish(ToolReport::STATUS_PASSED);
+        $report->close(ToolReport::STATUS_PASSED);
 
         $this->assertEquals(
             [

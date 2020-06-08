@@ -73,6 +73,7 @@
     <xs:sequence>
       <xs:element name="diagnostics" type="tns:toolDiagnosticListType"/>
       <xs:element name="attachments" type="tns:toolAttachmentListType" minOccurs="0"/>
+      <xs:element name="diffs" type="tns:toolDiffListType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="name" type="tns:nonEmptyStringType">
       <xs:annotation>
@@ -198,6 +199,40 @@
         <xs:attribute name="name" type="tns:nonEmptyStringType" use="required">
           <xs:annotation>
             <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="filename" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The attachment name.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="mime" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>The mime type.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="toolDiffListType">
+    <xs:annotation>
+      <xs:documentation>The diffs produced by the tool.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="diff" type="tns:toolDiffType" maxOccurs="unbounded" nillable="true"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="toolDiffType">
+    <xs:annotation>
+      <xs:documentation>The diff body</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="name" type="tns:nonEmptyStringType" use="required">
+          <xs:annotation>
+            <xs:documentation>The diff name.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="filename" type="tns:nonEmptyStringType" use="required">

@@ -46,6 +46,7 @@ final class FileReportWriter extends AbstractReportWriter
             $tool->setAttribute('status', $toolReport->getStatus());
 
             $this->appendAttachments($tool, $toolReport);
+            $this->appendDiffs($tool, $toolReport);
         }
 
         $globalNode = $this->xml->createElement('global', $rootNode);

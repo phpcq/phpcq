@@ -74,5 +74,6 @@ final class ToolReportWriter extends AbstractReportWriter
         } while ($this->diagnostics->valid() && $report === $entry->getTool());
 
         $this->appendAttachments($tool, $report);
+        $this->appendDiffs($tool, $report);
     }
 }

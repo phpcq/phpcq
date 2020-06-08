@@ -7,10 +7,14 @@ namespace Report\Writer;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Report\Buffer\DiffBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use PHPUnit\Framework\TestCase;
+
+use function sys_get_temp_dir;
+use function tempnam;
 
 abstract class AbstractWriterTest extends TestCase
 {
@@ -20,6 +24,7 @@ abstract class AbstractWriterTest extends TestCase
         $toolReport = $report->createToolReport('tool');
         $toolReport->setStatus(ToolReportInterface::STATUS_PASSED);
         $toolReport->addAttachment(new AttachmentBuffer(tempnam(sys_get_temp_dir(), ''), 'foo.xml', 'application/xml'));
+        $toolReport->addAttachment(new AttachmentBuffer(tempnam(sys_get_temp_dir(), ''), 'bar.xml', null));
         $report->complete(Report::STATUS_PASSED);
 
         $report->createToolReport('tool2')->setStatus(ToolReportInterface::STATUS_FAILED);
@@ -41,6 +46,7 @@ abstract class AbstractWriterTest extends TestCase
                 'https://example.org/super-helpful-tip'
             )
         );
+        $toolReport->addDiff(new DiffBuffer(tempnam(sys_get_temp_dir(), ''), 'diff1.diff'));
 
         return $report;
     }

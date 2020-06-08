@@ -74,8 +74,12 @@ XML;
         <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
       </phpcq:diagnostics>
       <phpcq:attachments>
-        <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>
+        <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
+        <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
       </phpcq:attachments>
+      <phpcq:diffs>
+        <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
+      </phpcq:diffs>
     </phpcq:tool>
   </phpcq:tools>
 </phpcq:tool-report>
@@ -119,8 +123,12 @@ XML;
         <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
       </phpcq:diagnostics>
       <phpcq:attachments>
-        <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>
+        <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
+        <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
       </phpcq:attachments>
+      <phpcq:diffs>
+        <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
+      </phpcq:diffs>
     </phpcq:tool>
   </phpcq:tools>
 </phpcq:tool-report>

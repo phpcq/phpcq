@@ -133,6 +133,35 @@ abstract class AbstractReportWriter
             $node = $this->xml->createElement('attachment', $attachmentsNode);
             $this->xml->setAttribute($node, 'name', $attachment->getLocalName());
             $this->xml->setAttribute($node, 'filename', $fileName = $filePrefix . $attachment->getLocalName());
+            if (null !== ($mimeType = $attachment->getMimeType())) {
+                $this->xml->setAttribute($node, 'mime', $mimeType);
+            }
+
+            $this->filesystem->copy($absolutePath, $this->targetPath . '/' . $fileName, true);
+            // FIXME: better embedd the file instead of copy to the target dir?
+            // $this->xml->setTextContent($node, file_get_contents($attachment->getAbsolutePath()));
+        }
+    }
+
+    protected function appendDiffs(DOMElement $toolNode, ToolReportBuffer $report): void
+    {
+        $diffs = $report->getDiffs();
+        if ([] === $diffs) {
+            return;
+        }
+
+        $attachmentsNode = $this->xml->createElement('diffs', $toolNode);
+        $filePrefix = $report->getToolName() . '-';
+        foreach ($diffs as $attachment) {
+            $absolutePath = $attachment->getAbsolutePath();
+            if (!$this->filesystem->exists($absolutePath)) {
+                // FIXME: warn if the source does not exist.
+                continue;
+            }
+
+            $node = $this->xml->createElement('diff', $attachmentsNode);
+            $this->xml->setAttribute($node, 'name', $attachment->getLocalName());
+            $this->xml->setAttribute($node, 'filename', $fileName = $filePrefix . $attachment->getLocalName());
 
             $this->filesystem->copy($absolutePath, $this->targetPath . '/' . $fileName, true);
             // FIXME: better embedd the file instead of copy to the target dir?

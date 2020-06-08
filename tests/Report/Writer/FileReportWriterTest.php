@@ -69,8 +69,12 @@ XML;
   <phpcq:abstract>
     <phpcq:tool name="tool" status="passed">
       <phpcq:attachments>
-        <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>
+        <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
+        <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
       </phpcq:attachments>
+      <phpcq:diffs>
+        <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
+      </phpcq:diffs>
     </phpcq:tool>
     <phpcq:tool name="tool2" status="failed"/>
   </phpcq:abstract>
@@ -121,8 +125,12 @@ XML;
   <phpcq:abstract>
     <phpcq:tool name="tool" status="passed">
       <phpcq:attachments>
-        <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>
+        <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
+        <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
       </phpcq:attachments>
+      <phpcq:diffs>
+        <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
+      </phpcq:diffs>
     </phpcq:tool>
     <phpcq:tool name="tool2" status="failed"/>
   </phpcq:abstract>
