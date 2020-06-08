@@ -65,7 +65,10 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             public function finish(int $exitCode): void
             {
                 $content = '';
-                while ($line = $this->data->fetch()) {
+                while (null !== ($line = $this->data->fetch())) {
+                    if ($content !== '') {
+                        $content .= "\n";
+                    }
                     $content .= $line;
                 }
 
