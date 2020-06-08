@@ -6,6 +6,7 @@ namespace Phpcq\Test\Report\Buffer;
 
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Report\Buffer\DiffBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use PHPUnit\Framework\TestCase;
 
@@ -70,5 +71,16 @@ class ToolReportBufferTest extends TestCase
         $this->assertCount(1, $attachments);
         $this->arrayHasKey(0);
         $this->assertSame($attachment, $attachments[0]);
+    }
+
+    public function testAddsDiff(): void
+    {
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer->addDiff($diff = new DiffBuffer('/some/file', 'local'));
+
+        $diffs = $buffer->getDiffs();
+        $this->assertCount(1, $diffs);
+        $this->arrayHasKey(0);
+        $this->assertSame($diff, $diffs[0]);
     }
 }

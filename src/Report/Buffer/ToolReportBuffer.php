@@ -21,6 +21,9 @@ final class ToolReportBuffer
     /** @var AttachmentBuffer[] */
     private $attachments = [];
 
+    /** @var DiffBuffer[] */
+    private $diffs = [];
+
     /** @var string */
     private $reportName;
 
@@ -87,6 +90,11 @@ final class ToolReportBuffer
         $this->attachments[] = $buffer;
     }
 
+    public function addDiff(DiffBuffer $buffer): void
+    {
+        $this->diffs[] = $buffer;
+    }
+
     /**
      * Get attachments.
      *
@@ -96,5 +104,16 @@ final class ToolReportBuffer
     public function getAttachments(): array
     {
         return array_values($this->attachments);
+    }
+
+    /**
+     * Get diffs.
+     *
+     * @return DiffBuffer[]
+     * @psalm-return list<DiffBuffer>
+     */
+    public function getDiffs(): array
+    {
+        return array_values($this->diffs);
     }
 }

@@ -6,6 +6,7 @@ namespace Phpcq\Test\Report;
 
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Report\Buffer\DiffBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Phpcq\Report\ToolReport;
 use PHPUnit\Framework\TestCase;
@@ -97,6 +98,45 @@ class ToolReportTest extends TestCase
                 new AttachmentBuffer('/some/dir/file.bar', 'bar', null),
             ],
             $buffer->getAttachments()
+        );
+    }
+
+    public function testAddsDiff(): void
+    {
+        $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $report     = new ToolReport('tool-name', $buffer, sys_get_temp_dir(), $filesystem);
+
+        $this->assertSame($report, $report->addDiff('local')->fromFile('/some/patch-file.diff')->end());
+
+        $attachments = $buffer->getDiffs();
+
+        $this->assertCount(1, $attachments);
+        $this->arrayHasKey(0);
+        $attachment = $attachments[0];
+        $this->assertInstanceOf(DiffBuffer::class, $attachment);
+        $this->assertSame('/some/patch-file.diff', $attachment->getAbsolutePath());
+        $this->assertSame('local', $attachment->getLocalName());
+    }
+
+    public function testEndIsCalledForPendingDiffBuilderFromFinish(): void
+    {
+        $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $report     = new ToolReport('tool-name', $buffer, '/our/temp/dir', $filesystem);
+
+        // "forgotten" end calls on file builders.
+        $report->addDiff('foo')->fromFile('/some/dir/file.diff');
+        $report->addDiff('bar')->fromFile('/some/dir/file.diff');
+
+        $report->finish(ToolReport::STATUS_PASSED);
+
+        $this->assertEquals(
+            [
+                new DiffBuffer('/some/dir/file.diff', 'foo'),
+                new DiffBuffer('/some/dir/file.diff', 'bar'),
+            ],
+            $buffer->getDiffs()
         );
     }
 
