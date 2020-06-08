@@ -11,6 +11,9 @@ use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers \Phpcq\Repository\LockFileDumper
+ */
 class LockFileDumperTest extends TestCase
 {
     public function testLockFileDump(): void
