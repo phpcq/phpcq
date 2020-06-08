@@ -241,16 +241,18 @@ final class RunCommand extends AbstractCommand
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
     {
+        /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
+        $threshold  = (string) $this->input->getOption('threshold');
+
         ConsoleWriter::writeReport(
             $this->output,
             new SymfonyStyle($this->input, $this->output),
             $report,
+            $threshold,
             $this->getWrapWidth()
         );
 
         $reports = (array) $this->input->getOption('report');
-        /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
-        $threshold  = (string) $this->input->getOption('threshold');
         $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();
 
         if (in_array('tool-report', $reports, true)) {
@@ -262,7 +264,7 @@ final class RunCommand extends AbstractCommand
         }
 
         if (in_array('checkstyle', $reports, true)) {
-            CheckstyleReportWriter::writeReport($targetPath, $report);
+            CheckstyleReportWriter::writeReport($targetPath, $report, $threshold);
         }
 
         // Clean up attachments.

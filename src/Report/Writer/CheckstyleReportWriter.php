@@ -17,35 +17,37 @@ final class CheckstyleReportWriter
     public const ROOT_NODE_NAME = 'checkstyle';
 
     /**
-     * @var ReportBuffer
+     * @var DiagnosticIterator
      */
-    protected $report;
+    protected $diagnostics;
 
     /**
      * @var XmlBuilder
      */
     protected $xml;
 
-    public static function writeReport(string $targetPath, ReportBuffer $report): void
+    public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void
     {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {
             throw new RuntimeException('Only completed reports may be saved');
         }
 
-        $instance = new static($targetPath, $report);
+        $instance = new static($targetPath, $report, $minimumSeverity);
         $instance->save();
     }
 
-    private function __construct(string $targetPath, ReportBuffer $report)
+    private function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
-        $this->report = $report;
         $this->xml    = new XmlBuilder($targetPath, static::ROOT_NODE_NAME, null);
+        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
+            ->thenSortByFileAndRange()
+            ->thenSortByTool();
     }
 
     public function save(): void
     {
         $fileElement = null;
-        foreach (DiagnosticIterator::sortByFileAndRange($this->report)->thenSortByTool() as $entry) {
+        foreach ($this->diagnostics as $entry) {
             $fileElement = $this->updateFileElement($entry, $fileElement);
             $this->writeDiagnostic($fileElement, $entry);
         }

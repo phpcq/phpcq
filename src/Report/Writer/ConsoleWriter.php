@@ -42,9 +42,10 @@ final class ConsoleWriter
         OutputInterface $output,
         StyleInterface $style,
         ReportBuffer $report,
+        string $minimumSeverity,
         int $wrapWidth = 80
     ): void {
-        $instance = new self($output, $style, $report, $wrapWidth);
+        $instance = new self($output, $style, $report, $minimumSeverity, $wrapWidth);
         $instance->write();
     }
 
@@ -52,13 +53,16 @@ final class ConsoleWriter
         OutputInterface $output,
         StyleInterface $style,
         ReportBuffer $report,
+        string $minimumSeverity,
         int $wrapWidth = 80
     ) {
         $this->output      = $output;
         $this->style       = $style;
         $this->report      = $report;
-        $this->diagnostics = DiagnosticIterator::sortByFileAndRange($report)->getIterator();
         $this->wrapWidth   = $wrapWidth;
+        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
+            ->thenSortByFileAndRange()
+            ->getIterator();
     }
 
     public function write(): void
