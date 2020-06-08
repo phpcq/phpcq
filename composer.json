@@ -29,7 +29,7 @@
         "ext-xml": "*",
         "composer/semver": "^1.5",
         "composer/xdebug-handler": "^1.4",
-        "guzzlehttp/guzzle": "^6.0",
+        "guzzlehttp/guzzle": "^6.5",
         "phpcq/gnupg": "^1.0@dev",
         "phpcq/plugin-api": "^1.0@dev",
         "symfony/config": "^5.0.7",
