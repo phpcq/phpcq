@@ -11,8 +11,6 @@ use Phpcq\Platform\PlatformRequirementCheckerInterface;
 use function array_keys;
 use function dirname;
 use function is_array;
-use function strpos;
-use function substr;
 
 /**
  * Load a json file.
@@ -79,7 +77,7 @@ class JsonRepositoryLoader
             if (['url', 'checksum'] === array_keys($versions)) {
                 /** @psalm-suppress PossiblyInvalidArgument */
                 $this->includeFile(
-                    $this->determineAbsolutePath($versions['url'], $filePath),
+                    $versions['url'],
                     $versions['checksum'],
                     $baseDir
                 );
@@ -144,16 +142,5 @@ class JsonRepositoryLoader
                 );
         }
         throw new RuntimeException('Invalid bootstrap definition: ' . json_encode($bootstrap));
-    }
-
-    private function determineAbsolutePath(string $url, string $baseUrl): string
-    {
-        if (strpos($url, './') === 0) {
-            return dirname($baseUrl) . substr($url, 1);
-        }
-
-        // TODO: Do we need to support paths like ../foo/bar.json?
-
-        return $url;
     }
 }
