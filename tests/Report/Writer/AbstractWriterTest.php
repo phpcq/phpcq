@@ -24,7 +24,9 @@ abstract class AbstractWriterTest extends TestCase
 
         $report->createToolReport('tool2')->setStatus(ToolReportInterface::STATUS_FAILED);
 
-        $toolReport->addDiagnostic(new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Foo bar', 'baz', []));
+        $toolReport->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Foo bar', 'baz', [], null)
+        );
         $toolReport->addDiagnostic(
             new DiagnosticBuffer(
                 ToolReportInterface::SEVERITY_ERROR,
@@ -35,7 +37,8 @@ abstract class AbstractWriterTest extends TestCase
                     new FileRangeBuffer('example.php', 1, 2, null, null),
                     new FileRangeBuffer('example2.php', 1, 2, 3, null),
                     new FileRangeBuffer('example2.php', 1, 2, 3, 4)
-                ]
+                ],
+                'https://example.org/super-helpful-tip'
             )
         );
 

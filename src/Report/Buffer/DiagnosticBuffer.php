@@ -20,15 +20,24 @@ final class DiagnosticBuffer
     /** @var null|FileRangeBuffer[] */
     private $fileRanges;
 
+    /** @var string|null */
+    private $externalInfoUrl;
+
     /**
      * @param null|FileRangeBuffer[] $fileRanges
      */
-    public function __construct(string $severity, string $message, ?string $source, ?array $fileRanges)
-    {
+    public function __construct(
+        string $severity,
+        string $message,
+        ?string $source,
+        ?array $fileRanges,
+        ?string $externalInfoUrl
+    ) {
         $this->severity   = $severity;
         $this->message    = $message;
         $this->source     = $source;
         $this->fileRanges = $fileRanges ?: null;
+        $this->externalInfoUrl = $externalInfoUrl;
     }
 
     /**
@@ -65,5 +74,10 @@ final class DiagnosticBuffer
         foreach ($this->fileRanges as $range) {
             yield $range;
         }
+    }
+
+    public function getExternalInfoUrl(): ?string
+    {
+        return $this->externalInfoUrl;
     }
 }

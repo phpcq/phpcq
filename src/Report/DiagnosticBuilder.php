@@ -36,6 +36,9 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
     /** @var FileDiagnosticBuilder[] */
     private $pendingFiles = [];
 
+    /** @var string|null */
+    private $externalInfoUrl;
+
     /** @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback */
     public function __construct(ToolReportInterface $parent, string $severity, string $message, callable $callback)
     {
@@ -73,6 +76,13 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    public function withExternalInfoUrl(string $url): DiagnosticBuilderInterface
+    {
+        $this->externalInfoUrl = $url;
+
+        return $this;
+    }
+
     public function end(): ToolReportInterface
     {
         foreach ($this->pendingFiles as $pendingBuilder) {
@@ -80,7 +90,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         }
         call_user_func(
             $this->callback,
-            new DiagnosticBuffer($this->severity, $this->message, $this->source, $this->files),
+            new DiagnosticBuffer($this->severity, $this->message, $this->source, $this->files, $this->externalInfoUrl),
             $this
         );
 

@@ -68,10 +68,10 @@ XML;
     <phpcq:tool name="tool" status="passed">
       <phpcq:diagnostics>
         <phpcq:diagnostic severity="info" source="baz">Foo bar</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" file="example.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
       </phpcq:diagnostics>
       <phpcq:attachments>
         <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>
@@ -113,10 +113,10 @@ XML;
   <phpcq:tools>
     <phpcq:tool name="tool" status="passed">
       <phpcq:diagnostics>
-        <phpcq:diagnostic line="1" file="example.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error">Failure</phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
+        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">Failure</phpcq:diagnostic>
       </phpcq:diagnostics>
       <phpcq:attachments>
         <phpcq:attachment name="foo.xml" filename="tool-foo.xml"/>

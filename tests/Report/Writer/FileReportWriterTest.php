@@ -79,12 +79,12 @@ XML;
   </phpcq:global>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
     </phpcq:file>
   </phpcq:files>
 </phpcq:file-report>
@@ -129,12 +129,12 @@ XML;
   <phpcq:global/>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
     </phpcq:file>
   </phpcq:files>
 </phpcq:file-report>

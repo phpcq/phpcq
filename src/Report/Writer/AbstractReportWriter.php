@@ -106,6 +106,9 @@ abstract class AbstractReportWriter
         if (null !== $source = $diagnostic->getSource()) {
             $this->xml->setAttribute($diagnosticElement, 'source', $source);
         }
+        if (null !== $externalInfoUrl = $diagnostic->getExternalInfoUrl()) {
+            $this->xml->setAttribute($diagnosticElement, 'external_info_url', $externalInfoUrl);
+        }
         $this->xml->setTextContent($diagnosticElement, $diagnostic->getMessage());
 
         return $diagnosticElement;

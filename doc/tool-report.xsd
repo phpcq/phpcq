@@ -150,6 +150,7 @@
         </xs:attribute>
         <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required"/>
         <xs:attribute type="tns:nonEmptyStringType" name="source"/>
+        <xs:attribute type="tns:nonEmptyStringType" name="external_info_url"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

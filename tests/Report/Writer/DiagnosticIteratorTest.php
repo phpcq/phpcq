@@ -291,9 +291,16 @@ class DiagnosticIteratorTest extends TestCase
         string $severity,
         string $message,
         ?string $source = null,
-        ?FileRangeBuffer $fileRange = null
+        ?FileRangeBuffer $fileRange = null,
+        ?string $externalInfoUrl = null
     ): DiagnosticBuffer {
-        return new DiagnosticBuffer($severity, $message, $source, $fileRange ? [$fileRange] : null);
+        return new DiagnosticBuffer(
+            $severity,
+            $message,
+            $source,
+            $fileRange ? [$fileRange] : null,
+            $externalInfoUrl
+        );
     }
 
     private function range(
