@@ -90,6 +90,10 @@ final class RunCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
+        $fileSystem = new Filesystem();
+        $fileSystem->remove(getcwd() . '/' . $this->config['artifact']);
+        $fileSystem->mkdir(getcwd() . '/' . $this->config['artifact']);
+
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
         $tempDirectory = sys_get_temp_dir();
         $taskList = new Tasklist();
