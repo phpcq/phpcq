@@ -10,7 +10,9 @@ use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
+use Phpcq\Repository\LockFileDumper;
 use Phpcq\Repository\Repository;
+use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Phpcq\Repository\ToolInformationInterface;
@@ -44,34 +46,54 @@ final class UpdateExecutor
      */
     private $verifier;
 
+    /**
+     * @var RepositoryInterface|null
+     */
+    private $lockFileRepository;
+
     public function __construct(
         FileDownloader $downloader,
         SignatureVerifier $verifier,
         string $phpcqPath,
-        OutputInterface $output
+        OutputInterface $output,
+        ?RepositoryInterface $lockFileRepository
     ) {
-        $this->downloader           = $downloader;
-        $this->verifier             = $verifier;
-        $this->phpcqPath            = $phpcqPath;
-        $this->output               = $output;
+        $this->downloader         = $downloader;
+        $this->verifier           = $verifier;
+        $this->phpcqPath          = $phpcqPath;
+        $this->output             = $output;
+        $this->lockFileRepository = $lockFileRepository;
     }
 
     public function execute(array $tasks): void
     {
-        $installed = new Repository();
+        $installed      = new Repository();
+        $lockRepository = new Repository();
+
         foreach ($tasks as $task) {
+            $tool = $task['tool'];
+            assert($tool instanceof ToolInformationInterface);
+
             switch ($task['type']) {
                 case 'keep':
-                    $installed->addVersion($task['tool']);
+                    $installed->addVersion($tool);
+                    if (null === $this->lockFileRepository) {
+                        throw new RuntimeException('Unable to execute keep task without lock file repository');
+                    }
+                    $lockRepository->addVersion(
+                        $this->lockFileRepository->getTool($tool->getName(), $tool->getVersion())
+                    );
                     break;
                 case 'install':
-                    $installed->addVersion($this->installTool($task['tool'], $task['signed']));
+                    $installed->addVersion($this->installTool($tool, $task['signed']));
+                    $lockRepository->addVersion($tool);
                     break;
                 case 'upgrade':
-                    $installed->addVersion($this->upgradeTool($task['tool'], $task['old'], $task['signed']));
+                    $installed->addVersion($this->upgradeTool($tool, $task['old'], $task['signed']));
+                    $lockRepository->addVersion($tool);
                     break;
                 case 'remove':
-                    $this->removeTool($task['tool']);
+                    $this->removeTool($tool);
                     break;
             }
         }
@@ -79,6 +101,10 @@ final class UpdateExecutor
         // Save installed repository.
         $dumper = new JsonRepositoryDumper($this->phpcqPath);
         $dumper->dump($installed, 'installed.json');
+
+        $lockDumper = new LockFileDumper(getcwd());
+        $lockDumper->dump($lockRepository, '.phpcq.lock');
+        $this->lockFileRepository = $lockRepository;
     }
 
     private function installTool(ToolInformationInterface $tool, bool $requireSigned): ToolInformationInterface
@@ -98,10 +124,10 @@ final class UpdateExecutor
     ): ToolInformationInterface {
         $this->output->writeln('Upgrading', OutputInterface::VERBOSITY_VERBOSE);
 
-        $new = $this->installVersion($tool, $requireSigned);
+        // Do not install new version before deleting old. Otherwise the reinstall of the same version will fail!
         $this->deleteVersion($old);
 
-        return $new;
+        return $this->installVersion($tool, $requireSigned);
     }
 
     private function removeTool(ToolInformationInterface $tool): void
