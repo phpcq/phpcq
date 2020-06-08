@@ -7,7 +7,7 @@ namespace Phpcq\Config;
 use Phpcq\PluginApi\Version10\BuildConfigInterface;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
-use Phpcq\PluginApi\Version10\TaskFactoryInterface;
+use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 
 class BuildConfiguration implements BuildConfigInterface
 {

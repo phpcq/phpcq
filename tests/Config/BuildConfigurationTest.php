@@ -6,7 +6,7 @@ namespace Phpcq\Test\Config;
 
 use Phpcq\Config\BuildConfiguration;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
-use Phpcq\PluginApi\Version10\TaskFactoryInterface;
+use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

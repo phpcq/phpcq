@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Phpcq\Task\Tasklist;
 use PHPUnit\Framework\TestCase;
 
@@ -19,12 +19,12 @@ class TasklistTest extends TestCase
     {
         $list = new Tasklist();
 
-        $list->add($task1 = $this->getMockForAbstractClass(TaskRunnerInterface::class));
-        $list->add($task2 = $this->getMockForAbstractClass(TaskRunnerInterface::class));
+        $list->add($task1 = $this->getMockForAbstractClass(TaskInterface::class));
+        $list->add($task2 = $this->getMockForAbstractClass(TaskInterface::class));
 
         $tasks = [];
         foreach ($list->getIterator() as $task) {
-            $this->assertInstanceOf(TaskRunnerInterface::class, $task);
+            $this->assertInstanceOf(TaskInterface::class, $task);
             $tasks[] = $task;
         }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
-use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
 
 /**
  * Default task list implementation.
@@ -12,19 +12,19 @@ use Phpcq\PluginApi\Version10\TaskRunnerInterface;
 class Tasklist implements TasklistInterface
 {
     /**
-     * @var TaskRunnerInterface[]
+     * @var TaskInterface[]
      */
     private $tasks = [];
 
-    public function add(TaskRunnerInterface $taskRunner): void
+    public function add(TaskInterface $taskRunner): void
     {
         $this->tasks[] = $taskRunner;
     }
 
     /**
-     * @return TaskRunnerInterface[]|iterable
+     * @return TaskInterface[]|iterable
      *
-     * @psalm-return \Generator<array-key, TaskRunnerInterface, mixed, void>
+     * @psalm-return \Generator<array-key, TaskInterface, mixed, void>
      */
     public function getIterator(): iterable
     {

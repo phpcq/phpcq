@@ -14,6 +14,7 @@ use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -92,12 +93,12 @@ final class RunCommand extends AbstractCommand
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
         $tempDirectory = sys_get_temp_dir();
         $taskList = new Tasklist();
-        $report = new ReportBuffer();
+        $reportBuffer = new ReportBuffer();
+        $report = new Report($reportBuffer, $tempDirectory);
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $installed = $this->getInstalledRepository(true),
-            new Report($report, $tempDirectory),
             ...$this->findPhpCli()
         );
         // Create build configuration
@@ -122,61 +123,67 @@ final class RunCommand extends AbstractCommand
         }
 
         $consoleOutput = $this->getWrappedOutput();
-        $exitCode = $this->runTasks($taskList, $consoleOutput, (bool) $this->input->getOption('fast-finish'));
+        $exitCode = $this->runTasks($taskList, $report, $consoleOutput, (bool) $this->input->getOption('fast-finish'));
 
-        $report->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
-        $this->writeReports($report, $projectConfig);
+        $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
+        $this->writeReports($reportBuffer, $projectConfig);
 
         $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
         return $exitCode;
     }
 
-    private function runTasks(Tasklist $taskList, OutputInterface $consoleOutput, bool $fastFinish): int
+    private function runTasks(Tasklist $taskList, Report $report, OutputInterface $output, bool $fastFinish): int
     {
         // TODO: Parallelize tasks
         $exitCode = 0;
         foreach ($taskList->getIterator() as $task) {
-            $taskOutput = new BufferedOutput($consoleOutput);
+            if (!$task instanceof ReportWritingTaskInterface) {
+                throw new RuntimeException('Task is not an instance of: ' . ReportWritingTaskInterface::class);
+            }
+
             try {
-                $task->run($taskOutput);
+                $toolReport = $report->addToolReport($task->getToolName());
+                $task->runWithReport($toolReport);
+
+                if ($fastFinish && $toolReport->getStatus() !== ToolReportInterface::STATUS_PASSED) {
+                    return $exitCode;
+                }
             } catch (PluginApiRuntimeException $throwable) {
-                $this->renderException($taskOutput, $throwable);
+                $this->renderException($output, $throwable);
 
                 $exitCode = (int) $throwable->getCode();
                 $exitCode = $exitCode === 0 ? 1 : $exitCode;
 
                 if ($fastFinish) {
-                    $taskOutput->release();
-                    break;
+                    return $exitCode;
                 }
             }
-            $taskOutput->release();
         }
 
         return $exitCode;
     }
 
-    private function renderException(BufferedOutput $taskOutput, PluginApiRuntimeException $exception): void
+    private function renderException(OutputInterface $output, PluginApiRuntimeException $exception): void
     {
         // Log internal exceptions on level normal - these indicate an error in phpcq caused from within a plugin.
         if ($exception instanceof Exception) {
-            $taskOutput->writeln('', BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STDERR);
-            $taskOutput->writeln(
+            $output->writeln('', BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STDERR);
+            $output->writeln(
                 'WARNING: task execution caused internal error: "' . $exception->getMessage() . '"',
                 BufferedOutput::VERBOSITY_NORMAL,
                 BufferedOutput::CHANNEL_STDERR
             );
-            $taskOutput->writeln(
+            $output->writeln(
                 'This is most certainly caused by a plugin misbehaving.',
                 BufferedOutput::VERBOSITY_NORMAL,
                 BufferedOutput::CHANNEL_STDERR
             );
-            $taskOutput->writeln(
+            $output->writeln(
                 $exception->getFile() . ' on line ' . $exception->getLine(),
                 BufferedOutput::VERBOSITY_VERBOSE,
                 BufferedOutput::CHANNEL_STDERR
             );
-            $taskOutput->writeln(
+            $output->writeln(
                 $exception->getTraceAsString(),
                 BufferedOutput::VERBOSITY_VERBOSE,
                 BufferedOutput::CHANNEL_STDERR
@@ -184,7 +191,7 @@ final class RunCommand extends AbstractCommand
         }
 
         // Normal plugin exception.
-        $taskOutput->writeln(
+        $output->writeln(
             $exception->getMessage(),
             BufferedOutput::VERBOSITY_VERBOSE,
             BufferedOutput::CHANNEL_STDERR

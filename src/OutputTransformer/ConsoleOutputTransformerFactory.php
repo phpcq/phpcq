@@ -82,7 +82,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                     $this->report->addAttachment('stdout.log')->fromString($this->stdOut)->end();
                 }
 
-                $this->report->finish($status);
+                $this->report->close($status);
             }
 
             /**

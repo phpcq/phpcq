@@ -14,9 +14,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ToolReport implements ToolReportInterface
 {
-    /** @var string */
-    private $toolName;
-
     /** @var ToolReportBuffer */
     private $report;
 
@@ -32,16 +29,16 @@ class ToolReport implements ToolReportInterface
     /** @var AttachmentBuilder[] */
     private $pendingAttachments = [];
 
-    public function __construct(
-        string $toolName,
-        ToolReportBuffer $report,
-        string $tempDir,
-        Filesystem $filesystem = null
-    ) {
-        $this->toolName   = $toolName;
+    public function __construct(ToolReportBuffer $report, string $tempDir, Filesystem $filesystem = null)
+    {
         $this->report     = $report;
         $this->tempDir    = $tempDir;
         $this->filesystem = $filesystem ?: new Filesystem();
+    }
+
+    public function getStatus(): string
+    {
+        return $this->report->getStatus();
     }
 
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
@@ -73,7 +70,7 @@ class ToolReport implements ToolReportInterface
         return $this->pendingAttachments[spl_object_hash($builder)] = $builder;
     }
 
-    public function finish(string $status): void
+    public function close(string $status): void
     {
         foreach ($this->pendingDiagnostics as $pendingBuilder) {
             $pendingBuilder->end();

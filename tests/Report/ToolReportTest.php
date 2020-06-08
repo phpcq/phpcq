@@ -17,7 +17,6 @@ class ToolReportTest extends TestCase
     public function testCanBeInstantiated(): void
     {
         new ToolReport(
-            'tool-name',
             new ToolReportBuffer('tool-name', 'report-name'),
             sys_get_temp_dir()
         );
@@ -27,7 +26,7 @@ class ToolReportTest extends TestCase
     public function testAddsDiagnostic(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, sys_get_temp_dir());
 
         $this->assertSame(
             $report,
@@ -46,11 +45,11 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingDiagnosticBuilderFromFinish(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, sys_get_temp_dir());
 
         $report->addDiagnostic('error', 'This is an error');
 
-        $report->finish(ToolReport::STATUS_PASSED);
+        $report->close(ToolReport::STATUS_PASSED);
 
         $diagnostics = iterator_to_array($buffer->getDiagnostics());
         $this->assertCount(1, $diagnostics);
@@ -65,7 +64,7 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name');
-        $report     = new ToolReport('tool-name', $buffer, sys_get_temp_dir(), $filesystem);
+        $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
 
         $this->assertSame($report, $report->addAttachment('local')->fromFile('/some/file')->end());
 
@@ -84,13 +83,13 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name');
-        $report     = new ToolReport('tool-name', $buffer, '/our/temp/dir', $filesystem);
+        $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
         $report->addAttachment('foo')->fromFile('/some/dir/file.foo')->setMimeType('application/foo');
         $report->addAttachment('bar')->fromFile('/some/dir/file.bar');
 
-        $report->finish(ToolReport::STATUS_PASSED);
+        $report->close(ToolReport::STATUS_PASSED);
 
         $this->assertEquals(
             [
@@ -104,9 +103,9 @@ class ToolReportTest extends TestCase
     public function testFinishSetsTheStatus(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $report = new ToolReport('tool-name', $buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, sys_get_temp_dir());
 
-        $report->finish('passed');
+        $report->close('passed');
 
         $this->assertSame('passed', $buffer->getStatus());
     }

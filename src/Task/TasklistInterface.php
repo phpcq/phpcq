@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use IteratorAggregate;
-use Phpcq\PluginApi\Version10\TaskRunnerInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;
 
 interface TasklistInterface extends IteratorAggregate
@@ -13,14 +13,14 @@ interface TasklistInterface extends IteratorAggregate
     /**
      * Adds a task to the list.
      *
-     * @param TaskRunnerInterface $taskRunner The task to add.
+     * @param TaskInterface $taskRunner The task to add.
      */
-    public function add(TaskRunnerInterface $taskRunner): void;
+    public function add(TaskInterface $taskRunner): void;
 
     /**
-     * @return TaskRunnerInterface[]|iterable
+     * @return TaskInterface[]|iterable
      *
-     * @psalm-return Traversable<int, TaskRunnerInterface>
+     * @psalm-return Traversable<int, TaskInterface>
      */
     public function getIterator(): iterable;
 }

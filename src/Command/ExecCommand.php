@@ -7,6 +7,7 @@ namespace Phpcq\Command;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Output\BufferedOutput;
+use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -71,7 +72,6 @@ final class ExecCommand extends AbstractCommand
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $this->getInstalledRepository(true),
-            null,
             ...$this->findPhpCli()
         );
 
@@ -85,13 +85,17 @@ final class ExecCommand extends AbstractCommand
             ->withWorkingDirectory(getcwd())
             ->build();
 
+        if (! $task instanceof OutputWritingTaskInterface) {
+            throw new RuntimeException('Task is not an instance of: ' . OutputWritingTaskInterface::class);
+        }
+
         // Wrap console output
         $consoleOutput = $this->getWrappedOutput();
         // Execute task.
         $exitCode = 0;
         $taskOutput = new BufferedOutput($consoleOutput);
         try {
-            $task->run($taskOutput);
+            $task->runForOutput($taskOutput);
         } catch (PluginApiRuntimeException $throwable) {
             $exitCode = (int) $throwable->getCode();
             $exitCode = $exitCode === 0 ? 1 : $exitCode;

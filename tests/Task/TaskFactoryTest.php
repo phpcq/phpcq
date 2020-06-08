@@ -11,7 +11,7 @@ use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\Task\TaskFactory;
-use Phpcq\Task\TaskRunnerBuilder;
+use Phpcq\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -25,14 +25,13 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            $this->mockReport(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
 
         $builder = $factory->buildRunProcess('tool-name', ['command', 'arg1', 'arg2']);
 
-        $this->assertInstanceOf(TaskRunnerBuilder::class, $builder);
+        $this->assertInstanceOf(TaskBuilder::class, $builder);
         $this->assertPrivateProperty(['command', 'arg1', 'arg2'], 'command', $builder);
     }
 
@@ -41,7 +40,6 @@ final class TaskFactoryTest extends TestCase
         $factory = new TaskFactory(
             '/phpcq/path',
             $installed = $this->getMockForAbstractClass(RepositoryInterface::class),
-            $this->mockReport(),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -57,7 +55,7 @@ final class TaskFactoryTest extends TestCase
 
         $builder = $factory->buildRunPhar('phar-name', ['phar-arg1', 'phar-arg2']);
 
-        $this->assertInstanceOf(TaskRunnerBuilder::class, $builder);
+        $this->assertInstanceOf(TaskBuilder::class, $builder);
         $this->assertPrivateProperty([
             '/path/to/php-cli',
             'php', 'arguments',
@@ -66,40 +64,7 @@ final class TaskFactoryTest extends TestCase
         ], 'command', $builder);
     }
 
-    public function testBuildToolReport(): void
-    {
-        $factory = new TaskFactory(
-            '/phpcq/path',
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            $this->mockReport(),
-            '/path/to/php-cli',
-            ['php', 'arguments']
-        );
-
-        $toolReport = $factory->createToolReport('tool');
-        $this->assertInstanceOf(ToolReportInterface::class, $toolReport);
-    }
-
-    public function testBuildToolReportNotAvailable(): void
-    {
-        $factory = new TaskFactory(
-            '/phpcq/path',
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            null,
-            '/path/to/php-cli',
-            ['php', 'arguments']
-        );
-
-        $this->expectException(RuntimeException::class);
-        $factory->createToolReport('tool');
-    }
-
-    private function mockReport(): Report
-    {
-        return new Report(new ReportBuffer(), sys_get_temp_dir());
-    }
-
-    private static function assertPrivateProperty($expected, string $property, object $instance): void
+    private function assertPrivateProperty($expected, string $property, object $instance): void
     {
         $reflection = new ReflectionProperty($instance, $property);
         $reflection->setAccessible(true);

@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\TaskFactoryInterface;
-use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
+use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
+use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 
 class TaskFactory implements TaskFactoryInterface
@@ -36,11 +35,6 @@ class TaskFactory implements TaskFactoryInterface
     private $phpArguments;
 
     /**
-     * @var Report|null
-     */
-    private $report;
-
-    /**
      * Create a new instance.
      *
      * @param string              $phpcqPath
@@ -51,7 +45,6 @@ class TaskFactory implements TaskFactoryInterface
     public function __construct(
         string $phpcqPath,
         RepositoryInterface $installed,
-        ?Report $report,
         string $phpCliBinary,
         array $phpArguments
     ) {
@@ -59,26 +52,25 @@ class TaskFactory implements TaskFactoryInterface
         $this->installed    = $installed;
         $this->phpCliBinary = $phpCliBinary;
         $this->phpArguments = $phpArguments;
-        $this->report       = $report;
     }
 
     /**
      * @param string[] $command
      *
-     * @return TaskRunnerBuilder
+     * @return TaskBuilder
      */
-    public function buildRunProcess(string $toolName, array $command): TaskRunnerBuilderInterface
+    public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskRunnerBuilder($toolName, $command, $this->report ? $this->createToolReport($toolName) : null);
+        return new TaskBuilder($toolName, $command);
     }
 
     /**
      * @param string   $toolName
      * @param string[] $arguments
      *
-     * @return TaskRunnerBuilder
+     * @return TaskBuilder
      */
-    public function buildRunPhar(string $toolName, array $arguments = []): TaskRunnerBuilderInterface
+    public function buildRunPhar(string $toolName, array $arguments = []): TaskBuilderInterface
     {
         return $this->buildRunProcess($toolName, array_merge(
             [$this->phpCliBinary],
@@ -86,15 +78,5 @@ class TaskFactory implements TaskFactoryInterface
             [$this->phpcqPath . '/' . $this->installed->getTool($toolName, '*')->getPharUrl()],
             $arguments
         ));
-    }
-
-    public function createToolReport(string $toolName): ToolReportInterface
-    {
-        // Fixme: We need to tell the plugin if we transform the output.
-        if ($this->report === null) {
-            throw new RuntimeException(sprintf('No report assigned. Creating a tool report is not possible.'));
-        }
-
-        return $this->report->addToolReport($toolName);
     }
 }

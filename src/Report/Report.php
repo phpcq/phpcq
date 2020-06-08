@@ -26,6 +26,6 @@ final class Report implements ReportInterface
 
     public function addToolReport(string $toolName): ToolReportInterface
     {
-        return new ToolReport($toolName, $this->report->createToolReport($toolName), $this->tempDir);
+        return new ToolReport($this->report->createToolReport($toolName), $this->tempDir);
     }
 }

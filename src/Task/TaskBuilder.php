@@ -6,15 +6,11 @@ namespace Phpcq\Task;
 
 use Phpcq\OutputTransformer\ConsoleOutputTransformerFactory;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
-use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\PluginApi\Version10\TaskRunnerBuilderInterface;
-use Phpcq\PluginApi\Version10\TaskRunnerInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;
 
-use function assert;
-
-final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
+final class TaskBuilder implements TaskBuilderInterface
 {
     /**
      * @var string
@@ -52,26 +48,20 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     private $transformerFactory;
 
     /**
-     * @var ToolReportInterface|null
-     */
-    private $report;
-
-    /**
      * Create a new instance.
      *
      * @param string[] $command
      */
-    public function __construct(string $toolName, array $command, ?ToolReportInterface $report)
+    public function __construct(string $toolName, array $command)
     {
         $this->toolName = $toolName;
         $this->command = $command;
-        $this->report = $report;
     }
 
     /**
      * @return self
      */
-    public function withWorkingDirectory(string $cwd): TaskRunnerBuilderInterface
+    public function withWorkingDirectory(string $cwd): TaskBuilderInterface
     {
         $this->cwd = $cwd;
 
@@ -83,7 +73,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @return self
      */
-    public function withEnv(array $env): TaskRunnerBuilderInterface
+    public function withEnv(array $env): TaskBuilderInterface
     {
         $this->env = $env;
 
@@ -96,7 +86,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @return self
      */
-    public function withInput($input): TaskRunnerBuilderInterface
+    public function withInput($input): TaskBuilderInterface
     {
         $this->input = $input;
 
@@ -108,7 +98,7 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
      *
      * @return self
      */
-    public function withTimeout($timeout): TaskRunnerBuilderInterface
+    public function withTimeout($timeout): TaskBuilderInterface
     {
         $this->timeout = $timeout;
 
@@ -118,46 +108,24 @@ final class TaskRunnerBuilder implements TaskRunnerBuilderInterface
     /**
      * @return self
      */
-    public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskRunnerBuilderInterface
+    public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskBuilderInterface
     {
         $this->transformerFactory = $factory;
 
         return $this;
     }
 
-    public function build(): TaskRunnerInterface
+    public function build(): TaskInterface
     {
-        if ($this->report === null) {
-            return $this->buildExecTaskRunner();
-        }
-
-        return $this->buildProcessTaskRunner();
-    }
-
-    private function buildProcessTaskRunner(): TaskRunnerInterface
-    {
-        assert($this->report instanceof ReportInterface);
-
         $transformerFactory = $this->transformerFactory;
         if (null === $transformerFactory) {
             $transformerFactory = new ConsoleOutputTransformerFactory($this->toolName);
         }
 
-        return new ReportWritingProcessTaskRunner(
+        return new ProcessTask(
+            $this->toolName,
             $this->command,
-            $this->report,
             $transformerFactory,
-            $this->cwd,
-            $this->env,
-            $this->input,
-            $this->timeout
-        );
-    }
-
-    private function buildExecTaskRunner(): TaskRunnerInterface
-    {
-        return new ConsoleWritingExecTaskRunner(
-            $this->command,
             $this->cwd,
             $this->env,
             $this->input,
