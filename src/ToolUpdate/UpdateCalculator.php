@@ -10,6 +10,17 @@ use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\RepositoryPool;
 use Phpcq\Repository\ToolInformationInterface;
 
+/**
+ * @psalm-import-type TToolConfig from \Phpcq\ConfigLoader
+ *
+ * @psalm-type TUpdateTask = array{
+ *    type: 'install'|'keep'|'remove'|'upgrade',
+ *    message: string,
+ *    tool: ToolInformationInterface,
+ *    old?: ToolInformationInterface,
+ *    signed?: boolean,
+ * }
+ */
 final class UpdateCalculator
 {
     /**
@@ -37,6 +48,9 @@ final class UpdateCalculator
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
      *                             tools.
+     *
+     * @psalm-param array<string,TToolConfig> $tools
+     * @psalm-return list<TUpdateTask>
      */
     public function calculate(array $tools, bool $forceReinstall = false): array
     {
@@ -45,6 +59,9 @@ final class UpdateCalculator
         return $this->calculateTasksToExecute($desired, $tools, $forceReinstall);
     }
 
+    /**
+     * @psalm-param array<string,TToolConfig> $tools
+     */
     private function calculateDesiredTools(array $tools): RepositoryInterface
     {
         $desired = new Repository();
@@ -63,10 +80,10 @@ final class UpdateCalculator
      * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
      *                             tools.
      *
-     * @return (ToolInformationInterface|mixed|string)[][]
+     * @psalm-param array<string,TToolConfig> $tools
      *
-     * @psalm-return list<array{type: string, tool: ToolInformationInterface, old?: ToolInformationInterface,
-     * message: string, signed?: mixed}>
+     * @return array[]
+     * @psalm-return list<TUpdateTask>
      */
     public function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -75,8 +92,8 @@ final class UpdateCalculator
     ): array {
         // Determine diff to current installation.
         $tasks = [];
+        /** @var ToolInformationInterface $tool */
         foreach ($desired as $tool) {
-            /** @var ToolInformationInterface $tool */
             $name = $tool->getName();
             // Not installed yet => install.
             if (!$this->installed->hasTool($name, '*')) {
@@ -112,8 +129,8 @@ final class UpdateCalculator
             ];
         }
         // Determine uninstalls now.
+        /** @var ToolInformationInterface $tool */
         foreach ($this->installed as $tool) {
-            /** @var ToolInformationInterface $tool */
             $name = $tool->getName();
             if (!$desired->hasTool($name, '*')) {
                 $message = 'Will remove ' . $name . ' version ' . $tool->getVersion();

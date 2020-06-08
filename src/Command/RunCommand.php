@@ -132,7 +132,7 @@ final class RunCommand extends AbstractCommand
         $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($reportBuffer, $projectConfig);
 
-        $consoleOutput->writeln('Finished.', $consoleOutput::VERBOSITY_VERBOSE, $consoleOutput::CHANNEL_STDERR);
+        $consoleOutput->writeln('Finished.', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         return $exitCode;
     }
 

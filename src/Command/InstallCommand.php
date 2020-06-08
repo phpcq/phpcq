@@ -11,6 +11,9 @@ use Phpcq\Repository\RepositoryPool;
 use Phpcq\ToolUpdate\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ */
 final class InstallCommand extends AbstractUpdateCommand
 {
     protected function configure(): void
@@ -31,6 +34,7 @@ final class InstallCommand extends AbstractUpdateCommand
         return parent::doExecute();
     }
 
+    /** @psalm-return list<TUpdateTask> */
     protected function calculateTasks(): array
     {
         if (null !== $this->lockFileRepository) {

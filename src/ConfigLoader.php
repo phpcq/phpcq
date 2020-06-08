@@ -13,6 +13,22 @@ use function array_fill_keys;
 use function array_key_exists;
 use function array_keys;
 
+/**
+ * @psalm-type TToolConfig = array{
+ *    version: string,
+ *    signed: bool
+ * }
+ * @psalm-type TConfig = array{
+ *   directories: list<string>,
+ *   artifact: string,
+ *   trusted-keys: list<string>,
+ *   chains: array<string,array<string,array|null>>,
+ *   tools: array<string,TToolConfig>,
+ *   tool-config: array<string,array>,
+ *   repositories: list<int, string>,
+ *   auth: array
+ * }
+ */
 final class ConfigLoader
 {
     /**
@@ -24,6 +40,8 @@ final class ConfigLoader
      * Load configuration from yaml file and return a preprocessed configuration.
      *
      * @param string $configPath Path of the yaml configuration file.
+     *
+     * @psalm-return TConfig
      */
     public static function load(string $configPath): array
     {
@@ -35,6 +53,9 @@ final class ConfigLoader
         $this->configPath = $configPath;
     }
 
+    /**
+     * @psalm-return TConfig
+     */
     public function getConfig(): array
     {
         $config = Yaml::parseFile($this->configPath);
@@ -56,6 +77,9 @@ final class ConfigLoader
         return $merged;
     }
 
+    /**
+     * @psalm-return TConfig
+     */
     private function mergeConfig(array $config): array
     {
         $defaultDirs = [];

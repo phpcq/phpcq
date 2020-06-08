@@ -9,7 +9,7 @@ phpcq:
     phpunit:
       version: ^9.0
     psalm:
-      version: ^3.10.0
+      version: ^3.11.5
     composer-require-checker:
       version: ^2.0.0
     phpmd:

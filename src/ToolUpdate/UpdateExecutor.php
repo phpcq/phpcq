@@ -20,6 +20,10 @@ use Phpcq\Repository\ToolInformationInterface;
 use function file_get_contents;
 use function sprintf;
 
+/**
+ * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ * @psalm-import-type TInstallTask from \Phpcq\ToolUpdate\UpdateCalculator
+ */
 final class UpdateExecutor
 {
     public const TRUST_SIGNED = 'signed';
@@ -65,6 +69,7 @@ final class UpdateExecutor
         $this->lockFileRepository = $lockFileRepository;
     }
 
+    /** @psalm-param list<TUpdateTask> $tasks */
     public function execute(array $tasks): void
     {
         $installed      = new Repository();
@@ -72,7 +77,6 @@ final class UpdateExecutor
 
         foreach ($tasks as $task) {
             $tool = $task['tool'];
-            assert($tool instanceof ToolInformationInterface);
 
             switch ($task['type']) {
                 case 'keep':
@@ -85,10 +89,12 @@ final class UpdateExecutor
                     );
                     break;
                 case 'install':
+                    /** @psalm-suppress PossiblyUndefinedArrayOffset - See https://github.com/vimeo/psalm/issues/3548 */
                     $installed->addVersion($this->installTool($tool, $task['signed']));
                     $lockRepository->addVersion($tool);
                     break;
                 case 'upgrade':
+                    /** @psalm-suppress PossiblyUndefinedArrayOffset - See https://github.com/vimeo/psalm/issues/3548 */
                     $installed->addVersion($this->upgradeTool($tool, $task['old'], $task['signed']));
                     $lockRepository->addVersion($tool);
                     break;
@@ -188,6 +194,7 @@ final class UpdateExecutor
             return;
         }
 
+        /** @psalm-var array<string,string> $hashMap */
         static $hashMap = [
             ToolHash::SHA_1   => 'sha1',
             ToolHash::SHA_256 => 'sha256',

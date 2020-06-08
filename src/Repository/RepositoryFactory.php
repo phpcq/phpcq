@@ -22,21 +22,21 @@ class RepositoryFactory
     }
 
     /**
-     * @psalm-param array<int, string|null> $repositories
-     *
-     * @param array $repositories
+     * @param mixed[] $repositories
+     * @psalm-param list<string|mixed> $repositories
      */
     public function buildPool(array $repositories): RepositoryPool
     {
         $pool = new RepositoryPool();
 
+        /** @var string|mixed $repository */
         foreach ($repositories as $repository) {
-            if (!is_string($repository)) {
-                throw new InvalidConfigException('Repository has to be a string');
-                // TODO: handle different repository types here.
+            if (is_string($repository)) {
+                $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
             }
 
-            $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
+            throw new InvalidConfigException('Repository has to be a string');
+            // TODO: handle different repository types here.
         }
 
         return $pool;

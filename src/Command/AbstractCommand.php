@@ -20,6 +20,9 @@ use function is_dir;
 use function mkdir;
 use function sprintf;
 
+/**
+ * @psalm-import-type TConfig from \Phpcq\ConfigLoader
+ */
 abstract class AbstractCommand extends Command
 {
     /**
@@ -54,6 +57,7 @@ abstract class AbstractCommand extends Command
      *
      * @var array
      *
+     * @psalm-var TConfig
      * @psalm-suppress PropertyNotSetInConstructor
      */
     protected $config;

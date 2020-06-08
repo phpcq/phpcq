@@ -18,10 +18,13 @@ use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Signature\SignatureFileDownloader;
 use Phpcq\ToolUpdate\UpdateExecutor;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
+ *
+ * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
  */
 abstract class AbstractUpdateCommand extends AbstractCommand
 {
@@ -104,8 +107,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
+    /** @psalm-return list<TUpdateTask> */
     abstract protected function calculateTasks(): array;
 
+    /** @psalm-param list<TUpdateTask> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $signatureVerifier = new SignatureVerifier(
@@ -135,11 +140,14 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             return AlwaysStrategy::TRUST();
         }
 
+        $questionHelper = $this->getHelper('question');
+        assert($questionHelper instanceof QuestionHelper);
+
         return new InteractiveQuestionKeyTrustStrategy(
             new TrustedKeysStrategy($this->config['trusted-keys']),
             $this->input,
             $this->output,
-            $this->getHelper('question')
+            $questionHelper
         );
     }
 }

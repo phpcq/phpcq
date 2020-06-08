@@ -32,8 +32,8 @@ class LockFileDumper
             'phars' => [],
         ];
 
+        /** @var ToolInformationInterface $tool */
         foreach ($repository as $tool) {
-            /** @var ToolInformationInterface $tool */
             $name = $tool->getName();
 
             if (!isset($data['phars'][$name])) {

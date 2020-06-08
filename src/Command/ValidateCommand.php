@@ -60,6 +60,7 @@ final class ValidateCommand extends AbstractCommand
      */
     protected function validatePlugin(PluginRegistry $plugins, string $toolName, ?string $chain = null): bool
     {
+        /** @psalm-var array<string,array<string,bool>> */
         static $cache = [];
 
         $plugin = $plugins->getPluginByName($toolName);
@@ -75,7 +76,7 @@ final class ValidateCommand extends AbstractCommand
             : null;
 
         if (null === $configuration) {
-            $configuration = $this->config['tools-config'][$name] ?? [];
+            $configuration = $this->config['tool-config'][$name] ?? [];
         }
 
         $hash = md5(serialize($configuration));

@@ -22,8 +22,9 @@ class JsonRepositoryDumper
     public function dump(RepositoryInterface $repository, string $filename): void
     {
         $data = ['phars' => []];
+
+        /** @var ToolInformationInterface $tool */
         foreach ($repository as $tool) {
-            /** @var ToolInformationInterface $tool */
             $name = $tool->getName();
 
             if (!isset($data['phars'][$name])) {

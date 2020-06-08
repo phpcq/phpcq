@@ -78,7 +78,7 @@ final class ExecCommand extends AbstractCommand
         $toolName = $this->input->getArgument('tool');
         assert(is_string($toolName));
 
-        /** @var array $toolArguments */
+        /** @psalm-var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
         $task = $taskFactory
             ->buildRunPhar($toolName, $toolArguments)

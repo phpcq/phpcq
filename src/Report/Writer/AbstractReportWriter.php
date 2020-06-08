@@ -53,6 +53,10 @@ abstract class AbstractReportWriter
     {
         $this->targetPath  = $targetPath;
         $this->report      = $report;
+        /**
+         * @psalm-suppress MixedOperand - No way to indicate type of static references constants
+         * @psalm-suppress MixedArgument
+         */
         $this->xml         = new XmlBuilder($targetPath, 'phpcq:' . static::ROOT_NODE_NAME, static::XML_NAMESPACE);
         $this->filesystem  = new Filesystem();
         $this->filesystem->mkdir($this->targetPath);
@@ -71,6 +75,7 @@ abstract class AbstractReportWriter
 
         $this->appendReportXml($rootNode);
 
+        /** @psalm-suppress MixedArgument */
         $this->xml->write(static::REPORT_FILE);
     }
 
