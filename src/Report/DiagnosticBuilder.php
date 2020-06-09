@@ -39,6 +39,12 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
     /** @var string|null */
     private $externalInfoUrl;
 
+    /** @var string[] */
+    private $classNames = [];
+
+    /** @var string[] */
+    private $categories = [];
+
     /** @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback */
     public function __construct(ToolReportInterface $parent, string $severity, string $message, callable $callback)
     {
@@ -83,6 +89,20 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    public function forClass(string $className): DiagnosticBuilderInterface
+    {
+        $this->classNames[$className] = $className;
+
+        return $this;
+    }
+
+    public function withCategory(string $category): DiagnosticBuilderInterface
+    {
+        $this->categories[$category] = $category;
+
+        return $this;
+    }
+
     public function end(): ToolReportInterface
     {
         foreach ($this->pendingFiles as $pendingBuilder) {
@@ -90,7 +110,15 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         }
         call_user_func(
             $this->callback,
-            new DiagnosticBuffer($this->severity, $this->message, $this->source, $this->files, $this->externalInfoUrl),
+            new DiagnosticBuffer(
+                $this->severity,
+                $this->message,
+                $this->source,
+                $this->files,
+                $this->externalInfoUrl,
+                array_values($this->classNames),
+                array_values($this->categories)
+            ),
             $this
         );
 

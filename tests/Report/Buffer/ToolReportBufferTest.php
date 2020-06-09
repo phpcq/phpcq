@@ -54,7 +54,9 @@ class ToolReportBufferTest extends TestCase
     public function testAddsDiagnostic(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name');
-        $buffer->addDiagnostic($diagnostic = new DiagnosticBuffer('error', 'test message', null, null, null));
+        $buffer->addDiagnostic(
+            $diagnostic = new DiagnosticBuffer('error', 'test message', null, null, null, null, null)
+        );
 
         $diagnostics = iterator_to_array($buffer->getDiagnostics());
         $this->assertCount(1, $diagnostics);

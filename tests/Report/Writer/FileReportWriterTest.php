@@ -18,6 +18,10 @@ use function unlink;
 
 use const DATE_ATOM;
 
+/**
+ * @covers \Phpcq\Report\Writer\AbstractReportWriter
+ * @covers \Phpcq\Report\Writer\FileReportWriter
+ */
 final class FileReportWriterTest extends AbstractWriterTest
 {
     public function testWriteEmptyReport(): void
@@ -79,16 +83,42 @@ XML;
     <phpcq:tool name="tool2" status="failed"/>
   </phpcq:abstract>
   <phpcq:global>
-    <phpcq:diagnostic severity="info" source="baz" tool="tool">Foo bar</phpcq:diagnostic>
+    <phpcq:diagnostic severity="info" source="baz" tool="tool">
+      <phpcq:message>Foo bar</phpcq:message>
+    </phpcq:diagnostic>
   </phpcq:global>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
     </phpcq:file>
   </phpcq:files>
 </phpcq:file-report>
@@ -137,12 +167,36 @@ XML;
   <phpcq:global/>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">Failure</phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+        <phpcq:class_name name="Some\Class\Name"/>
+        <phpcq:class_name name="Another\Class\Name"/>
+        <phpcq:category name="category1"/>
+        <phpcq:category name="category2"/>
+        <phpcq:message>Failure</phpcq:message>
+      </phpcq:diagnostic>
     </phpcq:file>
   </phpcq:files>
 </phpcq:file-report>
@@ -164,10 +218,8 @@ XML;
         unlink($fileName);
     }
 
-    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     private function assertSchemaValidate(string $fileName): void
     {
-        $this->markTestSkipped('Schema not implemented yet');
         $dom = new DOMDocument('1.0');
         $dom->load($fileName);
         $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../doc/file-report.xsd'));

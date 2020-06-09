@@ -292,14 +292,18 @@ class DiagnosticIteratorTest extends TestCase
         string $message,
         ?string $source = null,
         ?FileRangeBuffer $fileRange = null,
-        ?string $externalInfoUrl = null
+        ?string $externalInfoUrl = null,
+        ?array $classNames = null,
+        ?array $categories = null
     ): DiagnosticBuffer {
         return new DiagnosticBuffer(
             $severity,
             $message,
             $source,
             $fileRange ? [$fileRange] : null,
-            $externalInfoUrl
+            $externalInfoUrl,
+            $classNames,
+            $categories
         );
     }
 

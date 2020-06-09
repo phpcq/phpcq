@@ -23,6 +23,12 @@ final class DiagnosticBuffer
     /** @var string|null */
     private $externalInfoUrl;
 
+    /** @var null|string[] */
+    private $classNames = [];
+
+    /** @var null|string[] */
+    private $categories = [];
+
     /**
      * @param null|FileRangeBuffer[] $fileRanges
      */
@@ -31,13 +37,17 @@ final class DiagnosticBuffer
         string $message,
         ?string $source,
         ?array $fileRanges,
-        ?string $externalInfoUrl
+        ?string $externalInfoUrl,
+        ?array $classNames,
+        ?array $categories
     ) {
         $this->severity   = $severity;
         $this->message    = $message;
         $this->source     = $source;
         $this->fileRanges = $fileRanges ?: null;
         $this->externalInfoUrl = $externalInfoUrl;
+        $this->classNames = $classNames ?: null;
+        $this->categories = $categories ?: null;
     }
 
     /**
@@ -79,5 +89,37 @@ final class DiagnosticBuffer
     public function getExternalInfoUrl(): ?string
     {
         return $this->externalInfoUrl;
+    }
+
+    public function hasClassNames(): bool
+    {
+        return null !== $this->classNames;
+    }
+
+    /** @psalm-return Generator<int, string> */
+    public function getClassNames(): Generator
+    {
+        if (null === $this->classNames) {
+            return;
+        }
+        foreach ($this->classNames as $className) {
+            yield $className;
+        }
+    }
+
+    public function hasCategories(): bool
+    {
+        return null !== $this->categories;
+    }
+
+    /** @psalm-return Generator<int, string> */
+    public function getCategories(): Generator
+    {
+        if (null === $this->categories) {
+            return;
+        }
+        foreach ($this->categories as $category) {
+            yield $category;
+        }
     }
 }
