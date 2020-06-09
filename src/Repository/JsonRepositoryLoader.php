@@ -20,19 +20,29 @@ use function is_array;
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
  * }
- * @psalm-type TBootstrap = array
- * @psalm-type TToolConfig = array{
+ * @psalm-type TBootstrapInline = array{
+ *    type: 'inline',
+ *    code: string,
+ *    plugin-version: string
+ * }
+ * @psalm-type TBootstrapFile = array{
+ *    type: 'file',
+ *    url: string,
+ *    plugin-version: string
+ * }
+ * @psalm-type TBootstrap = TBootstrapInline|TBootstrapFile
+ * @psalm-type TToolConfigJson = array{
  *    version: string,
  *    phar-url: string,
- *    checksum: THash,
  *    bootstrap: string|TBootstrap,
- *    signed: bool,
- *    requirements: array<string,string>
+ *    requirements: array<string,string>,
+ *    hash?: THash,
+ *    signature?: string
  * }
  * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
  * @psalm-type TJsonRepository = array{
- *   bootstraps?: list<TBootstrap>,
- *   phars: array<string,TRepositoryInclude|list<TToolConfig>>,
+ *   bootstraps?: array<string, TBootstrap>,
+ *   phars: array<string,TRepositoryInclude|list<TToolConfigJson>>,
  * }
  */
 class JsonRepositoryLoader
@@ -109,7 +119,10 @@ class JsonRepositoryLoader
         }
     }
 
-    /** @psalm-param list<TToolConfig> $versionList */
+    /**
+     * @psalm-param list<TToolConfigJson> $versionList
+     * @psalm-param array<string, TBootstrap> $bootstrapLookup
+     */
     private function handleVersionList(
         string $toolName,
         array $versionList,
@@ -137,6 +150,8 @@ class JsonRepositoryLoader
 
     /**
      * @param string|array $bootstrap
+     * @param-param string|TBootstrap $bootstrap
+     * @psalm-param array<string, TBootstrap> $bootstrapLookup
      */
     private function makeBootstrap($bootstrap, array $bootstrapLookup, string $baseDir): BootstrapInterface
     {
@@ -146,6 +161,8 @@ class JsonRepositoryLoader
             }
             $bootstrap = $bootstrapLookup[$bootstrap];
         }
+
+        /** @psalm-suppress DocblockTypeContradiction */
         if (!is_array($bootstrap)) {
             throw new RuntimeException('Invalid bootstrap definition: ' . json_encode($bootstrap));
         }
@@ -153,8 +170,10 @@ class JsonRepositoryLoader
         switch ($bootstrap['type']) {
             case 'inline':
                 // Static bootstrapper.
+                /** @psalm-var TBootstrapInline $bootstrap */
                 return new InlineBootstrap($bootstrap['plugin-version'], $bootstrap['code']);
             case 'file':
+                /** @psalm-var TBootstrapFile $bootstrap */
                 return new RemoteBootstrap(
                     $bootstrap['plugin-version'],
                     $bootstrap['url'],

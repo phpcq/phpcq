@@ -72,9 +72,6 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this->pendingFiles[spl_object_hash($builder)] = $builder;
     }
 
-    /**
-     * @return self
-     */
     public function fromSource(string $source): DiagnosticBuilderInterface
     {
         $this->source = $source;

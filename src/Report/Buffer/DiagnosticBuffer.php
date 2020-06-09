@@ -31,6 +31,8 @@ final class DiagnosticBuffer
 
     /**
      * @param null|FileRangeBuffer[] $fileRanges
+     * @param null|string[] $classNames
+     * @param null|string[] $categories
      */
     public function __construct(
         string $severity,
