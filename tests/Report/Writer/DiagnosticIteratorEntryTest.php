@@ -17,7 +17,7 @@ class DiagnosticIteratorEntryTest extends TestCase
     {
         $entry = new DiagnosticIteratorEntry(
             $tool = new ToolReportBuffer('tool-name', 'report-name'),
-            $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null),
+            $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             null
         );
         $this->assertSame($tool, $entry->getTool());
@@ -31,7 +31,7 @@ class DiagnosticIteratorEntryTest extends TestCase
     {
         $entry = new DiagnosticIteratorEntry(
             $tool = new ToolReportBuffer('tool-name', 'report-name'),
-            $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null),
+            $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             $range = new FileRangeBuffer('some/file', null, null, null, null)
         );
         $this->assertSame($tool, $entry->getTool());

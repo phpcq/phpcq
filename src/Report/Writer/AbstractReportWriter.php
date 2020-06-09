@@ -114,7 +114,29 @@ abstract class AbstractReportWriter
         if (null !== $externalInfoUrl = $diagnostic->getExternalInfoUrl()) {
             $this->xml->setAttribute($diagnosticElement, 'external_info_url', $externalInfoUrl);
         }
-        $this->xml->setTextContent($diagnosticElement, $diagnostic->getMessage());
+        if ($diagnostic->hasClassNames()) {
+            foreach ($diagnostic->getClassNames() as $category) {
+                $this->xml->setAttribute(
+                    $this->xml->createElement('class_name', $diagnosticElement),
+                    'name',
+                    $category
+                );
+            }
+        }
+        if ($diagnostic->hasCategories()) {
+            foreach ($diagnostic->getCategories() as $category) {
+                $this->xml->setAttribute(
+                    $this->xml->createElement('category', $diagnosticElement),
+                    'name',
+                    $category
+                );
+            }
+        }
+
+        $this->xml->setTextContent(
+            $this->xml->createElement('message', $diagnosticElement),
+            $diagnostic->getMessage()
+        );
 
         return $diagnosticElement;
     }

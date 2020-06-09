@@ -112,48 +112,73 @@
         A diagnostic entry found by a tool.
       </xs:documentation>
     </xs:annotation>
-    <xs:simpleContent>
-      <xs:extension base="tns:nonEmptyStringCollapsedType">
-        <xs:attribute type="xs:int" name="line">
-          <xs:annotation>
-            <xs:documentation>
-              Optional line number within the file denoted by "file" the diagnostic begins on.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:int" name="column">
-          <xs:annotation>
-            <xs:documentation>
-              Optional column on the line denoted by "line" within the file denoted by "file" the diagnostic begins on.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:int" name="line_end">
-          <xs:annotation>
-            <xs:documentation>
-              Optional line number within the file denoted by "file" the diagnostic ends on.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:int" name="column_end">
-          <xs:annotation>
-            <xs:documentation>
-              Optional column on the line denoted by "line_end" within the file denoted by "file" the diagnostic ends on.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="xs:string" name="file">
-          <xs:annotation>
-            <xs:documentation>
-              Optional file name the diagnostic relates to.
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required"/>
-        <xs:attribute type="tns:nonEmptyStringType" name="source"/>
-        <xs:attribute type="tns:nonEmptyStringType" name="external_info_url"/>
-      </xs:extension>
-    </xs:simpleContent>
+    <xs:sequence>
+      <xs:element name="class_name" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            One or more classes this diagnostic relates to.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="name" type="tns:nonEmptyStringType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="category" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            One or more categories this diagnostic can be described as.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="name" type="tns:nonEmptyStringType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="message" type="tns:nonEmptyStringCollapsedType">
+        <xs:annotation>
+          <xs:documentation>
+            The message of the diagnostic.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute type="xs:int" name="line">
+      <xs:annotation>
+        <xs:documentation>
+          Optional line number within the file denoted by "file" the diagnostic begins on.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="column">
+      <xs:annotation>
+        <xs:documentation>
+          Optional column on the line denoted by "line" within the file denoted by "file" the diagnostic begins on.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="line_end">
+      <xs:annotation>
+        <xs:documentation>
+          Optional line number within the file denoted by "file" the diagnostic ends on.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:int" name="column_end">
+      <xs:annotation>
+        <xs:documentation>
+          Optional column on the line denoted by "line_end" within the file denoted by "file" the diagnostic ends on.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="xs:string" name="file">
+      <xs:annotation>
+        <xs:documentation>
+          Optional file name the diagnostic relates to.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute type="tns:toolDiagnosticSeverityType" name="severity" use="required"/>
+    <xs:attribute type="tns:nonEmptyStringType" name="source"/>
+    <xs:attribute type="tns:nonEmptyStringType" name="external_info_url"/>
   </xs:complexType>
 
   <xs:simpleType name="toolDiagnosticSeverityType">
@@ -165,7 +190,12 @@
     <xs:restriction base="tns:nonEmptyStringType">
       <xs:enumeration value="info">
         <xs:annotation>
-          <xs:documentation>An non issue - strictly informational.</xs:documentation>
+          <xs:documentation>A non issue - strictly informational.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="notice">
+        <xs:annotation>
+          <xs:documentation>Normal but significant diagnostic - no action has to be taken.</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
       <xs:enumeration value="warning">

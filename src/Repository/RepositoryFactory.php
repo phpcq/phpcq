@@ -33,6 +33,7 @@ class RepositoryFactory
         foreach ($repositories as $repository) {
             if (is_string($repository)) {
                 $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
+                break;
             }
 
             throw new InvalidConfigException('Repository has to be a string');
