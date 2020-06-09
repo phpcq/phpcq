@@ -55,7 +55,6 @@ class InstalledRepositoryLoader
         $fileName         = basename($filePath);
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->readFile($fileName, $baseDir);
-        /** @psalm-var TInstalledRepository $data */
         foreach ($data['phars'] as $toolName => $versions) {
             $this->handleVersionList($toolName, $versions, $baseDir);
         }
