@@ -22,7 +22,6 @@ use function sprintf;
 
 /**
  * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
- * @psalm-import-type TInstallTask from \Phpcq\ToolUpdate\UpdateCalculator
  */
 final class UpdateExecutor
 {

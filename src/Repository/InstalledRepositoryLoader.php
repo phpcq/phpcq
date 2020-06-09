@@ -11,6 +11,20 @@ use Phpcq\Platform\PlatformRequirementCheckerInterface;
  * Load a installed.json file.
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-type TBootstrap = array{
+ *   type: string,
+ *   code?: string,
+ *   url?: string
+ * }
+ * @psalm-type TToolConfig = array{
+ *    version: string,
+ *    signed: bool,
+ *    bootstrap: TBootstrap
+ * }
+ * @psalm-type TInstalledRepository = array{
+ *   bootstraps: array,
+ *   phars: array<string,list<TToolConfig>>,
+*  }
  */
 class InstalledRepositoryLoader
 {
@@ -40,6 +54,7 @@ class InstalledRepositoryLoader
         $fileName         = basename($filePath);
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->readFile($fileName, $baseDir);
+        /** @psalm-var list<TToolConfig> $versions */
         foreach ($data['phars'] as $toolName => $versions) {
             if (!is_array($versions)) {
                 throw new RuntimeException('Invalid version list');

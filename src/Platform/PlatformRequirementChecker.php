@@ -11,7 +11,7 @@ use Composer\Semver\VersionParser;
 class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
 {
     /**
-     * @var Closure
+     * @var callable(string, string) : bool
      */
     private $callback;
 

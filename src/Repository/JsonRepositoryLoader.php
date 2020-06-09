@@ -16,6 +16,23 @@ use function is_array;
  * Load a json file.
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-type THash = array{
+ *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
+ *   value: string
+ * }
+ * @psalm-type TToolConfig = array{
+ *    version: string,
+ *    url: string,
+ *    checksum: string,
+ *    signed: bool,
+ *
+ * }
+ * @psalm-type TBootstrap = array
+ * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
+ * @psalm-type TJsonRepository = array{
+ *   bootstraps?: list<TBootstrap>,
+ *   phars: array<string,list<TToolConfig>|TRepositoryInclude>,
+ * }
  */
 class JsonRepositoryLoader
 {
@@ -56,6 +73,7 @@ class JsonRepositoryLoader
         $this->bypassCache = $bypassCache;
     }
 
+    /** @psalm-param ?THash $hash */
     public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
         $this->repository = new Repository($this->requirementChecker);
@@ -64,17 +82,16 @@ class JsonRepositoryLoader
         return $this->repository;
     }
 
+    /** @psalm-param ?THash $hash */
     private function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
     {
         $baseDir          = $baseDir ?? dirname($filePath);
         $data             = $this->downloader->downloadJsonFile($filePath, $baseDir, $this->bypassCache, $hash);
         $bootstrapLookup  = $data['bootstraps'] ?? [];
         foreach ($data['phars'] as $toolName => $versions) {
-            if (!is_array($versions)) {
-                throw new RuntimeException('Invalid version list');
-            }
             // Include? - load it!
             if (['url', 'checksum'] === array_keys($versions)) {
+                /** @psalm-var TRepositoryInclude $versions*/
                 /** @psalm-suppress PossiblyInvalidArgument */
                 $this->includeFile(
                     $versions['url'],
@@ -89,6 +106,7 @@ class JsonRepositoryLoader
         }
     }
 
+    /** @psalm-param list<TToolConfig> $versionList */
     private function handleVersionList(
         string $toolName,
         array $versionList,

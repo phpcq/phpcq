@@ -6,6 +6,12 @@ namespace Phpcq\Repository;
 
 use Phpcq\Exception\InvalidHashException;
 
+/**
+ * @psalm-type THash = array{
+ *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
+ *   value: string
+ * }
+ */
 class ToolHash
 {
     public const SHA_1   = 'sha-1';

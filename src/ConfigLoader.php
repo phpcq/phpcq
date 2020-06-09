@@ -58,6 +58,7 @@ final class ConfigLoader
      */
     public function getConfig(): array
     {
+        /** @psalm-var array */
         $config = Yaml::parseFile($this->configPath);
 
         if (!isset($config['phpcq'])) {

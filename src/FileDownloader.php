@@ -9,11 +9,17 @@ use GuzzleHttp\Exception\RequestException;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
 
+use Phpcq\Repository\ToolHash;
 use function file_get_contents;
 use function file_put_contents;
 use function is_file;
 use function strpos;
 
+/**
+ * @psalm-import-type TJsonRepository from \Phpcq\Repository\JsonRepositoryLoader
+ * @psalm-import-type TToolConfig from \Phpcq\ConfigLoader
+ * @psalm-import-type THash from \Phpcq\Repository\ToolHash
+ */
 class FileDownloader
 {
     /**
@@ -59,7 +65,7 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param array{type: string, value:string}|null $hash
+     * @psalm-param ?THash $hash
      *
      * @return string
      */
@@ -102,13 +108,17 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param array{type: string, value:string}|null $hash
+     * @psalm-param ?THash $hash
      *
      * @return array
+     * @psalm-return TJsonRepository
      */
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
-        /** @var null|array $data */
+        /**
+         * @var null|array $data
+         * @psalm-var ?TJsonRepository $data
+         */
         $data = json_decode($this->downloadFile($url, $baseDir, $force, $hash), true);
         if (null === $data) {
             throw new RuntimeException('Invalid repository ' . $url);
@@ -149,7 +159,7 @@ class FileDownloader
      * @param string     $cacheFile The file to check
      * @param array|null $hash      he hash to validate.
      *
-     * @psalm-param array{type: string, value:string}|null $hash
+     * @psalm-param ?THash $hash
      *
      * @return bool
      */
@@ -159,12 +169,12 @@ class FileDownloader
             return false;
         }
 
-        /** @var array<string, string> $hashMap */
+        /** @psalm-var array<ToolHash::SHA_1|ToolHash::SHA_256|ToolHash::SHA_384|ToolHash::SHA_512, string> $hashMap */
         static $hashMap = [
-            'sha-1'   => 'sha1',
-            'sha-256' => 'sha256',
-            'sha-384' => 'sha384',
-            'sha-512' => 'sha512',
+            ToolHash::SHA_1   => 'sha1',
+            ToolHash::SHA_256 => 'sha256',
+            ToolHash::SHA_384 => 'sha384',
+            ToolHash::SHA_512 => 'sha512',
         ];
 
         if (!isset($hashMap[$hash['type']])) {

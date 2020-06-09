@@ -9,9 +9,13 @@ use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Repository\ToolInformationInterface;
 
 use function get_class;
 
+/**
+ * @psalm-import-type TInstalledRepository from \Phpcq\Repository\InstalledRepositoryLoader
+ */
 final class PluginRegistry implements IteratorAggregate
 {
     /** @var array<string, PluginInterface> */
@@ -32,6 +36,7 @@ final class PluginRegistry implements IteratorAggregate
     {
         $instance = new self();
 
+        /** @var ToolInformationInterface $toolVersion */
         foreach ($repository as $toolVersion) {
             $bootstrap = $toolVersion->getBootstrap();
             assert($bootstrap instanceof InstalledBootstrap);
@@ -92,6 +97,7 @@ final class PluginRegistry implements IteratorAggregate
             throw new RuntimeException('Invalid path provided: ' . $jsonFile);
         }
         $baseDir  = dirname($realFile);
+        /** @psalm-var TInstalledRepository $contents */
         $contents = json_decode(file_get_contents($jsonFile), true);
         foreach ($contents['phars'] as $toolName => $toolVersions) {
             if (count($toolVersions) > 1) {
@@ -100,10 +106,11 @@ final class PluginRegistry implements IteratorAggregate
 
             $version   = $toolVersions[0];
             $bootstrap = $version['bootstrap'];
-            if (!is_array($bootstrap) || 'file' !== $bootstrap['type']) {
+            if ('file' !== $bootstrap['type']) {
                 throw new RuntimeException('Invalid bootstrap definition: ' . json_encode($bootstrap));
             }
             // Bootstrap files are in the same dir as the installed.json.
+            /** @psalm-suppress PossiblyUndefinedArrayOffset - Bootstrap type file always contains url */
             $path = realpath($baseDir . '/' . $bootstrap['url']);
             if (false === $path || !is_readable($path)) {
                 throw new RuntimeException(
