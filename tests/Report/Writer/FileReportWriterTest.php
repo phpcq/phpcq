@@ -47,13 +47,11 @@ XML;
         // phpcs:enable
         $xml = sprintf($xml, $report->getStartedAt()->format(DATE_ATOM), $report->getCompletedAt()->format(DATE_ATOM));
 
-
+        $this->assertSchemaValidate($fileName);
         $this->assertEquals(
             $xml,
             file_get_contents($fileName)
         );
-
-        $this->assertSchemaValidate($fileName);
 
         unlink($fileName);
     }
@@ -126,6 +124,7 @@ XML;
 XML;
         // phpcs:enable
 
+        $this->assertSchemaValidate($fileName);
         $this->assertEquals(
             sprintf(
                 $xml,
@@ -134,8 +133,6 @@ XML;
             ),
             file_get_contents($fileName)
         );
-
-        $this->assertSchemaValidate($fileName);
 
         unlink($fileName);
     }
@@ -204,6 +201,7 @@ XML;
 XML;
         // phpcs:enable
 
+        $this->assertSchemaValidate($fileName);
         $this->assertEquals(
             sprintf(
                 $xml,
@@ -212,8 +210,6 @@ XML;
             ),
             file_get_contents($fileName)
         );
-
-        $this->assertSchemaValidate($fileName);
 
         unlink($fileName);
     }
