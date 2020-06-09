@@ -20,18 +20,19 @@ use function is_array;
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
  * }
+ * @psalm-type TBootstrap = array
  * @psalm-type TToolConfig = array{
  *    version: string,
- *    url: string,
- *    checksum: string,
+ *    phar-url: string,
+ *    checksum: THash,
+ *    bootstrap: string|TBootstrap,
  *    signed: bool,
- *
+ *    requirements: array<string,string>
  * }
- * @psalm-type TBootstrap = array
  * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
  * @psalm-type TJsonRepository = array{
  *   bootstraps?: list<TBootstrap>,
- *   phars: array<string,list<TToolConfig>|TRepositoryInclude>,
+ *   phars: array<string,TRepositoryInclude|list<TToolConfig>>,
  * }
  */
 class JsonRepositoryLoader
@@ -91,8 +92,10 @@ class JsonRepositoryLoader
         foreach ($data['phars'] as $toolName => $versions) {
             // Include? - load it!
             if (['url', 'checksum'] === array_keys($versions)) {
-                /** @psalm-var TRepositoryInclude $versions*/
-                /** @psalm-suppress PossiblyInvalidArgument */
+                /**
+                 * @psalm-suppress PossiblyInvalidArgument
+                 * @psalm-suppress ArgumentTypeCoercion
+                 */
                 $this->includeFile(
                     $versions['url'],
                     $versions['checksum'],

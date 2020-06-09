@@ -22,8 +22,8 @@ use Phpcq\Platform\PlatformRequirementCheckerInterface;
  *    bootstrap: TBootstrap
  * }
  * @psalm-type TInstalledRepository = array{
- *   bootstraps: array,
- *   phars: array<string,list<TToolConfig>>,
+ *   bootstraps: list<TBootstrap>,
+ *   phars: array<string,list<TToolConfig>>
 *  }
  */
 class InstalledRepositoryLoader
@@ -56,10 +56,6 @@ class InstalledRepositoryLoader
         $data             = $this->readFile($fileName, $baseDir);
         /** @psalm-var list<TToolConfig> $versions */
         foreach ($data['phars'] as $toolName => $versions) {
-            if (!is_array($versions)) {
-                throw new RuntimeException('Invalid version list');
-            }
-
             /** @psalm-suppress InvalidArgument */
             $this->handleVersionList($toolName, $versions, $baseDir);
         }
