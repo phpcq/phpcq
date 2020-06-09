@@ -46,11 +46,25 @@ final class ToolReportWriter extends AbstractReportWriter
 
     protected function handleRange(DOMElement $diagnosticElement, DiagnosticIteratorEntry $entry): void
     {
-        parent::handleRange($diagnosticElement, $entry);
-
-        if (null !== ($range = $entry->getRange())) {
-            $this->xml->setAttribute($diagnosticElement, 'file', $range->getFile());
+        if (!$entry->getDiagnostic()->hasFileRanges()) {
+            $this->diagnostics->next();
+            return;
         }
+
+        // Collect ranges for this diagnostic together.
+        $diagnostic = $entry->getDiagnostic();
+        do {
+            $range = $entry->getRange();
+            if (null === $range) {
+                break;
+            }
+            $fileElement = $this->xml->createElement('file', $diagnosticElement);
+            parent::handleRange($fileElement, $entry);
+            $this->xml->setAttribute($fileElement, 'name', $range->getFile());
+            $this->diagnostics->next();
+            /** @var DiagnosticIteratorEntry $entry */
+            $entry = $this->diagnostics->current();
+        } while ($this->diagnostics->valid() && $diagnostic === $entry->getDiagnostic());
     }
 
     private function appendToolReport(DOMElement $node): void
@@ -65,8 +79,6 @@ final class ToolReportWriter extends AbstractReportWriter
         $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
         do {
             $this->createDiagnosticElement($diagnosticsElement, $entry);
-
-            $this->diagnostics->next();
             if (!$this->diagnostics->valid()) {
                 break;
             }

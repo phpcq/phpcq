@@ -70,32 +70,15 @@ XML;
         <phpcq:diagnostic severity="info" source="baz">
           <phpcq:message>Foo bar</phpcq:message>
         </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
+        <phpcq:diagnostic severity="error" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>
           <phpcq:class_name name="Another\Class\Name"/>
           <phpcq:category name="category1"/>
           <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
+          <phpcq:file line="1" name="example.php"/>
+          <phpcq:file line="1" column="2" name="example.php"/>
+          <phpcq:file line="1" column="2" line_end="3" name="example2.php"/>
+          <phpcq:file line="1" column="2" line_end="3" column_end="4" name="example2.php"/>
           <phpcq:message>Failure</phpcq:message>
         </phpcq:diagnostic>
       </phpcq:diagnostics>
@@ -142,32 +125,15 @@ XML;
   <phpcq:tools>
     <phpcq:tool name="tool" status="passed">
       <phpcq:diagnostics>
-        <phpcq:diagnostic line="1" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
+        <phpcq:diagnostic severity="error" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>
           <phpcq:class_name name="Another\Class\Name"/>
           <phpcq:category name="category1"/>
           <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" file="example.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
-          <phpcq:message>Failure</phpcq:message>
-        </phpcq:diagnostic>
-        <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" file="example2.php" severity="error" external_info_url="https://example.org/super-helpful-tip">
-          <phpcq:class_name name="Some\Class\Name"/>
-          <phpcq:class_name name="Another\Class\Name"/>
-          <phpcq:category name="category1"/>
-          <phpcq:category name="category2"/>
+          <phpcq:file line="1" name="example.php"/>
+          <phpcq:file line="1" column="2" name="example.php"/>
+          <phpcq:file line="1" column="2" line_end="3" name="example2.php"/>
+          <phpcq:file line="1" column="2" line_end="3" column_end="4" name="example2.php"/>
           <phpcq:message>Failure</phpcq:message>
         </phpcq:diagnostic>
       </phpcq:diagnostics>

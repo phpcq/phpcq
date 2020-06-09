@@ -9,6 +9,7 @@ use DOMElement;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -105,32 +106,16 @@ abstract class AbstractReportWriter
         DiagnosticIteratorEntry $entry
     ): DOMElement {
         $diagnosticElement = $this->xml->createElement('diagnostic', $parentNode);
-        $this->handleRange($diagnosticElement, $entry);
         $diagnostic = $entry->getDiagnostic();
+        $this->appendClassNames($diagnosticElement, $diagnostic);
+        $this->appendCategories($diagnosticElement, $diagnostic);
+        $this->handleRange($diagnosticElement, $entry);
         $this->xml->setAttribute($diagnosticElement, 'severity', $diagnostic->getSeverity());
         if (null !== $source = $diagnostic->getSource()) {
             $this->xml->setAttribute($diagnosticElement, 'source', $source);
         }
         if (null !== $externalInfoUrl = $diagnostic->getExternalInfoUrl()) {
             $this->xml->setAttribute($diagnosticElement, 'external_info_url', $externalInfoUrl);
-        }
-        if ($diagnostic->hasClassNames()) {
-            foreach ($diagnostic->getClassNames() as $category) {
-                $this->xml->setAttribute(
-                    $this->xml->createElement('class_name', $diagnosticElement),
-                    'name',
-                    $category
-                );
-            }
-        }
-        if ($diagnostic->hasCategories()) {
-            foreach ($diagnostic->getCategories() as $category) {
-                $this->xml->setAttribute(
-                    $this->xml->createElement('category', $diagnosticElement),
-                    'name',
-                    $category
-                );
-            }
         }
 
         $this->xml->setTextContent(
@@ -139,6 +124,26 @@ abstract class AbstractReportWriter
         );
 
         return $diagnosticElement;
+    }
+
+    protected function appendClassNames(DOMElement $node, DiagnosticBuffer $diagnostic): void
+    {
+        if (!$diagnostic->hasClassNames()) {
+            return;
+        }
+        foreach ($diagnostic->getClassNames() as $category) {
+            $this->xml->setAttribute($this->xml->createElement('class_name', $node), 'name', $category);
+        }
+    }
+
+    protected function appendCategories(DOMElement $node, DiagnosticBuffer $diagnostic): void
+    {
+        if (!$diagnostic->hasCategories()) {
+            return;
+        }
+        foreach ($diagnostic->getCategories() as $category) {
+            $this->xml->setAttribute($this->xml->createElement('category', $node), 'name', $category);
+        }
     }
 
     protected function appendAttachments(DOMElement $toolNode, ToolReportBuffer $report): void
