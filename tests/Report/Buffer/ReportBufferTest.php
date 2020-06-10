@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Buffer;
 
 use DateTimeImmutable;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use PHPUnit\Framework\TestCase;
@@ -54,5 +56,47 @@ class ReportBufferTest extends TestCase
         $this->assertSame('tool-name', $toolBuffer1->getReportName());
         $this->assertSame('tool-name-1', $toolBuffer2->getReportName());
         $this->assertSame([$toolBuffer1, $toolBuffer2], $buffer->getToolReports());
+    }
+
+    public function testCountDiagnosticsGroupedBySeverity(): void
+    {
+        $buffer = new ReportBuffer();
+        $toolBuffer = $buffer->createToolReport('tool-name');
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
+        );
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 2', null, null, null, null, null),
+        );
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_NOTICE, 'Notice 1', null, null, null, null, null),
+        );
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 1', null, null, null, null, null),
+        );
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 2', null, null, null, null, null),
+        );
+        $toolBuffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 3', null, null, null, null, null),
+        );
+
+        $toolBuffer2 = $buffer->createToolReport('tool2-name');
+        $toolBuffer2->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Tool 2 Info 1', null, null, null, null, null),
+        );
+        $toolBuffer2->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Tool 2 Info 2', null, null, null, null, null),
+        );
+
+        $this->assertEquals(
+            [
+                ToolReportInterface::SEVERITY_ERROR => 3,
+                ToolReportInterface::SEVERITY_WARNING => 0,
+                ToolReportInterface::SEVERITY_NOTICE => 1,
+                ToolReportInterface::SEVERITY_INFO => 4,
+            ],
+            $buffer->countDiagnosticsGroupedBySeverity()
+        );
     }
 }

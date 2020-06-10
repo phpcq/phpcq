@@ -6,7 +6,19 @@ namespace Phpcq\Report\Buffer;
 
 use Generator;
 use Phpcq\PluginApi\Version10\ReportInterface;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 
+use function array_filter;
+
+/**
+ * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
+ * @psalm-type TToolReportSummary = array{
+ *  info: int,
+ *  notice: int,
+ *  warning: int,
+ *  error: int
+ * }
+ */
 final class ToolReportBuffer
 {
     /** @var string */
@@ -74,7 +86,7 @@ final class ToolReportBuffer
     }
 
     /**
-     * @return Generator
+     * @return Generator|DiagnosticBuffer[]
      *
      * @psalm-return Generator<int, DiagnosticBuffer, mixed, void>
      */
@@ -115,5 +127,23 @@ final class ToolReportBuffer
     public function getDiffs(): array
     {
         return array_values($this->diffs);
+    }
+
+    /** @psalm-return TToolReportSummary */
+    public function countDiagnosticsGroupedBySeverity(): array
+    {
+        /** @psalm-var TToolReportSummary $summary */
+        $summary = [
+            ToolReportInterface::SEVERITY_ERROR   => 0,
+            ToolReportInterface::SEVERITY_WARNING => 0,
+            ToolReportInterface::SEVERITY_NOTICE  => 0,
+            ToolReportInterface::SEVERITY_INFO    => 0,
+        ];
+
+        foreach ($this->getDiagnostics() as $diagnostic) {
+            $summary[$diagnostic->getSeverity()]++;
+        }
+
+        return $summary;
     }
 }

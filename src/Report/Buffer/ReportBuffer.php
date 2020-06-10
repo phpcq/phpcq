@@ -5,9 +5,19 @@ declare(strict_types=1);
 namespace Phpcq\Report\Buffer;
 
 use DateTimeImmutable;
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 
 use function array_values;
 
+/**
+ * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
+ * @psalm-type TReportSummary = array{
+ *  info: int,
+ *  notice: int,
+ *  warning: int,
+ *  error: int
+ * }
+ */
 final class ReportBuffer
 {
     /** @var string */
@@ -71,5 +81,26 @@ final class ReportBuffer
     public function getToolReports(): iterable
     {
         return array_values($this->toolReports);
+    }
+
+    /**
+     * @psalm-return TReportSummary
+     */
+    public function countDiagnosticsGroupedBySeverity(): array
+    {
+        $summary = [
+            ToolReportInterface::SEVERITY_ERROR   => 0,
+            ToolReportInterface::SEVERITY_WARNING => 0,
+            ToolReportInterface::SEVERITY_NOTICE  => 0,
+            ToolReportInterface::SEVERITY_INFO    => 0,
+        ];
+
+        foreach ($this->getToolReports() as $toolReport) {
+            foreach ($toolReport->countDiagnosticsGroupedBySeverity() as $severity => $count) {
+                $summary[$severity] += $count;
+            }
+        }
+
+        return $summary;
     }
 }

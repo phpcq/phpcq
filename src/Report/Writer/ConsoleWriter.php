@@ -12,7 +12,9 @@ use Phpcq\Report\ToolReport;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
+use function array_filter;
 use function explode;
+use function sprintf;
 use function str_repeat;
 use function wordwrap;
 
@@ -145,9 +147,19 @@ final class ConsoleWriter
 
     private function writeConclusion(): void
     {
-        $this->output->writeln(
-            sprintf('Code quality check %s.', $this->renderReportStatus($this->report->getStatus()))
-        );
+        $conclusion = $this->renderReportStatus($this->report->getStatus());
+        $summary = array_filter($this->report->countDiagnosticsGroupedBySeverity());
+        if (count($summary) > 0) {
+            $conclusion .= ': ';
+            $prefix = '';
+            foreach ($summary as $severity => $count) {
+                $conclusion .= $prefix . $count . ' ' . $severity . 's';
+                $prefix = ', ';
+            }
+        }
+        $conclusion .= '.';
+
+        $this->output->writeln($conclusion);
         $this->style->newLine();
     }
 
@@ -190,16 +202,22 @@ final class ConsoleWriter
     {
         switch ($status) {
             case ReportInterface::STATUS_STARTED:
-                return '<fg=yellow>' . $status . '</>';
+                $color = 'yellow';
+                break;
 
             case ReportInterface::STATUS_PASSED:
-                return '<fg=green>' . $status . '</>';
+                $color = 'green';
+                break;
 
             case ReportInterface::STATUS_FAILED:
-                return '<fg=red>' . $status . '</>';
+                $color = 'red';
+                break;
+
+            default:
+                $color = 'white';
         }
 
-        return $status;
+        return sprintf('<fg=%s>Code quality check %s</>', $color, $status);
     }
 
     private function renderDiagnosticSeverity(string $severity, ?string $message = null): string

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Buffer;
 
+use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -84,5 +85,38 @@ class ToolReportBufferTest extends TestCase
         $this->assertCount(1, $diffs);
         $this->arrayHasKey(0);
         $this->assertSame($diff, $diffs[0]);
+    }
+
+    public function testCountDiagnosticsGroupedBySeverity(): void
+    {
+        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
+        );
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 2', null, null, null, null, null),
+        );
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_NOTICE, 'Notice 1', null, null, null, null, null),
+        );
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 1', null, null, null, null, null),
+        );
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 2', null, null, null, null, null),
+        );
+        $buffer->addDiagnostic(
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 3', null, null, null, null, null),
+        );
+
+        $this->assertEquals(
+            [
+                ToolReportInterface::SEVERITY_ERROR => 3,
+                ToolReportInterface::SEVERITY_WARNING => 0,
+                ToolReportInterface::SEVERITY_NOTICE => 1,
+                ToolReportInterface::SEVERITY_INFO => 2,
+            ],
+            $buffer->countDiagnosticsGroupedBySeverity()
+        );
     }
 }
