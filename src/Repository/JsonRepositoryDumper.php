@@ -54,7 +54,21 @@ class JsonRepositoryDumper
         return [
             'plugin-version' => $tool->getBootstrap()->getPluginVersion(),
             'type' => 'file',
-            'url'  => $bootFile
+            'url'  => $bootFile,
+            'hash' => $this->dumpBootstrapHash($tool)
+        ];
+    }
+
+    private function dumpBootstrapHash(ToolInformationInterface $tool): ?array
+    {
+        $hash = $tool->getBootstrap()->getHash();
+        if (null === $hash) {
+            return null;
+        }
+
+        return [
+            'type'  => $hash->getType(),
+            'value' => $hash->getValue(),
         ];
     }
 }

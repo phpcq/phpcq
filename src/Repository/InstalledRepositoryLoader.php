@@ -14,7 +14,11 @@ use Phpcq\Platform\PlatformRequirementCheckerInterface;
  * @psalm-type TBootstrapFile = array{
  *    type: 'file',
  *    url: string,
- *    plugin-version: string
+ *    plugin-version: string,
+ *    hash?: array{
+ *      type: string,
+ *      value: string
+ *    }
  * }
  * @psalm-type TToolConfigInstalled = array{
  *    version: string,
@@ -110,6 +114,10 @@ class InstalledRepositoryLoader
             throw new RuntimeException('Bootstrap file not found: ' . $filePath);
         }
 
-        return new InstalledBootstrap($bootstrap['plugin-version'], $filePath);
+        $hash = isset($bootstrap['hash'])
+            ? new BootstrapHash($bootstrap['hash']['type'], $bootstrap['hash']['value'])
+            : null;
+
+        return new InstalledBootstrap($bootstrap['plugin-version'], $filePath, $hash);
     }
 }

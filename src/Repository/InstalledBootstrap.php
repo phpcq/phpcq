@@ -14,7 +14,12 @@ class InstalledBootstrap implements BootstrapInterface
      */
     private $filePath;
 
-    public function __construct(string $version, string $filePath)
+    /**
+     * @var BootstrapHash|null
+     */
+    private $hash;
+
+    public function __construct(string $version, string $filePath, ?BootstrapHash $hash)
     {
         if ($version !== '1.0.0') {
             throw new RuntimeException('Invalid version string: ' . $version);
@@ -25,6 +30,7 @@ class InstalledBootstrap implements BootstrapInterface
         }
 
         $this->filePath = $filePath;
+        $this->hash     = $hash;
     }
 
     public function getPluginVersion(): string
@@ -45,5 +51,10 @@ class InstalledBootstrap implements BootstrapInterface
     public function getFilePath()
     {
         return $this->filePath;
+    }
+
+    public function getHash(): ?BootstrapHash
+    {
+        return $this->hash;
     }
 }

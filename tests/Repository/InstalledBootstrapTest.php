@@ -15,7 +15,7 @@ class InstalledBootstrapTest extends TestCase
 {
     public function testGetters(): void
     {
-        $instance = new InstalledBootstrap('1.0.0', __DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php');
+        $instance = new InstalledBootstrap('1.0.0', __DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php', null);
         $this->assertSame('1.0.0', $instance->getPluginVersion());
         $this->assertSame(__DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php', $instance->getFilePath());
         $this->assertSame(
@@ -28,13 +28,13 @@ class InstalledBootstrapTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid version string: 11.0.0');
-        new InstalledBootstrap('11.0.0', __DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php');
+        new InstalledBootstrap('11.0.0', __DIR__ . '/../fixtures/plugins/demo-plugin-bootstrap.php', null);
     }
 
     public function testThrowsForInvalidPath(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('File not found: /does/not/exist');
-        new InstalledBootstrap('1.0.0', '/does/not/exist');
+        new InstalledBootstrap('1.0.0', '/does/not/exist', null);
     }
 }

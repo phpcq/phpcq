@@ -18,7 +18,7 @@ use function strpos;
 /**
  * @psalm-import-type TJsonRepository from \Phpcq\Repository\JsonRepositoryLoader
  * @psalm-import-type TToolConfig from \Phpcq\ConfigLoader
- * @psalm-import-type THash from \Phpcq\Repository\ToolHash
+ * @psalm-import-type TToolHash from \Phpcq\Repository\ToolHash
  */
 class FileDownloader
 {
@@ -65,7 +65,7 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param ?THash $hash
+     * @psalm-param ?TToolHash $hash
      *
      * @return string
      */
@@ -108,7 +108,7 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param ?THash $hash
+     * @psalm-param ?TToolHash $hash
      *
      * @return array
      * @psalm-return TJsonRepository
@@ -159,7 +159,7 @@ class FileDownloader
      * @param string     $cacheFile The file to check
      * @param array|null $hash      he hash to validate.
      *
-     * @psalm-param ?THash $hash
+     * @psalm-param ?TToolHash $hash
      *
      * @return bool
      */

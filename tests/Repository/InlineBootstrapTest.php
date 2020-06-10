@@ -15,7 +15,7 @@ class InlineBootstrapTest extends TestCase
 {
     public function testGetters(): void
     {
-        $instance = new InlineBootstrap('1.0.0', 'code');
+        $instance = new InlineBootstrap('1.0.0', 'code', null);
         $this->assertSame('1.0.0', $instance->getPluginVersion());
         $this->assertSame('code', $instance->getCode());
     }
@@ -24,6 +24,6 @@ class InlineBootstrapTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid version string: 11.0.0');
-        new InlineBootstrap('11.0.0', 'code');
+        new InlineBootstrap('11.0.0', 'code', null);
     }
 }

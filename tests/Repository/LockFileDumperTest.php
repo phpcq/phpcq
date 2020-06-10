@@ -26,7 +26,7 @@ class LockFileDumperTest extends TestCase
             [
                 'php' => '>=7.3'
             ],
-            new InlineBootstrap('1.0.0', '<?php return []; ?>'),
+            new InlineBootstrap('1.0.0', '<?php return []; ?>', null),
             new ToolHash(ToolHash::SHA_256, 'foo'),
             'test.phar.asc'
         ));
@@ -37,7 +37,7 @@ class LockFileDumperTest extends TestCase
             [
                 'php' => '>=7.3'
             ],
-            new InlineBootstrap('1.0.0', '<?php return [\'foo\']; ?>'),
+            new InlineBootstrap('1.0.0', '<?php return [\'foo\']; ?>', null),
             new ToolHash(ToolHash::SHA_256, 'foo'),
             'test2.phar.asc'
         ));
@@ -55,12 +55,14 @@ class LockFileDumperTest extends TestCase
                     'bootstrap-0' => [
                         'plugin-version' => '1.0.0',
                         'type' => 'inline',
-                        'code' => '<?php return []; ?>'
+                        'code' => '<?php return []; ?>',
+                        'hash' => null,
                     ],
                     'bootstrap-1' => [
                         'plugin-version' => '1.0.0',
                         'type' => 'inline',
-                        'code' => '<?php return [\'foo\']; ?>'
+                        'code' => '<?php return [\'foo\']; ?>',
+                        'hash' => null,
                     ],
                 ],
                 'phars' => [

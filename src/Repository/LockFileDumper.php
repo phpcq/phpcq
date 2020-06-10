@@ -61,8 +61,22 @@ class LockFileDumper
             'plugin-version' => $tool->getBootstrap()->getPluginVersion(),
             'type' => 'inline',
             'code' => $tool->getBootstrap()->getCode(),
+            'hash' => $this->dumpBootstrapHash($tool),
         ];
 
         return $name;
+    }
+
+    private function dumpBootstrapHash(ToolInformationInterface $tool): ?array
+    {
+        $hash = $tool->getBootstrap()->getHash();
+        if (null === $hash) {
+            return null;
+        }
+
+        return [
+            'type'  => $hash->getType(),
+            'value' => $hash->getValue(),
+        ];
     }
 }

@@ -34,6 +34,10 @@ class PluginRegistryTest extends TestCase
 
     private function getBootstrap(string $fileName)
     {
-        return new InstalledBootstrap('1.0.0', __DIR__ . '/../fixtures/repositories/installed-repository/' . $fileName);
+        return new InstalledBootstrap(
+            '1.0.0',
+            __DIR__ . '/../fixtures/repositories/installed-repository/' . $fileName,
+            null
+        );
     }
 }

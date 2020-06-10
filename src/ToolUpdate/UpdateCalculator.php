@@ -108,7 +108,7 @@ final class UpdateCalculator
                 continue;
             }
             // Installed in another version => upgrade.
-            if ($forceReinstall || !$this->installed->hasTool($name, $tool->getVersion())) {
+            if ($forceReinstall || $this->isUpgradeRequired($tool)) {
                 $oldVersion = $this->installed->getTool($name, '*');
                 $message = $this->getTaskMessage($oldVersion, $tool);
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
@@ -164,5 +164,29 @@ final class UpdateCalculator
                 return 'Will upgrade ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $tool->getVersion();
         }
+    }
+
+    private function isUpgradeRequired(ToolInformationInterface $tool): bool
+    {
+        if (!$this->installed->hasTool($tool->getName(), $tool->getVersion())) {
+            return true;
+        }
+
+        return $this->hasBootstrapHashChanged($tool, $this->installed->getTool($tool->getName(), $tool->getVersion()));
+    }
+
+    private function hasBootstrapHashChanged(ToolInformationInterface $tool, ToolInformationInterface $installed): bool
+    {
+        // No hash given. We can't verify changes, force reinstall
+        if (null === ($bootstrapHash = $tool->getBootstrap()->getHash())) {
+            return true;
+        }
+
+        // No hash given for installed tool but new version has a hash, forche reinstall
+        if (null === ($installedHash = $installed->getBootstrap()->getHash())) {
+            return true;
+        }
+
+        return !$bootstrapHash->equals($installedHash);
     }
 }

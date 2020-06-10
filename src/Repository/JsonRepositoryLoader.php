@@ -16,7 +16,7 @@ use function is_array;
  * Load a json file.
  *
  * @psalm-suppress PropertyNotSetInConstructor
- * @psalm-type THash = array{
+ * @psalm-type TToolHash = array{
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
  * }
@@ -36,10 +36,10 @@ use function is_array;
  *    phar-url: string,
  *    bootstrap: string|TBootstrap,
  *    requirements: array<string,string>,
- *    hash?: THash,
+ *    hash?: TToolHash,
  *    signature?: string
  * }
- * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
+ * @psalm-type TRepositoryInclude = array{url:string, checksum:TToolHash|null}
  * @psalm-type TJsonRepository = array{
  *   bootstraps?: array<string, TBootstrap>,
  *   phars: array<string,TRepositoryInclude|list<TToolConfigJson>>,
@@ -84,7 +84,7 @@ class JsonRepositoryLoader
         $this->bypassCache = $bypassCache;
     }
 
-    /** @psalm-param ?THash $hash */
+    /** @psalm-param ?TToolHash $hash */
     public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
         $this->repository = new Repository($this->requirementChecker);
@@ -93,7 +93,7 @@ class JsonRepositoryLoader
         return $this->repository;
     }
 
-    /** @psalm-param ?THash $hash */
+    /** @psalm-param ?TToolHash $hash */
     private function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
     {
         $baseDir          = $baseDir ?? dirname($filePath);
@@ -171,12 +171,21 @@ class JsonRepositoryLoader
             case 'inline':
                 // Static bootstrapper.
                 /** @psalm-var TBootstrapInline $bootstrap */
-                return new InlineBootstrap($bootstrap['plugin-version'], $bootstrap['code']);
+                return new InlineBootstrap(
+                    $bootstrap['plugin-version'],
+                    $bootstrap['code'],
+                    isset($bootstrap['hash'])
+                        ? new BootstrapHash($bootstrap['hash']['type'], $bootstrap['hash']['value'])
+                        : null,
+                );
             case 'file':
                 /** @psalm-var TBootstrapFile $bootstrap */
                 return new RemoteBootstrap(
                     $bootstrap['plugin-version'],
                     $bootstrap['url'],
+                    isset($bootstrap['hash'])
+                        ? new BootstrapHash($bootstrap['hash']['type'], $bootstrap['hash']['value'])
+                        : null,
                     $this->downloader,
                     $baseDir
                 );

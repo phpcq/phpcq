@@ -10,4 +10,6 @@ interface BootstrapInterface
     public function getPluginVersion(): string;
 
     public function getCode(): string;
+
+    public function getHash(): ?BootstrapHash;
 }

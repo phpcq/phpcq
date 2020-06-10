@@ -25,8 +25,18 @@ class RemoteBootstrap implements BootstrapInterface
      */
     private $baseDir;
 
-    public function __construct(string $version, string $url, FileDownloader $downloader, string $baseDir)
-    {
+    /**
+     * @var BootstrapHash|null
+     */
+    private $hash;
+
+    public function __construct(
+        string $version,
+        string $url,
+        ?BootstrapHash $hash,
+        FileDownloader $downloader,
+        string $baseDir
+    ) {
         if ($version !== '1.0.0') {
             throw new RuntimeException('Invalid version string: ' . $version);
         }
@@ -34,6 +44,7 @@ class RemoteBootstrap implements BootstrapInterface
         $this->url        = $url;
         $this->downloader = $downloader;
         $this->baseDir    = $baseDir;
+        $this->hash       = $hash;
     }
 
     public function getPluginVersion(): string
@@ -44,5 +55,10 @@ class RemoteBootstrap implements BootstrapInterface
     public function getCode(): string
     {
         return $this->downloader->downloadFile($this->url, $this->baseDir);
+    }
+
+    public function getHash(): ?BootstrapHash
+    {
+        return $this->hash;
     }
 }
