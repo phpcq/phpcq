@@ -14,6 +14,15 @@ use Phpcq\Report\Buffer\ReportBuffer;
 
 final class DiagnosticIterator implements IteratorAggregate
 {
+    /**
+     * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
+     * @psalm-var array{
+     *  info: int,
+     *  notice: int,
+     *  warning: int,
+     *  error: int
+     * }
+     */
     private const SEVERITY_LOOKUP = [
         ToolReportInterface::SEVERITY_INFO    => 0,
         ToolReportInterface::SEVERITY_NOTICE  => 1,

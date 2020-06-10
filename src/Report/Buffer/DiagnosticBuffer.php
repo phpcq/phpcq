@@ -6,9 +6,18 @@ namespace Phpcq\Report\Buffer;
 
 use Generator;
 
+/**
+ * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\ToolReportInterface::SEVERITY_INFO
+ * |\Phpcq\PluginApi\Version10\ToolReportInterface::SEVERITY_NOTICE
+ * |\Phpcq\PluginApi\Version10\ToolReportInterface::SEVERITY_WARNING
+ * |\Phpcq\PluginApi\Version10\ToolReportInterface::SEVERITY_ERROR
+ */
 final class DiagnosticBuffer
 {
-    /** @var string */
+    /**
+     * @var string
+     * @psalm-var TDiagnosticSeverity
+     */
     private $severity;
 
     /** @var string */
@@ -33,6 +42,8 @@ final class DiagnosticBuffer
      * @param null|FileRangeBuffer[] $fileRanges
      * @param null|string[] $classNames
      * @param null|string[] $categories
+     *
+     * @psalm-param TDiagnosticSeverity $severity
      */
     public function __construct(
         string $severity,
@@ -56,6 +67,7 @@ final class DiagnosticBuffer
      * Get severity.
      *
      * @return string
+     * @psalm-return TDiagnosticSeverity
      */
     public function getSeverity(): string
     {

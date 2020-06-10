@@ -10,9 +10,16 @@ use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 
+/**
+ * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_INFO|ToolReportInterface::SEVERITY_NOTICE
+ * |ToolReportInterface::SEVERITY_WARNING|ToolReportInterface::SEVERITY_ERROR
+ */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     * @psalm-var TDiagnosticSeverity
+     */
     private $severity;
 
     /** @var string */
@@ -45,7 +52,10 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
     /** @var string[] */
     private $categories = [];
 
-    /** @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback */
+    /**
+     * @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
+     * @psalm-param TDiagnosticSeverity $severity
+     */
     public function __construct(ToolReportInterface $parent, string $severity, string $message, callable $callback)
     {
         $this->severity = $severity;
