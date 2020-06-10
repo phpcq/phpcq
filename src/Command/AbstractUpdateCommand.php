@@ -21,6 +21,8 @@ use Phpcq\ToolUpdate\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 
+use function array_filter;
+
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
  *
@@ -102,6 +104,17 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         }
 
         $tasks = $this->calculateTasks();
+        $changes = array_filter(
+            $tasks,
+            static function ($task) {
+                return $task['type'] !== 'keep';
+            }
+        );
+        if (count($changes) === 0) {
+            $this->output->writeln('Nothing to install.');
+            return 0;
+        }
+
         $this->executeTasks($tasks);
 
         return 0;

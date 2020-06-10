@@ -65,8 +65,6 @@ tool-config:
   #  names:
     names_exclude:
       # These are duplicate code but entirely unrelated to each other.
-      - DiffBuilder.php
-      - AttachmentBuilder.php
       - DiffBuilderTest.php
       - AttachmentBuilderTest.php
   #  regexps_exclude:
