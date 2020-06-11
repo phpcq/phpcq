@@ -11,6 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class GithubActionConsoleWriter
 {
+    use RenderRangeTrait;
+
     /**
      * @var OutputInterface
      */
@@ -57,7 +59,7 @@ final class GithubActionConsoleWriter
         }
     }
 
-    private function writeDiagnostic(DiagnosticIteratorEntry $entry)
+    private function writeDiagnostic(DiagnosticIteratorEntry $entry): void
     {
         $message = $this->compileMessage($entry);
         $range   = $this->compileRange($entry);
@@ -68,11 +70,11 @@ final class GithubActionConsoleWriter
     private function compileMessage(DiagnosticIteratorEntry $entry): string
     {
         $diagnostic = $entry->getDiagnostic();
-        $message    = $entry->getDiagnostic()->getMessage();
+        $message    = $this->renderRangePrefix($entry) . $entry->getDiagnostic()->getMessage();
 
         $reportedBy = 'reported by ' . $entry->getTool()->getToolName();
         if (null !== ($source = $diagnostic->getSource())) {
-            $reportedBy .= ':' . $source;
+            $reportedBy .= ': ' . $source;
         }
         $message .= ' (' . $reportedBy;
 
@@ -99,5 +101,14 @@ final class GithubActionConsoleWriter
         }
 
         return $buffer;
+    }
+
+    private function renderRangePrefix(DiagnosticIteratorEntry $entry): string
+    {
+        if (null === ($range = $entry->getRange()) || null === $range->getEndLine()) {
+            return '';
+        }
+
+        return $this->renderRange($range) . ' ';
     }
 }
