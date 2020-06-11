@@ -116,16 +116,3 @@ final class ConfigLoader
         return $config;
     }
 }
-
-/**
- * array{
- * artifact: string,
- * auth: array<array-key, mixed>,
- * chains: array<string,array<string, array<array-key, mixed>|null>>,
- * directories: list<string>,
- * repositories: list<int>,
- * tool-config: array<string, array{directories?: array<string, array<array-key, mixed>|bool|null>}>,
- * tools: array<string, array{signed: bool, version: string}>,
- * trusted-keys: list<string>
- * }, parent type array<array-key, mixed> provided
- */
