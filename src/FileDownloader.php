@@ -17,7 +17,6 @@ use function strpos;
 
 /**
  * @psalm-import-type TJsonRepository from \Phpcq\Repository\JsonRepositoryLoader
- * @psalm-import-type TToolConfig from \Phpcq\ConfigLoader
  * @psalm-import-type TToolHash from \Phpcq\Repository\ToolHash
  */
 class FileDownloader

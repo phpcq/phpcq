@@ -14,17 +14,20 @@ use function array_key_exists;
 use function array_keys;
 
 /**
- * @psalm-type TToolConfig = array{
+ * @psalm-type TTool = array{
  *    version: string,
  *    signed: bool
+ * }
+ * @psalm-type TToolConfig = array{
+ *   directories?: array<string, array|null|bool>
  * }
  * @psalm-type TConfig = array{
  *   directories: list<string>,
  *   artifact: string,
  *   trusted-keys: list<string>,
  *   chains: array<string,array<string,array|null>>,
- *   tools: array<string,TToolConfig>,
- *   tool-config: array<string,array>,
+ *   tools: array<string,TTool>,
+ *   tool-config: array<string,TToolConfig>,
  *   repositories: list<int, string>,
  *   auth: array
  * }
@@ -67,8 +70,8 @@ final class ConfigLoader
 
         $processed = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
         unset($config['phpcq']);
+        /** @psalm-var TConfig $processed */
         $processed = array_merge($processed, $config);
-
         $merged = $this->mergeConfig($processed);
 
         if (!array_key_exists('default', $merged['chains'])) {
@@ -79,6 +82,7 @@ final class ConfigLoader
     }
 
     /**
+     * @psalm-param TConfig $config $config
      * @psalm-return TConfig
      */
     private function mergeConfig(array $config): array
@@ -112,3 +116,16 @@ final class ConfigLoader
         return $config;
     }
 }
+
+/**
+ * array{
+ * artifact: string,
+ * auth: array<array-key, mixed>,
+ * chains: array<string,array<string, array<array-key, mixed>|null>>,
+ * directories: list<string>,
+ * repositories: list<int>,
+ * tool-config: array<string, array{directories?: array<string, array<array-key, mixed>|bool|null>}>,
+ * tools: array<string, array{signed: bool, version: string}>,
+ * trusted-keys: list<string>
+ * }, parent type array<array-key, mixed> provided
+ */

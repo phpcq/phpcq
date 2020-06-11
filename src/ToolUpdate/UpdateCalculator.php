@@ -11,7 +11,7 @@ use Phpcq\Repository\RepositoryPool;
 use Phpcq\Repository\ToolInformationInterface;
 
 /**
- * @psalm-import-type TToolConfig from \Phpcq\ConfigLoader
+ * @psalm-import-type TTool from \Phpcq\ConfigLoader
  *
  * @psalm-type TUpdateTask = array{
  *    type: 'install'|'keep'|'remove'|'upgrade',
@@ -49,7 +49,7 @@ final class UpdateCalculator
      * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
      *                             tools.
      *
-     * @psalm-param array<string,TToolConfig> $tools
+     * @psalm-param array<string,TTool> $tools
      * @psalm-return list<TUpdateTask>
      */
     public function calculate(array $tools, bool $forceReinstall = false): array
@@ -60,7 +60,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TToolConfig> $tools
+     * @psalm-param array<string,TTool> $tools
      */
     private function calculateDesiredTools(array $tools): RepositoryInterface
     {
@@ -80,7 +80,7 @@ final class UpdateCalculator
      * @param bool $forceReinstall Intended to use if no lock file exists. Remote tool information required for all
      *                             tools.
      *
-     * @psalm-param array<string,TToolConfig> $tools
+     * @psalm-param array<string,TTool> $tools
      *
      * @return array[]
      * @psalm-return list<TUpdateTask>

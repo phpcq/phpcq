@@ -16,19 +16,21 @@ use function is_array;
  * Load a json file.
  *
  * @psalm-suppress PropertyNotSetInConstructor
- * @psalm-type TToolHash = array{
+ * @psalm-type THash = array{
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
  * }
  * @psalm-type TBootstrapInline = array{
  *    type: 'inline',
  *    code: string,
- *    plugin-version: string
+ *    plugin-version: string,
+ *    hash: ?THash
  * }
  * @psalm-type TBootstrapFile = array{
  *    type: 'file',
  *    url: string,
- *    plugin-version: string
+ *    plugin-version: string,
+ *    hash: ?THash
  * }
  * @psalm-type TBootstrap = TBootstrapInline|TBootstrapFile
  * @psalm-type TToolConfigJson = array{
@@ -36,10 +38,10 @@ use function is_array;
  *    phar-url: string,
  *    bootstrap: string|TBootstrap,
  *    requirements: array<string,string>,
- *    hash?: TToolHash,
+ *    hash?: THash,
  *    signature?: string
  * }
- * @psalm-type TRepositoryInclude = array{url:string, checksum:TToolHash|null}
+ * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
  * @psalm-type TJsonRepository = array{
  *   bootstraps?: array<string, TBootstrap>,
  *   phars: array<string,TRepositoryInclude|list<TToolConfigJson>>,
@@ -84,7 +86,7 @@ class JsonRepositoryLoader
         $this->bypassCache = $bypassCache;
     }
 
-    /** @psalm-param ?TToolHash $hash */
+    /** @psalm-param ?THash $hash */
     public function loadFile(string $filePath, ?array $hash = null, ?string $baseDir = null): RepositoryInterface
     {
         $this->repository = new Repository($this->requirementChecker);
@@ -93,7 +95,7 @@ class JsonRepositoryLoader
         return $this->repository;
     }
 
-    /** @psalm-param ?TToolHash $hash */
+    /** @psalm-param ?THash $hash */
     private function includeFile(string $filePath, ?array $hash = null, ?string $baseDir = null): void
     {
         $baseDir          = $baseDir ?? dirname($filePath);
