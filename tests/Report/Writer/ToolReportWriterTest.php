@@ -65,7 +65,7 @@ XML;
 <?xml version="1.0"?>
 <phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:tools>
-    <phpcq:tool name="tool" status="passed">
+    <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:diagnostics>
         <phpcq:diagnostic severity="info" source="baz">
           <phpcq:message>Foo bar</phpcq:message>
@@ -123,7 +123,7 @@ XML;
 <?xml version="1.0"?>
 <phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:tools>
-    <phpcq:tool name="tool" status="passed">
+    <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:diagnostics>
         <phpcq:diagnostic severity="error" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>

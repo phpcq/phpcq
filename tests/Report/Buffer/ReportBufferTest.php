@@ -37,7 +37,7 @@ class ReportBufferTest extends TestCase
     {
         $buffer = new ReportBuffer();
 
-        $toolBuffer = $buffer->createToolReport('tool-name');
+        $toolBuffer = $buffer->createToolReport('tool-name', '1.0.0');
 
         $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer);
         $this->assertSame('tool-name', $toolBuffer->getToolName());
@@ -48,8 +48,8 @@ class ReportBufferTest extends TestCase
     {
         $buffer = new ReportBuffer();
 
-        $toolBuffer1 = $buffer->createToolReport('tool-name');
-        $toolBuffer2 = $buffer->createToolReport('tool-name');
+        $toolBuffer1 = $buffer->createToolReport('tool-name', '1.0.0');
+        $toolBuffer2 = $buffer->createToolReport('tool-name', '1.0.0');
 
         $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer1);
         $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer2);
@@ -61,7 +61,7 @@ class ReportBufferTest extends TestCase
     public function testCountDiagnosticsGroupedBySeverity(): void
     {
         $buffer = new ReportBuffer();
-        $toolBuffer = $buffer->createToolReport('tool-name');
+        $toolBuffer = $buffer->createToolReport('tool-name', '1.0.0');
         $toolBuffer->addDiagnostic(
             new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
         );
@@ -81,7 +81,7 @@ class ReportBufferTest extends TestCase
             new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 3', null, null, null, null, null),
         );
 
-        $toolBuffer2 = $buffer->createToolReport('tool2-name');
+        $toolBuffer2 = $buffer->createToolReport('tool2-name', '2.0.0');
         $toolBuffer2->addDiagnostic(
             new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Tool 2 Info 1', null, null, null, null, null),
         );

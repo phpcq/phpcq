@@ -39,11 +39,15 @@ final class ToolReportBuffer
     /** @var string */
     private $reportName;
 
-    public function __construct(string $toolName, string $reportName)
+    /** @var string */
+    private $toolVersion;
+
+    public function __construct(string $toolName, string $reportName, string $toolVersion)
     {
-        $this->toolName   = $toolName;
-        $this->reportName = $reportName;
-        $this->status     = ReportInterface::STATUS_STARTED;
+        $this->toolName    = $toolName;
+        $this->reportName  = $reportName;
+        $this->toolVersion = $toolVersion;
+        $this->status      = ReportInterface::STATUS_STARTED;
     }
 
     /**
@@ -54,6 +58,11 @@ final class ToolReportBuffer
     public function getToolName(): string
     {
         return $this->toolName;
+    }
+
+    public function getToolVersion(): string
+    {
+        return $this->toolVersion;
     }
 
     public function getReportName(): string

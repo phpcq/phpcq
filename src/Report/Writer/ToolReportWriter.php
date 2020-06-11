@@ -76,6 +76,7 @@ final class ToolReportWriter extends AbstractReportWriter
         $tool = $this->xml->createElement('tool', $node);
         $tool->setAttribute('name', $report->getToolName());
         $tool->setAttribute('status', $report->getStatus());
+        $tool->setAttribute('version', $report->getToolVersion());
         $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
         do {
             $this->createDiagnosticElement($diagnosticsElement, $entry);

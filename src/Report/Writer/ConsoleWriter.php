@@ -104,10 +104,14 @@ final class ConsoleWriter
     {
         $rows = [];
         foreach ($this->report->getToolReports() as $toolReport) {
-            $rows[] = [$toolReport->getToolName(), $this->renderToolStatus($toolReport->getStatus())];
+            $rows[] = [
+                $toolReport->getToolName(),
+                $toolReport->getToolVersion(),
+                $this->renderToolStatus($toolReport->getStatus()),
+            ];
         }
 
-        $this->style->table(['Tool', 'State'], $rows);
+        $this->style->table(['Tool', 'Version', 'State'], $rows);
     }
 
     private function writeEntryReport(DiagnosticIteratorEntry $entry): void

@@ -16,7 +16,7 @@ class ToolReportBufferTest extends TestCase
 {
     public function testConstructionCreatesEmpty(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $this->assertSame('report-name', $buffer->getReportName());
         $this->assertSame('tool-name', $buffer->getToolName());
         $this->assertSame('started', $buffer->getStatus());
@@ -26,7 +26,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testSetsStatusToPassed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
 
         $buffer->setStatus('passed');
 
@@ -35,7 +35,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testSetsStatusToFailed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
 
         $buffer->setStatus('failed');
 
@@ -44,7 +44,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testDoesNotSetStatusToPassedWhenAlreadyFailed(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
 
         $buffer->setStatus('failed');
         $buffer->setStatus('passed');
@@ -54,7 +54,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testAddsDiagnostic(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $buffer->addDiagnostic(
             $diagnostic = new DiagnosticBuffer('error', 'test message', null, null, null, null, null)
         );
@@ -67,7 +67,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testAddsAttachment(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $buffer->addAttachment($attachment = new AttachmentBuffer('/some/file', 'local', null));
 
         $attachments = $buffer->getAttachments();
@@ -78,7 +78,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testAddsDiff(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $buffer->addDiff($diff = new DiffBuffer('/some/file', 'local'));
 
         $diffs = $buffer->getDiffs();
@@ -89,7 +89,7 @@ class ToolReportBufferTest extends TestCase
 
     public function testCountDiagnosticsGroupedBySeverity(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $buffer->addDiagnostic(
             new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
         );

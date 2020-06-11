@@ -37,7 +37,7 @@ class DiagnosticIteratorTest extends TestCase
     public function iterateSingleItemProvider(): array
     {
         $report = new ReportBuffer();
-        $report->createToolReport('tool')->addDiagnostic($this->diagnostic('error', 'test'));
+        $report->createToolReport('tool', '1.0.0')->addDiagnostic($this->diagnostic('error', 'test'));
         return [
             'file/range' => [DiagnosticIterator::sortByFileAndRange($report)],
             'tool' => [DiagnosticIterator::sortByTool($report)],
@@ -238,7 +238,7 @@ class DiagnosticIteratorTest extends TestCase
     public function testIterateOverDuplicateFileLists(): void
     {
         $report = new ReportBuffer();
-        $tool   = $report->createToolReport('tool');
+        $tool   = $report->createToolReport('tool', '1.0.0');
         $tool->addDiagnostic($this->diagnostic('error', 'file1.74', null, $this->range('file1', 74, 10)));
         $tool->addDiagnostic($this->diagnostic('error', 'file1.82', null, $this->range('file1', 82, 10)));
         $tool->addDiagnostic($this->diagnostic('error', 'file1.83', null, $this->range('file1', 83, 10)));
@@ -322,8 +322,8 @@ class DiagnosticIteratorTest extends TestCase
         $report = new ReportBuffer();
 
         // Create inverse, to ensure we have some sorting action.
-        $tool2 = $report->createToolReport('tool2');
-        $tool1 = $report->createToolReport('tool1');
+        $tool2 = $report->createToolReport('tool2', '1.0.0');
+        $tool1 = $report->createToolReport('tool1', '1.0.0');
 
         $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error1.no-file'));
         $tool1->addDiagnostic($this->diagnostic('info', 'tool1.info1.info'));

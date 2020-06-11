@@ -62,6 +62,11 @@
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="status" type="tns:toolStatusType"/>
+    <xs:attribute name="version" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>The tool version</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="globalDiagnosticListType">

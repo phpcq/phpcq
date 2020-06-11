@@ -40,7 +40,7 @@ final class ReportBuffer
         $this->startedAt = new DateTimeImmutable();
     }
 
-    public function createToolReport(string $toolName): ToolReportBuffer
+    public function createToolReport(string $toolName, string $toolVersion): ToolReportBuffer
     {
         $reportName = $toolName;
         if (isset($this->toolReports[$reportName])) {
@@ -49,7 +49,7 @@ final class ReportBuffer
                 $reportName = $toolName . '-' . ++$number;
             } while (isset($this->toolReports[$reportName]));
         }
-        return $this->toolReports[$reportName] = new ToolReportBuffer($toolName, $reportName);
+        return $this->toolReports[$reportName] = new ToolReportBuffer($toolName, $reportName, $toolVersion);
     }
 
     public function complete(string $status): void

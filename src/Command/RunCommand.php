@@ -97,14 +97,14 @@ final class RunCommand extends AbstractCommand
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
         $tempDirectory = sys_get_temp_dir();
         $taskList = new Tasklist();
-        $reportBuffer = new ReportBuffer();
-        $report = new Report($reportBuffer, $tempDirectory);
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $installed = $this->getInstalledRepository(true),
             ...$this->findPhpCli()
         );
+        $reportBuffer = new ReportBuffer();
+        $report = new Report($reportBuffer, $installed, $tempDirectory);
         // Create build configuration
         $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
         // Load bootstraps

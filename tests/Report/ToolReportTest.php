@@ -18,7 +18,7 @@ class ToolReportTest extends TestCase
     public function testCanBeInstantiated(): void
     {
         new ToolReport(
-            new ToolReportBuffer('tool-name', 'report-name'),
+            new ToolReportBuffer('tool-name', 'report-name', '1.0.0'),
             sys_get_temp_dir()
         );
         $this->expectNotToPerformAssertions();
@@ -26,7 +26,7 @@ class ToolReportTest extends TestCase
 
     public function testAddsDiagnostic(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report = new ToolReport($buffer, sys_get_temp_dir());
 
         $this->assertSame(
@@ -45,7 +45,7 @@ class ToolReportTest extends TestCase
 
     public function testEndIsCalledForPendingDiagnosticBuilderFromFinish(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report = new ToolReport($buffer, sys_get_temp_dir());
 
         $report->addDiagnostic('error', 'This is an error');
@@ -64,7 +64,7 @@ class ToolReportTest extends TestCase
     public function testAddsAttachment(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
 
         $this->assertSame($report, $report->addAttachment('local')->fromFile('/some/file')->end());
@@ -83,7 +83,7 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingAttachmentBuilderFromFinish(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
@@ -104,7 +104,7 @@ class ToolReportTest extends TestCase
     public function testAddsDiff(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
 
         $this->assertSame($report, $report->addDiff('local')->fromFile('/some/patch-file.diff')->end());
@@ -122,7 +122,7 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingDiffBuilderFromFinish(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
@@ -142,7 +142,7 @@ class ToolReportTest extends TestCase
 
     public function testFinishSetsTheStatus(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name');
+        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report = new ToolReport($buffer, sys_get_temp_dir());
 
         $report->close('passed');

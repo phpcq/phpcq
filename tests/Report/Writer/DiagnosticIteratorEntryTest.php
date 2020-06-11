@@ -16,7 +16,7 @@ class DiagnosticIteratorEntryTest extends TestCase
     public function testCanBeInstantiatedWithoutFileRange(): void
     {
         $entry = new DiagnosticIteratorEntry(
-            $tool = new ToolReportBuffer('tool-name', 'report-name'),
+            $tool = new ToolReportBuffer('tool-name', 'report-name', '1.0.0'),
             $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             null
         );
@@ -30,7 +30,7 @@ class DiagnosticIteratorEntryTest extends TestCase
     public function testCanBeInstantiatedWithFileRange(): void
     {
         $entry = new DiagnosticIteratorEntry(
-            $tool = new ToolReportBuffer('tool-name', 'report-name'),
+            $tool = new ToolReportBuffer('tool-name', 'report-name', '1.0.0'),
             $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             $range = new FileRangeBuffer('some/file', null, null, null, null)
         );
