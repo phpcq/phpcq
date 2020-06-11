@@ -97,7 +97,7 @@ final class ConsoleWriter
 
     private function writeHeadline(): void
     {
-        $this->style->title('PHP Code Quality check');
+        $this->style->title('PHP Code Quality Report');
     }
 
     private function writeSummary(): void
@@ -157,7 +157,7 @@ final class ConsoleWriter
             $conclusion .= ': ';
             $prefix = '';
             foreach ($summary as $severity => $count) {
-                $conclusion .= $prefix . $count . ' ' . $severity . 's';
+                $conclusion .= $prefix . $count . ' ' . $severity . ($count > 1 ? 's' : '');
                 $prefix = ', ';
             }
         }
