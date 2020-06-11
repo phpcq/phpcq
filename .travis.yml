@@ -35,10 +35,10 @@ install:
         || echo dev-${TRAVIS_BRANCH}) \
         travis_retry composer update $COMPOSER_FLAGS $PLATFORM_FLAGS --prefer-dist --no-interaction;
     fi
-  - ./phpcq install -t ./.phpcq -v $PLATFORM_FLAGS
+  - ./phpcq install -v $PLATFORM_FLAGS
 
 script:
-  - ./phpcq run -t ./.phpcq -v $PLATFORM_FLAGS
+  - ./phpcq run -v $PLATFORM_FLAGS
 
 # Hack to make things work again - we can not use a shallow repository.
 git:
