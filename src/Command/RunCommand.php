@@ -21,6 +21,7 @@ use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\ConsoleWriter;
 use Phpcq\Report\Writer\FileReportWriter;
+use Phpcq\Report\Writer\GithubActionConsoleWriter;
 use Phpcq\Report\Writer\ToolReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
@@ -66,9 +67,18 @@ final class RunCommand extends AbstractCommand
             'report',
             'r',
             InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-            'Set the report formats which should be created. Available options are "file-report", '
-            . '"tool-report" and "checkstyle".',
+            'Set the report formats which should be created. Available options are <info>file-report</info>, '
+            . '<info>tool-report</info> and <info>checkstyle</info>".',
             ['file-report']
+        );
+
+        $this->addOption(
+            'output',
+            'o',
+            InputOption::VALUE_REQUIRED,
+            'Set a specific console output format. Available options are <info>default</info> and '
+            . '<info>github-action</info>',
+            'default'
         );
 
         $this->addOption(
@@ -255,13 +265,17 @@ final class RunCommand extends AbstractCommand
         /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
         $threshold  = (string) $this->input->getOption('threshold');
 
-        ConsoleWriter::writeReport(
-            $this->output,
-            new SymfonyStyle($this->input, $this->output),
-            $report,
-            $threshold,
-            $this->getWrapWidth()
-        );
+        if ($this->input->getOption('output') === 'github-action') {
+            GithubActionConsoleWriter::writeReport($this->output, $report);
+        } else {
+            ConsoleWriter::writeReport(
+                $this->output,
+                new SymfonyStyle($this->input, $this->output),
+                $report,
+                $threshold,
+                $this->getWrapWidth()
+            );
+        }
 
         $reports = (array) $this->input->getOption('report');
         $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();

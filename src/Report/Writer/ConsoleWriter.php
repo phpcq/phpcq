@@ -6,7 +6,6 @@ namespace Phpcq\Report\Writer;
 
 use Generator;
 use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\ToolReport;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,6 +19,8 @@ use function wordwrap;
 
 final class ConsoleWriter
 {
+    use RenderRangeTrait;
+
     /**
      * @var OutputInterface
      */
@@ -165,25 +166,6 @@ final class ConsoleWriter
 
         $this->output->writeln($conclusion);
         $this->style->newLine();
-    }
-
-    private function renderRange(FileRangeBuffer $range): string
-    {
-        if (null === $value = $range->getStartLine()) {
-            return '';
-        }
-        $result = '[' . (string) $value;
-        if (null !== $value = $range->getStartColumn()) {
-            $result .= ':' . (string) $value;
-        }
-        if (null !== $value = $range->getEndLine()) {
-            $result .= ' - ' . (string) $value;
-            if (null !== $value = $range->getEndColumn()) {
-                $result .= ':' . (string) $value;
-            }
-        }
-
-        return $result . ']';
     }
 
     private function renderToolStatus(string $status): string
