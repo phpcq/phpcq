@@ -36,8 +36,6 @@ jobs:
 
       - name: Install phpcq toolchain
         run: $GITHUB_WORKSPACE/phpcq install -v
-        working-directory: bootstrap
 
       - name: Run tests
         run: $GITHUB_WORKSPACE/phpcq run -o github-action
-        working-directory: bootstrap
