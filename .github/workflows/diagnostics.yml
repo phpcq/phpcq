@@ -1,0 +1,43 @@
+name: Code Quality Diagnostics
+
+env:
+  PHPCQ_DIRECTORY: ./phpcq-runner
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v2
+
+      - name: Cache composer cache directory
+        uses: actions/cache@v1
+        env:
+          cache-name: composer-cache-dir
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Cache vendor directory of phpcq tool runner
+        uses: actions/cache@v1
+        env:
+          cache-name: phpcq-vendor
+        with:
+          path: $GITHUB_WORKSPACE/vendor
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Install phpcq toolchain
+        run: $GITHUB_WORKSPACE/phpcq install -v
+        working-directory: bootstrap
+
+      - name: Run tests
+        run: $GITHUB_WORKSPACE/phpcq run -o github-action
+        working-directory: bootstrap
