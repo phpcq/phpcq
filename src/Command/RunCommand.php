@@ -260,10 +260,14 @@ final class RunCommand extends AbstractCommand
                 $process->mustRun();
                 return (int) trim($process->getOutput());
             } catch (Throwable $ignored) {
-                // fallback.
+                // Fallback to grep.
                 $process = new Process(['grep', '-c', '^processor', '/proc/cpuinfo']);
-                $process->mustRun();
-                return (int) trim($process->getOutput());
+                try {
+                    $process->mustRun();
+                    return (int) trim($process->getOutput());
+                } catch (Throwable $ignored) {
+                    // Ignore exception and return the 1 default below.
+                }
             }
         }
         // Unsupported OS.
