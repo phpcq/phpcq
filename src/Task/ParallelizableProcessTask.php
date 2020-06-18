@@ -43,8 +43,8 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
     /** @var Process|null */
     private $process;
 
-    /** @var int */
-    private $incrementalErrorOffset;
+    /** @var int|null */
+    private $errorOffset;
 
     /**
      * @param string                           $toolName    The name of the tool the task belongs to
@@ -89,7 +89,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         $command = $this->process->getCommandLine();
         $report->addDiagnostic(ToolReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
         $this->transformer = $this->factory->createFor($report);
-        $this->incrementalErrorOffset = 0;
+        $this->errorOffset = 0;
         try {
             $this->process->start();
         } catch (Throwable $exception) {
@@ -128,9 +128,9 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
      */
     public function getIncrementalErrorOutput(): string
     {
-        $all = $this->process->getErrorOutput();
-        $latest = substr($all, $this->incrementalErrorOffset);
-        $this->incrementalErrorOffset += strlen($latest);
+        $all                = $this->process->getErrorOutput();
+        $latest             = substr($all, $this->errorOffset);
+        $this->errorOffset += strlen($latest);
         if (false === $latest) {
             return '';
         }
