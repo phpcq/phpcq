@@ -77,7 +77,7 @@ class TaskScheduler
         }
 
         // Empty list.
-        if (!$this->tasks->valid() || null === $this->tasks->current()) {
+        if (!$this->tasks->valid()) {
             $this->stop = true;
             return true;
         }

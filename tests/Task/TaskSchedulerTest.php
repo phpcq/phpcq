@@ -33,6 +33,14 @@ class TaskSchedulerTest extends TestCase
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $generator = function () {
+            // Ugly, I know - but how shall I create an empty generator else?
+            foreach ([] as $task) {
+                yield;
+            }
+        };
+        $list->expects($this->once())->method('getIterator')->willReturn($generator());
+
         $scheduler = new TaskScheduler($list, 1, $report, $output, false);
         $this->assertTrue($scheduler->run());
     }
@@ -49,6 +57,14 @@ class TaskSchedulerTest extends TestCase
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $generator = function () {
+            // Ugly, I know - but how shall I create an empty generator else?
+            foreach ([] as $task) {
+                yield;
+            }
+        };
+        $list->expects($this->once())->method('getIterator')->willReturn($generator());
+
         $scheduler = new TaskScheduler($list, 1, $report, $output, false);
         $scheduler->run();
         $this->expectException(\Phpcq\Exception\RuntimeException::class);
