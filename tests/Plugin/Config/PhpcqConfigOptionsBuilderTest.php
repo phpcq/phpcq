@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Plugin\Config;
+namespace Phpcq\Test\Plugin\Config;
 
 use Phpcq\Plugin\Config\ArrayConfigOption;
 use Phpcq\Plugin\Config\BoolConfigOption;

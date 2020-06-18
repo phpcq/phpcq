@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryFactory;
 use Phpcq\Repository\RepositoryPool;
 use Phpcq\ToolUpdate\UpdateCalculator;

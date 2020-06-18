@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Report\Writer;
+namespace Phpcq\Test\Report\Writer;
 
 use DOMDocument;
 use Phpcq\PluginApi\Version10\ToolReportInterface;

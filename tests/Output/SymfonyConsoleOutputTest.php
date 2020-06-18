@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Output;
+namespace Phpcq\Test\Output;
 
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;

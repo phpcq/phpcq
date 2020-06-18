@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Platform;
+namespace Phpcq\Test\Platform;
 
 use Phpcq\Platform\PlatformInformation;
 use PHPUnit\Framework\TestCase;

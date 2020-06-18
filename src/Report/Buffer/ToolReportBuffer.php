@@ -8,8 +8,6 @@ use Generator;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 
-use function array_filter;
-
 /**
  * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
  * @psalm-type TToolReportSummary = array{

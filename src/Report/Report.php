@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;

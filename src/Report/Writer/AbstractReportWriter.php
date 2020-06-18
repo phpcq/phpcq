@@ -49,7 +49,7 @@ abstract class AbstractReportWriter
         $instance->save();
     }
 
-    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) - Implementations my use the parameter */
+    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) - Implementations may use the parameter */
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
         $this->targetPath  = $targetPath;

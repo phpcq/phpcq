@@ -25,10 +25,6 @@ use function sprintf;
  */
 final class UpdateExecutor
 {
-    public const TRUST_SIGNED = 'signed';
-    public const TRUST_UNSIGNED = 'unsigned';
-    public const TRUST_UNKNOWN_KEY = 'unknown-key';
-
     /**
      * @var FileDownloader
      */

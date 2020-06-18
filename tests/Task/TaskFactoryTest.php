@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\Task\TaskFactory;

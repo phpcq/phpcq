@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
-use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Repository\RepositoryInterface;
 
 class TaskFactory implements TaskFactoryInterface

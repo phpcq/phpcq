@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Repository;
+namespace Phpcq\Test\Repository;
 
 use Phpcq\Repository\InlineBootstrap;
 use Phpcq\Repository\LockFileDumper;

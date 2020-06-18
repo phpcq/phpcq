@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Repository;
+namespace Phpcq\Test\Repository;
 
-use JsonSerializable;
 use Phpcq\Repository\BootstrapHash;
 use PHPUnit\Framework\TestCase;
 
