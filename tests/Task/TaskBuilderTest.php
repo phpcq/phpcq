@@ -13,7 +13,7 @@ use ReflectionProperty;
 /**
  * @covers \Phpcq\Task\TaskBuilder
  */
-final class TaskRunnerBuilderTest extends TestCase
+final class TaskBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
