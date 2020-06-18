@@ -132,6 +132,18 @@ final class TaskBuilder implements TaskBuilderInterface
             $transformerFactory = new ConsoleOutputTransformerFactory($this->toolName);
         }
 
+        if ($this->parallel) {
+            return new ParallelizableProcessTask(
+                $this->toolName,
+                $this->command,
+                $transformerFactory,
+                $this->cwd,
+                $this->env,
+                $this->input,
+                $this->timeout
+            );
+        }
+
         return new ProcessTask(
             $this->toolName,
             $this->command,
