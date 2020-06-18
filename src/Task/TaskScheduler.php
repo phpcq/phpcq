@@ -88,10 +88,12 @@ class TaskScheduler
                 break;
             }
             $this->fillUp();
+            usleep(500);
         }
         // If stopped, let the remaining running tasks complete.
         while ($this->runningThreads > 0) {
             $this->tick();
+            usleep(500);
         }
 
         $this->stop = true;
