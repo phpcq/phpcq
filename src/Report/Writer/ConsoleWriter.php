@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Report\Writer;
 
+use DateTimeImmutable;
 use Generator;
 use Phpcq\PluginApi\Version10\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -163,8 +164,13 @@ final class ConsoleWriter
             }
         }
         $conclusion .= '.';
-
         $this->output->writeln($conclusion);
+
+        $completedAt = $this->report->getCompletedAt();
+        assert($completedAt instanceof DateTimeImmutable);
+        $runningTime = $completedAt->diff($this->report->getStartedAt());
+        $this->output->writeln(sprintf('<fg=green>Elapsed time:</> %s', $runningTime->format('%hh %mm %ss.')));
+
         $this->style->newLine();
     }
 

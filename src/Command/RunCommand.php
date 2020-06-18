@@ -6,15 +6,11 @@ namespace Phpcq\Command;
 
 use Phpcq\Config\BuildConfiguration;
 use Phpcq\Config\ProjectConfiguration;
-use Phpcq\Exception\Exception;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Output\BufferedOutput;
 use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
-use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -25,11 +21,14 @@ use Phpcq\Report\Writer\GithubActionConsoleWriter;
 use Phpcq\Report\Writer\ToolReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
+use Phpcq\Task\TaskScheduler;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
+use Throwable;
 
 use function assert;
 use function getcwd;
@@ -95,6 +94,15 @@ final class RunCommand extends AbstractCommand
             ToolReportInterface::SEVERITY_INFO
         );
 
+        $numCores = $this->getCores();
+        $this->addOption(
+            'threads',
+            'j',
+            InputOption::VALUE_REQUIRED,
+            sprintf('Set the amount of threads to run in parallel. <info>1</info>-<info>%1$d</info>', $numCores),
+            $numCores
+        );
+
         parent::configure();
     }
 
@@ -137,7 +145,7 @@ final class RunCommand extends AbstractCommand
         }
 
         $consoleOutput = $this->getWrappedOutput();
-        $exitCode = $this->runTasks($taskList, $report, $consoleOutput, (bool) $this->input->getOption('fast-finish'));
+        $exitCode = $this->runTasks($taskList, $report, $consoleOutput);
 
         $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($reportBuffer, $projectConfig);
@@ -146,70 +154,13 @@ final class RunCommand extends AbstractCommand
         return $exitCode;
     }
 
-    private function runTasks(Tasklist $taskList, Report $report, OutputInterface $output, bool $fastFinish): int
+    private function runTasks(Tasklist $taskList, Report $report, OutputInterface $output): int
     {
-        // TODO: Parallelize tasks
-        $exitCode = 0;
-        foreach ($taskList->getIterator() as $task) {
-            if (!$task instanceof ReportWritingTaskInterface) {
-                throw new RuntimeException('Task is not an instance of: ' . ReportWritingTaskInterface::class);
-            }
+        $fastFinish = (bool) $this->input->getOption('fast-finish');
+        $threads    = (int) $this->input->getOption('threads');
+        $scheduler  = new TaskScheduler($taskList, $threads, $report, $output, $fastFinish);
 
-            try {
-                $toolReport = $report->addToolReport($task->getToolName());
-                $task->runWithReport($toolReport);
-
-                if ($fastFinish && $toolReport->getStatus() !== ToolReportInterface::STATUS_PASSED) {
-                    return $exitCode;
-                }
-            } catch (PluginApiRuntimeException $throwable) {
-                $this->renderException($output, $throwable);
-
-                $exitCode = (int) $throwable->getCode();
-                $exitCode = $exitCode === 0 ? 1 : $exitCode;
-
-                if ($fastFinish) {
-                    return $exitCode;
-                }
-            }
-        }
-
-        return $exitCode;
-    }
-
-    private function renderException(OutputInterface $output, PluginApiRuntimeException $exception): void
-    {
-        // Log internal exceptions on level normal - these indicate an error in phpcq caused from within a plugin.
-        if ($exception instanceof Exception) {
-            $output->writeln('', BufferedOutput::VERBOSITY_NORMAL, BufferedOutput::CHANNEL_STDERR);
-            $output->writeln(
-                'WARNING: task execution caused internal error: "' . $exception->getMessage() . '"',
-                BufferedOutput::VERBOSITY_NORMAL,
-                BufferedOutput::CHANNEL_STDERR
-            );
-            $output->writeln(
-                'This is most certainly caused by a plugin misbehaving.',
-                BufferedOutput::VERBOSITY_NORMAL,
-                BufferedOutput::CHANNEL_STDERR
-            );
-            $output->writeln(
-                $exception->getFile() . ' on line ' . $exception->getLine(),
-                BufferedOutput::VERBOSITY_VERBOSE,
-                BufferedOutput::CHANNEL_STDERR
-            );
-            $output->writeln(
-                $exception->getTraceAsString(),
-                BufferedOutput::VERBOSITY_VERBOSE,
-                BufferedOutput::CHANNEL_STDERR
-            );
-        }
-
-        // Normal plugin exception.
-        $output->writeln(
-            $exception->getMessage(),
-            BufferedOutput::VERBOSITY_VERBOSE,
-            BufferedOutput::CHANNEL_STDERR
-        );
+        return $scheduler->run() ? 0 : 1;
     }
 
     /** @psalm-return array{0: string, 1: array} */
@@ -299,5 +250,27 @@ final class RunCommand extends AbstractCommand
                 $fileSystem->remove($attachment->getAbsolutePath());
             }
         }
+    }
+
+    private function getCores(): int
+    {
+        if ('/' === DIRECTORY_SEPARATOR) {
+            $process = new Process(['nproc']);
+            try {
+                $process->mustRun();
+                return (int) trim($process->getOutput());
+            } catch (Throwable $ignored) {
+                // Fallback to grep.
+                $process = new Process(['grep', '-c', '^processor', '/proc/cpuinfo']);
+                try {
+                    $process->mustRun();
+                    return (int) trim($process->getOutput());
+                } catch (Throwable $ignored) {
+                    // Ignore exception and return the 1 default below.
+                }
+            }
+        }
+        // Unsupported OS.
+        return 1;
     }
 }
