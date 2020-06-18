@@ -108,25 +108,18 @@ final class RunCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
+        // Stage 1: preparation.
         $fileSystem = new Filesystem();
-        $fileSystem->remove(getcwd() . '/' . $this->config['artifact']);
-        $fileSystem->mkdir(getcwd() . '/' . $this->config['artifact']);
-
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
-        $tempDirectory = sys_get_temp_dir();
-        $taskList = new Tasklist();
+
+        $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
+        $fileSystem->mkdir($tempDirectory);
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
             $installed = $this->getInstalledRepository(true),
             ...$this->findPhpCli()
         );
-        $reportBuffer = new ReportBuffer();
-        $report = new Report($reportBuffer, $installed, $tempDirectory);
-        // Create build configuration
-        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
-        // Load bootstraps
-        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
 
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
@@ -135,6 +128,13 @@ final class RunCommand extends AbstractCommand
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
 
+        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
+        $outputPath = $buildConfig->getProjectConfiguration()->getArtifactOutputPath();
+        $fileSystem->remove($outputPath);
+        $fileSystem->mkdir($outputPath);
+
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
+        $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
             $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
@@ -144,13 +144,20 @@ final class RunCommand extends AbstractCommand
             }
         }
 
+        // Stage 2: execution.
+        $reportBuffer  = new ReportBuffer();
+        $report        = new Report($reportBuffer, $installed, $tempDirectory);
         $consoleOutput = $this->getWrappedOutput();
-        $exitCode = $this->runTasks($taskList, $report, $consoleOutput);
+        $exitCode      = $this->runTasks($taskList, $report, $consoleOutput);
 
+        // Stage 2: reporting.
         $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($reportBuffer, $projectConfig);
 
+        // Stage 4. cleanup.
         $consoleOutput->writeln('Finished.', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
+        $fileSystem->remove($tempDirectory);
+
         return $exitCode;
     }
 
