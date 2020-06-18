@@ -9,6 +9,7 @@ use Phpcq\Repository\LockFileDumper;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,6 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class LockFileDumperTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testLockFileDump(): void
     {
         $repository = new Repository();
@@ -42,11 +45,10 @@ class LockFileDumperTest extends TestCase
             'test2.phar.asc'
         ));
 
-        $tempDir = sys_get_temp_dir();
-        $fileName = tempnam($tempDir, 'phpcq-test');
+        $fileName = tempnam(self::$tempdir, 'phpcq-test');
 
-        $dumper = new LockFileDumper($tempDir);
-        $dumper->dump($repository, str_replace($tempDir . '/', '', $fileName));
+        $dumper = new LockFileDumper(self::$tempdir);
+        $dumper->dump($repository, str_replace(self::$tempdir . '/', '', $fileName));
 
         $data = json_decode(file_get_contents($fileName), true);
         $this->assertSame(

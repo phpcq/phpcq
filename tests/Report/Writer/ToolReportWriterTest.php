@@ -9,10 +9,10 @@ use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\ToolReportWriter;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 
 use function file_get_contents;
 use function sprintf;
-use function sys_get_temp_dir;
 use function uniqid;
 use function unlink;
 
@@ -24,12 +24,14 @@ use const DATE_ATOM;
  */
 final class ToolReportWriterTest extends AbstractWriterTest
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testWriteEmptyReport(): void
     {
         $report = new ReportBuffer();
         $report->complete(Report::STATUS_PASSED);
 
-        $tempDir = sys_get_temp_dir() . '/' . uniqid('phpcq', true);
+        $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
         ToolReportWriter::writeReport($tempDir, $report);
@@ -55,7 +57,7 @@ XML;
     {
         $report = $this->createFullFeaturedReport();
 
-        $tempDir = sys_get_temp_dir() . '/' . uniqid('phpcq', true);
+        $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
         ToolReportWriter::writeReport($tempDir, $report);
@@ -113,7 +115,7 @@ XML;
     {
         $report = $this->createFullFeaturedReport();
 
-        $tempDir = sys_get_temp_dir() . '/' . uniqid('phpcq', true);
+        $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
         ToolReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_WARNING);

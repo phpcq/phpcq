@@ -9,17 +9,20 @@ use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
 use Phpcq\Report\Buffer\ToolReportBuffer;
 use Phpcq\Report\ToolReport;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 /** @covers \Phpcq\Report\ToolReport */
 class ToolReportTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testCanBeInstantiated(): void
     {
         new ToolReport(
             new ToolReportBuffer('tool-name', 'report-name', '1.0.0'),
-            sys_get_temp_dir()
+            self::$tempdir
         );
         $this->expectNotToPerformAssertions();
     }
@@ -27,7 +30,7 @@ class ToolReportTest extends TestCase
     public function testAddsDiagnostic(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, self::$tempdir);
 
         $this->assertSame(
             $report,
@@ -46,7 +49,7 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingDiagnosticBuilderFromFinish(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, self::$tempdir);
 
         $report->addDiagnostic('error', 'This is an error');
 
@@ -65,7 +68,7 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
+        $report     = new ToolReport($buffer, self::$tempdir, $filesystem);
 
         $this->assertSame($report, $report->addAttachment('local')->fromFile('/some/file')->end());
 
@@ -105,7 +108,7 @@ class ToolReportTest extends TestCase
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
         $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, sys_get_temp_dir(), $filesystem);
+        $report     = new ToolReport($buffer, self::$tempdir, $filesystem);
 
         $this->assertSame($report, $report->addDiff('local')->fromFile('/some/patch-file.diff')->end());
 
@@ -143,7 +146,7 @@ class ToolReportTest extends TestCase
     public function testFinishSetsTheStatus(): void
     {
         $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, sys_get_temp_dir());
+        $report = new ToolReport($buffer, self::$tempdir);
 
         $report->close('passed');
 

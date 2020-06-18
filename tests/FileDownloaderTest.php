@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq;
+namespace Phpcq\Test;
 
+use Phpcq\FileDownloader;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,12 +12,14 @@ use PHPUnit\Framework\TestCase;
  */
 class FileDownloaderTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testDownloadJsonFile(): void
     {
         $downloader = $this
             ->getMockBuilder(FileDownloader::class)
             ->onlyMethods(['downloadFile'])
-            ->setConstructorArgs([sys_get_temp_dir() . '/phpcq', []])
+            ->setConstructorArgs([self::$tempdir . '/phpcq', []])
             ->getMock();
         $downloader
             ->expects($this->once())
@@ -32,7 +35,7 @@ class FileDownloaderTest extends TestCase
         $downloader = $this
             ->getMockBuilder(FileDownloader::class)
             ->onlyMethods(['downloadFile'])
-            ->setConstructorArgs([sys_get_temp_dir() . '/phpcq', []])
+            ->setConstructorArgs([self::$tempdir . '/phpcq', []])
             ->getMock();
         $downloader
             ->expects($this->once())
@@ -40,7 +43,7 @@ class FileDownloaderTest extends TestCase
             ->with('some/url')
             ->willReturn('{"json": "file"}');
 
-        $filename = sys_get_temp_dir() . '/' . uniqid('test-download');
+        $filename = self::$tempdir . '/' . uniqid('test-download');
         try {
             $downloader->downloadFileTo('some/url', $filename);
             $this->assertFileExists($filename);
@@ -52,14 +55,9 @@ class FileDownloaderTest extends TestCase
 
     public function testDownloadFile(): void
     {
-        $tempDir = sys_get_temp_dir() . '/phpcq';
-        $downloader = new FileDownloader($tempDir);
+        $downloader = new FileDownloader(self::$tempdir);
 
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir);
-        }
-
-        $filename = $tempDir . '/' . uniqid('test-download');
+        $filename = self::$tempdir . '/' . uniqid('test-download');
         file_put_contents($filename, '{"json": "file"}');
 
         $this->assertSame('{"json": "file"}', $downloader->downloadFile($filename));

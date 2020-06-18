@@ -15,12 +15,15 @@ use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Task\TasklistInterface;
 use Phpcq\Task\TaskScheduler;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
 /** @covers \Phpcq\Task\TaskScheduler */
 class TaskSchedulerTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testCanRunEmptyList(): void
     {
         $output = $this->getMockForAbstractClass(OutputInterface::class);
@@ -29,7 +32,7 @@ class TaskSchedulerTest extends TestCase
         $report = new Report(
             new ReportBuffer(),
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            sys_get_temp_dir()
+            self::$tempdir
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
@@ -50,7 +53,7 @@ class TaskSchedulerTest extends TestCase
         $report = new Report(
             new ReportBuffer(),
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            sys_get_temp_dir()
+            self::$tempdir
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
@@ -225,7 +228,7 @@ class TaskSchedulerTest extends TestCase
         $report = new Report(
             new ReportBuffer(),
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            sys_get_temp_dir()
+            self::$tempdir
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
@@ -340,7 +343,7 @@ class TaskSchedulerTest extends TestCase
         $report = new Report(
             $buffer = new ReportBuffer(),
             $this->getMockForAbstractClass(RepositoryInterface::class),
-            sys_get_temp_dir()
+            self::$tempdir
         );
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);

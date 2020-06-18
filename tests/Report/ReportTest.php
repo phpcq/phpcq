@@ -8,17 +8,18 @@ use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
-
-use function sys_get_temp_dir;
 
 /** @covers \Phpcq\Report\Report */
 class ReportTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testCanBeInstantiated(): void
     {
         $installed = $this->getMockForAbstractClass(RepositoryInterface::class);
-        new Report(new ReportBuffer(), $installed, sys_get_temp_dir());
+        new Report(new ReportBuffer(), $installed, self::$tempdir);
         $this->expectNotToPerformAssertions();
     }
 
@@ -26,7 +27,7 @@ class ReportTest extends TestCase
     {
         $installed = $this->getMockForAbstractClass(RepositoryInterface::class);
         $buffer = new ReportBuffer();
-        $report = new Report($buffer, $installed, sys_get_temp_dir());
+        $report = new Report($buffer, $installed, self::$tempdir);
 
         $report->addToolReport('tool-name');
 
@@ -50,7 +51,7 @@ class ReportTest extends TestCase
             ->willReturn($toolInformation);
 
         $buffer = new ReportBuffer();
-        $report = new Report($buffer, $installed, sys_get_temp_dir());
+        $report = new Report($buffer, $installed, self::$tempdir);
 
         $report->addToolReport('tool-name');
 

@@ -48,6 +48,11 @@
             "Phpcq\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Phpcq\\Test\\": "tests/"
+        }
+    },
     "bin": [
         "./phpcq"
     ]

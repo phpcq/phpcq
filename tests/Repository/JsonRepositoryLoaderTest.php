@@ -9,20 +9,15 @@ use Phpcq\FileDownloader;
 use Phpcq\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteBootstrap;
+use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @covers \Phpcq\Repository\JsonRepositoryLoader
  */
 class JsonRepositoryLoaderTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $filesystem = new Filesystem();
-        $filesystem->remove(sys_get_temp_dir() . '/phpcq-test');
-    }
+    use TemporaryFileProducingTestTrait;
 
     public function testInvalidRepositoryThrows(): void
     {
@@ -56,7 +51,7 @@ class JsonRepositoryLoaderTest extends TestCase
 
     public function testLoadRepository()
     {
-        $downloader = new FileDownloader(sys_get_temp_dir() . '/phpcq-test');
+        $downloader = new FileDownloader(self::$tempdir . '/phpcq-test');
         $requirementChecker = $this->createMock(PlatformRequirementCheckerInterface::class);
         $requirementChecker
             ->method('isFulfilled')
