@@ -123,7 +123,7 @@ class TaskScheduler
         $this->output->writeln(sprintf(self::LOG_END, $thread->getToolName()), OutputInterface::VERBOSITY_DEBUG);
         $report = $this->threads->offsetGet($thread);
         $this->threads->detach($thread);
-        $this->runningThreads--;
+        $this->runningThreads -= $thread->getCost();
         $this->success = $this->success && $report->getStatus() === ToolReportInterface::STATUS_PASSED;
         if ($this->fastFinish && !$this->success) {
             $this->stop = true;
@@ -145,10 +145,12 @@ class TaskScheduler
         while ($this->runningThreads < $this->parallelThreads && $this->tasks->valid()) {
             $next = $this->tasks->current();
             // If the pending task is not parallelizable, return if we still have some running.
-            if (! ($next instanceof ParallelTaskInterface) && $this->runningThreads > 0) {
+            $cost = ($next instanceof ParallelTaskInterface) ? $next->getCost() : $this->parallelThreads;
+            if ($this->runningThreads + $cost > $this->parallelThreads) {
                 return;
             }
             $this->enqueueTask($next);
+
             $this->tasks->next();
             if ($this->stop) {
                 break;
@@ -183,7 +185,7 @@ class TaskScheduler
             return;
         }
         $this->threads->attach($task, $report);
-        $this->runningThreads++;
+        $this->runningThreads += $task->getCost();
     }
 
     /**

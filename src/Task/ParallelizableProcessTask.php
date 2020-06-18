@@ -22,6 +22,9 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
     /** @var string[] */
     private $command;
 
+    /** @var int */
+    private $cost;
+
     /** @var string|null */
     private $cwd;
 
@@ -64,6 +67,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         string $toolName,
         array $command,
         TransformerFactory $transformer,
+        int $cost,
         string $cwd = null,
         array $env = null,
         $input = null,
@@ -71,6 +75,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
     ) {
         $this->toolName = $toolName;
         $this->command  = $command;
+        $this->cost     = $cost;
         $this->cwd      = $cwd;
         $this->env      = $env;
         $this->input    = $input;
@@ -121,6 +126,11 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         return !$finished;
     }
 
+    public function getCost(): int
+    {
+        return $this->cost;
+    }
+
     /**
      * Sadly no Process::getIncrementalErrorOutput() - so we fake one.
      *
@@ -128,6 +138,8 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
      */
     public function getIncrementalErrorOutput(): string
     {
+        assert($this->process instanceof Process);
+        assert(is_int($this->errorOffset));
         $all                = $this->process->getErrorOutput();
         $latest             = substr($all, $this->errorOffset);
         $this->errorOffset += strlen($latest);

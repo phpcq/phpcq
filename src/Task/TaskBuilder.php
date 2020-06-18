@@ -6,6 +6,7 @@ namespace Phpcq\Task;
 
 use Phpcq\OutputTransformer\ConsoleOutputTransformerFactory;
 use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
+use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;
@@ -49,6 +50,9 @@ final class TaskBuilder implements TaskBuilderInterface
 
     /** @var bool */
     private $parallel = true;
+
+    /** @var int */
+    private $cost = 1;
 
     /**
      * Create a new instance.
@@ -120,7 +124,25 @@ final class TaskBuilder implements TaskBuilderInterface
 
     public function forceSingleProcess(): TaskBuilderInterface
     {
+        if (1 !== $this->cost) {
+            throw new RuntimeException('Can not force task with cost > 1 to run as single process');
+        }
+
         $this->parallel = false;
+
+        return $this;
+    }
+
+    public function withCosts(int $cost): TaskBuilderInterface
+    {
+        if (!$this->parallel && $cost !== 1) {
+            throw new RuntimeException('Can not set cost for single process forced task.');
+        }
+        if (0 > $cost) {
+            throw new RuntimeException('Cost must be greater than zero.');
+        }
+
+        $this->cost = $cost;
 
         return $this;
     }
@@ -137,6 +159,7 @@ final class TaskBuilder implements TaskBuilderInterface
                 $this->toolName,
                 $this->command,
                 $transformerFactory,
+                $this->cost,
                 $this->cwd,
                 $this->env,
                 $this->input,

@@ -34,10 +34,7 @@ class TaskSchedulerTest extends TestCase
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () {
-            // Ugly, I know - but how shall I create an empty generator else?
-            foreach ([] as $task) {
-                yield;
-            }
+            yield from [];
         };
         $list->expects($this->once())->method('getIterator')->willReturn($generator());
 
@@ -58,10 +55,7 @@ class TaskSchedulerTest extends TestCase
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () {
-            // Ugly, I know - but how shall I create an empty generator else?
-            foreach ([] as $task) {
-                yield;
-            }
+            yield from [];
         };
         $list->expects($this->once())->method('getIterator')->willReturn($generator());
 
@@ -169,6 +163,47 @@ class TaskSchedulerTest extends TestCase
                     $this->succeedingParallelTask(2, 'tool-2'),
                     $this->mockTask('tool-3', ReportInterface::STATUS_PASSED),
                     $this->succeedingParallelTask(2, 'tool-4'),
+                ],
+            ],
+            'run parallel tasks parallel in 4 threads depending on costs' => [
+                'expected' => [
+                    $this->start('tool-1'),
+                    $this->start('tool-2'),
+                    $this->end('tool-1'),
+                    $this->end('tool-2'),
+                    $this->start('tool-3'),
+                    $this->start('tool-4'),
+                    $this->end('tool-3'),
+                    $this->end('tool-4'),
+                ],
+                'threads' => 4,
+                'tasks' => [
+                    $this->succeedingParallelTask(1, 'tool-1', 1),
+                    $this->succeedingParallelTask(2, 'tool-2', 2),
+                    $this->succeedingParallelTask(3, 'tool-3', 3),
+                    $this->succeedingParallelTask(4, 'tool-4', 1),
+                ],
+            ],
+            'run mixed task types in 4 threads depending on costs' => [
+                'expected' => [
+                    $this->start('tool-1'),
+                    $this->start('tool-2'),
+                    $this->end('tool-1'),
+                    $this->end('tool-2'),
+                    $this->start('tool-3'),
+                    $this->end('tool-3'),
+                    $this->start('blocker'),
+                    $this->end('blocker'),
+                    $this->start('tool-4'),
+                    $this->end('tool-4'),
+                ],
+                'threads' => 4,
+                'tasks' => [
+                    $this->succeedingParallelTask(1, 'tool-1', 1),
+                    $this->succeedingParallelTask(2, 'tool-2', 2),
+                    $this->succeedingParallelTask(3, 'tool-3', 3),
+                    $this->succeedingTask('blocker'),
+                    $this->succeedingParallelTask(4, 'tool-4', 1),
                 ],
             ],
         ];
@@ -376,29 +411,39 @@ class TaskSchedulerTest extends TestCase
         return $mock;
     }
 
-    private function succeedingParallelTask(int $tickDuration, string $toolName): ReportWritingParallelTaskInterface
-    {
-        return $this->mockParallelizableTask($tickDuration, $toolName, ReportInterface::STATUS_PASSED);
+    private function succeedingParallelTask(
+        int $tickDuration,
+        string $toolName,
+        int $cost = 1
+    ): ReportWritingParallelTaskInterface {
+        return $this->mockParallelizableTask($tickDuration, $cost, $toolName, ReportInterface::STATUS_PASSED);
     }
 
-    private function failingParallelTask(int $tickDuration, string $toolName): ReportWritingParallelTaskInterface
-    {
-        return $this->mockParallelizableTask($tickDuration, $toolName, ReportInterface::STATUS_FAILED);
+    private function failingParallelTask(
+        int $tickDuration,
+        string $toolName,
+        int $cost = 1
+    ): ReportWritingParallelTaskInterface {
+        return $this->mockParallelizableTask($tickDuration, $cost, $toolName, ReportInterface::STATUS_FAILED);
     }
 
-    private function throwingParallelTask(int $tickDuration, string $toolName): ReportWritingParallelTaskInterface
-    {
-        return $this->mockParallelizableTask($tickDuration, $toolName, new RuntimeException('fail miserably'));
+    private function throwingParallelTask(
+        int $tickDuration,
+        string $toolName,
+        int $cost = 1
+    ): ReportWritingParallelTaskInterface {
+        return $this->mockParallelizableTask($tickDuration, $cost, $toolName, new RuntimeException('fail miserably'));
     }
 
     private function skippedParallelTask(int $tickDuration): ReportWritingParallelTaskInterface
     {
-        return $this->mockParallelizableTask($tickDuration, uniqid('skipped-'), null);
+        return $this->mockParallelizableTask($tickDuration, 1, uniqid('skipped-'), null);
     }
 
     /** @param string|Throwable|null $result */
     private function mockParallelizableTask(
         int $tickDuration,
+        int $cost,
         string $toolName,
         $result
     ): ReportWritingParallelTaskInterface {
@@ -409,6 +454,7 @@ class TaskSchedulerTest extends TestCase
         if (null === $result) {
             $mock->expects($this->never())->method('runWithReport');
             $mock->expects($this->never())->method('tick');
+            $mock->expects($this->never())->method('getCost');
             return $mock;
         }
 
@@ -435,6 +481,8 @@ class TaskSchedulerTest extends TestCase
 
                 return array_shift($tickResults);
             });
+        $mock->expects($this->atLeastOnce())->method('getCost')->willReturn($cost);
+
         return $mock;
     }
 }

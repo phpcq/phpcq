@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
+use Phpcq\PluginApi\Version10\RuntimeException;
 use Phpcq\Task\ParallelizableProcessTask;
 use Phpcq\Task\ProcessTask;
 use Phpcq\Task\TaskBuilder;
@@ -39,6 +40,30 @@ final class TaskBuilderTest extends TestCase
         $this->assertPrivateProperty(['var1' => 'value1', 'var2' => 'value2"'], 'env', $runner);
         $this->assertPrivateProperty('input-values', 'input', $runner);
         $this->assertPrivateProperty(3600.0, 'timeout', $runner);
+    }
+
+    public function testThrowsExceptionWhenTryingToSetCostOnSingleThread(): void
+    {
+        $builder = new TaskBuilder('tool-name', ['foo']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Can not set cost for single process forced task.');
+
+        $builder
+            ->forceSingleProcess()
+            ->withCosts(10);
+    }
+
+    public function testThrowsExceptionWhenTryingToSetSingleThreadOnTaskWithHigherCostThanOne(): void
+    {
+        $builder = new TaskBuilder('tool-name', ['foo']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Can not force task with cost > 1 to run as single process');
+
+        $builder
+            ->withCosts(10)
+            ->forceSingleProcess();
     }
 
     public function testBuildsParallel(): void
