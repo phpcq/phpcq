@@ -47,6 +47,9 @@ final class TaskBuilder implements TaskBuilderInterface
      */
     private $transformerFactory;
 
+    /** @var bool */
+    private $parallel = true;
+
     /**
      * Create a new instance.
      *
@@ -111,6 +114,13 @@ final class TaskBuilder implements TaskBuilderInterface
     public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskBuilderInterface
     {
         $this->transformerFactory = $factory;
+
+        return $this;
+    }
+
+    public function forceSingleProcess(): TaskBuilderInterface
+    {
+        $this->parallel = false;
 
         return $this;
     }

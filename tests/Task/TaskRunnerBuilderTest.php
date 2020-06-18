@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Task\ConsoleWritingExecTask;
 use Phpcq\Task\ProcessTask;
 use Phpcq\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +22,7 @@ final class TaskRunnerBuilderTest extends TestCase
         );
 
         $builder
+            ->forceSingleProcess()
             ->withWorkingDirectory('/path/to/working-directory')
             ->withEnv(['var1' => 'value1', 'var2' => 'value2"'])
             ->withInput('input-values')
