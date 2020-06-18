@@ -71,6 +71,10 @@ class TaskScheduler
 
     public function run(): bool
     {
+        // Empty list.
+        if (!$this->tasks->valid() || null === $this->tasks->current()) {
+            return true;
+        }
         $this->fillUp();
         while ($this->runningThreads > 0 || $this->tasks->valid()) {
             $this->tick();

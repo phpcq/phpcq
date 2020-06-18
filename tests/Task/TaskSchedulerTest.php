@@ -21,6 +21,22 @@ use Throwable;
 /** @covers \Phpcq\Task\TaskScheduler */
 class TaskSchedulerTest extends TestCase
 {
+    public function testCanRunEmptyList(): void
+    {
+        $output = $this->getMockForAbstractClass(OutputInterface::class);
+
+        // Dummy report - not used but can not mock due to lack of interface.
+        $report = new Report(
+            new ReportBuffer(),
+            $this->getMockForAbstractClass(RepositoryInterface::class),
+            sys_get_temp_dir()
+        );
+
+        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $scheduler = new TaskScheduler($list, 1, $report, $output, false);
+        $scheduler->run();
+    }
+
     /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function taskListProvider(): array
     {
