@@ -34,6 +34,25 @@ class TaskSchedulerTest extends TestCase
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $scheduler = new TaskScheduler($list, 1, $report, $output, false);
+        $this->assertTrue($scheduler->run());
+    }
+
+    public function testCanNotBeRunTwice(): void
+    {
+        $output = $this->getMockForAbstractClass(OutputInterface::class);
+
+        // Dummy report - not used but can not mock due to lack of interface.
+        $report = new Report(
+            new ReportBuffer(),
+            $this->getMockForAbstractClass(RepositoryInterface::class),
+            sys_get_temp_dir()
+        );
+
+        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $scheduler = new TaskScheduler($list, 1, $report, $output, false);
+        $scheduler->run();
+        $this->expectException(\Phpcq\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('Can not run twice.');
         $scheduler->run();
     }
 

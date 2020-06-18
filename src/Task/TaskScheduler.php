@@ -6,6 +6,7 @@ namespace Phpcq\Task;
 
 use Generator;
 use Phpcq\Exception\Exception;
+use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\OutputInterface;
 use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
 use Phpcq\PluginApi\Version10\Task\ParallelTaskInterface;
@@ -71,8 +72,13 @@ class TaskScheduler
 
     public function run(): bool
     {
+        if ($this->stop) {
+            throw new RuntimeException('Can not run twice.');
+        }
+
         // Empty list.
         if (!$this->tasks->valid() || null === $this->tasks->current()) {
+            $this->stop = true;
             return true;
         }
         $this->fillUp();
@@ -87,6 +93,8 @@ class TaskScheduler
         while ($this->runningThreads > 0) {
             $this->tick();
         }
+
+        $this->stop = true;
 
         return $this->success;
     }
