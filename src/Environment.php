@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config;
+namespace Phpcq;
 
-use Phpcq\PluginApi\Version10\BuildConfigInterface;
+use Phpcq\PluginApi\Version10\EnvironmentInterface;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 
-class BuildConfiguration implements BuildConfigInterface
+class Environment implements EnvironmentInterface
 {
     /**
      * @var ProjectConfigInterface

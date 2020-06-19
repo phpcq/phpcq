@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace Phpcq\Report\Buffer;
 
 use Generator;
-use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 
 /**
  * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
  * @psalm-type TToolReportSummary = array{
+ *  none: int,
  *  info: int,
- *  notice: int,
- *  warning: int,
- *  error: int
+ *  marginal: int,
+ *  minor: int,
+ *  major: int,
+ *  fatal: int
  * }
  */
 final class ToolReportBuffer
@@ -141,10 +143,12 @@ final class ToolReportBuffer
     {
         /** @psalm-var TToolReportSummary $summary */
         $summary = [
-            ToolReportInterface::SEVERITY_ERROR   => 0,
-            ToolReportInterface::SEVERITY_WARNING => 0,
-            ToolReportInterface::SEVERITY_NOTICE  => 0,
-            ToolReportInterface::SEVERITY_INFO    => 0,
+            ToolReportInterface::SEVERITY_FATAL    => 0,
+            ToolReportInterface::SEVERITY_MAJOR    => 0,
+            ToolReportInterface::SEVERITY_MINOR    => 0,
+            ToolReportInterface::SEVERITY_MARGINAL => 0,
+            ToolReportInterface::SEVERITY_INFO     => 0,
+            ToolReportInterface::SEVERITY_NONE     => 0,
         ];
 
         foreach ($this->getDiagnostics() as $diagnostic) {

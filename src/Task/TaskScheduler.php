@@ -7,11 +7,11 @@ namespace Phpcq\Task;
 use Generator;
 use Phpcq\Exception\Exception;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Task\ParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Report;
 use SplObjectStorage;
 

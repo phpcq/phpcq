@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq;
 
 use Phpcq\Config\PhpcqConfiguration;
-use Phpcq\PluginApi\Version10\InvalidConfigException;
-use Symfony\Component\Config\Definition\Processor;
+use Phpcq\Config\PhpcqConfigurationBuilder;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
 use function array_fill_keys;
@@ -44,9 +44,9 @@ final class ConfigLoader
      *
      * @param string $configPath Path of the yaml configuration file.
      *
-     * @psalm-return TConfig
+     * @psalm-return PhpcqConfiguration
      */
-    public static function load(string $configPath): array
+    public static function load(string $configPath): PhpcqConfiguration
     {
         return (new self($configPath))->getConfig();
     }
@@ -59,26 +59,27 @@ final class ConfigLoader
     /**
      * @psalm-return TConfig
      */
-    public function getConfig(): array
+    public function getConfig(): PhpcqConfiguration
     {
         /** @psalm-var array */
         $config = Yaml::parseFile($this->configPath);
 
         if (!isset($config['phpcq'])) {
-            throw new InvalidConfigException('Phpcq section missing');
+            throw new InvalidConfigurationException('Phpcq section missing');
         }
 
-        $processed = (new Processor())->processConfiguration(new PhpcqConfiguration(), [$config['phpcq']]);
+        $configBuilder = new PhpcqConfigurationBuilder();
+        $processed = $configBuilder->processConfig($config['phpcq']);
         unset($config['phpcq']);
         /** @psalm-var TConfig $processed */
-        $processed = array_merge($processed, $config);
+        $processed = array_merge($config, $processed->getValue());
         $merged = $this->mergeConfig($processed);
 
         if (!array_key_exists('default', $merged['chains'])) {
             $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
         }
 
-        return $merged;
+        return new PhpcqConfiguration($merged);
     }
 
     /**

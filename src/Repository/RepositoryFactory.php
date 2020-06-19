@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
-use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 class RepositoryFactory
 {
@@ -31,13 +31,15 @@ class RepositoryFactory
 
         /** @var string|mixed $repository */
         foreach ($repositories as $repository) {
-            if (is_string($repository)) {
-                $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
-                continue;
+            switch ($repository['type']) {
+                case 'remote':
+                    $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
+                    break;
+                default:
+                    throw new InvalidConfigurationException(
+                        sprintf('Unsupported repository type "%s"', $repository['type'])
+                    );
             }
-
-            throw new InvalidConfigException('Repository has to be a string');
-            // TODO: handle different repository types here.
         }
 
         return $pool;

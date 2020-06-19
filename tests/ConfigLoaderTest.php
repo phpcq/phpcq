@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test;
 
 use Phpcq\ConfigLoader;
-use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -140,7 +140,7 @@ final class ConfigLoaderTest extends TestCase
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/invalid-config.yaml');
 
-        $this->expectException(InvalidConfigException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Phpcq section missing');
 
         $loader->getConfig();

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiffBuilderInterface;
-use Phpcq\PluginApi\Version10\RuntimeException;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -56,7 +56,15 @@ class ToolReport implements ToolReportInterface
         if (
             !in_array(
                 $severity,
-                [self::SEVERITY_INFO, self::SEVERITY_NOTICE, self::SEVERITY_WARNING, self::SEVERITY_ERROR]
+                [
+                    self::SEVERITY_NONE,
+                    self::SEVERITY_INFO,
+                    self::SEVERITY_MINOR,
+                    self::SEVERITY_MARGINAL,
+                    self::SEVERITY_MAJOR,
+                    self::SEVERITY_MAJOR,
+                    self::SEVERITY_FATAL
+                ]
             )
         ) {
             throw new RuntimeException('Invalid severity passed: ' . $severity);

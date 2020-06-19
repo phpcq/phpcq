@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
+use Phpcq\Config\PhpcqConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\SymfonyConsoleOutput;
 use Phpcq\Output\SymfonyOutput;
+use Phpcq\PluginApi\Version10\Output\OutputInterface as PluginApiOutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,9 +57,8 @@ abstract class AbstractCommand extends Command
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var array
+     * @var PhpcqConfiguration
      *
-     * @psalm-var TConfig
      * @psalm-suppress PropertyNotSetInConstructor
      */
     protected $config;
@@ -120,7 +121,7 @@ abstract class AbstractCommand extends Command
         }
     }
 
-    protected function getWrappedOutput(): \Phpcq\PluginApi\Version10\OutputInterface
+    protected function getWrappedOutput(): PluginApiOutputInterface
     {
         // Wrap console output
         if ($this->output instanceof ConsoleOutputInterface) {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\OutputTransformer;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
@@ -100,7 +100,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 }
                 return [
                     ToolReportInterface::STATUS_FAILED,
-                    ToolReportInterface::SEVERITY_ERROR,
+                    ToolReportInterface::SEVERITY_MAJOR,
                 ];
             }
         };

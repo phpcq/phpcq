@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Output;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
 final class SymfonyOutput implements OutputInterface

@@ -34,15 +34,19 @@ final class InstallCommand extends AbstractUpdateCommand
             $pool->addRepository($this->lockFileRepository);
             $calculator = new UpdateCalculator($installedRepository, $pool, $this->getWrappedOutput());
 
-            return $calculator->calculateTasksToExecute($this->lockFileRepository, $this->config['tools']);
+            return $calculator->calculateTasksToExecute(
+                $this->lockFileRepository,
+                $this->config->getArray('tools')->getValue()
+            );
         }
 
         $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
 
         // Download repositories
-        $pool       = (new RepositoryFactory($this->repositoryLoader))->buildPool($this->config['repositories'] ?? []);
-        $calculator = new UpdateCalculator($installedRepository, $pool, $this->getWrappedOutput());
+        $repositories = $this->config->getArray('repositories')->getValue();
+        $pool         = (new RepositoryFactory($this->repositoryLoader))->buildPool($repositories);
+        $calculator   = new UpdateCalculator($installedRepository, $pool, $this->getWrappedOutput());
 
-        return $calculator->calculate($this->config['tools'], true);
+        return $calculator->calculate($this->config->getArray('tools')->getValue(), true);
     }
 }

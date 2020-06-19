@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface as TransformerFactory;
-use Phpcq\PluginApi\Version10\RuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as TransformerFactory;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;
-
 use function implode;
 
 /**

@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Config\BuildConfiguration;
+use Phpcq\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Config\PluginConfiguration;
 use Phpcq\Config\ProjectConfiguration;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
-use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Report\Writer\CheckstyleReportWriter;
-use Phpcq\Report\Buffer\ReportBuffer;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Report;
+use Phpcq\Report\Writer\CheckstyleReportWriter;
+use Phpcq\Environment;
+use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
+use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Writer\ConsoleWriter;
 use Phpcq\Report\Writer\FileReportWriter;
 use Phpcq\Report\Writer\GithubActionConsoleWriter;
@@ -86,10 +87,12 @@ final class RunCommand extends AbstractCommand
             InputOption::VALUE_REQUIRED,
             'Set the minimum threshold for diagnostics to be reported, Available options are (in ascending order): "' .
             implode('", "', [
+                ToolReportInterface::SEVERITY_NONE,
                 ToolReportInterface::SEVERITY_INFO,
-                ToolReportInterface::SEVERITY_NOTICE,
-                ToolReportInterface::SEVERITY_WARNING,
-                ToolReportInterface::SEVERITY_ERROR,
+                ToolReportInterface::SEVERITY_MINOR,
+                ToolReportInterface::SEVERITY_MARGINAL,
+                ToolReportInterface::SEVERITY_MAJOR,
+                ToolReportInterface::SEVERITY_FATAL,
             ]) . '"',
             ToolReportInterface::SEVERITY_INFO
         );
@@ -109,11 +112,13 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
+        $artifactDir = $this->config->getString('artifact');
         $fileSystem = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
+        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getList('directories'), $artifactDir);
 
         $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
         $fileSystem->mkdir($tempDirectory);
+
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
@@ -124,12 +129,13 @@ final class RunCommand extends AbstractCommand
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
 
-        if (!isset($this->config['chains'][$chain])) {
+        $chains = $this->config->getArray('chains')->getValue();
+        if (!isset($chains[$chain])) {
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
 
-        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
-        $outputPath = $buildConfig->getProjectConfiguration()->getArtifactOutputPath();
+        $environment = new Environment($projectConfig, $taskFactory, $tempDirectory);
+        $outputPath = $environment->getProjectConfiguration()->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
@@ -137,10 +143,10 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
-            $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
+            $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
         } else {
-            foreach (array_keys($this->config['chains'][$chain]) as $toolName) {
-                $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
+            foreach (array_keys($chains[$chain]) as $toolName) {
+                $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
             }
         }
 
@@ -150,7 +156,7 @@ final class RunCommand extends AbstractCommand
         $consoleOutput = $this->getWrappedOutput();
         $exitCode      = $this->runTasks($taskList, $report, $consoleOutput);
 
-        // Stage 2: reporting.
+        // Stage 3: reporting.
         $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($reportBuffer, $projectConfig);
 
@@ -187,7 +193,7 @@ final class RunCommand extends AbstractCommand
      * @param PluginRegistry     $plugins
      * @param string             $chain
      * @param string             $toolName
-     * @param BuildConfiguration $buildConfig
+     * @param Environment $buildConfig
      * @param Tasklist           $taskList
      *
      * @return void
@@ -196,23 +202,24 @@ final class RunCommand extends AbstractCommand
         PluginRegistry $plugins,
         string $chain,
         string $toolName,
-        BuildConfiguration $buildConfig,
+        Environment $buildConfig,
         Tasklist $taskList
     ): void {
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();
 
         // Initialize phar files
-        if ($plugin instanceof ConfigurationPluginInterface) {
-            $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-            $configuration       = $this->config['chains'][$chain][$name]
-                ?? ($this->config['tool-config'][$name] ?: []);
+        if ($plugin instanceof DiagnosticsPluginInterface) {
+            $chains = $this->config->getArray('chains')->getValue();
+            $toolConfig = $this->config->getArray('tool-config');
+            $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
+            $configuration       = $chains[$chain][$name]
+                ?? ($toolConfig->has($name) ? $toolConfig->getArray($name)->getValue() : []);
 
-            $plugin->describeOptions($configOptionsBuilder);
-            $options = $configOptionsBuilder->getOptions();
-            $options->validateConfig($configuration);
+            $plugin->describeConfiguration($configOptionsBuilder);
+            $configuration = new PluginConfiguration($configOptionsBuilder->processConfig($configuration));
 
-            foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
+            foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
                 $taskList->add($task);
             }
         }
