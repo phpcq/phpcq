@@ -72,7 +72,7 @@ final class ConfigLoader
         $processed = $configBuilder->processConfig($config['phpcq']);
         unset($config['phpcq']);
         /** @psalm-var TConfig $processed */
-        $processed = array_merge($config, $processed->getValue());
+        $processed = array_merge($processed->getValue(), $config);
         $merged = $this->mergeConfig($processed);
 
         if (!array_key_exists('default', $merged['chains'])) {

@@ -90,7 +90,7 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
         $value = $this->getNormalizedValue($raw);
         if ($value === null) {
             if ($this->required) {
-                throw new InvalidConfigurationException(sprintf('Configuration key "%s" ha sto be set', $this->name));
+                throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
             }
 
             return null;

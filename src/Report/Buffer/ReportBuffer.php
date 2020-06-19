@@ -93,8 +93,8 @@ final class ReportBuffer
         $summary = [
             ToolReportInterface::SEVERITY_FATAL    => 0,
             ToolReportInterface::SEVERITY_MAJOR    => 0,
-            ToolReportInterface::SEVERITY_MARGINAL => 0,
             ToolReportInterface::SEVERITY_MINOR    => 0,
+            ToolReportInterface::SEVERITY_MARGINAL => 0,
             ToolReportInterface::SEVERITY_INFO     => 0,
             ToolReportInterface::SEVERITY_NONE     => 0,
         ];

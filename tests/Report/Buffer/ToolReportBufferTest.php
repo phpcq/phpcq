@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Buffer;
 
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -97,24 +97,26 @@ class ToolReportBufferTest extends TestCase
             new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 2', null, null, null, null, null),
         );
         $buffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_NOTICE, 'Notice 1', null, null, null, null, null),
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MARGINAL, 'Notice 1', null, null, null, null, null),
         );
         $buffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 1', null, null, null, null, null),
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 1', null, null, null, null, null),
         );
         $buffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 2', null, null, null, null, null),
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 2', null, null, null, null, null),
         );
         $buffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_ERROR, 'Error 3', null, null, null, null, null),
+            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 3', null, null, null, null, null),
         );
 
         $this->assertEquals(
             [
-                ToolReportInterface::SEVERITY_ERROR => 3,
-                ToolReportInterface::SEVERITY_WARNING => 0,
-                ToolReportInterface::SEVERITY_NOTICE => 1,
-                ToolReportInterface::SEVERITY_INFO => 2,
+                ToolReportInterface::SEVERITY_FATAL    => 0,
+                ToolReportInterface::SEVERITY_MAJOR    => 3,
+                ToolReportInterface::SEVERITY_MINOR    => 0,
+                ToolReportInterface::SEVERITY_MARGINAL => 1,
+                ToolReportInterface::SEVERITY_INFO     => 2,
+                ToolReportInterface::SEVERITY_NONE     => 0,
             ],
             $buffer->countDiagnosticsGroupedBySeverity()
         );

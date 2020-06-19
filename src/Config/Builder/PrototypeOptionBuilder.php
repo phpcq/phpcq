@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
+use Phpcq\Config\Validation\Constraints;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
-use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 final class PrototypeOptionBuilder extends AbstractOptionBuilder implements PrototypeBuilderInterface
 {
     use TypeTrait;
 
-    /** @var OptionBuilderInterface */
+    /** @var ProcessConfigOptionBuilderInterface */
     private $valueBuilder;
 
     public function ofArrayValue() : OptionsBuilderInterface
@@ -67,5 +68,36 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         $this->declareType('string');
 
         return $this;
+    }
+
+    public function ofPrototypeValue() : PrototypeOptionBuilder
+    {
+        $this->declareType('prototype');
+        $this->valueBuilder = new PrototypeOptionBuilder($this, '', '');
+
+        return $this->valueBuilder;
+    }
+
+    public function processConfig($values): ?array
+    {
+        $values = $this->getNormalizedValue($values);
+        if ($values === null) {
+            if ($this->required) {
+                throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+            }
+
+            return null;
+        }
+
+        $values = Constraints::arrayConstraint($values);
+        if ($this->required && count($values) === 0) {
+            throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+        }
+
+        foreach ($values as $key => $value) {
+            $values[$key] = $this->valueBuilder->processConfig($value);
+        }
+
+        return $values;
     }
 }

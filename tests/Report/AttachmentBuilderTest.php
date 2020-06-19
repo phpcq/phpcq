@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\AttachmentBuilder;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use PHPUnit\Framework\TestCase;

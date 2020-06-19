@@ -100,12 +100,15 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
         }
 
         $value = Constraints::arrayConstraint($value);
-        foreach ($value as $key => $val) {
-            if (!isset($this->options[$key])) {
-                throw new InvalidConfigurationException(sprintf('Unexpected array key "%s"', $key));
-            }
+        $options = $this->options;
 
-            $value[$key] = $this->options[$key]->processConfig($val);
+        $diff = array_diff_key($value, $options);
+        if (count($diff) > 0) {
+            throw new InvalidConfigurationException(sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff))));
+        }
+
+        foreach ($options as $key => $builder) {
+            $value[$key] = $builder->processConfig($value[$key] ?? null);
         }
 
         $this->validateValue($value);

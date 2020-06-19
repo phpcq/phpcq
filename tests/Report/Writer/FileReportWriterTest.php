@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Writer;
 
 use DOMDocument;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\FileReportWriter;
@@ -89,14 +89,14 @@ XML;
   </phpcq:global>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
         <phpcq:category name="category2"/>
         <phpcq:message>Failure</phpcq:message>
       </phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
@@ -105,14 +105,14 @@ XML;
       </phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
         <phpcq:category name="category2"/>
         <phpcq:message>Failure</phpcq:message>
       </phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
@@ -145,7 +145,7 @@ XML;
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/file-report.xml';
 
-        FileReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_WARNING);
+        FileReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_MINOR);
 
         // phpcs:disable
         $xml = <<<'XML'
@@ -166,14 +166,14 @@ XML;
   <phpcq:global/>
   <phpcq:files>
     <phpcq:file name="example.php">
-      <phpcq:diagnostic line="1" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
         <phpcq:category name="category2"/>
         <phpcq:message>Failure</phpcq:message>
       </phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
@@ -182,14 +182,14 @@ XML;
       </phpcq:diagnostic>
     </phpcq:file>
     <phpcq:file name="example2.php">
-      <phpcq:diagnostic line="1" column="2" line_end="3" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" line_end="3" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>
         <phpcq:category name="category2"/>
         <phpcq:message>Failure</phpcq:message>
       </phpcq:diagnostic>
-      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="error" external_info_url="https://example.org/super-helpful-tip" tool="tool">
+      <phpcq:diagnostic line="1" column="2" line_end="3" column_end="4" severity="major" external_info_url="https://example.org/super-helpful-tip" tool="tool">
         <phpcq:class_name name="Some\Class\Name"/>
         <phpcq:class_name name="Another\Class\Name"/>
         <phpcq:category name="category1"/>

@@ -16,7 +16,7 @@ final class ConfigLoaderTest extends TestCase
     public function testFullFeaturedConfigFile(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-demo.yaml');
-        $config = $loader->getConfig();
+        $config = $loader->getConfig()->getValue();
 
         $this->assertArrayHasKey('directories', $config);
         $this->assertEquals(['src', 'tests'], $config['directories']);
@@ -24,9 +24,18 @@ final class ConfigLoaderTest extends TestCase
         $this->assertArrayHasKey('repositories', $config);
         $this->assertEquals(
             [
-                'https://example.com/build-tools/info.json',
-                'https://example.com/build-tools2/info.json',
-                'https://example.com/build-tools3/info.json'
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools/info.json',
+                ],
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools2/info.json',
+                ],
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools3/info.json'
+                ],
             ],
             $config['repositories']
         );

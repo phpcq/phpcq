@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Config;
+namespace Phpcq\Test\Config;
 
 use Phpcq\Config\PhpcqConfigurationBuilder;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +36,10 @@ final class PhpcqConfigurationBuilderTest extends TestCase
         $this->assertEquals(
             [
                 'repositories' => [
-                    'type' => 'remote',
-                    'url' => 'https://example.org/repository.json'
+                    [
+                        'type' => 'remote',
+                        'url' => 'https://example.org/repository.json'
+                    ]
                 ],
                 'directories' => [
                     'foo',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\PluginApi\Version10\RuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\Task\ParallelizableProcessTask;
 use Phpcq\Task\ProcessTask;
 use Phpcq\Task\TaskBuilder;

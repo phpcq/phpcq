@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report;
 
-use Phpcq\PluginApi\Version10\RuntimeException;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\DiffBuilder;
 use Phpcq\Report\Buffer\DiffBuffer;
 use PHPUnit\Framework\TestCase;

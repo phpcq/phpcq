@@ -202,24 +202,34 @@
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="tns:nonEmptyStringType">
+      <xs:enumeration value="none">
+        <xs:annotation>
+          <xs:documentation>A non issue - strictly informational. (additional debug info requested like tool execution argument - only to be exported if threshold is set to none)</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
       <xs:enumeration value="info">
         <xs:annotation>
           <xs:documentation>A non issue - strictly informational.</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="notice">
+      <xs:enumeration value="marginal">
         <xs:annotation>
-          <xs:documentation>Normal but significant diagnostic - no action has to be taken.</xs:documentation>
+          <xs:documentation>Marginal issue - no immediate action has to be taken.</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="warning">
+      <xs:enumeration value="minor">
         <xs:annotation>
-          <xs:documentation>An issue that should be fixed.</xs:documentation>
+          <xs:documentation>A minor issue - action should be taken but is not required (could be code style violations or the like).</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="error">
+      <xs:enumeration value="major">
         <xs:annotation>
-          <xs:documentation>An issue that MUST be fixed.</xs:documentation>
+          <xs:documentation>A major issue - action MUST be taken (could be failing unit tests).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="fatal">
+        <xs:annotation>
+          <xs:documentation>A fatal issue - (could be missing dependencies or the like which make the project unusable).</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
     </xs:restriction>

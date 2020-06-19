@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Writer;
 
 use DOMDocument;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\ToolReportWriter;
@@ -72,7 +72,7 @@ XML;
         <phpcq:diagnostic severity="info" source="baz">
           <phpcq:message>Foo bar</phpcq:message>
         </phpcq:diagnostic>
-        <phpcq:diagnostic severity="error" external_info_url="https://example.org/super-helpful-tip">
+        <phpcq:diagnostic severity="major" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>
           <phpcq:class_name name="Another\Class\Name"/>
           <phpcq:category name="category1"/>
@@ -118,7 +118,7 @@ XML;
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
-        ToolReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_WARNING);
+        ToolReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_MINOR);
 
         // phpcs:disable
         $xml = <<<'XML'
@@ -127,7 +127,7 @@ XML;
   <phpcq:tools>
     <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:diagnostics>
-        <phpcq:diagnostic severity="error" external_info_url="https://example.org/super-helpful-tip">
+        <phpcq:diagnostic severity="major" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>
           <phpcq:class_name name="Another\Class\Name"/>
           <phpcq:category name="category1"/>
