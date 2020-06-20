@@ -72,7 +72,6 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
         return $this;
     }
 
-
     public function withDefaultValue($defaultValue) : OptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

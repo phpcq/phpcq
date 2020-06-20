@@ -43,7 +43,7 @@ final class PhpcqConfigurationBuilder
                     // Fixme: Describe local repository
                 ->end()
             ->end()
-            ->describePrototype('tools', 'List of required plugins')
+            ->describePrototypeOption('tools', 'List of required plugins')
                 ->ofArrayValue()
                     ->describeStringOption('version', 'Version constraint')
 // TODO: Check if we need a version for local tools
@@ -59,7 +59,7 @@ final class PhpcqConfigurationBuilder
             ->describeListOption('trusted-keys', 'List of trusted key fingerprints')
                 ->ofStringItems()
             ->end()
-            ->describePrototype('chains', 'Available chains. Default chain is required')
+            ->describePrototypeOption('chains', 'Available chains. Default chain is required')
                 ->ofPrototypeValue()
                     ->ofArrayValue()
                         ->describePrototypeOption('directories', 'Directories being processed')

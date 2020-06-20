@@ -56,7 +56,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
         return $builder;
     }
 
-    public function describePrototype(string $name, string $description) : PrototypeBuilderInterface
+    public function describePrototypeOption(string $name, string $description) : PrototypeBuilderInterface
     {
         $builder = new PrototypeOptionBuilder($this, $name, $description);
         $this->describeOption($name, $builder);
