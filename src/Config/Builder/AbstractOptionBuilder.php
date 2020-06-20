@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -34,18 +33,8 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
      */
     protected $validators;
 
-    /**
-     * @var NodeBuilderInterface
-     */
-    private $parent;
-
-    public function __construct(
-        NodeBuilderInterface $parent,
-        string $name,
-        string $description,
-        array $validators = []
-    ) {
-        $this->parent      = $parent;
+    public function __construct(string $name, string $description, array $validators = [])
+    {
         $this->name        = $name;
         $this->description = $description;
         $this->validators  = $validators;
@@ -77,11 +66,6 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
         $this->defaultValue = $defaultValue;
 
         return $this;
-    }
-
-    public function end() : NodeBuilderInterface
-    {
-        return $this->parent;
     }
 
     public function processConfig($raw)

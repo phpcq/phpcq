@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Test\Config\Builder;
 
 use Phpcq\Config\Builder\ArrayOptionBuilder;
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Config\Builder\ArrayOptionBuilder */
@@ -42,10 +41,8 @@ final class ArrayOptionBuilderTest extends TestCase
         $this->assertEquals(2, $validated);
     }
 
-    protected function createInstance(?NodeBuilderInterface $parent = null): ArrayOptionBuilder
+    protected function createInstance(): ArrayOptionBuilder
     {
-        $parent = $parent ?: $this->getMockForAbstractClass(NodeBuilderInterface::class);
-
-        return new ArrayOptionBuilder($parent, 'Option', 'Example option');
+        return new ArrayOptionBuilder('Option', 'Example option');
     }
 }

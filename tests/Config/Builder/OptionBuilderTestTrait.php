@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Test\Config\Builder;
 
 use Phpcq\Config\Builder\AbstractOptionBuilder;
-use Phpcq\Config\Builder\OptionBuilder;
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -17,14 +15,6 @@ trait OptionBuilderTestTrait
         $builder = $this->createInstance();
         $this->assertInstanceOf(OptionBuilderInterface::class, $builder);
         $this->assertInstanceOf(AbstractOptionBuilder::class, $builder);
-    }
-
-    public function testReturnsParent(): void
-    {
-        $parent  = $this->getMockForAbstractClass(NodeBuilderInterface::class);
-        $builder = $this->createInstance($parent);
-
-        $this->assertSame($parent, $builder->end());
     }
 
     public function testIsRequired(): void
@@ -64,5 +54,5 @@ trait OptionBuilderTestTrait
         $this->assertEquals(2, $validated);
     }
 
-    abstract protected function createInstance(?NodeBuilderInterface $parent = null, array $validators = []);
+    abstract protected function createInstance(array $validators = []);
 }

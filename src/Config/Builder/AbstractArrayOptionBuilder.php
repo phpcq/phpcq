@@ -8,7 +8,6 @@ use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
@@ -19,14 +18,14 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
     /** @var ProcessConfigOptionBuilderInterface[]|array<string, ProcessConfigOptionBuilderInterface */
     protected $options = [];
 
-    public function __construct(NodeBuilderInterface $parent, string $name, string $description)
+    public function __construct(string $name, string $description)
     {
-        parent::__construct($parent, $name, $description, [Validator::arrayValidator()]);
+        parent::__construct($name, $description, [Validator::arrayValidator()]);
     }
 
     public function describeArrayOption(string $name, string $description): OptionsBuilderInterface
     {
-        $builder = new ArrayOptionBuilder($this, $name, $description);
+        $builder = new ArrayOptionBuilder($name, $description);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -34,7 +33,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeBoolOption(string $name, string $description): OptionBuilderInterface
     {
-        $builder = new OptionBuilder($this, $name, $description, [Validator::boolValidator()]);
+        $builder = new OptionBuilder($name, $description, [Validator::boolValidator()]);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -42,7 +41,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeFloatOption(string $name, string $description): OptionBuilderInterface
     {
-        $builder = new OptionBuilder($this, $name, $description, [Validator::floatValidator()]);
+        $builder = new OptionBuilder($name, $description, [Validator::floatValidator()]);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -50,7 +49,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeIntOption(string $name, string $description): OptionBuilderInterface
     {
-        $builder = new OptionBuilder($this, $name, $description, [Validator::intValidator()]);
+        $builder = new OptionBuilder($name, $description, [Validator::intValidator()]);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -58,7 +57,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describePrototypeOption(string $name, string $description) : PrototypeBuilderInterface
     {
-        $builder = new PrototypeOptionBuilder($this, $name, $description);
+        $builder = new PrototypeOptionBuilder($name, $description);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -66,7 +65,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeStringOption(string $name, string $description): OptionBuilderInterface
     {
-        $builder = new OptionBuilder($this, $name, $description, [Validator::stringValidator()]);
+        $builder = new OptionBuilder($name, $description, [Validator::stringValidator()]);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -74,7 +73,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeListOption(string $name, string $description): ListOptionBuilderInterface
     {
-        $builder = new ListOptionBuilder($this, $name, $description);
+        $builder = new ListOptionBuilder($name, $description);
         $this->describeOption($name, $builder);
 
         return $builder;
@@ -82,7 +81,7 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
 
     public function describeEnumOption(string $name, string $description): EnumOptionBuilderInterface
     {
-        $builder = new EnumOptionBuilder($this, $name, $description);
+        $builder = new EnumOptionBuilder($name, $description);
         $this->describeOption($name, $builder);
 
         return $builder;

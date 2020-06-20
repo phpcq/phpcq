@@ -46,7 +46,7 @@ final class ListOptionBuilder extends AbstractOptionBuilder implements ListOptio
         $this->declareType('array');
         $this->withItemValidator(Validator::arrayValidator());
 
-        $builder = new ArrayOptionBuilder($this, '', '');
+        $builder = new ArrayOptionBuilder('', '');
         $this->itemBuilder = $builder;
 
         return $builder;

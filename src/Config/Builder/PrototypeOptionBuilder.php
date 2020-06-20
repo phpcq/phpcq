@@ -21,7 +21,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     public function ofArrayValue() : OptionsBuilderInterface
     {
         $this->declareType('array');
-        $this->valueBuilder = new ArrayOptionBuilder($this, '', '');
+        $this->valueBuilder = new ArrayOptionBuilder('', '');
 
         return $this->valueBuilder;
     }
@@ -36,7 +36,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     public function ofEnumValue() : EnumOptionBuilderInterface
     {
         $this->declareType('enum');
-        $this->valueBuilder = new EnumOptionBuilder($this, '', '');
+        $this->valueBuilder = new EnumOptionBuilder('', '');
 
         return $this->valueBuilder;
     }
@@ -58,7 +58,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     public function ofListValue(): ListOptionBuilderInterface
     {
         $this->declareType('list');
-        $this->valueBuilder = new ListOptionBuilder($this, '', '');
+        $this->valueBuilder = new ListOptionBuilder('', '');
 
         return $this->valueBuilder;
     }
@@ -73,7 +73,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     public function ofPrototypeValue(): PrototypeBuilderInterface
     {
         $this->declareType('prototype');
-        $this->valueBuilder = new PrototypeOptionBuilder($this, '', '');
+        $this->valueBuilder = new PrototypeOptionBuilder('', '');
 
         return $this->valueBuilder;
     }

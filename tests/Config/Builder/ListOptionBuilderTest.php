@@ -6,7 +6,6 @@ namespace Phpcq\Test\Config\Builder;
 
 use Phpcq\Config\Builder\ListOptionBuilder;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
@@ -149,10 +148,8 @@ class ListOptionBuilderTest extends TestCase
         $builder->$methodB();
     }
 
-    protected function createInstance(?NodeBuilderInterface $parent = null, array $validators = []): ListOptionBuilder
+    protected function createInstance(array $validators = []): ListOptionBuilder
     {
-        $parent = $parent ?: $this->getMockForAbstractClass(NodeBuilderInterface::class);
-
-        return new ListOptionBuilder($parent, 'Option', 'Example option', $validators);
+        return new ListOptionBuilder('Option', 'Example option', $validators);
     }
 }

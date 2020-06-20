@@ -6,7 +6,6 @@ namespace Phpcq\Test\Config\Builder;
 
 use Phpcq\Config\Builder\EnumOptionBuilder;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\Configuration\Builder\NodeBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
@@ -143,10 +142,8 @@ class EnumOptionBuilderTest extends TestCase
         $builder->$methodB(... $argumentsB);
     }
 
-    protected function createInstance(?NodeBuilderInterface $parent = null, array $validators = []): EnumOptionBuilder
+    protected function createInstance(array $validators = []): EnumOptionBuilder
     {
-        $parent = $parent ?: $this->getMockForAbstractClass(NodeBuilderInterface::class);
-
-        return new EnumOptionBuilder($parent, 'Option', 'Example option', $validators);
+        return new EnumOptionBuilder('Option', 'Example option', $validators);
     }
 }
