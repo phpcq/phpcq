@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Config;
 
 use Phpcq\Config\Validation\Constraints;
+use Phpcq\Config\Validation\Validator;
 use Phpcq\Exception\InvalidArgumentException;
 use Phpcq\PluginApi\Version10\Configuration\OptionsInterface;
 
@@ -19,12 +20,12 @@ class Options implements OptionsInterface
         $this->options = $options;
     }
 
-    public function getInt(string $name) : int
+    public function getInt(string $name): int
     {
         return Constraints::intConstraint($this->getOption($name));
     }
 
-    public function getString(string $name) : string
+    public function getString(string $name): string
     {
         return Constraints::stringConstraint($this->getOption($name));
     }
@@ -39,12 +40,17 @@ class Options implements OptionsInterface
         return Constraints::boolConstraint($this->getOption($name));
     }
 
-    public function getList(string $name) : array
+    public function getList(string $name): array
     {
         return Constraints::listConstraint($this->getOption($name));
     }
 
-    public function getArray(string $name) : OptionsInterface
+    public function getStringList(string $name): array
+    {
+        return Constraints::listConstraint($this->getOption($name), Validator::stringValidator());
+    }
+
+    public function getArray(string $name): OptionsInterface
     {
         $value = Constraints::arrayConstraint($this->getOption($name));
         return new Options($value);
