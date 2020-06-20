@@ -390,12 +390,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "31aebd7462a366d982d7e15470415a7b4ca2d59f"
+                "reference": "3aaa69747419ac1e351492f8d9543539e5e7dac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/31aebd7462a366d982d7e15470415a7b4ca2d59f",
-                "reference": "31aebd7462a366d982d7e15470415a7b4ca2d59f",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/3aaa69747419ac1e351492f8d9543539e5e7dac5",
+                "reference": "3aaa69747419ac1e351492f8d9543539e5e7dac5",
                 "shasum": ""
             },
             "require": {
@@ -437,7 +437,7 @@
                 }
             ],
             "description": "PHP code quality project plugin API interfaces.",
-            "time": "2020-06-19T19:39:30+00:00"
+            "time": "2020-06-19T21:04:11+00:00"
         },
         {
             "name": "psr/container",
