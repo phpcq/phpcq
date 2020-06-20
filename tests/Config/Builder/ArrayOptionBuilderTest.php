@@ -31,12 +31,14 @@ final class ArrayOptionBuilderTest extends TestCase
     public function testValidatesValue(): void
     {
         $builder = $this->createInstance();
+        $builder->describeBoolOption('bar', 'Bar option');
         $validated = 0;
 
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
 
-        $builder->processConfig(['bar']);
+        $builder->processConfig(['bar' => true]);
+        $builder->validateValue(['bar' => true]);
         $this->assertEquals(2, $validated);
     }
 

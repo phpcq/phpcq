@@ -61,7 +61,7 @@ final class ConfigLoaderTest extends TestCase
             ],
             $config['tools']
         );
-        
+
         $this->assertEquals(
             [
                 'default' => [
@@ -102,7 +102,7 @@ final class ConfigLoaderTest extends TestCase
     public function testMergeConfiguration(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-merge.yaml');
-        $config = $loader->getConfig();
+        $config = $loader->getConfig()->getValue();
 
         $this->assertEquals(
             [

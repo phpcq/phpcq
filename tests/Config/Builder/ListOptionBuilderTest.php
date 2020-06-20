@@ -39,6 +39,7 @@ class ListOptionBuilderTest extends TestCase
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
 
         $builder->processConfig(['bar']);
+        $builder->validateValue(['bar']);
         $this->assertEquals(2, $validated);
     }
 
@@ -57,6 +58,7 @@ class ListOptionBuilderTest extends TestCase
 
         $this->expectException(InvalidConfigurationException::class);
         $builder->processConfig([1.0, 1]);
+        $builder->validateValue([1.0, 1]);
     }
 
     public function testIntItems(): void
@@ -74,6 +76,7 @@ class ListOptionBuilderTest extends TestCase
 
         $this->expectException(InvalidConfigurationException::class);
         $builder->processConfig(['foo']);
+        $builder->validateValue(['foo']);
     }
 
     public function testFloatItems(): void
@@ -91,6 +94,7 @@ class ListOptionBuilderTest extends TestCase
 
         $this->expectException(InvalidConfigurationException::class);
         $builder->processConfig([1]);
+        $builder->validateValue([1]);
     }
 
     public function preventMultipleValueDefinitionsProvider(): array

@@ -102,18 +102,35 @@ abstract class AbstractArrayOptionBuilder extends AbstractOptionBuilder implemen
         $value = Constraints::arrayConstraint($value);
         $options = $this->options;
 
-        $diff = array_diff_key($value, $options);
+        foreach ($options as $key => $builder) {
+            if (array_key_exists($key, $value) && $value[$key] === null) {
+                unset($value[$key]);
+                continue;
+            }
+
+            if (null === ($processed = $builder->processConfig($value[$key] ?? null))) {
+                unset($value[$key]);
+            } else {
+                $value[$key] = $processed;
+            }
+        }
+
+        return $value;
+    }
+
+    public function validateValue($options) : void
+    {
+        parent::validateValue($options);
+
+        $diff = array_diff_key($options, $this->options);
         if (count($diff) > 0) {
             throw new InvalidConfigurationException(sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff))));
         }
 
-        foreach ($options as $key => $builder) {
-            $value[$key] = $builder->processConfig($value[$key] ?? null);
+        assert(is_array($options));
+        foreach ($this->options as $key => $builder) {
+            $builder->validateValue($options[$key] ?? null);
         }
-
-        $this->validateValue($value);
-
-        return $value;
     }
 
     protected function describeOption(string $name, OptionBuilderInterface $builder): void

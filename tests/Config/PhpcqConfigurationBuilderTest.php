@@ -27,7 +27,10 @@ final class PhpcqConfigurationBuilderTest extends TestCase
             'directories' => [
                 'foo',
                 'bar'
-            ]
+            ],
+            'artifact' => './phpcq/build',
+            'chains' => [],
+            'trusted-keys' => [],
         ];
 
         $builder = new PhpcqConfigurationBuilder();
@@ -44,7 +47,10 @@ final class PhpcqConfigurationBuilderTest extends TestCase
                 'directories' => [
                     'foo',
                     'bar'
-                ]
+                ],
+                'artifact' => './phpcq/build',
+                'chains' => [],
+                'trusted-keys' => [],
             ],
             $configuration->getValue()
         );

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Config;
 
 use Phpcq\Config\Builder\ArrayOptionBuilder;
+use Phpcq\Config\Builder\ListOptionBuilder;
 use Phpcq\Config\Builder\RootOptionsBuilder;
+use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 
 final class PhpcqConfigurationBuilder
 {
@@ -17,60 +19,72 @@ final class PhpcqConfigurationBuilder
         $this->builder = new RootOptionsBuilder('phpcq', 'PHPCQ configuration');
         $this->builder
             ->describeListOption('directories', 'Directories which are checked by default')
-                ->ofStringItems()
-            ->end()
+            ->isRequired()
+            ->withDefaultValue([])
+            ->ofStringItems();
+        $this->builder
             ->describeStringOption('artifact', 'Artifact directory for builds')
-                ->withDefaultValue('.phpcq/build')
-            ->end()
-            ->describeListOption('repositories', 'Artifact directory for builds')
-                ->ofArrayItems()
-                    ->withNormalizer(static function ($value): array {
-                        if (is_string($value)) {
-                            return [
-                                'type' => 'remote',
-                                'url'  => $value
-                            ];
-                        }
+            ->isRequired()
+            ->withDefaultValue('.phpcq/build');
+        $this->describeRepositories($this->builder->describeListOption('repositories', 'Repositories'));
 
-                        return $value;
-                    })
-                    ->describeEnumOption('type', 'The type option')
-                        ->ofStringValues('local', 'remote')
-                        ->withDefaultValue('remote')
-                    ->end()
-                    ->describeStringOption('url', 'The url of a remote repository')
-                    ->end()
-                    // Fixme: Describe local repository
-                ->end()
-            ->end()
-            ->describePrototypeOption('tools', 'List of required plugins')
-                ->ofArrayValue()
-                    ->describeStringOption('version', 'Version constraint')
-// TODO: Check if we need a version for local tools
-//                        ->isRequired()
-                    ->end()
-                    ->describeStringOption('runner-plugin', 'Url to the bootstrap file. Use it to override default bootstrap')
-                    ->end()
-                    ->describeBoolOption('signed', 'If set to false no signature verification happens')
-                        ->withDefaultValue(true)
-                    ->end()
-                ->end()
-            ->end()
+        $this->describeTools($this->builder->describePrototypeOption('tools', 'List of required plugins')->ofArrayValue());
+
+        $this->builder
             ->describeListOption('trusted-keys', 'List of trusted key fingerprints')
-                ->ofStringItems()
-            ->end()
+                ->withDefaultValue([])
+                ->ofStringItems();
+
+        $arrayBuilder = $this->builder
             ->describePrototypeOption('chains', 'Available chains. Default chain is required')
-                ->ofPrototypeValue()
-                    ->ofArrayValue()
-                        ->describePrototypeOption('directories', 'Directories being processed')
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
+            ->withDefaultValue([])
+            ->ofPrototypeValue()
+                ->ofArrayValue();
+        assert($arrayBuilder instanceof ArrayOptionBuilder);
+        $arrayBuilder->bypassValueValidation();
     }
 
     public function processConfig(array $raw): PhpcqConfiguration
     {
-        return new PhpcqConfiguration($this->builder->processConfig($raw));
+        $processed = $this->builder->processConfig($raw);
+        $this->builder->validateValue($processed);
+
+        return new PhpcqConfiguration($processed);
+    }
+
+    private function describeRepositories(ListOptionBuilder $builder): void
+    {
+        $builder->withDefaultValue([]);
+        $itemsBuilder = $builder->ofArrayItems();
+        $itemsBuilder->withNormalizer(static function ($value): array {
+            if (is_string($value)) {
+                return [
+                    'type' => 'remote',
+                    'url'  => $value
+                ];
+            }
+
+            return $value;
+        });
+
+        $itemsBuilder
+            ->describeEnumOption('type', 'The type option')
+            ->ofStringValues('local', 'remote')
+            ->withDefaultValue('remote');
+
+        $itemsBuilder
+            ->describeStringOption('url', 'The url of a remote repository');
+    }
+
+    private function describeTools(OptionsBuilderInterface $builder): void
+    {
+        $builder->describeStringOption('version', 'Version constraint');
+        // TODO: Check if we need a version for local tools
+        //                        ->isRequired()
+        $builder->describeStringOption('runner-plugin', 'Url to the bootstrap file. Use it to override default bootstrap');
+        $builder
+            ->describeBoolOption('signed', 'If set to false no signature verification happens')
+            ->isRequired()
+            ->withDefaultValue(true);
     }
 }

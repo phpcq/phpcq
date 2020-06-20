@@ -30,7 +30,7 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofStringValues('foo', 'bar');
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig('baz');
+        $builder->validateValue('baz');
     }
 
     public function testIntEnum(): void
@@ -48,7 +48,7 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofIntValues(1, 2);
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig('baz');
+        $builder->validateValue('baz');
     }
 
     public function testFloatEnum(): void
@@ -66,7 +66,7 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofFloatValues(1.0, 2.2);
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig(1);
+        $builder->validateValue(1);
     }
 
     public function preventMultipleValueDefinitionsProvider(): array

@@ -95,8 +95,6 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
             return null;
         }
 
-        $this->validateValue($value);
-
         return $value;
     }
 
@@ -113,7 +111,7 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
         return $value;
     }
 
-    protected function validateValue($value): void
+    public function validateValue($value): void
     {
         foreach ($this->validators as $validator) {
             $validator($value);

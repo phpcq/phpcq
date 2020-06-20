@@ -70,7 +70,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this;
     }
 
-    public function ofPrototypeValue() : PrototypeOptionBuilder
+    public function ofPrototypeValue(): PrototypeBuilderInterface
     {
         $this->declareType('prototype');
         $this->valueBuilder = new PrototypeOptionBuilder($this, '', '');

@@ -60,6 +60,7 @@ trait OptionBuilderTestTrait
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
 
         $builder->processConfig('bar');
+        $builder->validateValue('bar');
         $this->assertEquals(2, $validated);
     }
 

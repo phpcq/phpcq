@@ -9,4 +9,6 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 interface ProcessConfigOptionBuilderInterface extends OptionBuilderInterface
 {
     public function processConfig($raw);
+
+    public function validateValue($value): void;
 }
