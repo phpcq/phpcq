@@ -58,7 +58,6 @@ phpcq:
 
 tool-config:
   phpunit:
-    custom_flags:
 
   phpcpd:
   #  exclude:

@@ -66,7 +66,7 @@ final class PhpcqConfiguration extends Options
     /** @psalm-return array<string,array<string,array|null>> */
     public function getChains(): array
     {
-        return $this->getOptions('chain')->getValue();
+        return $this->getOptions('chains')->getValue();
     }
 
     /** @psalm-return array<string,TToolConfig> */
@@ -75,15 +75,15 @@ final class PhpcqConfiguration extends Options
         return $this->getOptions('tool-config')->getValue();
     }
 
-    /*
-     *  *   directories: list<string>,
- *   artifact: string,
- *   trusted-keys: list<string>,
- *   chains: array<string,array<string,array|null>>,
- *   tools: array<string,TTool>,
- *   tool-config: array<string,TToolConfig>,
- *   repositories: list<int, string>,
- *   auth: array
-     */
+    /** @psalm-return list<string> */
+    public function getTrustedKeys(): array
+    {
+        return $this->getStringList('trusted-keys');
+    }
 
+    /** @return array<string, mixed> */
+    public function getAuth(): array
+    {
+        return $this->getOptions('auth')->getValue();
+    }
 }

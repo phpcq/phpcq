@@ -31,6 +31,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
+use function array_key_exists;
 use function assert;
 use function getcwd;
 use function in_array;
@@ -217,15 +218,57 @@ final class RunCommand extends AbstractCommand
                 ?? ($toolConfig->has($name) ? $toolConfig->getOptions($name)->getValue() : []);
 
             $plugin->describeConfiguration($configOptionsBuilder);
-            $processed = $configOptionsBuilder->normalizeValue($configuration);
-            $configOptionsBuilder->validateValue($processed);
-            /** @psalm-var array<string,mixed> $processed */
-            $configuration = new PluginConfiguration($processed);
+            if (!$configOptionsBuilder->supportDirectories()) {
+                unset($configuration['directories']);
 
-            foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
-                $taskList->add($task);
+                $processed = $configOptionsBuilder->normalizeValue($configuration);
+                $configOptionsBuilder->validateValue($processed);
+                /** @psalm-var array<string,mixed> $processed */
+                $configuration = new PluginConfiguration($processed);
+
+                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+                    $taskList->add($task);
+                }
+                return;
+            }
+
+            /** @psalm-var array<string,mixed> $configuration */
+            foreach ($this->processDirectories($configuration) as $config) {
+                $processed = $configOptionsBuilder->normalizeValue($config);
+                $configOptionsBuilder->validateValue($processed);
+                /** @psalm-var array<string,mixed> $processed */
+                $configuration = new PluginConfiguration($processed);
+
+                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+                    $taskList->add($task);
+                }
             }
         }
+    }
+
+    /**
+     * @psalm-param array<string,mixed> $configuration
+     * @psalm-return list<array<string,mixed>>
+     */
+    private function processDirectories(array $configuration): array
+    {
+        assert(array_key_exists('directories', $configuration));
+        /** @psalm-var array<string, array<string,mixed>|null> $directories */
+        $directories                  = $configuration['directories'];
+        $configuration['directories'] = [];
+        $configs                      = [$configuration];
+
+        foreach ($directories as $directory => $config) {
+            if (null === $config) {
+                /** @psalm-suppress MixedArrayAssignment */
+                $configs[0]['directories'][] = $directory;
+                continue;
+            }
+
+            $configs[] = $config;
+        }
+
+        return $configs;
     }
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void

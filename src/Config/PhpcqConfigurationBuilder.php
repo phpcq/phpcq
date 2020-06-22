@@ -8,7 +8,6 @@ use Phpcq\Config\Builder\OptionsBuilder;
 use Phpcq\Config\Validation\Constraints;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
-use function is_array;
 
 final class PhpcqConfigurationBuilder
 {

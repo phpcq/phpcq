@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Repository;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
-use function array_key_exists;
+
 use function assert;
 use function is_string;
 
