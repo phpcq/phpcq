@@ -18,7 +18,7 @@ final class PhpcqConfigurationBuilderTest extends TestCase
         $this->assertInstanceOf(PhpcqConfigurationBuilder::class, $builder);
     }
 
-    public function testProcessConfiguration(): void
+    public function testValidateConfiguration(): void
     {
         $config = [
             'repositories' => [

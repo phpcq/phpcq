@@ -36,11 +36,11 @@ final class UpdateCommand extends AbstractUpdateCommand
     {
         $factory  = new RepositoryFactory($this->repositoryLoader);
         // Download repositories
-        $pool = $factory->buildPool($this->config->getArray('repositories')->getValue());
+        $pool = $factory->buildPool($this->config->getOptions('repositories')->getValue());
         $calculator = new UpdateCalculator($this->getInstalledRepository(false), $pool, $this->getWrappedOutput());
         $force = $this->lockFileRepository === null || $this->input->getOption('force-reinstall');
 
-        return $calculator->calculate($this->config->getArray('tools')->getValue(), $force);
+        return $calculator->calculate($this->config->getOptions('tools')->getValue(), $force);
     }
 
     /** @psalm-param list<TUpdateTask> $tasks */

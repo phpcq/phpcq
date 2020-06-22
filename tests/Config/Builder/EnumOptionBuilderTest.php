@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Config\Builder;
 
 use Phpcq\Config\Builder\EnumOptionBuilder;
+use Phpcq\Config\Builder\StringOptionBuilder;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
@@ -14,13 +15,46 @@ class EnumOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
+    public function testNormalizesValue(): void
+    {
+        $builder = $this->createInstance();
+        $builder->ofStringValues('bar');
+        $builder->selfValidate();
+
+        $this->assertSame($builder, $builder->withNormalizer(function () { return 'BAR'; }));
+        $this->assertSame($builder, $builder->withNormalizer(function ($var) { return $var . ' 2'; }));
+        $this->assertEquals('BAR 2', $builder->normalizeValue('bar'));
+    }
+
+    public function testValidatesValue(): void
+    {
+        $builder = $this->createInstance();
+        $validated = 0;
+
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+
+        $builder->ofStringValues('bar');
+        $builder->selfValidate();
+        $builder->normalizeValue('bar');
+        $builder->validateValue('bar');
+        $this->assertEquals(2, $validated);
+    }
+
     public function testStringEnum(): void
     {
         $builder = $this->createInstance();
         $builder->ofStringValues('foo', 'bar');
 
-        $this->assertEquals('foo', $builder->processConfig('foo'));
-        $this->assertEquals('bar', $builder->processConfig('bar'));
+        $this->assertEquals('foo', $builder->normalizeValue('foo'));
+        $this->assertEquals('bar', $builder->normalizeValue('bar'));
+    }
+
+    public function testDefaultValue(): void
+    {
+        $builder = $this->createInstance();
+        $this->assertInstanceOf(StringOptionBuilder::class, $builder->ofStringValues('bar')->withDefaultValue('bar'));
+        $this->assertEquals('bar', $builder->normalizeValue(null));
     }
 
     public function testStringEnumInvalidValue(): void
@@ -37,8 +71,8 @@ class EnumOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $builder->ofIntValues(1, 2);
 
-        $this->assertEquals(1, $builder->processConfig(1));
-        $this->assertEquals(2, $builder->processConfig(2));
+        $this->assertEquals(1, $builder->normalizeValue(1));
+        $this->assertEquals(2, $builder->normalizeValue(2));
     }
 
     public function testIntEnumInvalidValue(): void
@@ -55,8 +89,8 @@ class EnumOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $builder->ofFloatValues(1.0, 2.2);
 
-        $this->assertEquals(1.0, $builder->processConfig(1.0));
-        $this->assertEquals(2.2, $builder->processConfig(2.2));
+        $this->assertEquals(1.0, $builder->normalizeValue(1.0));
+        $this->assertEquals(2.2, $builder->normalizeValue(2.2));
     }
 
     public function testFloatEnumInvalidValue(): void

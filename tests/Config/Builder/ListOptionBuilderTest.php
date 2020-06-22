@@ -18,7 +18,7 @@ class ListOptionBuilderTest extends TestCase
     {
         $builder = $this->createInstance();
         $this->assertSame($builder, $builder->withDefaultValue(['bar']));
-        $this->assertEquals(['bar'], $builder->processConfig(null));
+        $this->assertEquals(['bar'], $builder->normalizeValue(null));
     }
 
     public function testNormalizesValue(): void
@@ -26,7 +26,7 @@ class ListOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $this->assertSame($builder, $builder->withNormalizer(function () { return ['BAR']; }));
         $this->assertSame($builder, $builder->withNormalizer(function ($var) { return array_merge($var,  ['2']); }));
-        $this->assertEquals(['BAR', '2'], $builder->processConfig(['bar']));
+        $this->assertEquals(['BAR', '2'], $builder->normalizeValue(['bar']));
     }
 
     public function testValidatesValue(): void
@@ -37,7 +37,7 @@ class ListOptionBuilderTest extends TestCase
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
 
-        $builder->processConfig(['bar']);
+        $builder->normalizeValue(['bar']);
         $builder->validateValue(['bar']);
         $this->assertEquals(2, $validated);
     }
@@ -47,7 +47,7 @@ class ListOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $builder->ofStringItems();
 
-        $this->assertEquals(['foo', 'bar'], $builder->processConfig(['foo', 'bar']));
+        $this->assertEquals(['foo', 'bar'], $builder->normalizeValue(['foo', 'bar']));
     }
 
     public function testStringItemsInvalidValue(): void
@@ -56,7 +56,7 @@ class ListOptionBuilderTest extends TestCase
         $builder->ofStringItems();
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig([1.0, 1]);
+        $builder->normalizeValue([1.0, 1]);
         $builder->validateValue([1.0, 1]);
     }
 
@@ -65,7 +65,7 @@ class ListOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $builder->ofIntItems();
 
-        $this->assertEquals([1, 2], $builder->processConfig([1, 2]));
+        $this->assertEquals([1, 2], $builder->normalizeValue([1, 2]));
     }
 
     public function testIntItemsInvalidValue(): void
@@ -74,7 +74,7 @@ class ListOptionBuilderTest extends TestCase
         $builder->ofIntItems();
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig(['foo']);
+        $builder->normalizeValue(['foo']);
         $builder->validateValue(['foo']);
     }
 
@@ -83,7 +83,7 @@ class ListOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $builder->ofFloatItems();
 
-        $this->assertEquals([1.0, 2.2], $builder->processConfig([1.0, 2.2]));
+        $this->assertEquals([1.0, 2.2], $builder->normalizeValue([1.0, 2.2]));
     }
 
     public function testFloatItemsInvalidValue(): void
@@ -92,7 +92,7 @@ class ListOptionBuilderTest extends TestCase
         $builder->ofFloatItems();
 
         $this->expectException(InvalidConfigurationException::class);
-        $builder->processConfig([1]);
+        $builder->normalizeValue([1]);
         $builder->validateValue([1]);
     }
 

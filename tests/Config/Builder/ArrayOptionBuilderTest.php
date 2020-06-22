@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Config\Builder;
 
-use Phpcq\Config\Builder\ArrayOptionBuilder;
+use Phpcq\Config\Builder\OptionsBuilder;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Builder\ArrayOptionBuilder */
+/** @covers \Phpcq\Config\Builder\OptionsBuilder */
 final class ArrayOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
@@ -16,7 +16,7 @@ final class ArrayOptionBuilderTest extends TestCase
     {
         $builder = $this->createInstance();
         $this->assertSame($builder, $builder->withDefaultValue(['bar']));
-        $this->assertEquals(['bar'], $builder->processConfig(null));
+        $this->assertEquals(['bar'], $builder->normalizeValue(null));
     }
 
     public function testNormalizesValue(): void
@@ -24,7 +24,7 @@ final class ArrayOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $this->assertSame($builder, $builder->withNormalizer(function () { return ['BAR']; }));
         $this->assertSame($builder, $builder->withNormalizer(function ($var) { return array_merge($var,  ['2']); }));
-        $this->assertEquals(['BAR', '2'], $builder->processConfig(['bar']));
+        $this->assertEquals(['BAR', '2'], $builder->normalizeValue(['bar']));
     }
 
     public function testValidatesValue(): void
@@ -36,13 +36,13 @@ final class ArrayOptionBuilderTest extends TestCase
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
         $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
 
-        $builder->processConfig(['bar' => true]);
+        $builder->normalizeValue(['bar' => true]);
         $builder->validateValue(['bar' => true]);
         $this->assertEquals(2, $validated);
     }
 
-    protected function createInstance(): ArrayOptionBuilder
+    protected function createInstance(): OptionsBuilder
     {
-        return new ArrayOptionBuilder('Option', 'Example option');
+        return new OptionsBuilder('Option', 'Example option');
     }
 }

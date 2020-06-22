@@ -96,7 +96,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             ? PlatformRequirementChecker::create()
             : PlatformRequirementChecker::createAlwaysFulfilling();
 
-        $authConfig             = $this->config->has('auth') ? $this->config->getArray('auth')->getValue() : [];
+        $authConfig             = $this->config->has('auth') ? $this->config->getOptions('auth')->getValue() : [];
         $this->downloader       = new FileDownloader($cachePath, $authConfig);
         $this->repositoryLoader = new JsonRepositoryLoader($requirementChecker, $this->downloader, true);
         $lockFile               = $this->getLockFileName();
@@ -158,7 +158,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         assert($questionHelper instanceof QuestionHelper);
 
         return new InteractiveQuestionKeyTrustStrategy(
-            new TrustedKeysStrategy($this->config->getArray('trusted-keys')->getValue()),
+            new TrustedKeysStrategy($this->config->getOptions('trusted-keys')->getValue()),
             $this->input,
             $this->output,
             $questionHelper

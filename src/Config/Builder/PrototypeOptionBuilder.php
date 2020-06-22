@@ -5,80 +5,87 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
+use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
+use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
+use Phpcq\PluginApi\Version10\Configuration\Builder\IntOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
+use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 final class PrototypeOptionBuilder extends AbstractOptionBuilder implements PrototypeBuilderInterface
 {
     use TypeTrait;
 
-    /** @var ProcessConfigOptionBuilderInterface */
+    /** @var ConfigOptionBuilderInterface */
     private $valueBuilder;
 
-    public function ofArrayValue() : OptionsBuilderInterface
+    public function ofOptionsValue() : OptionsBuilderInterface
     {
         $this->declareType('array');
-        $this->valueBuilder = new ArrayOptionBuilder('', '');
 
-        return $this->valueBuilder;
+        return $this->valueBuilder = new OptionsBuilder($this->name, $this->description);
     }
 
-    public function ofBoolValue() : PrototypeBuilderInterface
+    public function ofBoolValue() : BoolOptionBuilderInterface
     {
         $this->declareType('bool');
 
-        return $this;
+        return $this->valueBuilder = new BoolOptionBuilder($this->name, $this->description);
     }
 
     public function ofEnumValue() : EnumOptionBuilderInterface
     {
         $this->declareType('enum');
-        $this->valueBuilder = new EnumOptionBuilder('', '');
 
-        return $this->valueBuilder;
+        return $this->valueBuilder = new EnumOptionBuilder($this->name, $this->description);
     }
 
-    public function ofFloatValue() : PrototypeBuilderInterface
+    public function ofFloatValue() : FloatOptionBuilderInterface
     {
         $this->declareType('float');
 
-        return $this;
+        return $this->valueBuilder = new FloatOptionBuilder($this->name, $this->description);
     }
 
-    public function ofIntValue() : PrototypeBuilderInterface
+    public function ofIntValue() : IntOptionBuilderInterface
     {
         $this->declareType('int');
 
-        return $this;
+        return $this->valueBuilder = new IntOptionBuilder($this->name, $this->description);
     }
 
     public function ofListValue(): ListOptionBuilderInterface
     {
         $this->declareType('list');
-        $this->valueBuilder = new ListOptionBuilder('', '');
 
-        return $this->valueBuilder;
+        return $this->valueBuilder = new ListOptionBuilder($this->name, $this->description);
     }
 
-    public function ofStringValue() : PrototypeBuilderInterface
+    public function ofStringValue() : StringOptionBuilderInterface
     {
         $this->declareType('string');
 
-        return $this;
+        return $this->valueBuilder = new StringOptionBuilder($this->name, $this->description);
     }
 
     public function ofPrototypeValue(): PrototypeBuilderInterface
     {
         $this->declareType('prototype');
-        $this->valueBuilder = new PrototypeOptionBuilder('', '');
 
-        return $this->valueBuilder;
+        return $this->valueBuilder = new self($this->name, $this->description);
     }
 
-    public function processConfig($values): ?array
+    public function withDefaultValue(array $defaultValue) : PrototypeBuilderInterface
+    {
+        $this->defaultValue = $defaultValue;
+
+        return $this;
+    }
+
+    public function normalizeValue($values): ?array
     {
         $values = $this->getNormalizedValue($values);
         if ($values === null) {
@@ -95,7 +102,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         }
 
         foreach ($values as $key => $value) {
-            $values[$key] = $this->valueBuilder->processConfig($value);
+            $values[$key] = $this->valueBuilder->normalizeValue($value);
         }
 
         return $values;

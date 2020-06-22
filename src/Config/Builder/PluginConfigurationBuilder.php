@@ -8,7 +8,7 @@ use Phpcq\Exception\InvalidArgumentException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 
-class PluginConfigurationBuilder extends AbstractArrayOptionBuilder implements PluginConfigurationBuilderInterface
+class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface
 {
     public function supportDirectories(): PluginConfigurationBuilderInterface
     {

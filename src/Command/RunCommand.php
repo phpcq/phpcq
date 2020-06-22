@@ -129,7 +129,7 @@ final class RunCommand extends AbstractCommand
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
 
-        $chains = $this->config->getArray('chains')->getValue();
+        $chains = $this->config->getOptions('chains')->getValue();
         if (!isset($chains[$chain])) {
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
@@ -210,14 +210,14 @@ final class RunCommand extends AbstractCommand
 
         // Initialize phar files
         if ($plugin instanceof DiagnosticsPluginInterface) {
-            $chains = $this->config->getArray('chains')->getValue();
-            $toolConfig = $this->config->getArray('tool-config');
+            $chains = $this->config->getOptions('chains')->getValue();
+            $toolConfig = $this->config->getOptions('tool-config');
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
             $configuration       = $chains[$chain][$name]
-                ?? ($toolConfig->has($name) ? $toolConfig->getArray($name)->getValue() : []);
+                ?? ($toolConfig->has($name) ? $toolConfig->getOptions($name)->getValue() : []);
 
             $plugin->describeConfiguration($configOptionsBuilder);
-            $configuration = new PluginConfiguration($configOptionsBuilder->processConfig($configuration));
+            $configuration = new PluginConfiguration($configOptionsBuilder->normalizeValue($configuration));
 
             foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
                 $taskList->add($task);

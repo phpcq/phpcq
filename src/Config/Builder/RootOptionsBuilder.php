@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
-class RootOptionsBuilder extends AbstractArrayOptionBuilder
+class RootOptionsBuilder extends AbstractOptionsBuilder
 {
     public function __construct(string $name, string $description)
     {

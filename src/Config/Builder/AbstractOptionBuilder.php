@@ -6,8 +6,9 @@ namespace Phpcq\Config\Builder;
 
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use function sprintf;
 
-abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterface
+abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 {
     /** @var string */
     protected $name;
@@ -61,25 +62,9 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
         return $this;
     }
 
-    public function withDefaultValue($defaultValue) : OptionBuilderInterface
+    public function normalizeValue($raw)
     {
-        $this->defaultValue = $defaultValue;
-
-        return $this;
-    }
-
-    public function processConfig($raw)
-    {
-        $value = $this->getNormalizedValue($raw);
-        if ($value === null) {
-            if ($this->required) {
-                throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
-            }
-
-            return null;
-        }
-
-        return $value;
+        return $this->getNormalizedValue($raw);
     }
 
     protected function getNormalizedValue($value)
@@ -97,8 +82,16 @@ abstract class AbstractOptionBuilder implements ProcessConfigOptionBuilderInterf
 
     public function validateValue($value): void
     {
+        if (null === $value && $this->required) {
+            throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+        }
+
         foreach ($this->validators as $validator) {
             $validator($value);
         }
+    }
+
+    public function selfValidate() : void
+    {
     }
 }

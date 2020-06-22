@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Phpcq\Config;
 
-use Phpcq\Config\Builder\ArrayOptionBuilder;
-use Phpcq\Config\Builder\ListOptionBuilder;
+use Phpcq\Config\Builder\OptionsBuilder;
 use Phpcq\Config\Builder\RootOptionsBuilder;
+use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 
 final class PhpcqConfigurationBuilder
 {
-    /** @var ArrayOptionBuilder */
+    /** @var OptionsBuilder */
     private $builder;
 
     public function __construct()
@@ -19,8 +19,8 @@ final class PhpcqConfigurationBuilder
         $this->builder = new RootOptionsBuilder('phpcq', 'PHPCQ configuration');
         $this->builder
             ->describeListOption('directories', 'Directories which are checked by default')
-            ->isRequired()
             ->withDefaultValue([])
+            ->isRequired()
             ->ofStringItems();
         $this->builder
             ->describeStringOption('artifact', 'Artifact directory for builds')
@@ -28,7 +28,7 @@ final class PhpcqConfigurationBuilder
             ->withDefaultValue('.phpcq/build');
         $this->describeRepositories($this->builder->describeListOption('repositories', 'Repositories'));
 
-        $this->describeTools($this->builder->describePrototypeOption('tools', 'List of required plugins')->ofArrayValue());
+        $this->describeTools($this->builder->describePrototypeOption('tools', 'List of required plugins')->ofOptionsValue());
 
         $this->builder
             ->describeListOption('trusted-keys', 'List of trusted key fingerprints')
@@ -39,23 +39,23 @@ final class PhpcqConfigurationBuilder
             ->describePrototypeOption('chains', 'Available chains. Default chain is required')
             ->withDefaultValue([])
             ->ofPrototypeValue()
-                ->ofArrayValue();
-        assert($arrayBuilder instanceof ArrayOptionBuilder);
+                ->ofOptionsValue();
+        assert($arrayBuilder instanceof OptionsBuilder);
         $arrayBuilder->bypassValueValidation();
     }
 
     public function processConfig(array $raw): PhpcqConfiguration
     {
-        $processed = $this->builder->processConfig($raw);
+        $processed = $this->builder->normalizeValue($raw);
         $this->builder->validateValue($processed);
 
         return new PhpcqConfiguration($processed);
     }
 
-    private function describeRepositories(ListOptionBuilder $builder): void
+    private function describeRepositories(ListOptionBuilderInterface $builder): void
     {
         $builder->withDefaultValue([]);
-        $itemsBuilder = $builder->ofArrayItems();
+        $itemsBuilder = $builder->ofOptionsItems();
         $itemsBuilder->withNormalizer(static function ($value): array {
             if (is_string($value)) {
                 return [

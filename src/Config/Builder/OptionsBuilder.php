@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
-final class ArrayOptionBuilder extends AbstractArrayOptionBuilder
+final class OptionsBuilder extends AbstractOptionsBuilder
 {
     /** @var bool */
     private $bypassValueValidation = false;
