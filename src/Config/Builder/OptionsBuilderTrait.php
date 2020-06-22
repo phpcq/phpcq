@@ -9,17 +9,21 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\IntOptionBuilderInterface;
-use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
+
 use function array_key_exists;
+use function assert;
 
 trait OptionsBuilderTrait
 {
-    /** @var ConfigOptionBuilderInterface[]|array<string, ConfigOptionBuilderInterface */
+    /**
+     * @var ConfigOptionBuilderInterface[]
+     * @psalm-var array<string, ConfigOptionBuilderInterface>
+     */
     protected $options = [];
 
     public function describeOptions(string $name, string $description): OptionsBuilderInterface
@@ -54,7 +58,7 @@ trait OptionsBuilderTrait
         return $builder;
     }
 
-    public function describePrototypeOption(string $name, string $description) : PrototypeBuilderInterface
+    public function describePrototypeOption(string $name, string $description): PrototypeBuilderInterface
     {
         $builder = new PrototypeOptionBuilder($name, $description);
         $this->describeOption($name, $builder);
@@ -94,11 +98,16 @@ trait OptionsBuilderTrait
         return $builder;
     }
 
-    protected function describeOption(string $name, OptionBuilderInterface $builder): void
+    protected function describeOption(string $name, ConfigOptionBuilderInterface $builder): void
     {
         $this->options[$name] = $builder;
     }
 
+    /**
+     * @psalm-param array<string,mixed> $options
+     *
+     * @psalm-return array<string,mixed>
+     */
     protected function normalizeOptions(array $options): array
     {
         foreach ($this->options as $key => $builder) {
@@ -107,9 +116,11 @@ trait OptionsBuilderTrait
                 continue;
             }
 
+            /** @psalm-suppress MixedAssignment */
             if (null === ($processed = $builder->normalizeValue($options[$key] ?? null))) {
                 unset($options[$key]);
             } else {
+                /** @psalm-suppress MixedAssignment */
                 $options[$key] = $processed;
             }
         }

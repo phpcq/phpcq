@@ -34,7 +34,7 @@ final class ValidateCommand extends AbstractCommand
         $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $valid = true;
-        foreach ($this->config->getOptions('chains')->getValue() as $chainName => $chainTools) {
+        foreach ($this->config->getChains() as $chainName => $chainTools) {
             $this->output->writeln('Validate chain "' . $chainName . '":', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
             foreach (array_keys($chainTools) as $toolName) {
@@ -70,13 +70,13 @@ final class ValidateCommand extends AbstractCommand
             return true;
         }
 
-        $chains               = $this->config->getOptions('chains')->getValue();
+        $chains               = $this->config->getChains();
         $configOptionsBuilder = new PluginConfigurationBuilder($name, 'Plugin configuration');
         $configuration        = $chain ? $chains[$chain][$name] : null;
 
         if (null === $configuration) {
-            $toolConfig    = $this->config->getOptions('tool-config');
-            $configuration = $toolConfig->has($name) ? $toolConfig->getOptions($name)->getValue() : [];
+            $toolConfig    = $this->config->getToolConfig();
+            $configuration = $toolConfig[$name] ?? [];
         }
 
         $hash = md5(serialize($configuration));

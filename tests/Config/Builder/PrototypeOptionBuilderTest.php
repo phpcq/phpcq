@@ -7,6 +7,7 @@ namespace Phpcq\Test\Config\Builder;
 use Phpcq\Config\Builder\PrototypeOptionBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
+
 use function array_merge;
 
 /** @covers \Phpcq\Config\Builder\PrototypeOptionBuilder */
@@ -41,8 +42,12 @@ final class PrototypeOptionBuilderTest extends TestCase
         $builder->ofStringValue();
         $validated = 0;
 
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
 
         $builder->validateValue(['bar' => 'baz', 'foo' => 'example']);
         $this->assertEquals(2, $validated);

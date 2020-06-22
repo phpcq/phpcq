@@ -55,5 +55,4 @@ final class PhpcqConfigurationBuilderTest extends TestCase
             $configuration
         );
     }
-
 }

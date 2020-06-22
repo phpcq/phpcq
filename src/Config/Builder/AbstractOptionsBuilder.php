@@ -9,6 +9,7 @@ use Phpcq\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
+/** @extends AbstractOptionBuilder<array<string,mixed>> */
 abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements OptionsBuilderInterface
 {
     use OptionsBuilderTrait;
@@ -27,6 +28,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
 
     public function normalizeValue($raw): ?array
     {
+        /** @psalm-suppress MixedAssignment */
         $value = parent::normalizeValue($raw);
         if ($value === null) {
             if ($this->required) {
@@ -36,6 +38,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
             return null;
         }
 
+        /** @psalm-var array<string, mixed> $value */
         $value = Constraints::arrayConstraint($value);
 
         return $this->normalizeOptions($value);
@@ -45,12 +48,14 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
     {
         parent::validateValue($options);
 
+        /** @var array $options - We validate it withing parent validator */
         $diff = array_diff_key($options, $this->options);
         if (count($diff) > 0) {
-            throw new InvalidConfigurationException(sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff))));
+            throw new InvalidConfigurationException(
+                sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff)))
+            );
         }
 
-        assert(is_array($options));
         foreach ($this->options as $key => $builder) {
             $builder->validateValue($options[$key] ?? null);
         }

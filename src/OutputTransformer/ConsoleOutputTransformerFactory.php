@@ -10,6 +10,14 @@ use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface;
 use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 
+/**
+ * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_NONE
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_INFO
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MARGINAL
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MINOR
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MAJOR
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_FATAL
+ */
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
     /**
@@ -88,7 +96,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             /**
              * @return string[]
              *
-             * @psalm-return array{0: string, 1: string}
+             * @psalm-return array{0: string, 1: TDiagnosticSeverity}
              */
             private function calculateStatusAndSeverity(int $exitCode): array
             {

@@ -35,37 +35,47 @@ class Options implements OptionsInterface
         return Constraints::floatConstraint($this->getOption($name));
     }
 
-    public function getBool(string $name) : bool
+    public function getBool(string $name): bool
     {
         return Constraints::boolConstraint($this->getOption($name));
     }
 
+    /**
+     * @psalm-suppress MixedReturnTypeCoercion
+     * @psalm-return list<string>
+     */
     public function getStringList(string $name): array
     {
         return Constraints::listConstraint($this->getOption($name), Validator::stringValidator());
     }
 
+    /**
+     * @psalm-suppress MixedReturnTypeCoercion
+     * @psalm-return list<array<string,mixed>>
+     */
     public function getOptionsList(string $name): array
     {
-        return Constraints::listConstraint($this->getOption($name), Validator::instanceOfValidator(Options::class));
+        return Constraints::listConstraint($this->getOption($name), Validator::arrayValidator());
     }
 
     public function getOptions(string $name): OptionsInterface
     {
         $value = Constraints::arrayConstraint($this->getOption($name));
+        /** @psalm-var array<string,mixed> $value */
         return new Options($value);
     }
 
-    public function has(string $name) : bool
+    public function has(string $name): bool
     {
         return array_key_exists($name, $this->options);
     }
 
-    public function getValue() : array
+    public function getValue(): array
     {
         return $this->options;
     }
 
+    /** @return mixed */
     protected function getOption(string $name)
     {
         if (!isset($this->options[$name])) {

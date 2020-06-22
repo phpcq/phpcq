@@ -11,8 +11,12 @@ use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 
 /**
- * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_INFO|ToolReportInterface::SEVERITY_NOTICE
- * |ToolReportInterface::SEVERITY_WARNING|ToolReportInterface::SEVERITY_ERROR
+ * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_NONE
+ * |ToolReportInterface::SEVERITY_INFO
+ * |ToolReportInterface::SEVERITY_MARGINAL
+ * |ToolReportInterface::SEVERITY_MINOR
+ * |ToolReportInterface::SEVERITY_MAJOR
+ * |ToolReportInterface::SEVERITY_FATAL
  */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {

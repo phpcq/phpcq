@@ -8,8 +8,10 @@ use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+
 use function sprintf;
 
+/** @extends AbstractOptionBuilder<list<array<string,mixed>>> */
 final class OptionsListOptionBuilder extends AbstractOptionBuilder implements OptionsListOptionBuilderInterface
 {
     use OptionsBuilderTrait;
@@ -34,9 +36,11 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             return null;
         }
 
+        /** @psalm-var list<array<string,mixed>> $values */
         $values = Constraints::listConstraint($values);
         foreach ($values as $index => $options) {
             foreach ($this->normalizer as $normalizer) {
+                /** @psalm-var array<string,mixed> */
                 $values[$index] = $normalizer($options);
             }
 
@@ -56,6 +60,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 
+        /** @psalm-var list<array<string,mixed>> $options */
         $options = Constraints::listConstraint($options, Validator::arrayValidator());
         foreach ($options as $value) {
             foreach ($this->validators as $validator) {

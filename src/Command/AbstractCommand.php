@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Config\Options;
+use Phpcq\Config\PhpcqConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Output\SymfonyConsoleOutput;
@@ -57,7 +58,7 @@ abstract class AbstractCommand extends Command
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var Options
+     * @var PhpcqConfiguration
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */

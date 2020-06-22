@@ -13,27 +13,33 @@ final class IntOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
-    public function testDefaultValue() : void
+    public function testDefaultValue(): void
     {
         $builder = $this->createInstance();
         $this->assertSame($builder, $builder->withDefaultValue(2));
         $this->assertEquals(2, $builder->normalizeValue(null));
     }
 
-    public function testNormalizesValue() : void
+    public function testNormalizesValue(): void
     {
         $builder = $this->createInstance();
-        $this->assertSame($builder, $builder->withNormalizer(function () { return 3.0; }));
+        $this->assertSame($builder, $builder->withNormalizer(function () {
+            return 3.0;
+        }));
         $this->assertEquals(3, $builder->normalizeValue(7));
     }
 
-    public function testValidatesValue() : void
+    public function testValidatesValue(): void
     {
         $builder = $this->createInstance();
         $validated = 0;
 
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
 
         $builder->validateValue(3);
         $this->assertEquals(2, $validated);

@@ -32,7 +32,6 @@
         "guzzlehttp/guzzle": "^6.5",
         "phpcq/gnupg": "^1.0@dev",
         "phpcq/plugin-api": "dev-feature/revise-api",
-        "symfony/config": "^5.0.7",
         "symfony/console": "^5.0.7",
         "symfony/filesystem": "^5.0",
         "symfony/process": "^5.0.7",

@@ -8,8 +8,12 @@ use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+
 use function sprintf;
 
+/**
+ * @extends AbstractOptionBuilder<list<string>>
+ */
 final class StringListOptionBuilder extends AbstractOptionBuilder implements StringListOptionBuilderInterface
 {
     public function __construct(string $name, string $description)
@@ -17,7 +21,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         parent::__construct($name, $description, [Validator::stringValidator()]);
     }
 
-    /** @param string[] */
+    /** @psalm-param list<string> $values */
     public function withDefaultValue(array $values): StringListOptionBuilderInterface
     {
         $this->defaultValue = $values;
@@ -39,8 +43,10 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         }
 
         $values = Constraints::listConstraint($values);
+        /** @psalm-suppress MixedAssignment */
         foreach ($values as $index => $options) {
             foreach ($this->normalizer as $normalizer) {
+                /** @psalm-suppress MixedAssignment */
                 $values[$index] = $normalizer($options);
             }
         }
@@ -59,6 +65,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         }
 
         $options = Constraints::listConstraint($options, Validator::stringValidator());
+        /** @psalm-var list<string> $options */
         foreach ($options as $value) {
             foreach ($this->validators as $validator) {
                 $validator($value);

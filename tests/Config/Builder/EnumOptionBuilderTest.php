@@ -10,7 +10,11 @@ use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Builder\EnumOptionBuilder */
+/**
+ * @covers \Phpcq\Config\Builder\EnumOptionBuilder
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class EnumOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
@@ -21,8 +25,12 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofStringValues('bar');
         $builder->selfValidate();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () { return 'BAR'; }));
-        $this->assertSame($builder, $builder->withNormalizer(function ($var) { return $var . ' 2'; }));
+        $this->assertSame($builder, $builder->withNormalizer(function () {
+            return 'BAR';
+        }));
+        $this->assertSame($builder, $builder->withNormalizer(function ($var) {
+            return $var . ' 2';
+        }));
         $this->assertEquals('BAR 2', $builder->normalizeValue('bar'));
     }
 
@@ -31,8 +39,12 @@ class EnumOptionBuilderTest extends TestCase
         $builder = $this->createInstance();
         $validated = 0;
 
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
 
         $builder->ofStringValues('bar');
         $builder->selfValidate();
@@ -168,7 +180,7 @@ class EnumOptionBuilderTest extends TestCase
         array $argumentsA,
         string $methodB,
         array $argumentsB
-    ): void{
+    ): void {
         $this->expectException(RuntimeException::class);
 
         $builder = $this->createInstance();

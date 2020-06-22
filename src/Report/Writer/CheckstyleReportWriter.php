@@ -6,7 +6,7 @@ namespace Phpcq\Report\Writer;
 
 use DOMElement;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\ReportInterface;
+use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 /**

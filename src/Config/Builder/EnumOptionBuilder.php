@@ -15,10 +15,13 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 {
     use TypeTrait;
 
-    /** @var ConfigOptionBuilderInterface */
+    /**
+     * @psalm-suppress PropertyNotSetInConstructor selfValidate() checks it.
+     * @var ConfigOptionBuilderInterface
+     */
     private $valueBuilder;
 
-    public function ofStringValues(string ...$values) : StringOptionBuilderInterface
+    public function ofStringValues(string ...$values): StringOptionBuilderInterface
     {
         $this->declareType('string');
         $this
@@ -28,7 +31,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return $this->valueBuilder = new StringOptionBuilder($this->name, $this->description);
     }
 
-    public function ofIntValues(int ...$values) : IntOptionBuilderInterface
+    public function ofIntValues(int ...$values): IntOptionBuilderInterface
     {
         $this->declareType('int');
         $this
@@ -38,7 +41,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return $this->valueBuilder = new IntOptionBuilder($this->name, $this->description);
     }
 
-    public function ofFloatValues(float ...$values) : FloatOptionBuilderInterface
+    public function ofFloatValues(float ...$values): FloatOptionBuilderInterface
     {
         $this->declareType('float');
         $this
@@ -50,20 +53,22 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 
     public function normalizeValue($raw)
     {
+        /** @psalm-suppress MixedAssignment */
         $raw = $this->valueBuilder->normalizeValue($raw);
 
         return parent::normalizeValue($raw);
     }
 
-    public function validateValue($value) : void
+    public function validateValue($value): void
     {
         parent::validateValue($value);
 
         $this->valueBuilder->normalizeValue($value);
     }
 
-    public function selfValidate() : void
+    public function selfValidate(): void
     {
+        /** @psalm-suppress DocblockTypeContradiction */
         if (null === $this->valueBuilder) {
             throw new RuntimeException('Enum value type has to be defined');
         }

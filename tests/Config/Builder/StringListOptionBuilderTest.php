@@ -26,7 +26,9 @@ class StringListOptionBuilderTest extends TestCase
     {
         $builder = $this->createInstance();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () { return 'BAR'; }));
+        $this->assertSame($builder, $builder->withNormalizer(function () {
+            return 'BAR';
+        }));
         $this->assertEquals(['BAR'], $builder->normalizeValue(['bar']));
     }
 
@@ -36,8 +38,12 @@ class StringListOptionBuilderTest extends TestCase
 
         $validated = 0;
 
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
-        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) { $validated++; }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
+        $this->assertSame($builder, $builder->withValidator(function () use (&$validated) {
+            $validated++;
+        }));
 
         $builder->normalizeValue(['bar']);
         $builder->validateValue(['bar']);
@@ -60,7 +66,7 @@ class StringListOptionBuilderTest extends TestCase
         $builder->validateValue([1.0, 1]);
     }
 
-    protected function createInstance(array $validators = []): StringListOptionBuilder
+    protected function createInstance(): StringListOptionBuilder
     {
         return new StringListOptionBuilder('Option', 'Example option');
     }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Repository;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use function array_key_exists;
+use function assert;
+use function is_string;
 
 class RepositoryFactory
 {
@@ -23,17 +26,17 @@ class RepositoryFactory
 
     /**
      * @param mixed[] $repositories
-     * @psalm-param list<string|mixed> $repositories
+     * @psalm-param list<array{type:string, url?: string}> $repositories
      */
     public function buildPool(array $repositories): RepositoryPool
     {
         $pool = new RepositoryPool();
 
-        /** @var string|mixed $repository */
         foreach ($repositories as $repository) {
             switch ($repository['type']) {
                 case 'remote':
-                    $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
+                    assert(is_string($url = $repository['url'] ?? null));
+                    $pool->addRepository(new RemoteRepository($url, $this->repositoryLoader));
                     break;
                 default:
                     throw new InvalidConfigurationException(

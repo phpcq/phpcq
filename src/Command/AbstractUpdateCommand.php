@@ -158,7 +158,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         assert($questionHelper instanceof QuestionHelper);
 
         return new InteractiveQuestionKeyTrustStrategy(
-            new TrustedKeysStrategy($this->config->getOptions('trusted-keys')->getValue()),
+            new TrustedKeysStrategy($this->config->getStringList('trusted-keys')),
             $this->input,
             $this->output,
             $questionHelper

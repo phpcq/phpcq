@@ -6,7 +6,7 @@ namespace Phpcq\Report\Writer;
 
 use DateTimeImmutable;
 use Generator;
-use Phpcq\PluginApi\Version10\ReportInterface;
+use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\ToolReport;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -217,13 +217,16 @@ final class ConsoleWriter
         $message = $message ?: $severity;
 
         switch ($severity) {
+            case ToolReport::SEVERITY_NONE:
             case ToolReport::SEVERITY_INFO:
                 return '<fg=white>' . $message . '</>';
 
-            case ToolReport::SEVERITY_WARNING:
+            case ToolReport::SEVERITY_MARGINAL:
+            case ToolReport::SEVERITY_MINOR:
                 return '<fg=yellow>' . $message . '</>';
 
-            case ToolReport::SEVERITY_ERROR:
+            case ToolReport::SEVERITY_MAJOR:
+            case ToolReport::SEVERITY_FATAL:
                 return '<fg=red>' . $message . '</>';
         }
 

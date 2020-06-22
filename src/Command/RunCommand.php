@@ -114,7 +114,7 @@ final class RunCommand extends AbstractCommand
         // Stage 1: preparation.
         $artifactDir = $this->config->getString('artifact');
         $fileSystem = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getList('directories'), $artifactDir);
+        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir);
 
         $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
         $fileSystem->mkdir($tempDirectory);
@@ -129,7 +129,7 @@ final class RunCommand extends AbstractCommand
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
 
-        $chains = $this->config->getOptions('chains')->getValue();
+        $chains = $this->config->getChains();
         if (!isset($chains[$chain])) {
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
@@ -190,11 +190,11 @@ final class RunCommand extends AbstractCommand
     }
 
     /**
-     * @param PluginRegistry     $plugins
-     * @param string             $chain
-     * @param string             $toolName
-     * @param Environment $buildConfig
-     * @param Tasklist           $taskList
+     * @param PluginRegistry $plugins
+     * @param string         $chain
+     * @param string         $toolName
+     * @param Environment    $buildConfig
+     * @param Tasklist       $taskList
      *
      * @return void
      */
@@ -210,14 +210,17 @@ final class RunCommand extends AbstractCommand
 
         // Initialize phar files
         if ($plugin instanceof DiagnosticsPluginInterface) {
-            $chains = $this->config->getOptions('chains')->getValue();
+            $chains = $this->config->getChains();
             $toolConfig = $this->config->getOptions('tool-config');
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
             $configuration       = $chains[$chain][$name]
                 ?? ($toolConfig->has($name) ? $toolConfig->getOptions($name)->getValue() : []);
 
             $plugin->describeConfiguration($configOptionsBuilder);
-            $configuration = new PluginConfiguration($configOptionsBuilder->normalizeValue($configuration));
+            $processed = $configOptionsBuilder->normalizeValue($configuration);
+            $configOptionsBuilder->validateValue($processed);
+            /** @psalm-var array<string,mixed> $processed */
+            $configuration = new PluginConfiguration($processed);
 
             foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
                 $taskList->add($task);

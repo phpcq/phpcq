@@ -17,42 +17,49 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInter
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @extends AbstractOptionBuilder<array<string,mixed>>
+ */
 final class PrototypeOptionBuilder extends AbstractOptionBuilder implements PrototypeBuilderInterface
 {
     use TypeTrait;
 
-    /** @var ConfigOptionBuilderInterface */
+    /**
+     * @psalm-suppress PropertyNotSetInConstructor selfValidate() checks it.
+     * @var ConfigOptionBuilderInterface
+     */
     private $valueBuilder;
 
-    public function ofOptionsValue() : OptionsBuilderInterface
+    public function ofOptionsValue(): OptionsBuilderInterface
     {
         $this->declareType('array');
 
         return $this->valueBuilder = new OptionsBuilder($this->name, $this->description);
     }
 
-    public function ofBoolValue() : BoolOptionBuilderInterface
+    public function ofBoolValue(): BoolOptionBuilderInterface
     {
         $this->declareType('bool');
 
         return $this->valueBuilder = new BoolOptionBuilder($this->name, $this->description);
     }
 
-    public function ofEnumValue() : EnumOptionBuilderInterface
+    public function ofEnumValue(): EnumOptionBuilderInterface
     {
         $this->declareType('enum');
 
         return $this->valueBuilder = new EnumOptionBuilder($this->name, $this->description);
     }
 
-    public function ofFloatValue() : FloatOptionBuilderInterface
+    public function ofFloatValue(): FloatOptionBuilderInterface
     {
         $this->declareType('float');
 
         return $this->valueBuilder = new FloatOptionBuilder($this->name, $this->description);
     }
 
-    public function ofIntValue() : IntOptionBuilderInterface
+    public function ofIntValue(): IntOptionBuilderInterface
     {
         $this->declareType('int');
 
@@ -73,7 +80,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new OptionsListOptionBuilder($this->name, $this->description);
     }
 
-    public function ofStringValue() : StringOptionBuilderInterface
+    public function ofStringValue(): StringOptionBuilderInterface
     {
         $this->declareType('string');
 
@@ -87,7 +94,8 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new self($this->name, $this->description);
     }
 
-    public function withDefaultValue(array $defaultValue) : PrototypeBuilderInterface
+    /** @psalm-param array<string, mixed> $defaultValue */
+    public function withDefaultValue(array $defaultValue): PrototypeBuilderInterface
     {
         $this->defaultValue = $defaultValue;
 
@@ -96,6 +104,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
 
     public function selfValidate(): void
     {
+        /** @psalm-suppress DocblockTypeContradiction */
         if (null === $this->valueBuilder) {
             throw new RuntimeException('Prototype value type has to be defined');
         }
@@ -105,6 +114,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
 
     public function normalizeValue($values): ?array
     {
+        /** @psalm-suppress MixedAssignment */
         $values = parent::normalizeValue($values);
         if ($values === null) {
             if ($this->required) {
@@ -119,7 +129,12 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 
+        /**
+         * @psalm-var array<string, mixed> $values
+         * @psalm-suppress MixedAssignment
+         */
         foreach ($values as $key => $value) {
+            /** @psalm-suppress MixedAssignment */
             $values[$key] = $this->valueBuilder->normalizeValue($value);
         }
 
@@ -134,6 +149,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         }
 
         $values = Constraints::arrayConstraint($values);
+        /** @psalm-suppress MixedAssignment */
         foreach ($values as $value) {
             $this->valueBuilder->validateValue($value);
         }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Exception\InvalidArgumentException;
-use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 
 class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface
@@ -36,7 +35,7 @@ class PluginConfigurationBuilder extends AbstractOptionsBuilder implements Plugi
         return $this->supportsDirectories;
     }
 
-    protected function describeOption(string $name, OptionBuilderInterface $builder): void
+    protected function describeOption(string $name, ConfigOptionBuilderInterface $builder): void
     {
         if ('directories' === $name) {
             throw new InvalidArgumentException('Directories is a reserved configuration key');

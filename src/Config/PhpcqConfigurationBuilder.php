@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Config;
 
 use Phpcq\Config\Builder\OptionsBuilder;
+use Phpcq\Config\Validation\Constraints;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
-use function var_dump;
+use function is_array;
 
 final class PhpcqConfigurationBuilder
 {
@@ -23,8 +24,8 @@ final class PhpcqConfigurationBuilder
             ->isRequired();
         $this->builder
             ->describeStringOption('artifact', 'Artifact directory for builds')
-            ->isRequired()
-            ->withDefaultValue('.phpcq/build');
+            ->withDefaultValue('.phpcq/build')
+            ->isRequired();
         $this->describeRepositories($this->builder->describeOptionsListOption('repositories', 'Repositories'));
 
         $this->describeTools(
@@ -42,15 +43,18 @@ final class PhpcqConfigurationBuilder
             ->ofPrototypeValue()
                 ->ofOptionsValue();
         assert($arrayBuilder instanceof OptionsBuilder);
+        /** @psalm-suppress DeprecatedMethod */
         $arrayBuilder->bypassValueValidation();
     }
 
+    /** @psalm-return array<string,mixed> */
     public function processConfig(array $raw): array
     {
         $this->builder->selfValidate();
         $processed = $this->builder->normalizeValue($raw);
         $this->builder->validateValue($processed);
 
+        /** @psalm-var array<string,mixed> $processed */
         return $processed;
     }
 
@@ -67,7 +71,7 @@ final class PhpcqConfigurationBuilder
                     ];
                 }
 
-                return $value;
+                return Constraints::arrayConstraint($value);
             });
 
         $builder
@@ -90,7 +94,7 @@ final class PhpcqConfigurationBuilder
         );
         $builder
             ->describeBoolOption('signed', 'If set to false no signature verification happens')
-            ->isRequired()
-            ->withDefaultValue(true);
+            ->withDefaultValue(true)
+            ->isRequired();
     }
 }

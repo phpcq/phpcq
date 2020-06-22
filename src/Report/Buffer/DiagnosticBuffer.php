@@ -11,8 +11,8 @@ use Generator;
  * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_INFO
  * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MARGINAL
  * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MINOR
- * |\Phpcq\PluginApi\Version10\TReport\oolReportInterface::SEVERITY_MAJOR
- * |\Phpcq\PluginApi\Version10\TReport\oolReportInterface::SEVERITY_FATAL
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MAJOR
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_FATAL
  */
 final class DiagnosticBuffer
 {

@@ -13,6 +13,7 @@ use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;
+
 use function implode;
 
 /**

@@ -6,8 +6,13 @@ namespace Phpcq\Config\Builder;
 
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+
 use function sprintf;
 
+/**
+ * @psalm-template TType
+ * @psalm-import-type TValidator from \Phpcq\Config\Validation\Validator
+ */
 abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 {
     /** @var string */
@@ -19,21 +24,22 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     /** @var bool */
     protected $required = false;
 
-    /** @psalm-var TType */
+    /** @psalm-var TType|null */
     protected $defaultValue;
 
     /**
      * @var callable[]
-     * @psalm-var list<callable(mixed): TType>
+     * @psalm-var list<callable(mixed): mixed>
      */
     protected $normalizer = [];
 
     /**
      * @var callable[]
-     * @psalm-var list<callable(TType): void>
+     * @psalm-var list<callable(mixed): void>
      */
     protected $validators;
 
+    /** @psalm-param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         $this->name        = $name;
@@ -48,6 +54,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $this;
     }
 
+    /** @psalm-param callable(mixed): void $normalizer */
     public function withNormalizer(callable $normalizer): OptionBuilderInterface
     {
         $this->normalizer[] = $normalizer;
@@ -55,6 +62,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $this;
     }
 
+    /** @psalm-param callable(mixed): void $validator */
     public function withValidator(callable $validator): OptionBuilderInterface
     {
         $this->validators[] = $validator;
@@ -69,6 +77,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         }
 
         foreach ($this->normalizer as $normalizer) {
+            /** @psalm-suppress MixedAssignment */
             $value = $normalizer($value);
         }
 

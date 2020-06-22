@@ -16,8 +16,12 @@ use Phpcq\Report\Buffer\ToolReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_INFO|ToolReportInterface::SEVERITY_NOTICE
- * |ToolReportInterface::SEVERITY_WARNING|ToolReportInterface::SEVERITY_ERROR
+ * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_NONE
+ * |ToolReportInterface::SEVERITY_INFO
+ * |ToolReportInterface::SEVERITY_MARGINAL
+ * |ToolReportInterface::SEVERITY_MINOR
+ * |ToolReportInterface::SEVERITY_MAJOR
+ * |ToolReportInterface::SEVERITY_FATAL
  */
 class ToolReport implements ToolReportInterface
 {
@@ -53,23 +57,6 @@ class ToolReport implements ToolReportInterface
 
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
-        if (
-            !in_array(
-                $severity,
-                [
-                    self::SEVERITY_NONE,
-                    self::SEVERITY_INFO,
-                    self::SEVERITY_MINOR,
-                    self::SEVERITY_MARGINAL,
-                    self::SEVERITY_MAJOR,
-                    self::SEVERITY_MAJOR,
-                    self::SEVERITY_FATAL
-                ]
-            )
-        ) {
-            throw new RuntimeException('Invalid severity passed: ' . $severity);
-        }
-
         /** @psalm-var TDiagnosticSeverity $severity */
         $builder = new DiagnosticBuilder(
             $this,

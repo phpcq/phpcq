@@ -80,7 +80,7 @@ final class ValidatorTest extends TestCase
     }
 
     /** @dataProvider listConstraintProvider */
-    public function testListItemValidator($value, bool $error, int $expectedCallbackInvokeTimes = 0): void
+    public function testListItemValidator($value, bool $error, int $expectedCalls = 0): void
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
@@ -95,13 +95,13 @@ final class ValidatorTest extends TestCase
         $this->assertIsCallable($validator);
         $validator($value);
 
-        if ($expectedCallbackInvokeTimes > 0) {
+        if ($expectedCalls > 0) {
             $this->assertEquals(
-                $expectedCallbackInvokeTimes,
+                $expectedCalls,
                 $itemValidatorCalled,
                 sprintf(
                     'Callback was expected to be called "%s" times, but was called "%s" times',
-                    $expectedCallbackInvokeTimes,
+                    $expectedCalls,
                     $itemValidatorCalled
                 )
             );

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Phpcq\Config\Validation;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+
 use function get_class;
 use function gettype;
 use function is_object;
 
 final class Constraints
 {
+    /** @psalm-param mixed $value */
     public static function boolConstraint($value): bool
     {
         if (!is_bool($value)) {
@@ -20,6 +22,7 @@ final class Constraints
         return $value;
     }
 
+    /** @psalm-param mixed $value */
     public static function floatConstraint($value): float
     {
         if (!is_float($value)) {
@@ -29,6 +32,7 @@ final class Constraints
         return $value;
     }
 
+    /** @psalm-param mixed $value */
     public static function intConstraint($value): int
     {
         if (!is_int($value)) {
@@ -38,6 +42,7 @@ final class Constraints
         return $value;
     }
 
+    /** @psalm-param mixed $value */
     public static function arrayConstraint($value): array
     {
         if (!is_array($value)) {
@@ -47,6 +52,7 @@ final class Constraints
         return $value;
     }
 
+    /** @psalm-param mixed $value */
     public static function stringConstraint($value): string
     {
         if (!is_string($value)) {
@@ -56,7 +62,11 @@ final class Constraints
         return $value;
     }
 
-    /** @psalm-return list<mixed> */
+    /**
+     * @psalm-suppress MixedReturnTypeCoercion
+     * @psalm-param mixed $value
+     * @psalm-return list<mixed>
+     */
     public static function listConstraint($value, ?callable $itemValidator = null): array
     {
         $value    = self::arrayConstraint($value);
@@ -80,28 +90,13 @@ final class Constraints
 
     /**
      * @param mixed $value
-     * @psalm-template TValue
-     * @psalm-param list<TValue> $acceptedValues
-     * @psalm-return TValue
+     * @psalm-param list<mixed> $acceptedValues
+     * @psalm-return mixed
      */
     public static function enumConstraint($value, array $acceptedValues)
     {
         if (!in_array($value, $acceptedValues, true)) {
             throw new InvalidConfigurationException('Unexpected value given');
-        }
-
-        return $value;
-    }
-
-    public static function instanceOfConstraint($value, string $class): string
-    {
-        $value = self::stringConstraint($value);
-        if (! $value instanceof $class) {
-            throw new InvalidConfigurationException(sprintf(
-                'Value of type "%s" is not an instance of "%s"',
-                is_object($value) ? get_class($value) : gettype($value),
-                $class
-            ));
         }
 
         return $value;

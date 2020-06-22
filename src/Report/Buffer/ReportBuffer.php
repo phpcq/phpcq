@@ -11,7 +11,7 @@ use function array_values;
 
 /**
  * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
- * @psalm-type TToolReportSummary = array{
+ * @psalm-type TReportSummary = array{
  *  none: int,
  *  info: int,
  *  marginal: int,
@@ -90,6 +90,7 @@ final class ReportBuffer
      */
     public function countDiagnosticsGroupedBySeverity(): array
     {
+        /** @psalm-var TReportSummary $summary */
         $summary = [
             ToolReportInterface::SEVERITY_FATAL    => 0,
             ToolReportInterface::SEVERITY_MAJOR    => 0,
