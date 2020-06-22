@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Phpcq\Config\Validation;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use function get_class;
+use function gettype;
+use function is_object;
 
 final class Constraints
 {
@@ -85,6 +88,20 @@ final class Constraints
     {
         if (!in_array($value, $acceptedValues, true)) {
             throw new InvalidConfigurationException('Unexpected value given');
+        }
+
+        return $value;
+    }
+
+    public static function instanceOfConstraint($value, string $class): string
+    {
+        $value = self::stringConstraint($value);
+        if (! $value instanceof $class) {
+            throw new InvalidConfigurationException(sprintf(
+                'Value of type "%s" is not an instance of "%s"',
+                is_object($value) ? get_class($value) : gettype($value),
+                $class
+            ));
         }
 
         return $value;

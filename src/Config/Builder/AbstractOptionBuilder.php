@@ -41,33 +41,28 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         $this->validators  = $validators;
     }
 
-    public function isRequired() : OptionBuilderInterface
+    public function isRequired(): OptionBuilderInterface
     {
         $this->required = true;
 
         return $this;
     }
 
-    public function withNormalizer(callable $normalizer) : OptionBuilderInterface
+    public function withNormalizer(callable $normalizer): OptionBuilderInterface
     {
         $this->normalizer[] = $normalizer;
 
         return $this;
     }
 
-    public function withValidator(callable $validator) : OptionBuilderInterface
+    public function withValidator(callable $validator): OptionBuilderInterface
     {
         $this->validators[] = $validator;
 
         return $this;
     }
 
-    public function normalizeValue($raw)
-    {
-        return $this->getNormalizedValue($raw);
-    }
-
-    protected function getNormalizedValue($value)
+    public function normalizeValue($value)
     {
         if (null === $value) {
             $value = $this->defaultValue;
@@ -95,7 +90,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         }
     }
 
-    public function selfValidate() : void
+    public function selfValidate(): void
     {
     }
 }

@@ -44,4 +44,12 @@ final class Validator
             Constraints::enumConstraint($value, $values);
         };
     }
+
+    /** @psalm-param class-string $class */
+    public static function instanceOfValidator(string $class): callable
+    {
+        return static function ($value) use ($class): void {
+            Constraints::instanceOfConstraint($value, $class);
+        };
+    }
 }

@@ -40,14 +40,14 @@ class Options implements OptionsInterface
         return Constraints::boolConstraint($this->getOption($name));
     }
 
-    public function getList(string $name): array
-    {
-        return Constraints::listConstraint($this->getOption($name));
-    }
-
     public function getStringList(string $name): array
     {
         return Constraints::listConstraint($this->getOption($name), Validator::stringValidator());
+    }
+
+    public function getOptionsList(string $name): array
+    {
+        return Constraints::listConstraint($this->getOption($name), Validator::instanceOfValidator(Options::class));
     }
 
     public function getOptions(string $name): OptionsInterface

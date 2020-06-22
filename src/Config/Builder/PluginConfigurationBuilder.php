@@ -20,8 +20,10 @@ class PluginConfigurationBuilder extends AbstractOptionsBuilder implements Plugi
         }
 
         $this->supportsDirectories = true;
-        $builder = new ListOptionBuilder('directories', 'List of directory paths which the plugin should process');
-        $builder->ofStringItems();
+        $builder = new StringListOptionBuilder(
+            'directories',
+            'List of directory paths which the plugin should process'
+        );
         // TODO: Shall we validate the directories values
 
         $this->options['directories'] = $builder;

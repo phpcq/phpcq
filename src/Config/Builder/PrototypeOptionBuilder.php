@@ -10,9 +10,10 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\IntOptionBuilderInterface;
-use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
+use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
+use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -58,11 +59,18 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new IntOptionBuilder($this->name, $this->description);
     }
 
-    public function ofListValue(): ListOptionBuilderInterface
+    public function ofStringListValue(): StringListOptionBuilderInterface
     {
-        $this->declareType('list');
+        $this->declareType('string-list');
 
-        return $this->valueBuilder = new ListOptionBuilder($this->name, $this->description);
+        return $this->valueBuilder = new StringListOptionBuilder($this->name, $this->description);
+    }
+
+    public function ofOptionsListValue(): OptionsListOptionBuilderInterface
+    {
+        $this->declareType('option-list');
+
+        return $this->valueBuilder = new OptionsListOptionBuilder($this->name, $this->description);
     }
 
     public function ofStringValue() : StringOptionBuilderInterface
@@ -97,7 +105,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
 
     public function normalizeValue($values): ?array
     {
-        $values = $this->getNormalizedValue($values);
+        $values = parent::normalizeValue($values);
         if ($values === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
