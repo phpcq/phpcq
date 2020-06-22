@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
+use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
@@ -85,6 +86,15 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this;
     }
 
+    public function selfValidate(): void
+    {
+        if (null === $this->valueBuilder) {
+            throw new RuntimeException('Prototype value type has to be defined');
+        }
+
+        $this->valueBuilder->selfValidate();
+    }
+
     public function normalizeValue($values): ?array
     {
         $values = $this->getNormalizedValue($values);
@@ -106,5 +116,18 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         }
 
         return $values;
+    }
+
+    public function validateValue($values): void
+    {
+        parent::validateValue($values);
+        if (null === $values) {
+            return;
+        }
+
+        $values = Constraints::arrayConstraint($values);
+        foreach ($values as $value) {
+            $this->valueBuilder->validateValue($value);
+        }
     }
 }

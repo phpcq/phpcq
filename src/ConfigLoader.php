@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq;
 
-use Phpcq\Config\PhpcqConfiguration;
+use Phpcq\Config\Options;
 use Phpcq\Config\PhpcqConfigurationBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
@@ -43,10 +43,8 @@ final class ConfigLoader
      * Load configuration from yaml file and return a preprocessed configuration.
      *
      * @param string $configPath Path of the yaml configuration file.
-     *
-     * @psalm-return PhpcqConfiguration
      */
-    public static function load(string $configPath): PhpcqConfiguration
+    public static function load(string $configPath): Options
     {
         return (new self($configPath))->getConfig();
     }
@@ -56,10 +54,7 @@ final class ConfigLoader
         $this->configPath = $configPath;
     }
 
-    /**
-     * @psalm-return TConfig
-     */
-    public function getConfig(): PhpcqConfiguration
+    public function getConfig(): Options
     {
         /** @psalm-var array */
         $config = Yaml::parseFile($this->configPath);
@@ -72,14 +67,14 @@ final class ConfigLoader
         $processed = $configBuilder->processConfig($config['phpcq']);
         unset($config['phpcq']);
         /** @psalm-var TConfig $processed */
-        $processed = array_merge($processed->getValue(), $config);
+        $processed = array_merge($processed, $config);
         $merged = $this->mergeConfig($processed);
 
         if (!array_key_exists('default', $merged['chains'])) {
             $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
         }
 
-        return new PhpcqConfiguration($merged);
+        return new Options($merged);
     }
 
     /**

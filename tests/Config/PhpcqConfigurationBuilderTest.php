@@ -52,7 +52,7 @@ final class PhpcqConfigurationBuilderTest extends TestCase
                 'chains' => [],
                 'trusted-keys' => [],
             ],
-            $configuration->getValue()
+            $configuration
         );
     }
 

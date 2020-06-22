@@ -27,5 +27,11 @@ trait OptionBuilderTestTrait
         $builder->validateValue(null);
     }
 
+    abstract public function testDefaultValue(): void;
+
+    abstract public function testNormalizesValue(): void;
+
+    abstract public function testValidatesValue(): void;
+
     abstract protected function createInstance(array $validators = []): ConfigOptionBuilderInterface;
 }

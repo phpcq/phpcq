@@ -82,7 +82,11 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 
     public function validateValue($value): void
     {
-        if (null === $value && $this->required) {
+        if (null === $value) {
+            if (!$this->required) {
+                return;
+            }
+
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 

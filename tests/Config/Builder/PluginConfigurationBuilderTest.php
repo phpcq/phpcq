@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Config\Builder;
 
-use Phpcq\Config\Builder\OptionsBuilder;
+use Phpcq\Config\Builder\PluginConfigurationBuilder;
 use PHPUnit\Framework\TestCase;
+use function array_merge;
 
-/** @covers \Phpcq\Config\Builder\OptionsBuilder */
-final class ArrayOptionBuilderTest extends TestCase
+/** @covers \Phpcq\Config\Builder\PluginConfigurationBuilder */
+final class PluginConfigurationBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
@@ -41,8 +42,15 @@ final class ArrayOptionBuilderTest extends TestCase
         $this->assertEquals(2, $validated);
     }
 
-    protected function createInstance(): OptionsBuilder
+    public function testSupportsDirectories(): void
     {
-        return new OptionsBuilder('Option', 'Example option');
+        $builder = $this->createInstance();
+        $this->assertSame($builder, $builder->supportDirectories());
+        $this->assertTrue($builder->hasDirectoriesSupport());
+    }
+
+    protected function createInstance(array $validators = []) : PluginConfigurationBuilder
+    {
+        return new PluginConfigurationBuilder('Plugin', 'Plugin configuration');
     }
 }

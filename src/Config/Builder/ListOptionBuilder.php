@@ -72,6 +72,8 @@ final class ListOptionBuilder extends AbstractOptionBuilder implements ListOptio
         if (null === $this->itemBuilder) {
             throw new RuntimeException('List type not defined');
         }
+
+        $this->itemBuilder->selfValidate();
     }
 
     protected function getNormalizedValue($raw)

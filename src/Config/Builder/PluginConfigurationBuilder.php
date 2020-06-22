@@ -10,23 +10,28 @@ use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 
 class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface
 {
+    /** @var bool */
+    private $supportsDirectories = false;
+
     public function supportDirectories(): PluginConfigurationBuilderInterface
     {
-        if (isset($this->options['directories'])) {
+        if ($this->supportsDirectories) {
             return $this;
         }
 
-        $builder = new ListOptionBuilder(
-            $this,
-            'directories',
-            'List of directory paths which the plugin should process'
-        );
+        $this->supportsDirectories = true;
+        $builder = new ListOptionBuilder('directories', 'List of directory paths which the plugin should process');
         $builder->ofStringItems();
         // TODO: Shall we validate the directories values
 
         $this->options['directories'] = $builder;
 
         return $this;
+    }
+
+    public function hasDirectoriesSupport(): bool
+    {
+        return $this->supportsDirectories;
     }
 
     protected function describeOption(string $name, OptionBuilderInterface $builder): void

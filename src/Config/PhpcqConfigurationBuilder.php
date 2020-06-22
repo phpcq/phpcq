@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Config;
 
 use Phpcq\Config\Builder\OptionsBuilder;
-use Phpcq\Config\Builder\RootOptionsBuilder;
 use Phpcq\PluginApi\Version10\Configuration\Builder\ListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 
@@ -16,7 +15,7 @@ final class PhpcqConfigurationBuilder
 
     public function __construct()
     {
-        $this->builder = new RootOptionsBuilder('phpcq', 'PHPCQ configuration');
+        $this->builder = new OptionsBuilder('phpcq', 'PHPCQ configuration');
         $this->builder
             ->describeListOption('directories', 'Directories which are checked by default')
             ->withDefaultValue([])
@@ -44,12 +43,13 @@ final class PhpcqConfigurationBuilder
         $arrayBuilder->bypassValueValidation();
     }
 
-    public function processConfig(array $raw): PhpcqConfiguration
+    public function processConfig(array $raw): array
     {
+        $this->builder->selfValidate();
         $processed = $this->builder->normalizeValue($raw);
         $this->builder->validateValue($processed);
 
-        return new PhpcqConfiguration($processed);
+        return $processed;
     }
 
     private function describeRepositories(ListOptionBuilderInterface $builder): void
