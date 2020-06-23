@@ -58,11 +58,11 @@ class Options implements OptionsInterface
         return Constraints::listConstraint($this->getOption($name), Validator::arrayValidator());
     }
 
-    public function getOptions(string $name): OptionsInterface
+    public function getOptions(string $name): array
     {
         $value = Constraints::arrayConstraint($this->getOption($name));
         /** @psalm-var array<string,mixed> $value */
-        return new Options($value);
+        return $value;
     }
 
     public function has(string $name): bool

@@ -113,7 +113,7 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
-        $artifactDir = $this->config->getString('artifact');
+        $artifactDir = $this->config->getArtifactDir();
         $fileSystem = new Filesystem();
         $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir);
 
@@ -211,11 +211,10 @@ final class RunCommand extends AbstractCommand
 
         // Initialize phar files
         if ($plugin instanceof DiagnosticsPluginInterface) {
-            $chains = $this->config->getChains();
-            $toolConfig = $this->config->getOptions('tool-config');
+            $chains               = $this->config->getChains();
+            $toolConfig           = $this->config->getToolConfig();
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
-            $configuration       = $chains[$chain][$name]
-                ?? ($toolConfig->has($name) ? $toolConfig->getOptions($name)->getValue() : []);
+            $configuration        = $chains[$chain][$name] ?? $toolConfig[$name];
 
             $plugin->describeConfiguration($configOptionsBuilder);
             if (!$configOptionsBuilder->supportDirectories()) {

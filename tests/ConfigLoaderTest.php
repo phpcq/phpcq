@@ -16,7 +16,7 @@ final class ConfigLoaderTest extends TestCase
     public function testFullFeaturedConfigFile(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-demo.yaml');
-        $config = $loader->getConfig()->getValue();
+        $config = $loader->getConfig()->asArray();
 
         $this->assertArrayHasKey('directories', $config);
         $this->assertEquals(['src', 'tests'], $config['directories']);
@@ -102,7 +102,7 @@ final class ConfigLoaderTest extends TestCase
     public function testMergeConfiguration(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-merge.yaml');
-        $config = $loader->getConfig()->getValue();
+        $config = $loader->getConfig()->asArray();
 
         $this->assertEquals(
             [

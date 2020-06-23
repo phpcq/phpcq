@@ -27,14 +27,22 @@ namespace Phpcq\Config;
  *   auth: array
  * }
  */
-final class PhpcqConfiguration extends Options
+final class PhpcqConfiguration
 {
+    /** @var Options */
+    private $options;
+
+    public function __construct(Options $options)
+    {
+        $this->options = $options;
+    }
+
     /**
      * @psalm-param TConfig
      */
     public static function fromArray(array $options): self
     {
-        return new self($options);
+        return new self(new Options($options));
     }
 
     /**
@@ -43,47 +51,58 @@ final class PhpcqConfiguration extends Options
      */
     public function getDirectories(): array
     {
-        return $this->getStringList('directories');
+        return $this->options->getStringList('directories');
     }
 
     public function getArtifactDir(): string
     {
-        return $this->getString('artifact');
+        return $this->options->getString('artifact');
     }
 
     /** @psalm-return array<string,TTool> */
     public function getTools(): array
     {
-        return $this->getOptions('tools')->getValue();
+        return $this->options->getOptions('tools');
     }
 
     /** @psalm-return list<TRepository> */
     public function getRepositories(): array
     {
-        return $this->getOptionsList('repositories');
+        return $this->options->getOptionsList('repositories');
     }
 
     /** @psalm-return array<string,array<string,array|null>> */
     public function getChains(): array
     {
-        return $this->getOptions('chains')->getValue();
+        return $this->options->getOptions('chains');
     }
 
     /** @psalm-return array<string,TToolConfig> */
     public function getToolConfig(): array
     {
-        return $this->getOptions('tool-config')->getValue();
+        return $this->options->getOptions('tool-config');
     }
 
     /** @psalm-return list<string> */
     public function getTrustedKeys(): array
     {
-        return $this->getStringList('trusted-keys');
+        return $this->options->getStringList('trusted-keys');
     }
 
     /** @return array<string, mixed> */
     public function getAuth(): array
     {
-        return $this->getOptions('auth')->getValue();
+        return $this->options->getOptions('auth');
+    }
+
+    /**
+     * Get configuration as array.
+     *
+     * @return array
+     * @psalm-return TConfig
+     */
+    public function asArray(): array
+    {
+        return $this->options->getValue();
     }
 }
