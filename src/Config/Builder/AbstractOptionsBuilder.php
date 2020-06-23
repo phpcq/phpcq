@@ -6,6 +6,7 @@ namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
+use Phpcq\Exception\ConfigurationValidationFailedException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -48,16 +49,22 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
     {
         parent::validateValue($options);
 
-        /** @var array $options - We validate it withing parent validator */
-        $diff = array_diff_key($options, $this->options);
-        if (count($diff) > 0) {
-            throw new InvalidConfigurationException(
-                sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff)))
-            );
-        }
+        try {
+            /** @var array $options - We validate it withing parent validator */
+            $diff = array_diff_key($options, $this->options);
+            if (count($diff) > 0) {
+                throw new InvalidConfigurationException(
+                    sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff)))
+                );
+            }
 
-        foreach ($this->options as $key => $builder) {
-            $builder->validateValue($options[$key] ?? null);
+            foreach ($this->options as $key => $builder) {
+                $builder->validateValue($options[$key] ?? null);
+            }
+        } catch (ConfigurationValidationFailedException $exception) {
+            throw ConfigurationValidationFailedException::fromPreviousError([$this->name, $key], $exception);
+        } catch (InvalidConfigurationException $exception) {
+            throw ConfigurationValidationFailedException::fromRootError([$this->name, $key], $exception);
         }
     }
 }

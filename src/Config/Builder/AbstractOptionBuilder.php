@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
+use Phpcq\Exception\ConfigurationValidationFailedException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -86,16 +87,20 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 
     public function validateValue($value): void
     {
-        if (null === $value) {
-            if (!$this->required) {
-                return;
+        try {
+            if (null === $value) {
+                if (!$this->required) {
+                    return;
+                }
+
+                throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
             }
 
-            throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
-        }
-
-        foreach ($this->validators as $validator) {
-            $validator($value);
+            foreach ($this->validators as $validator) {
+                $validator($value);
+            }
+        } catch (InvalidConfigurationException $exception) {
+            throw ConfigurationValidationFailedException::fromRootError([$this->name], $exception);
         }
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
+use Phpcq\Exception\ConfigurationValidationFailedException;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
@@ -148,10 +149,21 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
             return;
         }
 
-        $values = Constraints::arrayConstraint($values);
-        /** @psalm-suppress MixedAssignment */
-        foreach ($values as $value) {
-            $this->valueBuilder->validateValue($value);
+        try {
+            $values = Constraints::arrayConstraint($values);
+        }  catch (InvalidConfigurationException $exception) {
+            throw ConfigurationValidationFailedException::fromRootError([$this->name], $exception);
+        }
+
+        try {
+            /** @psalm-suppress MixedAssignment */
+            foreach ($values as $index => $value) {
+                $this->valueBuilder->validateValue($value);
+            }
+        } catch (ConfigurationValidationFailedException $exception) {
+            throw ConfigurationValidationFailedException::fromPreviousError([$this->name, $index], $exception);
+        } catch (InvalidConfigurationException $exception) {
+            throw ConfigurationValidationFailedException::fromRootError([$this->name, $index], $exception);
         }
     }
 }
