@@ -11,10 +11,25 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 use function sprintf;
 
-/** @extends AbstractOptionBuilder<list<array<string,mixed>>> */
+/** @extends AbstractOptionBuilder<OptionsListOptionBuilderInterface, list<array<string,mixed>>> */
 final class OptionsListOptionBuilder extends AbstractOptionBuilder implements OptionsListOptionBuilderInterface
 {
     use OptionsBuilderTrait;
+
+    public function isRequired(): OptionsListOptionBuilderInterface
+    {
+        return parent::isRequired();
+    }
+
+    public function withNormalizer(callable $normalizer): OptionsListOptionBuilderInterface
+    {
+        return parent::withNormalizer($normalizer);
+    }
+
+    public function withValidator(callable $validator): OptionsListOptionBuilderInterface
+    {
+        return parent::withValidator($validator);
+    }
 
     public function withDefaultValue(array $defaultValue): OptionsListOptionBuilderInterface
     {

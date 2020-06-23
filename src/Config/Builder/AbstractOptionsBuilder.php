@@ -10,7 +10,16 @@ use Phpcq\Exception\ConfigurationValidationFailedException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
-/** @extends AbstractOptionBuilder<array<string,mixed>> */
+use function array_diff_key;
+use function array_keys;
+use function count;
+use function implode;
+use function sprintf;
+
+/**
+ * @psalm-template TReturnType
+ * @extends AbstractOptionBuilder<OptionsBuilderInterface, array<string,mixed>>
+ */
 abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements OptionsBuilderInterface
 {
     use OptionsBuilderTrait;
@@ -18,6 +27,21 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
     public function __construct(string $name, string $description)
     {
         parent::__construct($name, $description, [Validator::arrayValidator()]);
+    }
+
+    public function isRequired(): OptionsBuilderInterface
+    {
+        return parent::isRequired();
+    }
+
+    public function withNormalizer(callable $normalizer): OptionsBuilderInterface
+    {
+        return parent::withNormalizer($normalizer);
+    }
+
+    public function withValidator(callable $validator): OptionsBuilderInterface
+    {
+        return parent::withValidator($validator);
     }
 
     public function withDefaultValue(array $defaultValue): OptionsBuilderInterface
@@ -57,7 +81,12 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
                     sprintf('Unexpected array keys "%s"', implode(', ', array_keys($diff)))
                 );
             }
+        } catch (InvalidConfigurationException $exception) {
+            throw ConfigurationValidationFailedException::fromRootError([$this->name], $exception);
+        }
 
+        $key = '';
+        try {
             foreach ($this->options as $key => $builder) {
                 $builder->validateValue($options[$key] ?? null);
             }

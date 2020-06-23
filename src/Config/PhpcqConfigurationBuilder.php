@@ -62,7 +62,7 @@ final class PhpcqConfigurationBuilder
         $builder
             ->withDefaultValue([])
             ->isRequired()
-            ->withNormalizer(static function ($value): array {
+            ->withNormalizer(/** @param mixed $value */ static function ($value): array {
                 if (is_string($value)) {
                     return [
                         'type' => 'remote',

@@ -20,7 +20,7 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @extends AbstractOptionBuilder<array<string,mixed>>
+ * @extends AbstractOptionBuilder<PrototypeBuilderInterface, array<string,mixed>>
  */
 final class PrototypeOptionBuilder extends AbstractOptionBuilder implements PrototypeBuilderInterface
 {
@@ -95,6 +95,21 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new self($this->name, $this->description);
     }
 
+    public function isRequired(): PrototypeBuilderInterface
+    {
+        return parent::isRequired();
+    }
+
+    public function withNormalizer(callable $normalizer): PrototypeBuilderInterface
+    {
+        return parent::withNormalizer($normalizer);
+    }
+
+    public function withValidator(callable $validator): PrototypeBuilderInterface
+    {
+        return parent::withValidator($validator);
+    }
+
     /** @psalm-param array<string, mixed> $defaultValue */
     public function withDefaultValue(array $defaultValue): PrototypeBuilderInterface
     {
@@ -151,19 +166,20 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
 
         try {
             $values = Constraints::arrayConstraint($values);
-        }  catch (InvalidConfigurationException $exception) {
+        } catch (InvalidConfigurationException $exception) {
             throw ConfigurationValidationFailedException::fromRootError([$this->name], $exception);
         }
 
+        $index = 0;
         try {
             /** @psalm-suppress MixedAssignment */
             foreach ($values as $index => $value) {
                 $this->valueBuilder->validateValue($value);
             }
         } catch (ConfigurationValidationFailedException $exception) {
-            throw ConfigurationValidationFailedException::fromPreviousError([$this->name, $index], $exception);
+            throw ConfigurationValidationFailedException::fromPreviousError([$this->name, (string) $index], $exception);
         } catch (InvalidConfigurationException $exception) {
-            throw ConfigurationValidationFailedException::fromRootError([$this->name, $index], $exception);
+            throw ConfigurationValidationFailedException::fromRootError([$this->name, (string) $index], $exception);
         }
     }
 }

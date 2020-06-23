@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Exception\ConfigurationValidationFailedException;
-use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
 use function sprintf;
 
 /**
+ * @psalm-template TReturnType
  * @psalm-template TType
  * @psalm-import-type TValidator from \Phpcq\Config\Validation\Validator
  */
@@ -48,23 +48,40 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         $this->validators  = $validators;
     }
 
-    public function isRequired(): OptionBuilderInterface
+    /**
+     * @return $this
+     *
+     * @psalm-return TReturnType
+     * @psalm-suppress InvalidReturnStatement - Works for child classes
+     */
+    public function isRequired()
     {
         $this->required = true;
 
         return $this;
     }
 
-    /** @psalm-param callable(mixed): void $normalizer */
-    public function withNormalizer(callable $normalizer): OptionBuilderInterface
+    /**
+     * @psalm-param callable(mixed): void $normalizer
+     *
+     * @psalm-return TReturnType
+     * @psalm-suppress InvalidReturnStatement - Works for child classes
+     */
+    public function withNormalizer(callable $normalizer)
     {
         $this->normalizer[] = $normalizer;
 
         return $this;
     }
 
-    /** @psalm-param callable(mixed): void $validator */
-    public function withValidator(callable $validator): OptionBuilderInterface
+    /**
+     * @psalm-param callable(mixed): void $validator
+     *
+     * @return $this
+     * @psalm-return TReturnType
+     * @psalm-suppress InvalidReturnStatement - Works for child classes
+     */
+    public function withValidator(callable $validator)
     {
         $this->validators[] = $validator;
 

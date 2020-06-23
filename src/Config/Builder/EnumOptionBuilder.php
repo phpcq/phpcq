@@ -11,6 +11,9 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\IntOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
 
+/**
+ * @extends AbstractOptionBuilder<EnumOptionBuilderInterface, int|float|string>
+ */
 final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptionBuilderInterface
 {
     use TypeTrait;
@@ -20,6 +23,21 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
      * @var ConfigOptionBuilderInterface
      */
     private $valueBuilder;
+
+    public function isRequired(): EnumOptionBuilderInterface
+    {
+        return parent::isRequired();
+    }
+
+    public function withNormalizer(callable $normalizer): EnumOptionBuilderInterface
+    {
+        return parent::withNormalizer($normalizer);
+    }
+
+    public function withValidator(callable $validator): EnumOptionBuilderInterface
+    {
+        return parent::withValidator($validator);
+    }
 
     public function ofStringValues(string ...$values): StringOptionBuilderInterface
     {

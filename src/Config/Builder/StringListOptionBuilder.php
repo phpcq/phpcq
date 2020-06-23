@@ -12,13 +12,28 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use function sprintf;
 
 /**
- * @extends AbstractOptionBuilder<list<string>>
+ * @extends AbstractOptionBuilder<StringListOptionBuilderInterface, list<string>>
  */
 final class StringListOptionBuilder extends AbstractOptionBuilder implements StringListOptionBuilderInterface
 {
     public function __construct(string $name, string $description)
     {
         parent::__construct($name, $description, [Validator::stringValidator()]);
+    }
+
+    public function isRequired(): StringListOptionBuilderInterface
+    {
+        return parent::isRequired();
+    }
+
+    public function withNormalizer(callable $normalizer): StringListOptionBuilderInterface
+    {
+        return parent::withNormalizer($normalizer);
+    }
+
+    public function withValidator(callable $validator): StringListOptionBuilderInterface
+    {
+        return parent::withValidator($validator);
     }
 
     /** @psalm-param list<string> $values */
