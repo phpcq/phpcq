@@ -38,6 +38,9 @@ use function assert;
 use function getcwd;
 use function in_array;
 use function is_string;
+use function max;
+use function min;
+use function var_dump;
 
 final class RunCommand extends AbstractCommand
 {
@@ -115,9 +118,10 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
-        $artifactDir = $this->config->getArtifactDir();
-        $fileSystem = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir);
+        $maxCores      = min($this->getCores(), (int)$this->input->getOption('threads'));
+        $artifactDir   = $this->config->getArtifactDir();
+        $fileSystem    = new Filesystem();
+        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir, $maxCores);
 
         $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
         $fileSystem->mkdir($tempDirectory);

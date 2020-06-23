@@ -17,11 +17,13 @@ final class ProjectConfigurationTest extends TestCase
         $configuration = new ProjectConfiguration(
             '/some/path',
             ['dir1', 'dir2'],
-            '/output/path'
+            '/output/path',
+            5
         );
 
         self::assertSame('/some/path', $configuration->getProjectRootPath());
         self::assertSame(['dir1', 'dir2'], $configuration->getDirectories());
         self::assertSame('/output/path', $configuration->getArtifactOutputPath());
+        self::assertSame(5, $configuration->getMaxCpuCores());
     }
 }

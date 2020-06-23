@@ -24,17 +24,24 @@ class ProjectConfiguration implements ProjectConfigInterface
     private $artifactOutputPath;
 
     /**
+     * @var int
+     */
+    private $maxCpuCores;
+
+    /**
      * Create a new instance.
      *
      * @param string   $rootPath
      * @param string[] $directories
      * @param string   $artifactOutputPath
+     * @param int      $maxCpuCores
      */
-    public function __construct(string $rootPath, array $directories, string $artifactOutputPath)
+    public function __construct(string $rootPath, array $directories, string $artifactOutputPath, int $maxCpuCores)
     {
         $this->rootPath           = $rootPath;
         $this->directories        = $directories;
         $this->artifactOutputPath = $artifactOutputPath;
+        $this->maxCpuCores        = $maxCpuCores;
     }
 
     public function getProjectRootPath(): string
@@ -55,5 +62,10 @@ class ProjectConfiguration implements ProjectConfigInterface
     public function getArtifactOutputPath(): string
     {
         return $this->artifactOutputPath;
+    }
+
+    public function getMaxCpuCores(): int
+    {
+        return $this->maxCpuCores;
     }
 }

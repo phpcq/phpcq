@@ -390,12 +390,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "60032123ee5e72e86014a51f766badf000a42a4e"
+                "reference": "e37ace9c9763ab92f1213c267d4eda623143abf2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/60032123ee5e72e86014a51f766badf000a42a4e",
-                "reference": "60032123ee5e72e86014a51f766badf000a42a4e",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/e37ace9c9763ab92f1213c267d4eda623143abf2",
+                "reference": "e37ace9c9763ab92f1213c267d4eda623143abf2",
                 "shasum": ""
             },
             "require": {
@@ -447,7 +447,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-22T11:50:00+00:00"
+            "time": "2020-06-23T10:00:08+00:00"
         },
         {
             "name": "psr/container",
