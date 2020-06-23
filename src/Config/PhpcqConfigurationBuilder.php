@@ -6,8 +6,11 @@ namespace Phpcq\Config;
 
 use Phpcq\Config\Builder\OptionsBuilder;
 use Phpcq\Config\Validation\Constraints;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Throwable;
 
 final class PhpcqConfigurationBuilder
 {
@@ -50,8 +53,15 @@ final class PhpcqConfigurationBuilder
     public function processConfig(array $raw): array
     {
         $this->builder->selfValidate();
-        $processed = $this->builder->normalizeValue($raw);
-        $this->builder->validateValue($processed);
+
+        try {
+            $processed = $this->builder->normalizeValue($raw);
+            $this->builder->validateValue($processed);
+        } catch (ConfigurationValidationErrorException $exception) {
+            throw $exception->withOuterPath(['phpcq']);
+        } catch (Throwable $exception) {
+            throw ConfigurationValidationErrorException::fromError(['phpcq'], $exception);
+        }
 
         /** @psalm-var array<string,mixed> $processed */
         return $processed;

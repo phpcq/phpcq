@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
-use Phpcq\Exception\ConfigurationValidationFailedException;
-use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Phpcq\Exception\ConfigurationValidationErrorException;
+use Throwable;
 
 use function sprintf;
 
@@ -94,9 +94,15 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
             $value = $this->defaultValue;
         }
 
-        foreach ($this->normalizer as $normalizer) {
-            /** @psalm-suppress MixedAssignment */
-            $value = $normalizer($value);
+        try {
+            foreach ($this->normalizer as $normalizer) {
+                /** @psalm-suppress MixedAssignment */
+                $value = $normalizer($value);
+            }
+        } catch (ConfigurationValidationErrorException $exception) {
+            throw $exception->withOuterPath([$this->name]);
+        } catch (Throwable $exception) {
+            throw ConfigurationValidationErrorException::fromError([$this->name], $exception);
         }
 
         return $value;
@@ -104,20 +110,25 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 
     public function validateValue($value): void
     {
-        try {
-            if (null === $value) {
-                if (!$this->required) {
-                    return;
-                }
-
-                throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+        if (null === $value) {
+            if (!$this->required) {
+                return;
             }
 
+            throw ConfigurationValidationErrorException::withCustomMessage(
+                [$this->name],
+                sprintf('Configuration key "%s" has to be set', $this->name)
+            );
+        }
+
+        try {
             foreach ($this->validators as $validator) {
                 $validator($value);
             }
-        } catch (InvalidConfigurationException $exception) {
-            throw ConfigurationValidationFailedException::fromRootError([$this->name], $exception);
+        } catch (ConfigurationValidationErrorException $exception) {
+            throw $exception->withOuterPath([$this->name]);
+        } catch (Throwable $exception) {
+            throw ConfigurationValidationErrorException::fromError([$this->name], $exception);
         }
     }
 

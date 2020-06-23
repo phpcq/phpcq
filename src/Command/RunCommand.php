@@ -7,6 +7,7 @@ namespace Phpcq\Command;
 use Phpcq\Config\Builder\PluginConfigurationBuilder;
 use Phpcq\Config\PluginConfiguration;
 use Phpcq\Config\ProjectConfiguration;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
@@ -32,6 +33,7 @@ use Symfony\Component\Process\Process;
 use Throwable;
 
 use function array_key_exists;
+use function array_keys;
 use function assert;
 use function getcwd;
 use function in_array;
@@ -217,7 +219,7 @@ final class RunCommand extends AbstractCommand
             $configuration        = $chains[$chain][$name] ?? $toolConfig[$name];
 
             $plugin->describeConfiguration($configOptionsBuilder);
-            if (!$configOptionsBuilder->supportDirectories()) {
+            if (!$configOptionsBuilder->hasDirectoriesSupport()) {
                 unset($configuration['directories']);
 
                 $processed = $configOptionsBuilder->normalizeValue($configuration);
@@ -232,9 +234,17 @@ final class RunCommand extends AbstractCommand
             }
 
             /** @psalm-var array<string,mixed> $configuration */
+            //$configuration['directories'] = $configuration['directories'] ?: $this->config->getDirectories();
             foreach ($this->processDirectories($configuration) as $config) {
-                $processed = $configOptionsBuilder->normalizeValue($config);
-                $configOptionsBuilder->validateValue($processed);
+                try {
+                    $processed = $configOptionsBuilder->normalizeValue($config);
+                    $configOptionsBuilder->validateValue($processed);
+                } catch (ConfigurationValidationErrorException $exception) {
+                    throw $exception->withOuterPath([$name]);
+                } catch (Throwable $exception) {
+                    throw ConfigurationValidationErrorException::fromError([$name], $exception);
+                }
+
                 /** @psalm-var array<string,mixed> $processed */
                 $configuration = new PluginConfiguration($processed);
 

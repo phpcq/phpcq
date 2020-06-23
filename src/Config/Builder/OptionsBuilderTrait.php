@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Validator;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
@@ -14,6 +15,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInte
 use Phpcq\PluginApi\Version10\Configuration\Builder\PrototypeBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface;
+use Throwable;
 
 use function array_key_exists;
 use function assert;
@@ -116,12 +118,18 @@ trait OptionsBuilderTrait
                 continue;
             }
 
-            /** @psalm-suppress MixedAssignment */
-            if (null === ($processed = $builder->normalizeValue($options[$key] ?? null))) {
-                unset($options[$key]);
-            } else {
+            try {
                 /** @psalm-suppress MixedAssignment */
-                $options[$key] = $processed;
+                if (null === ($processed = $builder->normalizeValue($options[$key] ?? null))) {
+                    unset($options[$key]);
+                } else {
+                    /** @psalm-suppress MixedAssignment */
+                    $options[$key] = $processed;
+                }
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $exception->withOuterPath([$this->name]);
+            } catch (Throwable $exception) {
+                throw ConfigurationValidationErrorException::fromError([$this->name, $key], $exception);
             }
         }
 

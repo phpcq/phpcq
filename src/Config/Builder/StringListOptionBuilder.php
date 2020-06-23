@@ -6,8 +6,10 @@ namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\StringListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Throwable;
 
 use function sprintf;
 
@@ -60,9 +62,15 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         $values = Constraints::listConstraint($values);
         /** @psalm-suppress MixedAssignment */
         foreach ($values as $index => $options) {
-            foreach ($this->normalizer as $normalizer) {
-                /** @psalm-suppress MixedAssignment */
-                $values[$index] = $normalizer($options);
+            try {
+                foreach ($this->normalizer as $normalizer) {
+                    /** @psalm-suppress MixedAssignment */
+                    $values[$index] = $normalizer($options);
+                }
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $exception->withOuterPath([$this->name, (string) $index]);
+            } catch (Throwable $exception) {
+                throw ConfigurationValidationErrorException::fromError([$this->name, (string) $index], $exception);
             }
         }
 
@@ -76,14 +84,23 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
                 return;
             }
 
-            throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+            throw ConfigurationValidationErrorException::withCustomMessage(
+                [$this->name],
+                sprintf('Configuration key "%s" has to be set', $this->name)
+            );
         }
 
         $options = Constraints::listConstraint($options, Validator::stringValidator());
         /** @psalm-var list<string> $options */
-        foreach ($options as $value) {
-            foreach ($this->validators as $validator) {
-                $validator($value);
+        foreach ($options as $index => $value) {
+            try {
+                foreach ($this->validators as $validator) {
+                    $validator($value);
+                }
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $exception->withOuterPath([$this->name, (string) $index]);
+            } catch (Throwable $exception) {
+                throw ConfigurationValidationErrorException::fromError([$this->name, (string) $index], $exception);
             }
         }
     }

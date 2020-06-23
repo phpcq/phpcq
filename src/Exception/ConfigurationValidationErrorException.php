@@ -8,10 +8,11 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Throwable;
 
 use function array_merge;
+use function implode;
 
-class ConfigurationValidationFailedException extends InvalidConfigurationException
+class ConfigurationValidationErrorException extends InvalidConfigurationException
 {
-    /** @var InvalidConfigurationException|null $rootError */
+    /** @var Throwable|null $rootError */
     private $rootError;
 
     /** @psalm-var list<string> */
@@ -23,7 +24,7 @@ class ConfigurationValidationFailedException extends InvalidConfigurationExcepti
         string $message = '',
         int $code = 0,
         Throwable $previous = null,
-        ?InvalidConfigurationException $rootError = null
+        ?Throwable $rootError = null
     ) {
         parent::__construct($message, $code, $previous);
 
@@ -32,14 +33,20 @@ class ConfigurationValidationFailedException extends InvalidConfigurationExcepti
     }
 
     /** @psalm-param list<string> $path */
-    public static function fromRootError(
+    public static function withCustomMessage(array $path, string $message, Throwable $previous = null): self
+    {
+        return new self($path, $message, 0, $previous);
+    }
+
+    /** @psalm-param list<string> $path */
+    public static function fromError(
         array $path,
-        InvalidConfigurationException $rootException,
+        Throwable $rootException,
         Throwable $previous = null
     ): self {
         return new self(
             $path,
-            'Configuration validation failed at path "' . implode('.', $path) . '" with message:'
+            'Configuration validation failed at path "' . implode('.', $path) . '": '
             . $rootException->getMessage(),
             0,
             $previous ?: $rootException,
@@ -48,19 +55,20 @@ class ConfigurationValidationFailedException extends InvalidConfigurationExcepti
     }
 
     /** @psalm-param list<string> $outerPath */
-    public static function fromPreviousError(array $outerPath, ConfigurationValidationFailedException $previous): self
+    public function withOuterPath(array $outerPath): self
     {
+        $path = array_merge($outerPath, $this->getPath());
         return new self(
-            array_merge($outerPath, $previous->getPath()),
-            'Configuration validation failed at path "' . implode('.', $outerPath) . '" with message:'
-            . $previous->getRootError()->getMessage(),
+            $path,
+            'Configuration validation failed at path "' . implode('.', $path) . '": '
+            . $this->getRootError()->getMessage(),
             0,
-            $previous,
-            $previous->getRootError()
+            $this,
+            $this->getRootError()
         );
     }
 
-    public function getRootError(): InvalidConfigurationException
+    public function getRootError(): Throwable
     {
         return $this->rootError ?: $this;
     }

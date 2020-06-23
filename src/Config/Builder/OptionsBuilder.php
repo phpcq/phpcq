@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Config\Builder;
 
-use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Phpcq\Exception\ConfigurationValidationErrorException;
+use Throwable;
 
 use function sprintf;
 
@@ -31,13 +32,23 @@ final class OptionsBuilder extends AbstractOptionsBuilder
                 return;
             }
 
-            throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
+            throw ConfigurationValidationErrorException::withCustomMessage(
+                [$this->name],
+                sprintf('Configuration key "%s" has to be set', $this->name)
+            );
         }
 
         if ($this->bypassValidation) {
-            foreach ($this->validators as $validator) {
-                $validator($options);
+            try {
+                foreach ($this->validators as $validator) {
+                    $validator($options);
+                }
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $exception->withOuterPath([$this->name]);
+            } catch (Throwable $exception) {
+                throw ConfigurationValidationErrorException::fromError([$this->name], $exception);
             }
+
             return;
         }
 

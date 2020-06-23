@@ -6,8 +6,10 @@ namespace Phpcq\Config\Builder;
 
 use Phpcq\Config\Validation\Constraints;
 use Phpcq\Config\Validation\Validator;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Throwable;
 
 use function sprintf;
 
@@ -55,8 +57,14 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         $values = Constraints::listConstraint($values);
         foreach ($values as $index => $options) {
             foreach ($this->normalizer as $normalizer) {
-                /** @psalm-var array<string,mixed> */
-                $values[$index] = $normalizer($options);
+                try {
+                    /** @psalm-var array<string,mixed> */
+                    $values[$index] = $normalizer($options);
+                } catch (ConfigurationValidationErrorException $exception) {
+                    throw $exception->withOuterPath([$this->name, (string) $index]);
+                } catch (Throwable $exception) {
+                    throw ConfigurationValidationErrorException::fromError([$this->name, (string) $index], $exception);
+                }
             }
 
             $values[$index] = $this->normalizeOptions($values[$index]);
@@ -77,9 +85,15 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
 
         /** @psalm-var list<array<string,mixed>> $options */
         $options = Constraints::listConstraint($options, Validator::arrayValidator());
-        foreach ($options as $value) {
+        foreach ($options as $key => $value) {
             foreach ($this->validators as $validator) {
-                $validator($value);
+                try {
+                    $validator($value);
+                } catch (ConfigurationValidationErrorException $exception) {
+                    throw $exception->withOuterPath([$this->name, (string) $key]);
+                } catch (Throwable $exception) {
+                    throw ConfigurationValidationErrorException::fromError([$this->name, (string) $key], $exception);
+                }
             }
         }
     }
