@@ -38,9 +38,7 @@ use function assert;
 use function getcwd;
 use function in_array;
 use function is_string;
-use function max;
 use function min;
-use function var_dump;
 
 final class RunCommand extends AbstractCommand
 {
@@ -238,7 +236,6 @@ final class RunCommand extends AbstractCommand
             }
 
             /** @psalm-var array<string,mixed> $configuration */
-            //$configuration['directories'] = $configuration['directories'] ?: $this->config->getDirectories();
             foreach ($this->processDirectories($configuration) as $config) {
                 try {
                     $processed = $configOptionsBuilder->normalizeValue($config);
