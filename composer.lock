@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b69c1e421c4ac168a3a632cae62488fd",
+    "content-hash": "d1b3df42f5e7c03ec5d3d61d23134e73",
     "packages": [
         {
             "name": "composer/semver",
@@ -386,16 +386,16 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "dev-feature/revise-api",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "e37ace9c9763ab92f1213c267d4eda623143abf2"
+                "reference": "815f8bf09d4a5e4bcf0b91f3aadc7d5744bcba2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/e37ace9c9763ab92f1213c267d4eda623143abf2",
-                "reference": "e37ace9c9763ab92f1213c267d4eda623143abf2",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/815f8bf09d4a5e4bcf0b91f3aadc7d5744bcba2d",
+                "reference": "815f8bf09d4a5e4bcf0b91f3aadc7d5744bcba2d",
                 "shasum": ""
             },
             "require": {
@@ -447,7 +447,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-23T10:00:08+00:00"
+            "time": "2020-06-25T12:06:22+00:00"
         },
         {
             "name": "psr/container",
