@@ -118,6 +118,7 @@ final class ConfigLoaderTest extends TestCase
                     'author-validation' => null,
                     'phpcpd'            => null,
                 ]],
+                'auth' => [],
                 'tool-config' => [
                     'author-validation' => [
                         'directories' => ['src' => null, 'examples' => null

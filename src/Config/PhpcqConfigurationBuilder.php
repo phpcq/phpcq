@@ -39,6 +39,11 @@ final class PhpcqConfigurationBuilder
             ->withDefaultValue([])
             ->isRequired();
 
+        $this->builder
+            ->describePrototypeOption('auth', 'Authentication configuration. Not defined yet.')
+            ->withDefaultValue([])
+            ->ofOptionsValue();
+
         $arrayBuilder = $this->builder
             ->describePrototypeOption('chains', 'Available chains. Default chain is required')
             ->withDefaultValue([])
