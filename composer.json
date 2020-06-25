@@ -37,6 +37,9 @@
     "symfony/process": "^5.0.7",
     "symfony/yaml": "^5.0.7"
   },
+  "require-dev": {
+    "slevomat/coding-standard": "^6.3"
+  },
   "extra": {
     "branch-alias": {
       "dev-dev-3.0": "3.x-dev"

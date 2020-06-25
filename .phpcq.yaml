@@ -90,7 +90,9 @@ tool-config:
     config_file: '.composer-require-checker.json'
 
   phpcs: &phpcs
-    standard: PSR12
+    standard: ~
+    standard_paths:
+      - ./vendor/slevomat/coding-standard
 
   phpcbf:
     <<: *phpcs
