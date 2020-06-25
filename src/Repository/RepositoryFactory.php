@@ -35,7 +35,8 @@ class RepositoryFactory
         foreach ($repositories as $repository) {
             switch ($repository['type']) {
                 case 'remote':
-                    assert(is_string($url = $repository['url'] ?? null));
+                    $url = ($repository['url'] ?? null);
+                    assert(is_string($url));
                     $pool->addRepository(new RemoteRepository($url, $this->repositoryLoader));
                     break;
                 default:
