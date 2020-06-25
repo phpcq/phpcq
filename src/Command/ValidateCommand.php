@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
+use Phpcq\Config\Builder\PluginConfigurationBuilder;
 use Phpcq\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_key_exists;
@@ -34,7 +34,7 @@ final class ValidateCommand extends AbstractCommand
         $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $valid = true;
-        foreach ($this->config['chains'] as $chainName => $chainTools) {
+        foreach ($this->config->getChains() as $chainName => $chainTools) {
             $this->output->writeln('Validate chain "' . $chainName . '":', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
             foreach (array_keys($chainTools) as $toolName) {
@@ -70,13 +70,13 @@ final class ValidateCommand extends AbstractCommand
             return true;
         }
 
-        $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-        $configuration        = $chain
-            ? $this->config['chains'][$chain][$name]
-            : null;
+        $chains               = $this->config->getChains();
+        $configOptionsBuilder = new PluginConfigurationBuilder($name, 'Plugin configuration');
+        $configuration        = $chain ? $chains[$chain][$name] : null;
 
         if (null === $configuration) {
-            $configuration = $this->config['tool-config'][$name] ?? [];
+            $toolConfig    = $this->config->getToolConfig();
+            $configuration = $toolConfig[$name] ?? [];
         }
 
         $hash = md5(serialize($configuration));
@@ -89,11 +89,10 @@ final class ValidateCommand extends AbstractCommand
             return $cache[$toolName][$hash];
         }
 
-        $plugin->describeOptions($configOptionsBuilder);
-        $options = $configOptionsBuilder->getOptions();
+        $plugin->describeConfiguration($configOptionsBuilder);
 
         try {
-            $options->validateConfig($configuration);
+            $configOptionsBuilder->normalizeValue($configuration);
 
             $this->output->writeln(
                 sprintf(' - %s: <info>valid configuration</info>', $toolName),
@@ -101,7 +100,7 @@ final class ValidateCommand extends AbstractCommand
             );
 
             return $cache[$toolName][$hash] = true;
-        } catch (InvalidConfigException $exception) {
+        } catch (InvalidConfigurationException $exception) {
             $this->output->writeln(
                 sprintf(' - %s: <error>Invalid configuration (%s)</error>', $toolName, $exception->getMessage()),
                 OutputInterface::VERBOSITY_VERBOSE

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\ToolUpdate;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Repository\BootstrapHash;
 use Phpcq\Repository\BootstrapInterface;
 use Phpcq\Repository\Repository;

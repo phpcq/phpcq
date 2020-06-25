@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Output\BufferedOutput;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\Task\TaskFactory;

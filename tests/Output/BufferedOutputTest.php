@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Output;
 
 use Phpcq\Output\BufferedOutput;
-use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

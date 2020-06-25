@@ -6,7 +6,7 @@ namespace Phpcq\Report;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 

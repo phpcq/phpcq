@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Exception;
 
-use Phpcq\PluginApi\Version10\RuntimeException as PluginApiRuntimeException;
+use RuntimeException as BaseRuntimeException;
 
-class RuntimeException extends PluginApiRuntimeException implements Exception
+class RuntimeException extends BaseRuntimeException implements Exception
 {
 }

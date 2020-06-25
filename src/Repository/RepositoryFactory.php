@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Repository;
 
-use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+
+use function assert;
+use function is_string;
 
 class RepositoryFactory
 {
@@ -23,21 +26,23 @@ class RepositoryFactory
 
     /**
      * @param mixed[] $repositories
-     * @psalm-param list<string|mixed> $repositories
+     * @psalm-param list<array{type:string, url?: string}> $repositories
      */
     public function buildPool(array $repositories): RepositoryPool
     {
         $pool = new RepositoryPool();
 
-        /** @var string|mixed $repository */
         foreach ($repositories as $repository) {
-            if (is_string($repository)) {
-                $pool->addRepository(new RemoteRepository($repository, $this->repositoryLoader));
-                continue;
+            switch ($repository['type']) {
+                case 'remote':
+                    assert(is_string($url = $repository['url'] ?? null));
+                    $pool->addRepository(new RemoteRepository($url, $this->repositoryLoader));
+                    break;
+                default:
+                    throw new InvalidConfigurationException(
+                        sprintf('Unsupported repository type "%s"', $repository['type'])
+                    );
             }
-
-            throw new InvalidConfigException('Repository has to be a string');
-            // TODO: handle different repository types here.
         }
 
         return $pool;

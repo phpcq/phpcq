@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace Phpcq\OutputTransformer;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
-use Phpcq\PluginApi\Version10\OutputTransformerInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 
+/**
+ * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_NONE
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_INFO
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MARGINAL
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MINOR
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MAJOR
+ * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_FATAL
+ */
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
     /**
@@ -88,7 +96,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             /**
              * @return string[]
              *
-             * @psalm-return array{0: string, 1: string}
+             * @psalm-return array{0: string, 1: TDiagnosticSeverity}
              */
             private function calculateStatusAndSeverity(int $exitCode): array
             {
@@ -100,7 +108,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 }
                 return [
                     ToolReportInterface::STATUS_FAILED,
-                    ToolReportInterface::SEVERITY_ERROR,
+                    ToolReportInterface::SEVERITY_MAJOR,
                 ];
             }
         };

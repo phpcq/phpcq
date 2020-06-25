@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Writer;
 
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -36,7 +36,7 @@ abstract class AbstractWriterTest extends TestCase
         );
         $toolReport->addDiagnostic(
             new DiagnosticBuffer(
-                ToolReportInterface::SEVERITY_ERROR,
+                ToolReportInterface::SEVERITY_MAJOR,
                 'Failure',
                 null,
                 [

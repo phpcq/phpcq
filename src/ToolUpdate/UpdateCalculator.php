@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\ToolUpdate;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Repository\Repository;
 use Phpcq\Repository\RepositoryInterface;
 use Phpcq\Repository\RepositoryPool;

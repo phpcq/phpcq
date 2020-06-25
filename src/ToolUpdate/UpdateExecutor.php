@@ -7,7 +7,7 @@ namespace Phpcq\ToolUpdate;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
-use Phpcq\PluginApi\Version10\OutputInterface;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Repository\JsonRepositoryDumper;
 use Phpcq\Repository\LockFileDumper;

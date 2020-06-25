@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\PluginApi\Version10\RuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Report\ReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Repository\RepositoryInterface;

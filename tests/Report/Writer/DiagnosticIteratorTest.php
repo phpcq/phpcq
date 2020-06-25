@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Writer;
 
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -37,7 +37,9 @@ class DiagnosticIteratorTest extends TestCase
     public function iterateSingleItemProvider(): array
     {
         $report = new ReportBuffer();
-        $report->createToolReport('tool', '1.0.0')->addDiagnostic($this->diagnostic('error', 'test'));
+        $report
+            ->createToolReport('tool', '1.0.0')
+            ->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'test'));
         return [
             'file/range' => [DiagnosticIterator::sortByFileAndRange($report)],
             'tool' => [DiagnosticIterator::sortByTool($report)],
@@ -81,7 +83,7 @@ class DiagnosticIteratorTest extends TestCase
     {
         $iterator = DiagnosticIterator::filterByMinimumSeverity(
             $this->createReport(),
-            ToolReportInterface::SEVERITY_ERROR
+            ToolReportInterface::SEVERITY_MAJOR
         )->thenSortByTool();
 
         $elements = [];
@@ -133,7 +135,7 @@ class DiagnosticIteratorTest extends TestCase
     {
         $iterator = DiagnosticIterator::filterByMinimumSeverity(
             $this->createReport(),
-            ToolReportInterface::SEVERITY_ERROR
+            ToolReportInterface::SEVERITY_MAJOR
         )->thenSortByFileAndRange()->thenSortByTool();
 
         $elements = [];
@@ -160,7 +162,7 @@ class DiagnosticIteratorTest extends TestCase
     {
         $iterator = DiagnosticIterator::filterByMinimumSeverity(
             $this->createReport(),
-            ToolReportInterface::SEVERITY_ERROR
+            ToolReportInterface::SEVERITY_MAJOR
         )->thenSortByTool()->thenSortByFileAndRange();
 
         $elements = [];
@@ -212,7 +214,7 @@ class DiagnosticIteratorTest extends TestCase
     {
         $iterator = DiagnosticIterator::filterByMinimumSeverity(
             $this->createReport(),
-            ToolReportInterface::SEVERITY_ERROR
+            ToolReportInterface::SEVERITY_MAJOR
         );
 
         $elements = [];
@@ -325,18 +327,32 @@ class DiagnosticIteratorTest extends TestCase
         $tool2 = $report->createToolReport('tool2', '1.0.0');
         $tool1 = $report->createToolReport('tool1', '1.0.0');
 
-        $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error1.no-file'));
-        $tool1->addDiagnostic($this->diagnostic('info', 'tool1.info1.info'));
-        $tool2->addDiagnostic($this->diagnostic('error', 'tool2.error1.no-file'));
-        $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error2.no-file'));
-        $tool2->addDiagnostic($this->diagnostic('error', 'tool2.error2.no-file'));
-        $tool1->addDiagnostic($this->diagnostic('error', 'tool1.error3.file1', null, $this->range('file1')));
-        $tool2->addDiagnostic($this->diagnostic('error', 'tool2.error3.file1', null, $this->range('file1')));
+        $tool1->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool1.error1.no-file'));
+        $tool1->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_INFO, 'tool1.info1.info'));
+        $tool2->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool2.error1.no-file'));
+        $tool1->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool1.error2.no-file'));
+        $tool2->addDiagnostic($this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool2.error2.no-file'));
         $tool1->addDiagnostic(
-            $this->diagnostic('error', 'tool1.error3.file2-2.1-3.1', null, $this->range('file2', 2, 2, 3, 1))
+            $this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool1.error3.file1', null, $this->range('file1'))
         );
         $tool2->addDiagnostic(
-            $this->diagnostic('error', 'tool2.error3.file2-1.1-2.1', null, $this->range('file2', 1, 1, 2, 1))
+            $this->diagnostic(ToolReportInterface::SEVERITY_MAJOR, 'tool2.error3.file1', null, $this->range('file1'))
+        );
+        $tool1->addDiagnostic(
+            $this->diagnostic(
+                ToolReportInterface::SEVERITY_MAJOR,
+                'tool1.error3.file2-2.1-3.1',
+                null,
+                $this->range('file2', 2, 2, 3, 1)
+            )
+        );
+        $tool2->addDiagnostic(
+            $this->diagnostic(
+                ToolReportInterface::SEVERITY_MAJOR,
+                'tool2.error3.file2-1.1-2.1',
+                null,
+                $this->range('file2', 1, 1, 2, 1)
+            )
         );
 
         return $report;

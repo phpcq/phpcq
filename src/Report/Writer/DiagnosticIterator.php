@@ -9,7 +9,7 @@ use Generator;
 use Iterator;
 use IteratorAggregate;
 use LogicException;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 final class DiagnosticIterator implements IteratorAggregate
@@ -17,17 +17,21 @@ final class DiagnosticIterator implements IteratorAggregate
     /**
      * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
      * @psalm-var array{
+     *  none: int,
      *  info: int,
-     *  notice: int,
-     *  warning: int,
-     *  error: int
+     *  marginal: int,
+     *  minor: int,
+     *  major: int,
+     *  fatal: int
      * }
      */
     private const SEVERITY_LOOKUP = [
-        ToolReportInterface::SEVERITY_INFO    => 0,
-        ToolReportInterface::SEVERITY_NOTICE  => 1,
-        ToolReportInterface::SEVERITY_WARNING => 2,
-        ToolReportInterface::SEVERITY_ERROR   => 3,
+        ToolReportInterface::SEVERITY_NONE     => 0,
+        ToolReportInterface::SEVERITY_INFO     => 1,
+        ToolReportInterface::SEVERITY_MARGINAL => 2,
+        ToolReportInterface::SEVERITY_MINOR    => 3,
+        ToolReportInterface::SEVERITY_MAJOR    => 4,
+        ToolReportInterface::SEVERITY_FATAL    => 5,
     ];
 
     /**

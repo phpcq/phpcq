@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test;
 
 use Phpcq\ConfigLoader;
-use Phpcq\PluginApi\Version10\InvalidConfigException;
+use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +16,7 @@ final class ConfigLoaderTest extends TestCase
     public function testFullFeaturedConfigFile(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-demo.yaml');
-        $config = $loader->getConfig();
+        $config = $loader->getConfig()->asArray();
 
         $this->assertArrayHasKey('directories', $config);
         $this->assertEquals(['src', 'tests'], $config['directories']);
@@ -24,9 +24,18 @@ final class ConfigLoaderTest extends TestCase
         $this->assertArrayHasKey('repositories', $config);
         $this->assertEquals(
             [
-                'https://example.com/build-tools/info.json',
-                'https://example.com/build-tools2/info.json',
-                'https://example.com/build-tools3/info.json'
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools/info.json',
+                ],
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools2/info.json',
+                ],
+                [
+                    'type' => 'remote',
+                    'url'  => 'https://example.com/build-tools3/info.json'
+                ],
             ],
             $config['repositories']
         );
@@ -52,7 +61,7 @@ final class ConfigLoaderTest extends TestCase
             ],
             $config['tools']
         );
-        
+
         $this->assertEquals(
             [
                 'default' => [
@@ -93,7 +102,7 @@ final class ConfigLoaderTest extends TestCase
     public function testMergeConfiguration(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-merge.yaml');
-        $config = $loader->getConfig();
+        $config = $loader->getConfig()->asArray();
 
         $this->assertEquals(
             [
@@ -140,7 +149,7 @@ final class ConfigLoaderTest extends TestCase
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/invalid-config.yaml');
 
-        $this->expectException(InvalidConfigException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Phpcq section missing');
 
         $loader->getConfig();

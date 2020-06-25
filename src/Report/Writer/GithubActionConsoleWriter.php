@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Report\Writer;
 
 use Generator;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,7 +46,7 @@ final class GithubActionConsoleWriter
         $this->wrapWidth   = $wrapWidth;
         $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity(
             $report,
-            ToolReportInterface::SEVERITY_WARNING
+            ToolReportInterface::SEVERITY_MINOR
         )
             ->thenSortByFileAndRange()
             ->getIterator();
@@ -64,7 +64,13 @@ final class GithubActionConsoleWriter
         $message = $this->compileMessage($entry);
         $range   = $this->compileRange($entry);
 
-        $this->output->writeln(sprintf('::%s %s::%s', $entry->getDiagnostic()->getSeverity(), $range, $message));
+        switch ($entry->getDiagnostic()->getSeverity()) {
+            case ToolReportInterface::SEVERITY_MINOR:
+                $this->output->writeln(sprintf('::warning %s::%s', $range, $message));
+                break;
+            default:
+                $this->output->writeln(sprintf('::error %s::%s', $range, $message));
+        }
     }
 
     private function compileMessage(DiagnosticIteratorEntry $entry): string

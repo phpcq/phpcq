@@ -1,59 +1,58 @@
 {
-    "name": "phpcq/phpcq",
-    "description": "PHP code quality project.",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Christian Schiffler",
-            "email": "c.schiffler@cyberspectrum.de",
-            "homepage": "http://cyberspectrum.de",
-            "role": "lead"
-        },
-        {
-            "name": "David Molineus",
-            "email": "david.molineus@netzmacht.de",
-            "homepage": "https://netzmacht.de",
-            "role": "lead"
-        },
-        {
-            "name": "Stefan Heimes",
-            "email": "stefan_heimes@hotmail.com",
-            "role": "lead"
-        }
-    ],
-    "require": {
-        "php": "^7.3",
-        "ext-dom": "*",
-        "ext-hash": "*",
-        "ext-json": "*",
-        "ext-xml": "*",
-        "composer/semver": "^1.5",
-        "composer/xdebug-handler": "^1.4",
-        "guzzlehttp/guzzle": "^6.5",
-        "phpcq/gnupg": "^1.0@dev",
-        "phpcq/plugin-api": "^1.0@dev",
-        "symfony/config": "^5.0.7",
-        "symfony/console": "^5.0.7",
-        "symfony/filesystem": "^5.0",
-        "symfony/process": "^5.0.7",
-        "symfony/yaml": "^5.0.7"
+  "name": "phpcq/phpcq",
+  "description": "PHP code quality project.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christian Schiffler",
+      "email": "c.schiffler@cyberspectrum.de",
+      "homepage": "http://cyberspectrum.de",
+      "role": "lead"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-dev-3.0": "3.x-dev"
-        }
+    {
+      "name": "David Molineus",
+      "email": "david.molineus@netzmacht.de",
+      "homepage": "https://netzmacht.de",
+      "role": "lead"
     },
-    "autoload": {
-        "psr-4": {
-            "Phpcq\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Phpcq\\Test\\": "tests/"
-        }
-    },
-    "bin": [
-        "./phpcq"
-    ]
+    {
+      "name": "Stefan Heimes",
+      "email": "stefan_heimes@hotmail.com",
+      "role": "lead"
+    }
+  ],
+  "require": {
+    "php": "^7.3",
+    "ext-dom": "*",
+    "ext-hash": "*",
+    "ext-json": "*",
+    "ext-xml": "*",
+    "composer/semver": "^1.5",
+    "composer/xdebug-handler": "^1.4",
+    "guzzlehttp/guzzle": "^6.5",
+    "phpcq/gnupg": "^1.0@dev",
+    "phpcq/plugin-api": "dev-feature/revise-api",
+    "symfony/console": "^5.0.7",
+    "symfony/filesystem": "^5.0",
+    "symfony/process": "^5.0.7",
+    "symfony/yaml": "^5.0.7"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-dev-3.0": "3.x-dev"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Phpcq\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Phpcq\\Test\\": "tests/"
+    }
+  },
+  "bin": [
+    "./phpcq"
+  ]
 }

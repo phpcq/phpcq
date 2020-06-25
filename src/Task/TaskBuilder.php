@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Task;
 
 use Phpcq\OutputTransformer\ConsoleOutputTransformerFactory;
-use Phpcq\PluginApi\Version10\OutputTransformerFactoryInterface;
-use Phpcq\PluginApi\Version10\RuntimeException;
+use Phpcq\PluginApi\Version10\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Config\BuildConfiguration;
+use Phpcq\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Config\PluginConfiguration;
 use Phpcq\Config\ProjectConfiguration;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Plugin\Config\PhpcqConfigurationOptionsBuilder;
 use Phpcq\Plugin\PluginRegistry;
-use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\PluginApi\Version10\OutputInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
-use Phpcq\Report\Writer\CheckstyleReportWriter;
-use Phpcq\Report\Buffer\ReportBuffer;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Report;
+use Phpcq\Report\Writer\CheckstyleReportWriter;
+use Phpcq\Environment;
+use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
+use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Writer\ConsoleWriter;
 use Phpcq\Report\Writer\FileReportWriter;
 use Phpcq\Report\Writer\GithubActionConsoleWriter;
@@ -30,10 +32,13 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
+use function array_key_exists;
+use function array_keys;
 use function assert;
 use function getcwd;
 use function in_array;
 use function is_string;
+use function min;
 
 final class RunCommand extends AbstractCommand
 {
@@ -86,10 +91,12 @@ final class RunCommand extends AbstractCommand
             InputOption::VALUE_REQUIRED,
             'Set the minimum threshold for diagnostics to be reported, Available options are (in ascending order): "' .
             implode('", "', [
+                ToolReportInterface::SEVERITY_NONE,
                 ToolReportInterface::SEVERITY_INFO,
-                ToolReportInterface::SEVERITY_NOTICE,
-                ToolReportInterface::SEVERITY_WARNING,
-                ToolReportInterface::SEVERITY_ERROR,
+                ToolReportInterface::SEVERITY_MINOR,
+                ToolReportInterface::SEVERITY_MARGINAL,
+                ToolReportInterface::SEVERITY_MAJOR,
+                ToolReportInterface::SEVERITY_FATAL,
             ]) . '"',
             ToolReportInterface::SEVERITY_INFO
         );
@@ -109,11 +116,14 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
-        $fileSystem = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config['directories'], $this->config['artifact']);
+        $maxCores      = min($this->getCores(), (int)$this->input->getOption('threads'));
+        $artifactDir   = $this->config->getArtifactDir();
+        $fileSystem    = new Filesystem();
+        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir, $maxCores);
 
         $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
         $fileSystem->mkdir($tempDirectory);
+
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
@@ -124,12 +134,13 @@ final class RunCommand extends AbstractCommand
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
 
-        if (!isset($this->config['chains'][$chain])) {
+        $chains = $this->config->getChains();
+        if (!isset($chains[$chain])) {
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
 
-        $buildConfig = new BuildConfiguration($projectConfig, $taskFactory, $tempDirectory);
-        $outputPath = $buildConfig->getProjectConfiguration()->getArtifactOutputPath();
+        $environment = new Environment($projectConfig, $taskFactory, $tempDirectory);
+        $outputPath = $environment->getProjectConfiguration()->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
@@ -137,10 +148,10 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
-            $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
+            $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
         } else {
-            foreach (array_keys($this->config['chains'][$chain]) as $toolName) {
-                $this->handlePlugin($plugins, $chain, $toolName, $buildConfig, $taskList);
+            foreach (array_keys($chains[$chain]) as $toolName) {
+                $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
             }
         }
 
@@ -150,7 +161,7 @@ final class RunCommand extends AbstractCommand
         $consoleOutput = $this->getWrappedOutput();
         $exitCode      = $this->runTasks($taskList, $report, $consoleOutput);
 
-        // Stage 2: reporting.
+        // Stage 3: reporting.
         $reportBuffer->complete($exitCode === 0 ? Report::STATUS_PASSED : Report::STATUS_FAILED);
         $this->writeReports($reportBuffer, $projectConfig);
 
@@ -184,11 +195,11 @@ final class RunCommand extends AbstractCommand
     }
 
     /**
-     * @param PluginRegistry     $plugins
-     * @param string             $chain
-     * @param string             $toolName
-     * @param BuildConfiguration $buildConfig
-     * @param Tasklist           $taskList
+     * @param PluginRegistry $plugins
+     * @param string         $chain
+     * @param string         $toolName
+     * @param Environment    $buildConfig
+     * @param Tasklist       $taskList
      *
      * @return void
      */
@@ -196,26 +207,78 @@ final class RunCommand extends AbstractCommand
         PluginRegistry $plugins,
         string $chain,
         string $toolName,
-        BuildConfiguration $buildConfig,
+        Environment $buildConfig,
         Tasklist $taskList
     ): void {
         $plugin = $plugins->getPluginByName($toolName);
         $name   = $plugin->getName();
 
         // Initialize phar files
-        if ($plugin instanceof ConfigurationPluginInterface) {
-            $configOptionsBuilder = new PhpcqConfigurationOptionsBuilder();
-            $configuration       = $this->config['chains'][$chain][$name]
-                ?? ($this->config['tool-config'][$name] ?: []);
+        if ($plugin instanceof DiagnosticsPluginInterface) {
+            $chains               = $this->config->getChains();
+            $toolConfig           = $this->config->getToolConfig();
+            $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
+            $configuration        = $chains[$chain][$name] ?? $toolConfig[$name];
 
-            $plugin->describeOptions($configOptionsBuilder);
-            $options = $configOptionsBuilder->getOptions();
-            $options->validateConfig($configuration);
+            $plugin->describeConfiguration($configOptionsBuilder);
+            if (!$configOptionsBuilder->hasDirectoriesSupport()) {
+                unset($configuration['directories']);
 
-            foreach ($plugin->processConfig($configuration, $buildConfig) as $task) {
-                $taskList->add($task);
+                $processed = $configOptionsBuilder->normalizeValue($configuration);
+                $configOptionsBuilder->validateValue($processed);
+                /** @psalm-var array<string,mixed> $processed */
+                $configuration = new PluginConfiguration($processed);
+
+                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+                    $taskList->add($task);
+                }
+                return;
+            }
+
+            /** @psalm-var array<string,mixed> $configuration */
+            foreach ($this->processDirectories($configuration) as $config) {
+                try {
+                    $processed = $configOptionsBuilder->normalizeValue($config);
+                    $configOptionsBuilder->validateValue($processed);
+                } catch (ConfigurationValidationErrorException $exception) {
+                    throw $exception->withOuterPath([$name]);
+                } catch (Throwable $exception) {
+                    throw ConfigurationValidationErrorException::fromError([$name], $exception);
+                }
+
+                /** @psalm-var array<string,mixed> $processed */
+                $configuration = new PluginConfiguration($processed);
+
+                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+                    $taskList->add($task);
+                }
             }
         }
+    }
+
+    /**
+     * @psalm-param array<string,mixed> $configuration
+     * @psalm-return list<array<string,mixed>>
+     */
+    private function processDirectories(array $configuration): array
+    {
+        assert(array_key_exists('directories', $configuration));
+        /** @psalm-var array<string, array<string,mixed>|null> $directories */
+        $directories                  = $configuration['directories'];
+        $configuration['directories'] = [];
+        $configs                      = [$configuration];
+
+        foreach ($directories as $directory => $config) {
+            if (null === $config) {
+                /** @psalm-suppress MixedArrayAssignment */
+                $configs[0]['directories'][] = $directory;
+                continue;
+            }
+
+            $configs[] = $config;
+        }
+
+        return $configs;
     }
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void

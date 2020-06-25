@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-use Phpcq\PluginApi\Version10\ReportInterface;
-use Phpcq\PluginApi\Version10\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\ReportInterface;
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Repository\RepositoryInterface;
 

@@ -58,7 +58,6 @@ phpcq:
 
 tool-config:
   phpunit:
-    custom_flags:
 
   phpcpd:
   #  exclude:
@@ -67,6 +66,8 @@ tool-config:
       # These are duplicate code but entirely unrelated to each other.
       - DiffBuilderTest.php
       - AttachmentBuilderTest.php
+      - OptionsBuilderTest.php
+      - PluginConfigurationBuilderTest.php
   #  regexps_exclude:
   #  log:
   #  min_lines:

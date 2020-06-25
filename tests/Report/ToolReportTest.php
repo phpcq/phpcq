@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report;
 
+use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -34,7 +35,7 @@ class ToolReportTest extends TestCase
 
         $this->assertSame(
             $report,
-            $report->addDiagnostic('error', 'This is an error')->end()
+            $report->addDiagnostic(ToolReportInterface::SEVERITY_MAJOR, 'This is an error')->end()
         );
 
         $diagnostics = iterator_to_array($buffer->getDiagnostics());
@@ -42,7 +43,7 @@ class ToolReportTest extends TestCase
         /** @var DiagnosticBuffer $diagnostic */
         $diagnostic = $diagnostics[0];
 
-        $this->assertSame('error', $diagnostic->getSeverity());
+        $this->assertSame(ToolReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
         $this->assertSame('This is an error', $diagnostic->getMessage());
     }
 
@@ -51,7 +52,7 @@ class ToolReportTest extends TestCase
         $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
         $report = new ToolReport($buffer, self::$tempdir);
 
-        $report->addDiagnostic('error', 'This is an error');
+        $report->addDiagnostic(ToolReportInterface::SEVERITY_MAJOR, 'This is an error');
 
         $report->close(ToolReport::STATUS_PASSED);
 
@@ -60,7 +61,7 @@ class ToolReportTest extends TestCase
         /** @var DiagnosticBuffer $diagnostic */
         $diagnostic = $diagnostics[0];
 
-        $this->assertSame('error', $diagnostic->getSeverity());
+        $this->assertSame(ToolReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
         $this->assertSame('This is an error', $diagnostic->getMessage());
     }
 

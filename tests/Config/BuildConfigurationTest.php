@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Config;
 
-use Phpcq\Config\BuildConfiguration;
+use Phpcq\Environment;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Config\BuildConfiguration
+ * @covers \Phpcq\Environment
  */
 final class BuildConfigurationTest extends TestCase
 {
     public function testCreate(): void
     {
-        $configuration = new BuildConfiguration(
+        $configuration = new Environment(
             $projectConfig = $this->getMockForAbstractClass(ProjectConfigInterface::class),
             $taskFactory = $this->getMockForAbstractClass(TaskFactoryInterface::class),
             '/temp/dir'
