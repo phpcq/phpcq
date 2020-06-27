@@ -60,6 +60,25 @@ final class TaskFactoryTest extends TestCase
         ], 'command', $builder);
     }
 
+    public function testBuildPhpProcess(): void
+    {
+        $factory = new TaskFactory(
+            '/phpcq/path',
+            $this->getMockForAbstractClass(RepositoryInterface::class),
+            '/path/to/php-cli',
+            ['php', 'arguments']
+        );
+
+        $builder = $factory->buildPhpProcess('tool-name', ['command', 'arg1', 'arg2']);
+
+        $this->assertInstanceOf(TaskBuilder::class, $builder);
+        $this->assertPrivateProperty([
+            '/path/to/php-cli',
+            'php', 'arguments',
+            'command', 'arg1', 'arg2'
+        ], 'command', $builder);
+    }
+
     private function assertPrivateProperty($expected, string $property, object $instance): void
     {
         $reflection = new ReflectionProperty($instance, $property);

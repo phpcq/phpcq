@@ -77,4 +77,19 @@ class TaskFactory implements TaskFactoryInterface
             $arguments
         ));
     }
+
+    /**
+     * @param string   $toolName
+     * @param string[] $arguments
+     *
+     * @return TaskBuilder
+     */
+    public function buildPhpProcess(string $toolName, array $arguments = []): TaskBuilderInterface
+    {
+        return $this->buildRunProcess($toolName, array_merge(
+            [$this->phpCliBinary],
+            $this->phpArguments,
+            $arguments
+        ));
+    }
 }
