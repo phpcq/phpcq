@@ -36,13 +36,19 @@ use function array_key_exists;
 use function array_keys;
 use function assert;
 use function getcwd;
-use function in_array;
 use function is_string;
 use function min;
 
 final class RunCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
+
+    /** @var array<class-string<string, \Phpcq\Report\Writer\AbstractReportWriter>> */
+    private const REPORT_FORMATS = [
+        'tool-report' => ToolReportWriter::class,
+        'file-report' => FileReportWriter::class,
+        'checkstyle'  => CheckstyleReportWriter::class,
+    ];
 
     protected function configure(): void
     {
@@ -79,10 +85,10 @@ final class RunCommand extends AbstractCommand
         $this->addOption(
             'output',
             'o',
-            InputOption::VALUE_REQUIRED,
+            InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
             'Set a specific console output format. Available options are <info>default</info> and '
             . '<info>github-action</info>',
-            'default'
+            ['default']
         );
 
         $this->addOption(
@@ -284,11 +290,17 @@ final class RunCommand extends AbstractCommand
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
     {
         /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
-        $threshold  = (string) $this->input->getOption('threshold');
+        $threshold = (string) $this->input->getOption('threshold');
+        $formats   = (array) $this->input->getOption('output');
+        if ([] !== ($unsupported = array_diff($formats, ['github-action', 'default']))) {
+            throw new RuntimeException(sprintf('Output formats "%s" are not supported', implode(', ', $unsupported)));
+        }
 
-        if ($this->input->getOption('output') === 'github-action') {
+        if (in_array('github-action', $formats, true)) {
             GithubActionConsoleWriter::writeReport($this->output, $report);
-        } else {
+        }
+
+        if (in_array('default', $formats, true)) {
             ConsoleWriter::writeReport(
                 $this->output,
                 new SymfonyStyle($this->input, $this->output),
@@ -298,19 +310,16 @@ final class RunCommand extends AbstractCommand
             );
         }
 
+        /** @psalm-var list<string> $reports */
         $reports = (array) $this->input->getOption('report');
         $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();
 
-        if (in_array('tool-report', $reports, true)) {
-            ToolReportWriter::writeReport($targetPath, $report, $threshold);
-        }
-
-        if (in_array('file-report', $reports, true)) {
-            FileReportWriter::writeReport($targetPath, $report, $threshold);
-        }
-
-        if (in_array('checkstyle', $reports, true)) {
-            CheckstyleReportWriter::writeReport($targetPath, $report, $threshold);
+        foreach ($reports as $format) {
+            if (!isset(self::REPORT_FORMATS[$format])) {
+                throw new RuntimeException(sprintf('Report format "%s" is not supported', $format));
+            }
+            $writer = self::REPORT_FORMATS[$format];
+            $writer::writeReport($targetPath, $report, $threshold);
         }
 
         // Clean up attachments.

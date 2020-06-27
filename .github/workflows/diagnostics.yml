@@ -38,4 +38,4 @@ jobs:
         run: $GITHUB_WORKSPACE/phpcq install -v
 
       - name: Run tests
-        run: $GITHUB_WORKSPACE/phpcq run -o github-action
+        run: $GITHUB_WORKSPACE/phpcq run -o github-action -o default
