@@ -10,7 +10,7 @@ use Phpcq\Report\Buffer\ReportBuffer;
 
 final class FileReportWriter extends AbstractReportWriter
 {
-    public const XML_NAMESPACE = 'https://phpcq.github.io/v1/file-report.xsd';
+    public const XML_NAMESPACE = 'https://phpcq.github.io/schema/v1/file-report.xsd';
     public const ROOT_NODE_NAME = 'file-report';
     public const REPORT_FILE = '/file-report.xml';
 

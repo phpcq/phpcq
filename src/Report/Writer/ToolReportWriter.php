@@ -13,7 +13,7 @@ use Phpcq\Report\Buffer\ReportBuffer;
  */
 final class ToolReportWriter extends AbstractReportWriter
 {
-    public const XML_NAMESPACE = 'https://phpcq.github.io/v1/tool-report.xsd';
+    public const XML_NAMESPACE = 'https://phpcq.github.io/schema/v1/tool-report.xsd';
     public const ROOT_NODE_NAME = 'tool-report';
     public const REPORT_FILE = '/tool-report.xml';
 
