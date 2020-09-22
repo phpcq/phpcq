@@ -6,7 +6,7 @@ namespace Phpcq\Test\Report;
 
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
@@ -40,13 +40,13 @@ class ReportTest extends TestCase
         $toolInformation = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $toolInformation
             ->expects($this->once())
-            ->method('getVersion')
+            ->method('getPluginVersion')
             ->willReturn('1.0.0');
 
         $installed = $this->getMockForAbstractClass(RepositoryInterface::class);
         $installed
             ->expects($this->once())
-            ->method('getTool')
+            ->method('getPluginVersion')
             ->withAnyParameters()
             ->willReturn($toolInformation);
 

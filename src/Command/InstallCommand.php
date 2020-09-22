@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Repository\RepositoryFactory;
-use Phpcq\Repository\RepositoryPool;
-use Phpcq\ToolUpdate\UpdateCalculator;
+use Phpcq\Runner\Repository\RepositoryFactory;
+use Phpcq\Runner\Repository\RepositoryPool;
+use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,15 +27,14 @@ final class InstallCommand extends AbstractUpdateCommand
     {
         $installedRepository = $this->getInstalledRepository(false);
 
-        if (null !== $this->lockFileRepository) {
-            $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
-
-            $pool = new RepositoryPool();
-            $pool->addRepository($this->lockFileRepository);
-            $calculator = new UpdateCalculator($installedRepository, $pool, $this->getWrappedOutput());
-
-            return $calculator->calculateTasksToExecute($this->lockFileRepository, $this->config->getTools());
-        }
+// FIXME: Reimplement lock file installation
+//        if (null !== $this->lockFileRepository) {
+//            $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
+//
+//            $calculator = new UpdateCalculator($installedRepository, new RepositoryPool(), $this->getWrappedOutput());
+//
+//            return $calculator->calculateTasksToExecute($this->lockFileRepository, $this->config->getTools());
+//        }
 
         $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
 

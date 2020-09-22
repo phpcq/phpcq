@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Repository;
 
 use Phpcq\RepositoryDefinition\AbstractHash;
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirementList;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
-
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-abstract class AbstractRepositoryDumper
+final class InstalledRepositoryDumper
 {
     /** @var int */
     private const JSON_OPTIONS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR;
@@ -59,7 +59,6 @@ abstract class AbstractRepositoryDumper
         return $plugins;
     }
 
-    abstract protected function dumpInstalledPlugin(InstalledPlugin $plugin): array;
 
     protected function dumpInstalledTools(InstalledRepository $repository): array
     {
@@ -72,8 +71,6 @@ abstract class AbstractRepositoryDumper
 
         return $tools;
     }
-
-    abstract protected function dumpTool(ToolVersionInterface $version): array;
 
     protected function encodePluginRequirements(PluginRequirements $requirements): stdClass
     {
@@ -136,4 +133,53 @@ abstract class AbstractRepositoryDumper
             'value' => $hash->getValue(),
         ];
     }
+
+    protected function dumpInstalledPlugin(InstalledPlugin $plugin): array
+    {
+        $version = $plugin->getPluginVersion();
+
+        $data = [
+            'api-version'  => $version->getApiVersion(),
+            'version'      => $version->getVersion(),
+            'type'         => 'php-file',
+            'url'          => $version->getFilePath(),
+            'requirements' => $this->encodePluginRequirements($version->getRequirements()),
+            'checksum'     => $this->encodeHash($version->getHash()),
+            'tools'        => $this->dumpTools($plugin),
+        ];
+
+        if ($version instanceof PhpFilePluginVersionInterface) {
+            $data['type']      = 'php-file';
+            $data['url']       = $version->getFilePath();
+            $data['signature'] = $version->getSignaturePath();
+        } else {
+            $data['type']      = 'php-inline';
+            $data['code']      = $version->getCode();
+            $data['signature'] = $version->getSignature();
+        }
+
+        return $data;
+    }
+
+    protected function dumpTool(ToolVersionInterface $version): array
+    {
+        return [
+            'version'      => $version->getVersion(),
+            'url'          => $version->getPharUrl(),
+            'requirements' => $this->encodeToolRequirements($version->getRequirements()),
+            'checksum'     => $this->encodeHash($version->getHash()),
+            'signature'    => $version->getSignatureUrl(),
+        ];
+    }
+
+    private function dumpTools(InstalledPlugin $plugin): stdClass
+    {
+        $tools = new stdClass();
+        foreach ($plugin->iterateTools() as $toolVersion) {
+            $tools->{$toolVersion->getName()} = $this->dumpTool($toolVersion);
+        }
+
+        return $tools;
+    }
 }
+

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Command;
 
-use Phpcq\Config\Options;
 use Phpcq\Config\PhpcqConfiguration;
 use Phpcq\ConfigLoader;
 use Phpcq\Exception\RuntimeException;
@@ -78,7 +77,7 @@ abstract class AbstractCommand extends Command
             't',
             InputOption::VALUE_REQUIRED,
             'Path to the phpcq tool directory',
-            getcwd() . '/vendor/phpcq'
+            getcwd() . '/.phpcq/plugins'
         );
         $this->addOption(
             'ignore-platform-reqs',

@@ -6,12 +6,12 @@ namespace Phpcq\Runner\Repository;
 
 use Generator;
 use Phpcq\RepositoryDefinition\Exception\ToolNotFoundException;
-use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
+use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
 final class InstalledPlugin
 {
-    /** @var PhpFilePluginVersionInterface */
+    /** @var PluginVersionInterface */
     private $version;
 
     /**
@@ -26,7 +26,7 @@ final class InstalledPlugin
      *
      * @psalm-param array<string,ToolVersionInterface> $tools
      */
-    public function __construct(PhpFilePluginVersionInterface $version, array $tools)
+    public function __construct(PluginVersionInterface $version, array $tools = [])
     {
         $this->version = $version;
         $this->tools   = $tools;
@@ -37,7 +37,7 @@ final class InstalledPlugin
         return $this->getPluginVersion()->getName();
     }
 
-    public function getPluginVersion(): PhpFilePluginVersionInterface
+    public function getPluginVersion(): PluginVersionInterface
     {
         return $this->version;
     }
@@ -49,6 +49,11 @@ final class InstalledPlugin
         }
 
         return $this->tools[$name];
+    }
+
+    public function addTool(ToolVersionInterface $tool): void
+    {
+        $this->tools[$tool->getName()] = $tool;
     }
 
     /**
@@ -63,5 +68,10 @@ final class InstalledPlugin
         foreach ($this->tools as $toolVersion) {
             yield $toolVersion;
         }
+    }
+
+    public function hasTool(string $name): bool
+    {
+        return isset($this->tools[$name]);
     }
 }

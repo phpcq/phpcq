@@ -514,12 +514,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "3754c9bd39e421bf1b9bb60284642c22cd6316ac"
+                "reference": "9dd52066960d4c56368548b4bd5264df771c8886"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/3754c9bd39e421bf1b9bb60284642c22cd6316ac",
-                "reference": "3754c9bd39e421bf1b9bb60284642c22cd6316ac",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/9dd52066960d4c56368548b4bd5264df771c8886",
+                "reference": "9dd52066960d4c56368548b4bd5264df771c8886",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-18T08:47:21+00:00"
+            "time": "2020-09-21T10:02:35+00:00"
         },
         {
             "name": "psr/container",

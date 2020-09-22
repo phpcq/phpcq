@@ -12,7 +12,7 @@ use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Task\TasklistInterface;
 use Phpcq\Task\TaskScheduler;
 use Phpcq\Test\TemporaryFileProducingTestTrait;

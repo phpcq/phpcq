@@ -7,13 +7,14 @@ namespace Phpcq\Test\Repository;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\FileDownloader;
 use Phpcq\Platform\PlatformRequirementCheckerInterface;
-use Phpcq\Repository\JsonRepositoryLoader;
+use Phpcq\Runner\Repository\DownloadingJsonFileLoader;
+use Phpcq\Runner\Repository\JsonRepositoryLoader;
 use Phpcq\Repository\RemoteBootstrap;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Repository\JsonRepositoryLoader
+ * @covers \Phpcq\Runner\Repository\JsonRepositoryLoader
  */
 class JsonRepositoryLoaderTest extends TestCase
 {
@@ -41,7 +42,7 @@ class JsonRepositoryLoaderTest extends TestCase
                 throw new RuntimeException('Invalid URI passed: ' . $url);
             });
 
-        $loader = new JsonRepositoryLoader(null, $downloader);
+        $loader = new JsonRepositoryLoader(null, new DownloadingJsonFileLoader($downloader));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid URI passed: 123');
@@ -58,11 +59,11 @@ class JsonRepositoryLoaderTest extends TestCase
             ->with('php', '^5.3.9')
             ->willReturn(true);
 
-        $loader = new JsonRepositoryLoader($requirementChecker, $downloader);
+        $loader = new JsonRepositoryLoader($requirementChecker, new DownloadingJsonFileLoader($downloader));
         $repository = $loader->loadFile(__DIR__ . '/../fixtures/repositories/repository.json');
 
         // Test the included version exists.
-        $this->assertTrue($repository->hasTool('phpmd', '2.8.2'));
+        $this->assertTrue($repository->hasToolVersion('phpmd', '2.8.2'));
         $version = $repository->getTool('phpmd', '2.8.2');
 
         $this->assertSame('2.8.2', $version->getVersion());

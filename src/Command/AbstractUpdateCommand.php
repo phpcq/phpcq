@@ -12,12 +12,13 @@ use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Phpcq\Platform\PlatformRequirementChecker;
-use Phpcq\Repository\JsonRepositoryLoader;
-use Phpcq\Repository\RemoteRepository;
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\DownloadingJsonFileLoader;
+use Phpcq\Runner\Repository\InstalledRepository;
+use Phpcq\Runner\Repository\InstalledRepositoryLoader;
+use Phpcq\Runner\Repository\JsonRepositoryLoader;
 use Phpcq\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Signature\SignatureFileDownloader;
-use Phpcq\ToolUpdate\UpdateExecutor;
+use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -50,7 +51,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
      */
     protected $repositoryLoader;
 
-    /** @var RepositoryInterface|null */
+    /** @var InstalledRepository|null */
     protected $lockFileRepository;
 
     /**
@@ -98,13 +99,13 @@ abstract class AbstractUpdateCommand extends AbstractCommand
 
         $authConfig             = $this->config->getAuth();
         $this->downloader       = new FileDownloader($cachePath, $authConfig);
-        $this->repositoryLoader = new JsonRepositoryLoader($requirementChecker, $this->downloader, true);
+        $this->repositoryLoader = new JsonRepositoryLoader($requirementChecker, new DownloadingJsonFileLoader($this->downloader, true));
         $lockFile               = $this->getLockFileName();
         if (file_exists($lockFile)) {
-            $this->lockFileRepository = new RemoteRepository($lockFile, $this->repositoryLoader);
+            $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
         }
 
-        $tasks = $this->calculateTasks();
+        $tasks   = $this->calculateTasks();
         $changes = array_filter(
             $tasks,
             static function ($task) {
@@ -128,7 +129,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     protected function executeTasks(array $tasks): void
     {
         $signatureVerifier = new SignatureVerifier(
-            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath),
+            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath . '/gnupg'),
             new KeyDownloader(new SignatureFileDownloader($this->downloader)),
             $this->getUntrustedKeyStrategy()
         );
@@ -137,8 +138,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->downloader,
             $signatureVerifier,
             $this->phpcqPath,
-            $this->getWrappedOutput(),
-            $this->lockFileRepository,
+            $this->getWrappedOutput()
         );
         $executor->execute($tasks);
     }

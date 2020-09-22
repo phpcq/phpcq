@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Phpcq\Test\Repository;
 
 use Phpcq\Repository\InlineBootstrap;
-use Phpcq\Repository\LockFileDumper;
-use Phpcq\Repository\Repository;
+use Phpcq\Runner\Repository\LockFileDumper;
+use Phpcq\Runner\Repository\Repository;
 use Phpcq\Repository\ToolHash;
 use Phpcq\Repository\ToolInformation;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Repository\LockFileDumper
+ * @covers \Phpcq\Runner\Repository\LockFileDumper
  */
 class LockFileDumperTest extends TestCase
 {
@@ -22,7 +22,7 @@ class LockFileDumperTest extends TestCase
     public function testLockFileDump(): void
     {
         $repository = new Repository();
-        $repository->addVersion(new ToolInformation(
+        $repository->addPluginVersion(new ToolInformation(
             'test',
             '1.0.0',
             'test.phar',
@@ -33,7 +33,7 @@ class LockFileDumperTest extends TestCase
             new ToolHash(ToolHash::SHA_256, 'foo'),
             'test.phar.asc'
         ));
-        $repository->addVersion(new ToolInformation(
+        $repository->addPluginVersion(new ToolInformation(
             'test2',
             '1.0.0',
             'test2.phar',

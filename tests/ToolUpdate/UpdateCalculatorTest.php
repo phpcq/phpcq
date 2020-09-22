@@ -7,15 +7,15 @@ namespace Phpcq\Test\ToolUpdate;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Repository\BootstrapHash;
 use Phpcq\Repository\BootstrapInterface;
-use Phpcq\Repository\Repository;
-use Phpcq\Repository\RepositoryInterface;
-use Phpcq\Repository\RepositoryPool;
+use Phpcq\Runner\Repository\Repository;
+use Phpcq\Runner\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\RepositoryPool;
 use Phpcq\Repository\ToolInformationInterface;
-use Phpcq\ToolUpdate\UpdateCalculator;
+use Phpcq\Runner\Updater\UpdateCalculator;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\ToolUpdate\UpdateCalculator
+ * @covers \Phpcq\Runner\Updater\UpdateCalculator
  */
 final class UpdateCalculatorTest extends TestCase
 {
@@ -40,7 +40,7 @@ final class UpdateCalculatorTest extends TestCase
         );
         $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
         $tool->expects(self::atLeastOnce())->method('getBootstrap')->willReturn($bootstrap);
 
         $bootstrapOld = $this->getMockForAbstractClass(BootstrapInterface::class);
@@ -49,11 +49,11 @@ final class UpdateCalculatorTest extends TestCase
         );
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
         $oldTool->expects(self::atLeastOnce())->method('getBootstrap')->willReturn($bootstrapOld);
 
-        $repository->addVersion($tool);
-        $installed->addVersion($oldTool);
+        $repository->addPluginVersion($tool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -127,18 +127,18 @@ final class UpdateCalculatorTest extends TestCase
         $bootstrap->expects(self::atLeastOnce())->method('getHash')->willReturn($newHash);
         $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
         $tool->expects(self::atLeastOnce())->method('getBootstrap')->willReturn($bootstrap);
 
         $bootstrapOld = $this->getMockForAbstractClass(BootstrapInterface::class);
         $bootstrapOld->expects(self::atMost(1))->method('getHash')->willReturn($oldHash);
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
         $oldTool->expects(self::atMost(1))->method('getBootstrap')->willReturn($bootstrapOld);
 
-        $repository->addVersion($tool);
-        $installed->addVersion($oldTool);
+        $repository->addPluginVersion($tool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -190,16 +190,16 @@ final class UpdateCalculatorTest extends TestCase
 
         $repository
             ->expects(self::once())
-            ->method('hasTool')
+            ->method('hasToolVersion')
             ->with('foo', '^1.0.0')
             ->willReturn(true);
         $repository
             ->expects(self::once())
-            ->method('getTool')
+            ->method('getPluginVersion')
             ->with('foo', '^1.0.0')
             ->willReturn($tool = $this->getMockForAbstractClass(ToolInformationInterface::class));
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -234,14 +234,14 @@ final class UpdateCalculatorTest extends TestCase
 
         $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.1');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.1');
 
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.0');
 
-        $repository->addVersion($tool);
-        $installed->addVersion($oldTool);
+        $repository->addPluginVersion($tool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -277,14 +277,14 @@ final class UpdateCalculatorTest extends TestCase
 
         $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('1.0.1');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('1.0.1');
 
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('2.0.0');
 
-        $repository->addVersion($tool);
-        $installed->addVersion($oldTool);
+        $repository->addPluginVersion($tool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -318,9 +318,9 @@ final class UpdateCalculatorTest extends TestCase
 
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('2.0.0');
 
-        $installed->addVersion($oldTool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 
@@ -353,14 +353,14 @@ final class UpdateCalculatorTest extends TestCase
 
         $tool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $tool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $tool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+        $tool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('2.0.0');
 
         $oldTool = $this->getMockForAbstractClass(ToolInformationInterface::class);
         $oldTool->expects(self::atLeastOnce())->method('getName')->willReturn('foo');
-        $oldTool->expects(self::atLeastOnce())->method('getVersion')->willReturn('2.0.0');
+        $oldTool->expects(self::atLeastOnce())->method('getPluginVersion')->willReturn('2.0.0');
 
-        $repository->addVersion($tool);
-        $installed->addVersion($oldTool);
+        $repository->addPluginVersion($tool);
+        $installed->addPluginVersion($oldTool);
 
         $calculator = new UpdateCalculator($installed, $pool, $output);
 

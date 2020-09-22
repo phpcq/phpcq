@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Repository\ToolInformationInterface;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\TaskBuilder;
@@ -42,7 +42,7 @@ final class TaskFactoryTest extends TestCase
 
         $installed
             ->expects(self::atLeastOnce())
-            ->method('getTool')
+            ->method('getPluginVersion')
             ->with('phar-name', '*')->willReturn(
                 $tool = $this->getMockForAbstractClass(ToolInformationInterface::class)
             );

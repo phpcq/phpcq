@@ -6,12 +6,12 @@ namespace Phpcq\Exception;
 
 use Throwable;
 
-class ToolNotFoundException extends \RuntimeException implements Exception
+class PluginVersionNotFoundException extends \RuntimeException implements Exception
 {
     /**
      * @var string
      */
-    private $toolName;
+    private $pluginName;
 
     /**
      * @var string
@@ -21,30 +21,30 @@ class ToolNotFoundException extends \RuntimeException implements Exception
     /**
      * Create a new instance.
      *
-     * @param string         $toolName
+     * @param string         $pluginName
      * @param string         $constraint
      * @param int            $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $toolName, string $constraint, int $code = 0, Throwable $previous = null)
+    public function __construct(string $pluginName, string $constraint, int $code = 0, Throwable $previous = null)
     {
         parent::__construct(
-            'Tool not found: ' . $toolName . ':' . $constraint,
+            'Plugin not found: ' . $pluginName . ':' . $constraint,
             $code,
             $previous
         );
-        $this->toolName   = $toolName;
+        $this->pluginName   = $pluginName;
         $this->constraint = $constraint;
     }
 
     /**
-     * Retrieve toolName.
+     * Retrieve pluginName.
      *
      * @return string
      */
-    public function getToolName(): string
+    public function getPluginName(): string
     {
-        return $this->toolName;
+        return $this->pluginName;
     }
 
     /**

@@ -6,7 +6,9 @@ namespace Phpcq\Runner\Repository;
 
 use IteratorAggregate;
 use Phpcq\Exception\PluginVersionNotFoundException;
+use Phpcq\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
 final class RepositoryPool implements IteratorAggregate
 {
@@ -33,7 +35,6 @@ final class RepositoryPool implements IteratorAggregate
 
     public function getPluginVersion(string $name, string $versionConstraint): PluginVersionInterface
     {
-        /** @var RepositoryInterface $repository */
         foreach ($this as $repository) {
             if ($repository->hasPluginVersion($name, $versionConstraint)) {
                 return $repository->getPluginVersion($name, $versionConstraint);
@@ -43,10 +44,21 @@ final class RepositoryPool implements IteratorAggregate
         throw new PluginVersionNotFoundException($name, $versionConstraint);
     }
 
+    public function getToolVersion(string $name, string $versionConstraint): ToolVersionInterface
+    {
+        foreach ($this as $repository) {
+            if ($repository->hasToolVersion($name, $versionConstraint)) {
+                return $repository->getToolVersion($name, $versionConstraint);
+            }
+        }
+
+        throw new ToolVersionNotFoundException($name, $versionConstraint);
+    }
+
     /**
      * Iterate over all repositories.
      *
-     * @return \Generator
+     * @return \Generator|RepositoryInterface[]
      *
      * @psalm-return \Generator<array-key, RepositoryInterface, mixed, void>
      */

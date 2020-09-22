@@ -1,30 +1,39 @@
 phpcq:
   repositories:
-    - https://phpcq.github.io/repository/repository.json
+#    - https://phpcq.github.io/repository/repository.json
+    - /home/netzmacht/Daten/Projekte/Entwicklung/vcs/phpcq/repository/web/repository.json
   directories:
     - src
     - tests
   artifact: .phpcq/build
   tools:
     phpunit:
-      version: ^9.0
-    psalm:
-      version: ^3.11.5
-    composer-require-checker:
-      version: ^2.0.0
-    phpmd:
-      version: ^2.8.2
+      version: ^1.0
       signed: false
-    phpcpd:
-      version: ^5.0
-    phploc:
-      version: ^6.0
-    phpcs:
-      version: ^3.5
-    phpcbf:
-      version: ^3.5
-    composer-normalize:
-      version: ^2.1
+    psalm:
+      version: ^1.0
+      signed: false
+#    composer-require-checker:
+#      version: ^1.0
+#      signed: false
+#    phpmd:
+#      version: ^1.0
+#      signed: false
+#    phpcpd:
+#      version: ^1.0
+#      signed: false
+#    phploc:
+#      version: ^1.0
+#      signed: false
+#    phpcs:
+#      version: ^1.0
+#      signed: false
+#    phpcbf:
+#      version: ^1.0
+#      signed: false
+#    composer-normalize:
+#      version: ^1.0
+#      signed: false
   trusted-keys:
     # sb@sebastian-bergmann.de
     - 4AA394086372C20A

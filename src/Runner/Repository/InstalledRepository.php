@@ -55,7 +55,7 @@ final class InstalledRepository
     /**
      * Iterate over all installed plugins.
      *
-     * @return Generator
+     * @return Generator|InstalledPlugin[]
      *
      * @psalm-return Generator<InstalledPlugin>
      */

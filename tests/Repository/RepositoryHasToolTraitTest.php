@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Repository;
 
-use Phpcq\Exception\ToolNotFoundException;
-use Phpcq\Repository\RepositoryHasToolTrait;
+use Phpcq\Exception\ToolVersionNotFoundException;
+use Phpcq\Runner\Repository\RepositoryHasToolVersionTrait;
 use Phpcq\Repository\ToolInformationInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Repository\RepositoryHasToolTrait
+ * @covers \Phpcq\Runner\Repository\RepositoryHasToolVersionTrait
  */
 class RepositoryHasToolTraitTest extends TestCase
 {
     public function testCallsGetToolAndReturnsTrueOnMatch(): void
     {
-        $trait = $this->getMockBuilder(RepositoryHasToolTrait::class)->getMockForTrait();
+        $trait = $this->getMockBuilder(RepositoryHasToolVersionTrait::class)->getMockForTrait();
         $trait
-            ->method('getTool')
+            ->method('getPluginVersion')
             ->withConsecutive(['supertool', '1.0.0.0'], ['supertool', '1.0.0.1'])
             ->willReturnOnConsecutiveCalls(
                 $this->createMock(ToolInformationInterface::class),
-                $this->throwException(new ToolNotFoundException('supertool', '1.0.0.1'))
+                $this->throwException(new ToolVersionNotFoundException('supertool', '1.0.0.1'))
             );
 
-        /** @var RepositoryHasToolTrait $trait */
-        $this->assertTrue($trait->hasTool('supertool', '1.0.0.0'));
-        $this->assertFalse($trait->hasTool('supertool', '1.0.0.1'));
+        /** @var RepositoryHasToolVersionTrait $trait */
+        $this->assertTrue($trait->hasToolVersion('supertool', '1.0.0.0'));
+        $this->assertFalse($trait->hasToolVersion('supertool', '1.0.0.1'));
     }
 }

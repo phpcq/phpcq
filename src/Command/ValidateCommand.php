@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Config\Builder\PluginConfigurationBuilder;
-use Phpcq\Plugin\PluginRegistry;
+use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Output\OutputInterface;

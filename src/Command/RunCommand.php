@@ -9,7 +9,7 @@ use Phpcq\Config\PluginConfiguration;
 use Phpcq\Config\ProjectConfiguration;
 use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Plugin\PluginRegistry;
+use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Report;
@@ -163,7 +163,7 @@ final class RunCommand extends AbstractCommand
 
         // Stage 2: execution.
         $reportBuffer  = new ReportBuffer();
-        $report        = new Report($reportBuffer, $installed, $tempDirectory);
+        $report        = new Report($reportBuffer, $tempDirectory);
         $consoleOutput = $this->getWrappedOutput();
         $exitCode      = $this->runTasks($taskList, $report, $consoleOutput);
 

@@ -2,7 +2,7 @@
 .DS_Store
 Thumbs.db
 
-# IDEs 
+# IDEs
 .buildpath
 .project
 .settings/
@@ -11,8 +11,10 @@ Thumbs.db
 .idea/
 nbproject/
 
-# composer related
+# composer related & toolchain
 vendor/
+.phpcq
+.phpunit.result.cache
 
 # Transifex
 /.tx/

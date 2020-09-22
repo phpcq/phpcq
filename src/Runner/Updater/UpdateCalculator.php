@@ -1,0 +1,314 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Phpcq\Runner\Updater;
+
+use Composer\Semver\Constraint\Constraint;
+use Composer\Semver\VersionParser;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\RepositoryDefinition\AbstractHash;
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
+use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Phpcq\Runner\Repository\InstalledPlugin;
+use Phpcq\Runner\Repository\InstalledRepository;
+use Phpcq\Runner\Repository\Repository;
+use Phpcq\Runner\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\RepositoryPool;
+
+use function version_compare;
+
+/**
+ * @psalm-import-type TTool from \Phpcq\ConfigLoader
+ *
+ * @psalm-type TUpdateTask = array{
+ *    type: 'install'|'keep'|'remove'|'upgrade',
+ *    message: string,
+ *    tool: ToolInformationInterface,
+ *    old?: ToolInformationInterface,
+ *    signed?: boolean,
+ * }
+ */
+final class UpdateCalculator
+{
+    /**
+     * @var InstalledRepository
+     */
+    private $installed;
+
+    /**
+     * @var RepositoryPool
+     */
+    private $pool;
+
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    /**
+     * @var VersionParser
+     */
+    private $versionParser;
+
+    public function __construct(InstalledRepository $installed, RepositoryPool $pool, OutputInterface $output)
+    {
+        $this->installed     = $installed;
+        $this->pool          = $pool;
+        $this->output        = $output;
+        $this->versionParser = new VersionParser();
+    }
+
+    /**
+     * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     *
+     * @psalm-param array<string,TTool> $plugins
+     * @psalm-return list<TUpdateTask>
+     */
+    public function calculate(array $plugins, bool $forceReinstall = false): array
+    {
+        $desired = $this->calculateDesiredPlugins($plugins);
+
+        return $this->calculateTasksToExecute($desired, $plugins, $forceReinstall);
+    }
+
+    /**
+     * @psalm-param array<string,TTool> $plugins
+     */
+    private function calculateDesiredPlugins(array $plugins): RepositoryInterface
+    {
+        $desired = new Repository();
+        foreach ($plugins as $pluginName => $plugin) {
+            $desired->addPluginVersion($pluginVersion = $this->pool->getPluginVersion($pluginName, $plugin['version']));
+            $this->output->writeln(
+                'Want ' . $pluginVersion->getName() . ' in version ' . $pluginVersion->getVersion(),
+                OutputInterface::VERBOSITY_DEBUG
+            );
+        }
+
+        return $desired;
+    }
+
+    /**
+     * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     *
+     * @psalm-param array<string,TTool> $tools
+     *
+     * @return array[]
+     * @psalm-return list<TUpdateTask>
+     */
+    public function calculateTasksToExecute(
+        RepositoryInterface $desired,
+        array $plugins,
+        bool $forceReinstall = false
+    ): array {
+        // Determine diff to current installation.
+        $tasks = [];
+        /** @var PhpFilePluginVersionInterface $pluginVersion */
+        foreach ($desired->iteratePluginVersions() as $pluginVersion) {
+            $name = $pluginVersion->getName();
+
+            // Not installed yet => install.
+            if (!$this->installed->hasPlugin($name)) {
+                $message = 'Will install plugin ' . $name . ' in version ' . $pluginVersion->getVersion();
+                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                $tasks[] = [
+                    'type'    => 'install',
+                    'version' => $pluginVersion,
+                    'message' => $message,
+                    'signed'  => $plugins[$pluginVersion->getName()]['signed'],
+                    'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
+                ];
+                continue;
+            }
+            // Installed in another version => upgrade.
+            if ($forceReinstall || $this->isPluginUpgradeRequired($pluginVersion)) {
+                $installed = $this->installed->getPlugin($name);
+                $message   = $this->getPluginTaskMessage($installed->getPluginVersion(), $pluginVersion);
+                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                $tasks[] = [
+                    'type'    => 'upgrade',
+                    'version' => $pluginVersion,
+                    'old'     => $installed->getPluginVersion(),
+                    'message' => $message,
+                    'signed'  => $plugins[$pluginVersion->getName()]['signed'],
+                    'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
+                ];
+                continue;
+            }
+            // Keep the tool otherwise.
+            $tasks[] = [
+                'type'    => 'keep',
+                'plugin'  => $this->installed->getPlugin($name),
+                'version' => $pluginVersion,
+                'message' => 'Will keep plugin ' . $name . ' in version ' . $pluginVersion->getVersion(),
+                'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
+            ];
+        }
+        // Determine uninstalls now.
+        /** @var InstalledPlugin $installedPlugin */
+        foreach ($this->installed->iteratePlugins() as $installedPlugin) {
+            $name = $installedPlugin->getName();
+            if (!$desired->hasPluginVersion($name, '*')) {
+                $message = 'Will remove plugin ' . $name . ' version ' . $installedPlugin->getPluginVersion()->getVersion();
+                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                $tasks[] = [
+                    'type'    => 'remove',
+                    'plugin'  => $installedPlugin,
+                    'version' => $installedPlugin->getPluginVersion(),
+                    'message' => $message,
+                ];
+            }
+        }
+
+        return $tasks;
+    }
+
+    private function getPluginTaskMessage(
+        PluginVersionInterface $oldVersion,
+        PluginVersionInterface $plugin
+    ): string {
+
+        switch (version_compare($oldVersion->getVersion(), $plugin->getVersion())) {
+            case 0:
+                return 'Will reinstall plugin ' . $plugin->getName() . ' in version ' . $plugin->getVersion();
+
+            case 1:
+                return 'Will downgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $plugin->getVersion();
+
+            case -1:
+            default:
+                return 'Will upgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $plugin->getVersion();
+        }
+    }
+
+    private function isPluginUpgradeRequired(PhpFilePluginVersionInterface $desired): bool
+    {
+        if (! $this->installed->hasPlugin($desired->getName())) {
+            return true;
+        }
+
+        $installed = $this->installed->getPlugin($desired->getName());
+        $constraints = $this->versionParser->parseConstraints($desired->getVersion());
+
+        if ($constraints->matches(new Constraint('=', $installed->getPluginVersion()->getVersion()))) {
+            return false;
+        }
+
+        return $this->hasHashChanged($desired->getHash(), $installed->getPluginVersion()->getHash());
+    }
+
+    private function hasHashChanged(?AbstractHash $desired, ?AbstractHash $installed): bool
+    {
+        // No hash given. We can't verify changes, force reinstall
+        if (null === $desired) {
+            return true;
+        }
+
+        // No hash given for installed tool but new version has a hash, forche reinstall
+        if (null === $installed) {
+            return true;
+        }
+
+        return !$desired->equals($installed);
+    }
+
+    private function calculateToolTasks(PluginVersionInterface $desired, array $plugins, bool $forceReinstall): array
+    {
+        $config     = $plugins[$desired->getName()] ?? [];
+        $pluginName = $desired->getName();
+        $plugin     = $this->installed->hasPlugin($pluginName) ? $this->installed->getPlugin($pluginName) : null;
+        $tasks      = [];
+
+        foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
+            $constraint = $config[$toolRequirement->getName()]['version'] ?? $toolRequirement->getConstraint();
+            $tool       = $this->pool->getToolVersion($toolRequirement->getName(), $constraint);
+
+            if (!$plugin || !$plugin->hasTool($toolRequirement->getName())) {
+                $message = sprintf('Will install tool %s in version %s', $tool->getName(), $tool->getVersion());
+                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+
+                $tasks[] = [
+                    'type'    => 'install',
+                    'tool'    => $tool,
+                    'version' => $tool,
+                    'message' => $message,
+                    'signed'  => $config['signed'] ?? true,
+                ];
+                continue;
+            }
+            // Installed in another version => upgrade.
+            if ($forceReinstall || $this->isToolUpgradeRequired($plugin, $tool)) {
+                $installed = $plugin->getTool($tool->getName());
+                $message   = $this->getToolTaskMessage($installed, $tool);
+                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+
+                $tasks[] = [
+                    'type'    => 'upgrade',
+                    'tool'    => $tool,
+                    'message' => $message,
+                    'old'     => $installed,
+                    'signed'  => $config['signed'] ?? true,
+                ];
+                continue;
+            }
+            // Keep the tool otherwise.
+            $tasks[] = [
+                'type'    => 'keep',
+                'tool'    => $tool,
+                'message' => 'Will keep tool ' . $tool->getName() . ' in version ' . $tool->getVersion(),
+            ];
+        }
+
+        if ($this->installed->hasPlugin($desired->getName())) {
+            foreach ($plugin->iterateTools() as $tool) {
+                if (! $desired->getRequirements()->getToolRequirements()->has($tool->getName())) {
+                    $message = 'Will remove tool ' . $tool->getName() . ' version ' . $tool->getVersion();
+                    $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                    $tasks[] = [
+                        'type'    => 'remove',
+                        'tool'    => $tool,
+                        'message' => $message,
+                    ];
+                }
+            }
+        }
+
+        return $tasks;
+    }
+
+    private function isToolUpgradeRequired(InstalledPlugin $plugin, ToolVersionInterface $desired): bool
+    {
+        $constraints = $this->versionParser->parseConstraints($desired->getVersion());
+        $installed   = $plugin->getTool($desired->getName());
+
+        if ($constraints->matches(new Constraint('=', $installed->getVersion()))) {
+            return false;
+        }
+
+        return $this->hasHashChanged($desired->getHash(), $installed->getHash());
+    }
+
+    private function getToolTaskMessage(
+        ToolVersionInterface $oldVersion,
+        ToolVersionInterface $tool
+    ): string {
+
+        switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
+            case 0:
+                return 'Will reinstall tool ' . $tool->getName() . ' in version ' . $tool->getVersion();
+
+            case 1:
+                return 'Will downgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $tool->getVersion();
+
+            case -1:
+            default:
+                return 'Will upgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
+                    . ' to version ' . $tool->getVersion();
+        }
+    }
+}

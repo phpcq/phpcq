@@ -6,14 +6,14 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\InstalledRepository;
 
 class TaskFactory implements TaskFactoryInterface
 {
     /**
      * The installed repository.
      *
-     * @var RepositoryInterface
+     * @var InstalledRepository
      */
     private $installed;
 
@@ -36,13 +36,13 @@ class TaskFactory implements TaskFactoryInterface
      * Create a new instance.
      *
      * @param string              $phpcqPath
-     * @param RepositoryInterface $installed
+     * @param InstalledRepository $installed
      * @param string              $phpCliBinary
      * @param string[]            $phpArguments
      */
     public function __construct(
         string $phpcqPath,
-        RepositoryInterface $installed,
+        InstalledRepository $installed,
         string $phpCliBinary,
         array $phpArguments
     ) {

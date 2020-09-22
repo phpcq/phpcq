@@ -5,28 +5,22 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Platform\PlatformRequirementChecker;
-use Phpcq\Repository\InstalledRepositoryLoader;
-use Phpcq\Repository\Repository;
-use Phpcq\Repository\RepositoryInterface;
+use Phpcq\Runner\Repository\InstalledRepository;
+use Phpcq\Runner\Repository\InstalledRepositoryLoader;
+
+use function is_file;
 
 trait InstalledRepositoryLoadingCommandTrait
 {
-    protected function getInstalledRepository(bool $failIfNotExist): RepositoryInterface
+    protected function getInstalledRepository(bool $failIfNotExist): InstalledRepository
     {
-        $requirementChecker = null;
-        if (!$this->input->hasOption('ignore-platform-reqs') || !$this->input->getOption('ignore-platform-reqs')) {
-            $requirementChecker = PlatformRequirementChecker::create();
-        }
-
         if (!is_file($this->phpcqPath . '/installed.json')) {
             if (!$failIfNotExist) {
-                return new Repository($requirementChecker);
+                return new InstalledRepository();
             }
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
-        $loader = new InstalledRepositoryLoader($requirementChecker);
 
-        return $loader->loadFile($this->phpcqPath . '/installed.json');
+        return (new InstalledRepositoryLoader())->loadFile($this->phpcqPath . '/installed.json');
     }
 }
