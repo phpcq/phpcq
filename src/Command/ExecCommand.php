@@ -26,7 +26,7 @@ final class ExecCommand extends AbstractCommand
      */
     public static function prepare(array $argv): array
     {
-        if (false !== array_search('--', $argv)) {
+        if (false !== array_search('--', $argv, true)) {
             return $argv;
         }
         $argPos = array_search('exec', $argv);
@@ -52,6 +52,12 @@ final class ExecCommand extends AbstractCommand
         $this->setName('exec')->setDescription('Execute a tool with the passed arguments');
 
         $this->addArgument(
+            'plugin',
+            InputArgument::REQUIRED,
+            'The plugin which provides the tool'
+        );
+
+        $this->addArgument(
             'tool',
             InputArgument::REQUIRED,
             'The tool to be run'
@@ -68,10 +74,12 @@ final class ExecCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
+        // FIXME: Introduce own interface and rewrite the command
+
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
             $this->phpcqPath,
-            $this->getInstalledRepository(true),
+            $this->getInstalledRepository(true)->getPlugin($this->input->getArgument('plugin')),
             ...$this->findPhpCli()
         );
 
@@ -82,6 +90,7 @@ final class ExecCommand extends AbstractCommand
         $toolArguments = $this->input->getArgument('args');
         $task = $taskFactory
             ->buildRunPhar($toolName, $toolArguments)
+            ->forceSingleProcess()
             ->withWorkingDirectory(getcwd())
             ->build();
 
