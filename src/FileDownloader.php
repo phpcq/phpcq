@@ -8,11 +8,14 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Phpcq\Exception\InvalidHashException;
 use Phpcq\Exception\RuntimeException;
-use Phpcq\Repository\ToolHash;
+use Phpcq\RepositoryDefinition\AbstractHash;
 
+use function dirname;
+use function file_exists;
 use function file_get_contents;
 use function file_put_contents;
 use function is_file;
+use function mkdir;
 use function strpos;
 
 /**
@@ -53,6 +56,11 @@ class FileDownloader
         string $baseDir = '',
         bool $force = false
     ): void {
+        $directory = dirname($destinationFile);
+        if (!file_exists($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
         file_put_contents($destinationFile, $this->downloadFile($url, $baseDir, $force));
     }
 
@@ -170,10 +178,10 @@ class FileDownloader
 
         /** @psalm-var array<ToolHash::SHA_1|ToolHash::SHA_256|ToolHash::SHA_384|ToolHash::SHA_512, string> $hashMap */
         static $hashMap = [
-            ToolHash::SHA_1   => 'sha1',
-            ToolHash::SHA_256 => 'sha256',
-            ToolHash::SHA_384 => 'sha384',
-            ToolHash::SHA_512 => 'sha512',
+            AbstractHash::SHA_1   => 'sha1',
+            AbstractHash::SHA_256 => 'sha256',
+            AbstractHash::SHA_384 => 'sha384',
+            AbstractHash::SHA_512 => 'sha512',
         ];
 
         if (!isset($hashMap[$hash['type']])) {
