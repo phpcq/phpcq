@@ -13,27 +13,27 @@ phpcq:
     psalm:
       version: ^1.0
       signed: false
-#    composer-require-checker:
-#      version: ^1.0
-#      signed: false
-#    phpmd:
-#      version: ^1.0
-#      signed: false
-#    phpcpd:
-#      version: ^1.0
-#      signed: false
-#    phploc:
-#      version: ^1.0
-#      signed: false
-#    phpcs:
-#      version: ^1.0
-#      signed: false
-#    phpcbf:
-#      version: ^1.0
-#      signed: false
-#    composer-normalize:
-#      version: ^1.0
-#      signed: false
+    composer-require-checker:
+      version: ^1.0
+      signed: false
+    phpmd:
+      version: ^1.0
+      signed: false
+    phpcpd:
+      version: ^1.0
+      signed: false
+    phploc:
+      version: ^1.0
+      signed: false
+    phpcs:
+      version: ^1.0
+      signed: false
+    phpcbf:
+      version: ^1.0
+      signed: false
+    composer-normalize:
+      version: ^1.0
+      signed: false
   trusted-keys:
     # sb@sebastian-bergmann.de
     - 4AA394086372C20A
