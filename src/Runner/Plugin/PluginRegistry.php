@@ -17,13 +17,13 @@ final class PluginRegistry implements IteratorAggregate
     /** @var array<string, PluginInterface> */
     private $plugins = [];
 
-    public static function buildFromInstalledRepository(InstalledRepository $repository): self
+    public static function buildFromInstalledRepository(InstalledRepository $repository, string $phpcqPath): self
     {
         $instance = new self();
 
         foreach ($repository->iteratePlugins() as $plugin) {
             $pluginVersion = $plugin->getPluginVersion();
-            $instance->loadPluginFile($pluginVersion->getFilePath());
+            $instance->loadPluginFile($phpcqPath . '/' . $pluginVersion->getFilePath());
         }
 
         return $instance;

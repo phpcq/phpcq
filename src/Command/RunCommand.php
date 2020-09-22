@@ -143,7 +143,7 @@ final class RunCommand extends AbstractCommand
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
-        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed, $this->phpcqPath);
         $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));

@@ -149,13 +149,13 @@ final class UpdateExecutor
     private function installPluginVersion(PluginVersionInterface $plugin, bool $requireSigned): InstalledPlugin
     {
         assert($plugin instanceof PhpFilePluginVersion);
-        $pharName = sprintf('%1$s/plugin.php', $plugin->getName());
-        $pharPath = $this->installedPluginPath . '/' . $pharName;
+        $bootstrapFile = sprintf('%1$s/plugin.php', $plugin->getName());
+        $bootstrapPath = $this->installedPluginPath . '/' . $bootstrapFile;
         $this->output->writeln('Downloading ' . $plugin->getFilePath(), OutputInterface::VERBOSITY_VERY_VERBOSE);
 
-        $this->downloader->downloadFileTo($plugin->getFilePath(), $pharPath);
-        $this->validateHash($pharPath, $plugin->getHash());
-        $signatureName = $this->verifyPluginSignature($pharPath, $plugin, $requireSigned);
+        $this->downloader->downloadFileTo($plugin->getFilePath(), $bootstrapPath);
+        $this->validateHash($bootstrapPath, $plugin->getHash());
+        $signatureName = $this->verifyPluginSignature($bootstrapPath, $plugin, $requireSigned);
 
         return new InstalledPlugin(
             new PhpFilePluginVersion(
@@ -163,7 +163,7 @@ final class UpdateExecutor
                 $plugin->getVersion(),
                 $plugin->getApiVersion(),
                 $plugin->getRequirements(),
-                $pharPath,
+                $bootstrapFile,
                 $signatureName,
                 $plugin->getHash()
             )
@@ -281,7 +281,7 @@ final class UpdateExecutor
             new ToolVersion(
                 $tool->getName(),
                 $tool->getVersion(),
-                $pharPath,
+                $pharName,
                 clone $tool->getRequirements(),
                 ToolHash::createForFile($pharPath),
                 $signatureName
