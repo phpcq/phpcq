@@ -130,13 +130,7 @@ final class RunCommand extends AbstractCommand
         $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
         $fileSystem->mkdir($tempDirectory);
 
-        /** @psalm-suppress PossiblyInvalidArgument */
-        $taskFactory = new TaskFactory(
-            $this->phpcqPath,
-            $installed = $this->getInstalledRepository(true),
-            ...$this->findPhpCli()
-        );
-
+        $installed = $this->getInstalledRepository(true);
         $chain = $this->input->getArgument('chain');
         assert(is_string($chain));
 
@@ -145,8 +139,7 @@ final class RunCommand extends AbstractCommand
             throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
         }
 
-        $environment = new Environment($projectConfig, $taskFactory, $tempDirectory);
-        $outputPath = $environment->getProjectConfiguration()->getArtifactOutputPath();
+        $outputPath = $projectConfig->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
@@ -154,9 +147,27 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
+            $environment = new Environment(
+                $projectConfig,
+                new TaskFactory(
+                    $this->phpcqPath,
+                    $installed->getPlugin($toolName),
+                    ...$this->findPhpCli()
+                ),
+                $tempDirectory
+            );
             $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
         } else {
             foreach (array_keys($chains[$chain]) as $toolName) {
+                $environment = new Environment(
+                    $projectConfig,
+                    new TaskFactory(
+                        $this->phpcqPath,
+                        $installed->getPlugin($toolName),
+                        ...$this->findPhpCli()
+                    ),
+                    $tempDirectory
+                );
                 $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
             }
         }

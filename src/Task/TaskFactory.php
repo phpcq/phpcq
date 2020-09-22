@@ -6,14 +6,14 @@ namespace Phpcq\Task;
 
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
-use Phpcq\Runner\Repository\InstalledRepository;
+use Phpcq\Runner\Repository\InstalledPlugin;
 
 class TaskFactory implements TaskFactoryInterface
 {
     /**
      * The installed repository.
      *
-     * @var InstalledRepository
+     * @var InstalledPlugin
      */
     private $installed;
 
@@ -35,14 +35,14 @@ class TaskFactory implements TaskFactoryInterface
     /**
      * Create a new instance.
      *
-     * @param string              $phpcqPath
-     * @param InstalledRepository $installed
-     * @param string              $phpCliBinary
-     * @param string[]            $phpArguments
+     * @param string          $phpcqPath
+     * @param InstalledPlugin $installed
+     * @param string          $phpCliBinary
+     * @param string[]        $phpArguments
      */
     public function __construct(
         string $phpcqPath,
-        InstalledRepository $installed,
+        InstalledPlugin $installed,
         string $phpCliBinary,
         array $phpArguments
     ) {
@@ -73,7 +73,7 @@ class TaskFactory implements TaskFactoryInterface
         return $this->buildRunProcess($toolName, array_merge(
             [$this->phpCliBinary],
             $this->phpArguments,
-            [$this->phpcqPath . '/' . $this->installed->getTool($toolName, '*')->getPharUrl()],
+            [$this->phpcqPath . '/' . $this->installed->getTool($toolName)->getPharUrl()],
             $arguments
         ));
     }

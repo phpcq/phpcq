@@ -163,7 +163,7 @@ final class UpdateExecutor
                 $plugin->getVersion(),
                 $plugin->getApiVersion(),
                 $plugin->getRequirements(),
-                $pharName,
+                $pharPath,
                 $signatureName,
                 $plugin->getHash()
             )
@@ -281,7 +281,7 @@ final class UpdateExecutor
             new ToolVersion(
                 $tool->getName(),
                 $tool->getVersion(),
-                $pharName,
+                $pharPath,
                 clone $tool->getRequirements(),
                 ToolHash::createForFile($pharPath),
                 $signatureName
