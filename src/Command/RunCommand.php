@@ -104,7 +104,7 @@ final class RunCommand extends AbstractCommand
                 ToolReportInterface::SEVERITY_MAJOR,
                 ToolReportInterface::SEVERITY_FATAL,
             ]) . '"',
-            ToolReportInterface::SEVERITY_INFO
+            ToolReportInterface::SEVERITY_MARGINAL
         );
 
         $numCores = $this->getCores();
