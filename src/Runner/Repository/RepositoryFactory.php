@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Repository;
+namespace Phpcq\Runner\Repository;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 
@@ -37,7 +37,7 @@ class RepositoryFactory
                 case 'remote':
                     $url = ($repository['url'] ?? null);
                     assert(is_string($url));
-                    $pool->addRepository(new RemoteRepository($url, $this->repositoryLoader));
+                    $pool->addRepository($this->repositoryLoader->loadFile($url));
                     break;
                 default:
                     throw new InvalidConfigurationException(

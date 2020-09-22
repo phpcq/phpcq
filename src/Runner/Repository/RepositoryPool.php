@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Repository;
+namespace Phpcq\Runner\Repository;
 
 use IteratorAggregate;
-use Phpcq\Exception\ToolNotFoundException;
+use Phpcq\Exception\PluginVersionNotFoundException;
+use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 
 final class RepositoryPool implements IteratorAggregate
 {
@@ -19,25 +20,27 @@ final class RepositoryPool implements IteratorAggregate
         $this->repositories[] = $repository;
     }
 
-    public function hasTool(string $name, string $versionConstraint): bool
+    public function hasPlugin(string $name, string $versionConstraint): bool
     {
+        /** @var RepositoryInterface $repository */
         foreach ($this as $repository) {
-            if ($repository->hasTool($name, $versionConstraint)) {
+            if ($repository->hasPluginVersion($name, $versionConstraint)) {
                 return true;
             }
         }
         return false;
     }
 
-    public function getTool(string $name, string $versionConstraint): ToolInformationInterface
+    public function getPluginVersion(string $name, string $versionConstraint): PluginVersionInterface
     {
+        /** @var RepositoryInterface $repository */
         foreach ($this as $repository) {
-            if ($repository->hasTool($name, $versionConstraint)) {
-                return $repository->getTool($name, $versionConstraint);
+            if ($repository->hasPluginVersion($name, $versionConstraint)) {
+                return $repository->getPluginVersion($name, $versionConstraint);
             }
         }
 
-        throw new ToolNotFoundException($name, $versionConstraint);
+        throw new PluginVersionNotFoundException($name, $versionConstraint);
     }
 
     /**
