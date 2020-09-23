@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Task;
 
-use Phpcq\Runner\Repository\RepositoryInterface;
-use Phpcq\Repository\ToolInformationInterface;
+use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ final class TaskFactoryTest extends TestCase
     {
         $factory = new TaskFactory(
             '/phpcq/path',
-            $this->getMockForAbstractClass(RepositoryInterface::class),
+            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), []),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -35,17 +36,15 @@ final class TaskFactoryTest extends TestCase
     {
         $factory = new TaskFactory(
             '/phpcq/path',
-            $installed = $this->getMockForAbstractClass(RepositoryInterface::class),
+            new InstalledPlugin(
+                $this->getMockForAbstractClass(PluginVersionInterface::class),
+                [
+                    'phar-name' => $tool = $this->getMockForAbstractClass(ToolVersionInterface::class)
+                ]
+            ),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
-
-        $installed
-            ->expects(self::atLeastOnce())
-            ->method('getPluginVersion')
-            ->with('phar-name', '*')->willReturn(
-                $tool = $this->getMockForAbstractClass(ToolInformationInterface::class)
-            );
 
         $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('phar-file-name.phar');
 
@@ -64,7 +63,7 @@ final class TaskFactoryTest extends TestCase
     {
         $factory = new TaskFactory(
             '/phpcq/path',
-            $this->getMockForAbstractClass(RepositoryInterface::class),
+            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class)),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
