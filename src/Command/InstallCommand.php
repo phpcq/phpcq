@@ -44,6 +44,6 @@ final class InstallCommand extends AbstractUpdateCommand
 
         $calculator = new UpdateCalculator($installedRepository, $resolver, $this->getWrappedOutput());
 
-        return $calculator->calculate($this->config->getTools(), $force);
+        return $calculator->calculate($this->config->getPlugins(), $force);
     }
 }

@@ -45,7 +45,7 @@ final class UpdateCommand extends AbstractUpdateCommand
             $this->getWrappedOutput()
         );
 
-        return $calculator->calculate($this->config->getTools(), $force);
+        return $calculator->calculate($this->config->getPlugins(), $force);
     }
 
     /** @psalm-param list<TPluginTask> $tasks */
