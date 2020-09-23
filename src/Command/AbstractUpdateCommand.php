@@ -113,7 +113,16 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         $changes = array_filter(
             $tasks,
             static function ($task) {
-                return $task['type'] !== 'keep';
+                if ($task['type'] !== 'keep' ) {
+                    return true;
+                }
+                foreach ($task['tasks'] as $subTask) {
+                    if ($subTask['type'] !== 'keep') {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         );
         if (count($changes) === 0) {
