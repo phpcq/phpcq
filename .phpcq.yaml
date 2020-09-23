@@ -5,7 +5,8 @@ phpcq:
     - src
     - tests
   artifact: .phpcq/build
-  tools:
+
+  plugins:
     phpunit:
       version: ^1.0
       signed: false
@@ -47,58 +48,71 @@ phpcq:
 
   chains:
     fix:
-      composer-normalize:
-        dry_run: false
-      phpcbf: ~
+      - composer-normalize
+      - phpcbf
     verify: &verify
-      composer-require-checker: ~
-      composer-normalize: ~
+      - composer-require-checker
+      - composer-normalize
     analyze: &analyze
-      phploc: ~
-      phpcpd: ~
-      phpmd: ~
-      phpcs: ~
-      psalm: ~
-      phpunit: ~
+      - phploc
+      - phpcpd
+      - phpmd
+      - phpcs
+      - psalm
+      - phpunit
     default:
       <<: *verify
       <<: *analyze
 
-tool-config:
+tasks:
   phpunit:
+    plugin: phpunit
 
   phpcpd:
-  #  exclude:
-  #  names:
-    names_exclude:
-      # These are duplicate code but entirely unrelated to each other.
-      - DiffBuilderTest.php
-      - AttachmentBuilderTest.php
-      - OptionsBuilderTest.php
-      - PluginConfigurationBuilderTest.php
-  #  regexps_exclude:
-  #  log:
-  #  min_lines:
-  #  min_tokens:
-  #  fuzzy: true
-  #  custom_flags:
+    plugin: phpcpd
+    config:
+    #  exclude:
+    #  names:
+      names_exclude:
+        # These are duplicate code but entirely unrelated to each other.
+        - DiffBuilderTest.php
+        - AttachmentBuilderTest.php
+        - OptionsBuilderTest.php
+        - PluginConfigurationBuilderTest.php
+    #  regexps_exclude:
+    #  log:
+    #  min_lines:
+    #  min_tokens:
+    #  fuzzy: true
+    #  custom_flags:
 
   phploc:
+    plugin: phploc
 
   phpmd:
-    ruleset:
-      - codesize
-      - controversial
-      - naming
-      - unusedcode
+    plugin: phpmd
+    config:
+      ruleset:
+        - codesize
+        - controversial
+        - naming
+        - unusedcode
 
   psalm:
+    plugin: psalm
 
   composer-require-checker:
-    config_file: '.composer-require-checker.json'
+    plugin: composer-require-checker
+    config:
+      config_file: '.composer-require-checker.json'
 
-  phpcs: &phpcs
-    standard: PSR12
+  phpcs:
+    plugin: phpcs
+    config: &phpcs-config
+      standard: PSR12
 
   phpcbf:
-    <<: *phpcs
+    plugin: phpcs
+    config:
+      <<: *phpcs-config
+      fix: true
