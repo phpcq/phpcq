@@ -25,6 +25,6 @@ class AbstractCommandTest extends TestCase
         $this->assertTrue($definition->hasOption('tools'));
         $option = $definition->getOption('tools');
         $this->assertTrue($option->isValueRequired());
-        $this->assertSame($option->getDefault(), getcwd() . '/vendor/phpcq');
+        $this->assertSame($option->getDefault(), getcwd() . '/.phpcq/plugins');
     }
 }
