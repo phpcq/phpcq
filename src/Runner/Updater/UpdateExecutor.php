@@ -194,9 +194,7 @@ final class UpdateExecutor
     private function deleteFile(string $path): void
     {
         $this->output->writeln('Removing file ' . $path, OutputInterface::VERBOSITY_VERBOSE);
-        if (!unlink($path)) {
-            throw new RuntimeException('Could not remove file: ' . $path);
-        }
+        $this->filesystem->remove($path);
     }
 
     private function validateHash(string $pathToPhar, ?AbstractHash $hash): void
