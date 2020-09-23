@@ -65,9 +65,6 @@ phpcq:
       <<: *analyze
 
 tasks:
-  phpunit:
-    plugin: phpunit
-
   phpcpd:
     plugin: phpcpd
     config:
@@ -86,9 +83,6 @@ tasks:
     #  fuzzy: true
     #  custom_flags:
 
-  phploc:
-    plugin: phploc
-
   phpmd:
     plugin: phpmd
     config:
@@ -97,9 +91,6 @@ tasks:
         - controversial
         - naming
         - unusedcode
-
-  psalm:
-    plugin: psalm
 
   composer-require-checker:
     plugin: composer-require-checker
