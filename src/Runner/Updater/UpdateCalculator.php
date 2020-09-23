@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater;
 
 use Composer\Semver\Constraint\Constraint;
+use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
@@ -15,21 +16,11 @@ use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\Repository;
 use Phpcq\Runner\Repository\RepositoryInterface;
-use Phpcq\Runner\Repository\RepositoryPool;
+use Phpcq\Runner\Resolver\ResolverInterface;
 
+use function sprintf;
 use function version_compare;
 
-/**
- * @psalm-import-type TTool from \Phpcq\ConfigLoader
- *
- * @psalm-type TUpdateTask = array{
- *    type: 'install'|'keep'|'remove'|'upgrade',
- *    message: string,
- *    tool: ToolInformationInterface,
- *    old?: ToolInformationInterface,
- *    signed?: boolean,
- * }
- */
 final class UpdateCalculator
 {
     /**
@@ -38,9 +29,9 @@ final class UpdateCalculator
     private $installed;
 
     /**
-     * @var RepositoryPool
+     * @var ResolverInterface
      */
-    private $pool;
+    private $resolver;
 
     /**
      * @var OutputInterface
@@ -52,11 +43,11 @@ final class UpdateCalculator
      */
     private $versionParser;
 
-    public function __construct(InstalledRepository $installed, RepositoryPool $pool, OutputInterface $output)
+    public function __construct(InstalledRepository $installed, ResolverInterface $resolver, OutputInterface $output)
     {
         $this->installed     = $installed;
-        $this->pool          = $pool;
         $this->output        = $output;
+        $this->resolver      = $resolver;
         $this->versionParser = new VersionParser();
     }
 
@@ -68,9 +59,7 @@ final class UpdateCalculator
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
-        $desired = $this->calculateDesiredPlugins($plugins);
-
-        return $this->calculateTasksToExecute($desired, $plugins, $forceReinstall);
+        return $this->calculateTasksToExecute($this->calculateDesiredPlugins($plugins), $plugins, $forceReinstall);
     }
 
     /**
@@ -80,7 +69,7 @@ final class UpdateCalculator
     {
         $desired = new Repository();
         foreach ($plugins as $pluginName => $plugin) {
-            $desired->addPluginVersion($pluginVersion = $this->pool->getPluginVersion($pluginName, $plugin['version']));
+            $desired->addPluginVersion($pluginVersion = $this->resolver->resolvePluginVersion($pluginName, $plugin['version']));
             $this->output->writeln(
                 'Want ' . $pluginVersion->getName() . ' in version ' . $pluginVersion->getVersion(),
                 OutputInterface::VERBOSITY_DEBUG
@@ -98,7 +87,7 @@ final class UpdateCalculator
      * @return array[]
      * @psalm-return list<TUpdateTask>
      */
-    public function calculateTasksToExecute(
+    protected function calculateTasksToExecute(
         RepositoryInterface $desired,
         array $plugins,
         bool $forceReinstall = false
@@ -192,9 +181,7 @@ final class UpdateCalculator
         }
 
         $installed = $this->installed->getPlugin($desired->getName());
-        $constraints = $this->versionParser->parseConstraints($desired->getVersion());
-
-        if ($constraints->matches(new Constraint('=', $installed->getPluginVersion()->getVersion()))) {
+        if (Semver::satisfies($installed->getPluginVersion()->getVersion(), $desired->getVersion())) {
             return false;
         }
 
@@ -225,7 +212,7 @@ final class UpdateCalculator
 
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             $constraint = $config[$toolRequirement->getName()]['version'] ?? $toolRequirement->getConstraint();
-            $tool       = $this->pool->getToolVersion($toolRequirement->getName(), $constraint);
+            $tool       = $this->resolver->resolveToolVersion($pluginName, $toolRequirement->getName(), $constraint);
 
             if (!$plugin || !$plugin->hasTool($toolRequirement->getName())) {
                 $message = sprintf('Will install tool %s in version %s', $tool->getName(), $tool->getVersion());

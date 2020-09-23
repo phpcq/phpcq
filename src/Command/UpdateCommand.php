@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
+use Phpcq\Runner\Resolver\RepositoryPoolResolver;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -34,10 +35,9 @@ final class UpdateCommand extends AbstractUpdateCommand
 
     protected function calculateTasks(): array
     {
-        $factory = new RepositoryFactory($this->repositoryLoader);
-        // Download repositories
+        $factory    = new RepositoryFactory($this->repositoryLoader);
         $pool       = $factory->buildPool($this->config->getRepositories());
-        $calculator = new UpdateCalculator($this->getInstalledRepository(false), $pool, $this->getWrappedOutput());
+        $calculator = new UpdateCalculator($this->getInstalledRepository(false), new RepositoryPoolResolver($pool), $this->getWrappedOutput());
         $force      = $this->lockFileRepository === null || $this->input->getOption('force-reinstall');
 
         return $calculator->calculate($this->config->getTools(), $force);

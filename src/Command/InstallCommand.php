@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
-use Phpcq\Runner\Repository\RepositoryPool;
+use Phpcq\Runner\Resolver\InstalledRepositoryResolver;
+use Phpcq\Runner\Resolver\RepositoryPoolResolver;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -27,21 +28,21 @@ final class InstallCommand extends AbstractUpdateCommand
     {
         $installedRepository = $this->getInstalledRepository(false);
 
-// FIXME: Reimplement lock file installation
-//        if (null !== $this->lockFileRepository) {
-//            $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
-//
-//            $calculator = new UpdateCalculator($installedRepository, new RepositoryPool(), $this->getWrappedOutput());
-//
-//            return $calculator->calculateTasksToExecute($this->lockFileRepository, $this->config->getTools());
-//        }
+        if (null !== $this->lockFileRepository) {
+            $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
 
-        $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
+            $resolver = new InstalledRepositoryResolver($this->lockFileRepository);
+            $force    = false;
+        } else {
+            $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
 
-        // Download repositories
-        $repositories = $this->config->getRepositories();
-        $pool         = (new RepositoryFactory($this->repositoryLoader))->buildPool($repositories);
-        $calculator   = new UpdateCalculator($installedRepository, $pool, $this->getWrappedOutput());
+            $repositories = $this->config->getRepositories();
+            $pool         = (new RepositoryFactory($this->repositoryLoader))->buildPool($repositories);
+            $resolver     = new RepositoryPoolResolver($pool);
+            $force        = true;
+        }
+
+        $calculator = new UpdateCalculator($installedRepository, $resolver, $this->getWrappedOutput());
 
         return $calculator->calculate($this->config->getTools(), true);
     }
