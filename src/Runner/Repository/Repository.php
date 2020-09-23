@@ -87,7 +87,9 @@ class Repository implements RepositoryInterface
     public function iteratePluginVersions(): Generator
     {
         foreach ($this->repository->iteratePlugins() as $plugin) {
-            yield from $plugin;
+            foreach ($plugin as $pluginVersion) {
+                yield $pluginVersion;
+            }
         }
     }
 
