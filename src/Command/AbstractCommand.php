@@ -22,9 +22,6 @@ use function is_dir;
 use function mkdir;
 use function sprintf;
 
-/**
- * @psalm-import-type TConfig from \Phpcq\ConfigLoader
- */
 abstract class AbstractCommand extends Command
 {
     /**
@@ -116,7 +113,7 @@ abstract class AbstractCommand extends Command
             return;
         }
 
-        if (!mkdir($path, 0777, true)) {
+        if (!mkdir($path, 0777, true) && !is_dir($path)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
         }
     }

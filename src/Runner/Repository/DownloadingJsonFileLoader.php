@@ -9,6 +9,13 @@ use Phpcq\RepositoryDefinition\JsonFileLoaderInterface;
 
 use function dirname;
 
+/**
+ * @psalm-type TRepositoryCheckSum = array{
+ *   type: string,
+ *   value: string,
+ * }
+ * @psalm-import-type TJsonRepository from \Phpcq\Runner\Repository\JsonRepositoryLoader
+ */
 final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
 {
     /** @var FileDownloader */
@@ -23,6 +30,11 @@ final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
         $this->force      = $force;
     }
 
+    /**
+     * @psalm-param TRepositoryCheckSum|null $checksum
+     *
+     * @psalm-return TJsonRepository
+     */
     public function load(string $file, ?array $checksum = null): array
     {
         return $this->downloader->downloadJsonFile($file, dirname($file), $this->force, $checksum);

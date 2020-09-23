@@ -12,8 +12,6 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
 /**
  * Describes a repository.
- *
- * @extends Traversable<ToolInformationInterface>
  */
 interface RepositoryInterface
 {

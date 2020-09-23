@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Task;
 
+use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
@@ -70,10 +71,15 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunPhar(string $toolName, array $arguments = []): TaskBuilderInterface
     {
+        $pharUrl = $this->installed->getTool($toolName)->getPharUrl();
+        if (null === $pharUrl) {
+            throw new RuntimeException('Tool ' . $toolName . ' does not have a phar');
+        }
+
         return $this->buildRunProcess($toolName, array_merge(
             [$this->phpCliBinary],
             $this->phpArguments,
-            [$this->phpcqPath . '/' . $this->installed->getTool($toolName)->getPharUrl()],
+            [$this->phpcqPath . '/' . $pharUrl],
             $arguments
         ));
     }

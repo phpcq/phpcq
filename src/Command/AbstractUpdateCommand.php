@@ -27,7 +27,7 @@ use function array_filter;
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
  *
- * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ * @psalm-import-type TUpdateTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 abstract class AbstractUpdateCommand extends AbstractCommand
 {

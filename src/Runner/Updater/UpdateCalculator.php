@@ -9,7 +9,6 @@ use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
-use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
@@ -21,6 +20,79 @@ use Phpcq\Runner\Resolver\ResolverInterface;
 use function sprintf;
 use function version_compare;
 
+/**
+ * @psalm-import-type TTool from \Phpcq\ConfigLoader
+ *
+ * @psalm-type TPlugin = array{
+ *    version: string,
+ *    requirements: array<string,array{version: string, signed?: bool}>,
+ *    signed?: bool
+ * }
+ *
+ * @psalm-type TInstallToolTask = array{
+ *    type: 'install',
+ *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    message: string,
+ *    old: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    signed: bool,
+ * }
+ *
+ * @psalm-type TUpgradeToolTask = array{
+ *    type: 'upgrade',
+ *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    message: string,
+ *    old: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    signed: bool,
+ * }
+ *
+ * @psalm-type TKeepToolTask = array{
+ *    type: 'keep',
+ *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    message: string,
+ * }
+ *
+ * @psalm-type TRemoveToolTask = array{
+ *    type: 'remove',
+ *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    message: string,
+ * }
+ *
+ * @psalm-type TToolTask = TInstallToolTask|TUpgradeToolTask|TKeepToolTask|TRemoveToolTask
+ *
+ * @psalm-type TInstallPluginTask = array{
+ *    type: 'install',
+ *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
+ *    message: string,
+ *    signed: boolean,
+ *    tasks: list<TToolTask>
+ * }
+ *
+ * @psalm-type TUpgradePluginTask = array{
+ *    type: 'upgrade',
+ *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
+ *    old: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
+ *    message: string,
+ *    signed: boolean,
+ *    tasks: list<TToolTask>
+ * }
+ *
+ * @psalm-type TKeepPluginTask = array{
+ *    type: 'keep',
+ *    plugin: \Phpcq\Runner\Repository\InstalledPlugin,
+ *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
+ *    message: string,
+ *    tasks: list<TToolTask>
+ * }
+ *
+ * @psalm-type TRemovePluginTask = array{
+ *    type: 'remove',
+ *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
+ *    plugin: \Phpcq\Runner\Repository\InstalledPlugin,
+ *    message: string,
+ * }
+ *
+ * @psalm-type TPluginTask = TInstallPluginTask|TUpgradePluginTask|TKeepPluginTask|TRemovePluginTask
+ */
 final class UpdateCalculator
 {
     /**
@@ -54,8 +126,8 @@ final class UpdateCalculator
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
      *
-     * @psalm-param array<string,TTool> $plugins
-     * @psalm-return list<TUpdateTask>
+     * @psalm-param array<string,TPlugin> $plugins
+     * @psalm-return list<TPluginTask>
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
@@ -63,7 +135,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TTool> $plugins
+     * @psalm-param array<string,TPlugin> $plugins
      */
     private function calculateDesiredPlugins(array $plugins): RepositoryInterface
     {
@@ -83,10 +155,10 @@ final class UpdateCalculator
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
      *
-     * @psalm-param array<string,TTool> $tools
+     * @psalm-param array<string,TPlugin> $plugins
      *
      * @return array[]
-     * @psalm-return list<TUpdateTask>
+     * @psalm-return list<TPluginTask>
      */
     protected function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -106,7 +178,7 @@ final class UpdateCalculator
                     'type'    => 'install',
                     'version' => $pluginVersion,
                     'message' => $message,
-                    'signed'  => $plugins[$pluginVersion->getName()]['signed'],
+                    'signed'  => $plugins[$pluginVersion->getName()]['signed'] ?? true,
                     'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
                 ];
                 continue;
@@ -121,7 +193,7 @@ final class UpdateCalculator
                     'version' => $pluginVersion,
                     'old'     => $installed->getPluginVersion(),
                     'message' => $message,
-                    'signed'  => $plugins[$pluginVersion->getName()]['signed'],
+                    'signed'  => $plugins[$pluginVersion->getName()]['signed'] ?? true,
                     'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
                 ];
                 continue;
@@ -169,13 +241,12 @@ final class UpdateCalculator
                     . ' to version ' . $plugin->getVersion();
 
             case -1:
-            default:
                 return 'Will upgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $plugin->getVersion();
         }
     }
 
-    private function isPluginUpgradeRequired(PhpFilePluginVersionInterface $desired): bool
+    private function isPluginUpgradeRequired(PluginVersionInterface $desired): bool
     {
         if (! $this->installed->hasPlugin($desired->getName())) {
             return true;
@@ -204,7 +275,13 @@ final class UpdateCalculator
         return !$desired->equals($installed);
     }
 
-    /** @SuppressWarnings(PHPMD.CyclomaticComplexity) */
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @psalm-param array<string,TPlugin> $plugins
+     *
+     * @psalm-return list<TToolTask>
+     */
     private function calculateToolTasks(PluginVersionInterface $desired, array $plugins, bool $forceReinstall): array
     {
         $config     = $plugins[$desired->getName()] ?? [];
@@ -213,7 +290,8 @@ final class UpdateCalculator
         $tasks      = [];
 
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
-            $constraint = $config[$toolRequirement->getName()]['version'] ?? $toolRequirement->getConstraint();
+            // FIXME: Check if configured requirement is within the tool requirement
+            $constraint = $config['requirements'][$toolRequirement->getName()]['version'] ?? $toolRequirement->getConstraint();
             $tool       = $this->resolver->resolveToolVersion($pluginName, $toolRequirement->getName(), $constraint);
 
             if (!$plugin || !$plugin->hasTool($toolRequirement->getName())) {
@@ -223,9 +301,8 @@ final class UpdateCalculator
                 $tasks[] = [
                     'type'    => 'install',
                     'tool'    => $tool,
-                    'version' => $tool,
                     'message' => $message,
-                    'signed'  => $config['signed'] ?? true,
+                    'signed'  => $config['requirements'][$tool->getName()]['signed'] ?? true,
                 ];
                 continue;
             }
@@ -240,7 +317,7 @@ final class UpdateCalculator
                     'tool'    => $tool,
                     'message' => $message,
                     'old'     => $installed,
-                    'signed'  => $config['signed'] ?? true,
+                    'signed'  => $config['requirements'][$tool->getName()]['signed'] ?? true,
                 ];
                 continue;
             }
@@ -252,7 +329,7 @@ final class UpdateCalculator
             ];
         }
 
-        if ($this->installed->hasPlugin($desired->getName())) {
+        if ($plugin) {
             foreach ($plugin->iterateTools() as $tool) {
                 if (! $desired->getRequirements()->getToolRequirements()->has($tool->getName())) {
                     $message = 'Will remove tool ' . $tool->getName() . ' version ' . $tool->getVersion();
@@ -295,7 +372,6 @@ final class UpdateCalculator
                     . ' to version ' . $tool->getVersion();
 
             case -1:
-            default:
                 return 'Will upgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $tool->getVersion();
         }

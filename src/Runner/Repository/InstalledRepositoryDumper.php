@@ -143,7 +143,6 @@ final class InstalledRepositoryDumper
             'api-version'  => $version->getApiVersion(),
             'version'      => $version->getVersion(),
             'type'         => 'php-file',
-            'url'          => $version->getFilePath(),
             'requirements' => $this->encodePluginRequirements($version->getRequirements()),
             'checksum'     => $this->encodeHash($version->getHash()),
             'tools'        => $this->dumpTools($plugin),

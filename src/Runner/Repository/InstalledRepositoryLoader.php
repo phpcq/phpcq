@@ -15,10 +15,56 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersion;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
 
+/**
+ * @psalm-type TRepositoryCheckSum = array{
+ *   type: string,
+ *   value: string,
+ * }
+ * @psalm-type TRepositoryIncludeList = list<array{
+ *   url: string,
+ *   checksum: TRepositoryCheckSum
+ * }>
+ * @psalm-type TRepositoryToolRequirements = array{
+ *   php?: array<string, string>,
+ *   composer?: array<string, string>,
+ * }
+ * @psalm-type TInstalledToolVersion = array{
+ *   version: string,
+ *   url: string,
+ *   requirements: TRepositoryToolRequirements,
+ *   checksum?: TRepositoryCheckSum,
+ *   signature?: string,
+ * }
+ * @psalm-type TRepositoryPluginRequirements = array{
+ *   php?: array<string, string>,
+ *   tool?: array<string, string>,
+ *   plugin?: array<string, string>,
+ *   composer?: array<string, string>,
+ * }
+ * @psalm-type TInstalledPluginVersion = array{
+ *   type: 'php-file'|'php-inline',
+ *   version: string,
+ *   api-version: string,
+ *   requirements?: TRepositoryPluginRequirements,
+ *   url: string,
+ *   code?: string,
+ *   checksum?: TRepositoryCheckSum,
+ *   signature?: string,
+ *   tools: array<string,TInstalledToolVersion>
+ * }
+ * @psalm-type TRepositoryInclude = array{
+ *  url: string,
+ *  checksum: TRepositoryCheckSum
+ * }
+ * @psalm-type TInstalledRepository = array{
+ *  tools: array<string, TInstalledToolVersion>,
+ *  plugins: array<string, TInstalledPluginVersion>,
+ * }
+ */
 final class InstalledRepositoryLoader
 {
     /**
-     * @var JsonFileLoaderInterface|null
+     * @var JsonFileLoaderInterface
      */
     private $jsonFileLoader;
 
@@ -32,11 +78,13 @@ final class InstalledRepositoryLoader
 
     public function loadFile(string $filePath): InstalledRepository
     {
+        /** @psalm-var TInstalledRepository $installed */
         $installed = $this->jsonFileLoader->load($filePath);
 
         return $this->createRepository($installed);
     }
 
+    /** @psalm-param TInstalledRepository $installed */
     private function createRepository(array $installed): InstalledRepository
     {
         $repository = new InstalledRepository();
@@ -51,6 +99,7 @@ final class InstalledRepositoryLoader
         return $repository;
     }
 
+    /** @psalm-param TInstalledPluginVersion $information */
     private function createInstalledPlugin(string $name, array $information): InstalledPlugin
     {
         $version = new PhpFilePluginVersion(
@@ -71,6 +120,7 @@ final class InstalledRepositoryLoader
         return new InstalledPlugin($version, $tools);
     }
 
+    /** @psalm-param TInstalledToolVersion $information */
     private function createToolVersion(string $name, array $information): ToolVersionInterface
     {
         return new ToolVersion(

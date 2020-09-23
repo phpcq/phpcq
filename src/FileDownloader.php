@@ -19,9 +19,11 @@ use function mkdir;
 use function strpos;
 
 /**
- * @psalm-import-type TJsonRepository from \Phpcq\Repository\JsonRepositoryLoader
- * @psalm-import-type TToolHash from \Phpcq\Repository\ToolHash
- */
+ * @psalm-import-type TJsonRepository from \Phpcq\Runner\Repository\JsonRepositoryLoader
+ * @psalm-type TRepositoryCheckSum = array{
+ *   type: string,
+ *   value: string,
+ * } */
 class FileDownloader
 {
     /**
@@ -72,7 +74,7 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param ?TToolHash $hash
+     * @psalm-param ?TRepositoryCheckSum $hash
      *
      * @return string
      */
@@ -115,7 +117,7 @@ class FileDownloader
      * @param bool       $force
      * @param array|null $hash
      *
-     * @psalm-param ?TToolHash $hash
+     * @psalm-param ?TRepositoryCheckSum $hash
      *
      * @return array
      * @psalm-return TJsonRepository
@@ -166,7 +168,7 @@ class FileDownloader
      * @param string     $cacheFile The file to check
      * @param array|null $hash      he hash to validate.
      *
-     * @psalm-param ?TToolHash $hash
+     * @psalm-param ?TRepositoryCheckSum $hash
      *
      * @return bool
      */
@@ -176,7 +178,10 @@ class FileDownloader
             return false;
         }
 
-        /** @psalm-var array<ToolHash::SHA_1|ToolHash::SHA_256|ToolHash::SHA_384|ToolHash::SHA_512, string> $hashMap */
+        /**
+         * @psalm-var array<AbstractHash::SHA_1|AbstractHash::SHA_256|AbstractHash::SHA_384|AbstractHash::SHA_512,
+         * string> $hashMap
+         */
         static $hashMap = [
             AbstractHash::SHA_1   => 'sha1',
             AbstractHash::SHA_256 => 'sha256',

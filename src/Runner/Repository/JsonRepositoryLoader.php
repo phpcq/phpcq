@@ -12,6 +12,10 @@ use Phpcq\RepositoryDefinition\RepositoryLoader;
  * Load a json file.
  *
  * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-type TRepositoryCheckSum = array{
+ *   type: string,
+ *   value: string,
+ * }
  * @psalm-type THash = array{
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
@@ -20,13 +24,13 @@ use Phpcq\RepositoryDefinition\RepositoryLoader;
  *    type: 'inline',
  *    code: string,
  *    plugin-version: string,
- *    hash: ?THash
+ *    hash: ?TRepositoryCheckSum
  * }
  * @psalm-type TBootstrapFile = array{
  *    type: 'file',
  *    url: string,
  *    plugin-version: string,
- *    hash: ?THash
+ *    hash: ?TRepositoryCheckSum
  * }
  * @psalm-type TBootstrap = TBootstrapInline|TBootstrapFile
  * @psalm-type TToolConfigJson = array{
@@ -34,10 +38,10 @@ use Phpcq\RepositoryDefinition\RepositoryLoader;
  *    phar-url: string,
  *    bootstrap: string|TBootstrap,
  *    requirements: array<string,string>,
- *    hash?: THash,
+ *    hash?: TRepositoryCheckSum,
  *    signature?: string
  * }
- * @psalm-type TRepositoryInclude = array{url:string, checksum:THash|null}
+ * @psalm-type TRepositoryInclude = array{url:string, checksum:TRepositoryCheckSum|null}
  * @psalm-type TJsonRepository = array{
  *   bootstraps?: array<string, TBootstrap>,
  *   phars: array<string,TRepositoryInclude|list<TToolConfigJson>>,
@@ -69,7 +73,7 @@ class JsonRepositoryLoader
         $this->jsonFileLoader     = $jsonFileLoader;
     }
 
-    /** @psalm-param ?THash $hash */
+    /** @psalm-param ?TRepositoryCheckSum $hash */
     public function loadFile(string $filePath, ?array $hash = null): RepositoryInterface
     {
         return new Repository(

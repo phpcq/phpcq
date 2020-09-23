@@ -43,7 +43,7 @@ final class RunCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
 
-    /** @var array<class-string<string, \Phpcq\Report\Writer\AbstractReportWriter>> */
+    /** @var array<string, class-string<\Phpcq\Report\Writer\AbstractReportWriter>> */
     private const REPORT_FORMATS = [
         'tool-report' => ToolReportWriter::class,
         'file-report' => FileReportWriter::class,

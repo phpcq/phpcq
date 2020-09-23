@@ -2,15 +2,18 @@
 
 namespace Phpcq\Runner\Plugin;
 
+use Generator;
 use IteratorAggregate;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
 
+use function assert;
 use function get_class;
 
 /**
- * @psalm-import-type TInstalledRepository from \Phpcq\Repository\InstalledRepositoryLoader
+ * @psalm-import-type TInstalledRepository from \Phpcq\Runner\Repository\InstalledRepositoryLoader
  */
 final class PluginRegistry implements IteratorAggregate
 {
@@ -23,6 +26,7 @@ final class PluginRegistry implements IteratorAggregate
 
         foreach ($repository->iteratePlugins() as $plugin) {
             $pluginVersion = $plugin->getPluginVersion();
+            assert($pluginVersion instanceof PhpFilePluginVersionInterface);
             $instance->loadPluginFile($phpcqPath . '/' . $pluginVersion->getFilePath());
         }
 
@@ -59,7 +63,7 @@ final class PluginRegistry implements IteratorAggregate
     }
 
     /**
-     * @return PluginInterface[]|iterable
+     * @return PluginInterface[]|Generator|iterable
      *
      * @psalm-return Generator<string, PluginInterface, mixed, void>
      */

@@ -26,7 +26,16 @@ use function getcwd;
 use function sprintf;
 
 /**
- * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ * @psalm-import-type TInstallPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TUpgradePluginTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TKeepPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TRemovePluginTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TToolTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TInstallToolTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TUpgradeToolTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TKeepToolTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TRemoveToolTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 final class UpdateExecutor
 {
@@ -68,7 +77,7 @@ final class UpdateExecutor
         $this->filesystem          = new Filesystem();
     }
 
-    /** @psalm-param list<TUpdateTask> $plugins */
+    /** @psalm-param list<TPluginTask> $tasks */
     public function execute(array $tasks): void
     {
         $installed      = new InstalledRepository();
@@ -80,19 +89,21 @@ final class UpdateExecutor
 
             switch ($task['type']) {
                 case 'keep':
+                    /** @psalm-var TKeepPluginTask $task */
                     $plugin = new InstalledPlugin($task['plugin']->getPluginVersion());
                     $installed->addPlugin($plugin);
                     break;
                 case 'install':
-                    /** @psalm-suppress PossiblyUndefinedArrayOffset - See https://github.com/vimeo/psalm/issues/3548 */
+                    /** @psalm-var TInstallPluginTask $task */
                     $installed->addPlugin($this->installPlugin($desired, $task['signed']));
                     break;
                 case 'upgrade':
-                    /** @psalm-suppress PossiblyUndefinedArrayOffset - See https://github.com/vimeo/psalm/issues/3548 */
+                    /** @psalm-var TUpgradePluginTask $task */
                     $plugin = $this->upgradePlugin($desired, $task['old'], $task['signed']);
                     $installed->addPlugin($plugin);
                     break;
                 case 'remove':
+                    /** @psalm-var TRemovePluginTask $task */
                     $this->removePlugin($desired);
                     break;
             }
@@ -108,9 +119,7 @@ final class UpdateExecutor
         // Save installed repository.
         $dumper = new InstalledRepositoryDumper(new Filesystem());
         $dumper->dump($installed, $this->installedPluginPath . '/installed.json');
-
         $dumper->dump($lockRepository, getcwd() . '/.phpcq.lock');
-        $this->lockFileRepository = $lockRepository;
     }
 
     private function installPlugin(PluginVersionInterface $plugin, bool $requireSigned): InstalledPlugin
@@ -196,7 +205,7 @@ final class UpdateExecutor
             return;
         }
 
-        if (! $hash->equals($hash::createForFile($pathToPhar, $hash->getType()))) {
+        if (!    $hash->equals($hash::createForFile($pathToPhar, $hash->getType()))) {
             throw new RuntimeException('Invalid hash for file: ' . $pathToPhar);
         }
     }
@@ -244,24 +253,35 @@ final class UpdateExecutor
         return $signatureName;
     }
 
+    /**
+     * @psalm-param list<TToolTask> $tasks
+     *
+     * @return ToolVersionInterface[]
+     *
+     * @psalm-return array<string,ToolVersionInterface>
+     */
     private function executePluginTasks(array $tasks, InstalledPlugin $plugin): array
     {
         $tools = [];
         foreach ($tasks as $task) {
             switch ($task['type']) {
                 case 'keep':
+                    /** @psalm-var TKeepToolTask $task */
                     $tools[$task['tool']->getName()] = $task['tool'];
                     $plugin->addTool($task['tool']);
                     break;
                 case 'install':
+                    /** @psalm-var TInstallToolTask $task */
                     $tools[$task['tool']->getName()] = $task['tool'];
                     $this->installTool($plugin, $task['tool'], $task['signed']);
                     break;
                 case 'upgrade':
+                    /** @psalm-var TUpgradeToolTask $task */
                     $tools[$task['tool']->getName()] = $task['tool'];
                     $this->upgradeTool($plugin, $task['tool'], $task['old'], $task['signed']);
                     break;
                 case 'remove':
+                    /** @psalm-var TRemoveToolTask $task */
                     $this->removeTool($task['tool']);
                     break;
             }
@@ -272,13 +292,20 @@ final class UpdateExecutor
 
     private function installTool(InstalledPlugin $plugin, ToolVersionInterface $tool, bool $requireSigned): void
     {
-        $pharName = sprintf('%1$s/tools/%2$s~%3$s.phar', $plugin->getName(), $tool->getName(), $tool->getVersion());
-        $pharPath = $this->installedPluginPath . '/' . $pharName;
-        $this->output->writeln('Downloading ' . $tool->getPharUrl(), OutputInterface::VERBOSITY_VERY_VERBOSE);
+        $pharName      = null;
+        $hash          = null;
+        $signatureName = null;
 
-        $this->downloader->downloadFileTo($tool->getPharUrl(), $pharPath);
-        $this->validateHash($pharPath, $tool->getHash());
-        $signatureName = $this->verifyToolSignature($pharPath, $plugin, $tool, $requireSigned);
+        if ($pharUrl = $tool->getPharUrl()) {
+            $pharName = sprintf('%1$s/tools/%2$s~%3$s.phar', $plugin->getName(), $tool->getName(), $tool->getVersion());
+            $pharPath = $this->installedPluginPath . '/' . $pharName;
+            $this->output->writeln('Downloading ' . $pharUrl, OutputInterface::VERBOSITY_VERY_VERBOSE);
+
+            $this->downloader->downloadFileTo($pharUrl, $pharPath);
+            $this->validateHash($pharPath, $tool->getHash());
+            $signatureName = $this->verifyToolSignature($pharPath, $plugin, $tool, $requireSigned);
+            $hash          = ToolHash::createForFile($pharPath);
+        }
 
         $plugin->addTool(
             new ToolVersion(
@@ -286,7 +313,7 @@ final class UpdateExecutor
                 $tool->getVersion(),
                 $pharName,
                 clone $tool->getRequirements(),
-                ToolHash::createForFile($pharPath),
+                $hash,
                 $signatureName
             )
         );
@@ -330,7 +357,7 @@ final class UpdateExecutor
         string $pharPath,
         InstalledPlugin $plugin,
         ToolVersionInterface $tool,
-        $requireSigned
+        bool $requireSigned
     ): ?string {
         $signatureUrl = $tool->getSignatureUrl();
         if (null === $signatureUrl) {
