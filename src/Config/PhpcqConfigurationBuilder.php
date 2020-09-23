@@ -108,7 +108,7 @@ final class PhpcqConfigurationBuilder
 
         $builder->describeStringOption(
             'runner-plugin',
-            'Url to the bootstrap file. Use it to override default bootstrap'
+            'Url to the plugin file. Use it to override default plugin'
         );
         $builder
             ->describeBoolOption('signed', 'If set to false no signature verification happens')
