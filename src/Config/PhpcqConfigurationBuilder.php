@@ -96,13 +96,16 @@ final class PhpcqConfigurationBuilder
 
     private function describePlugins(OptionsBuilderInterface $builder): void
     {
-        $builder->describeStringOption('version', 'Version constraint');
-        // TODO: Check if we need a version for local tools
-        //                        ->isRequired()
         $validateConstraint = function ($constraint) {
             $versionParser = new VersionParser();
             $versionParser->parseConstraints($constraint);
         };
+        $builder
+            ->describeStringOption('version', 'Version constraint')
+            ->withValidator($validateConstraint)
+            ->isRequired()
+            ->withDefaultValue('*');
+
         $builder->describeStringOption(
             'runner-plugin',
             'Url to the bootstrap file. Use it to override default bootstrap'
