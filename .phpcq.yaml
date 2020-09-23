@@ -1,7 +1,6 @@
 phpcq:
   repositories:
-#    - https://phpcq.github.io/repository/repository.json
-    - /home/netzmacht/Daten/Projekte/Entwicklung/vcs/phpcq/repository/web/repository.json
+    - https://phpcq.github.io/repository/repository.json
   directories:
     - src
     - tests
