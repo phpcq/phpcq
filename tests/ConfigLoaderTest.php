@@ -43,7 +43,7 @@ final class ConfigLoaderTest extends TestCase
         $this->assertArrayHasKey('artifact', $config);
         $this->assertEquals('.phpcq/build', $config['artifact']);
 
-        $this->assertArrayHasKey('tools', $config);
+        $this->assertArrayHasKey('plugins', $config);
         $this->assertEquals(
             [
                 'phpunit'          => [
@@ -54,39 +54,127 @@ final class ConfigLoaderTest extends TestCase
                     'version' => '^1.0',
                     'signed'  => true,
                 ],
-                'local-tool'       => [
+                'local-tool'        => [
                     'runner-plugin' => '.phpcq/plugins/boot-local-tool.php',
                     'signed'        => true,
+                    'version'       => '*',
                 ],
             ],
-            $config['tools']
+            $config['plugins']
         );
 
+        $this->assertArrayHasKey('chains', $config);
         $this->assertEquals(
             [
                 'default' => [
-                    'phpcpd' => null,
-                    'author-validation' => null,
-                    'autoload-validation' => null,
-                    'branch-alias-validation' => null,
-                    'composer-validate' => null,
-                    'pdepend' => null,
-                    'phpcs' => null,
-                    'phplint' => null,
-                    'phploc' => null,
-                    'phpmd' => null,
-                    'phpspec' => null,
-                    'travis-configuration-check' => null,
+                    'phpcpd',
+                    'author-validation',
+                    'autoload-validation',
+                    'branch-alias-validation',
+                    'composer-validate',
+                    'pdepend',
+                    'phpcs',
+                    'phplint',
+                    'phploc',
+                    'phpmd',
+                    'phpspec',
+                    'travis-configuration-check',
                 ],
                 'tests' => [
-                    'phpunit' => [
-                        'directories' => [
-                            'foo' => null
-                        ]
-                    ]
+                    'phpunit'
                 ]
             ],
             $config['chains']
+        );
+
+        $this->assertArrayHasKey('tasks', $config);
+        $this->assertEquals(
+            [
+                'phpunit' => [
+                    'directories' => [
+                        'foo'
+                    ],
+                    'config' => [
+                        'customflags' => null,
+                    ],
+                ],
+                'phpcpd' => [
+                    'directories' => [
+                        'a',
+                        'b',
+                        'xyz',
+                    ],
+                    'config' => [
+                        'customflags' => null,
+                    ],
+                ],
+                'author-validation' => [
+                    'directories' => [
+                        'src'
+                    ],
+                    'config' => [
+                        'composer' => false,
+                        'bower' => false,
+                        'packages' => false,
+                        'php-files' => true,
+                    ],
+                ],
+                'autoload-validation' => [
+                    'config' => [
+                        'excluded' => false,
+                        'customflags' => null,
+                    ],
+                ],
+                'branch-alias-validation' => null,
+                'composer-validate' => null,
+                'pdepend' => [
+                    'config' => [
+                        'excluded' => null,
+                        'src' => null,
+                        'output' => null,
+                    ],
+                ],
+                'phpcs' => [
+                    'config' => [
+                        'excluded' => null,
+                        'src' => null,
+                        'standard' => null,
+                        'customflags' => null,
+                    ],
+                ],
+                'phplint' => [
+                    'config' => [
+                        'src' => null,
+                    ],
+                ],
+                'phploc' => [
+                    'config' => [
+                        'excluded' => null,
+                        'src' => null,
+                        'output' => null,
+                    ],
+                ],
+                'phpmd' => [
+                    'config' => [
+                        'excluded' => null,
+                        'src' => null,
+                        'format' => null,
+                        'ruleset' => null,
+                        'customflags' => null,
+                    ],
+                ],
+                'phpspec' => [
+                    'config' => [
+                        'format' => null,
+                    ],
+                ],
+                'travis-configuration-check' => [
+                    'config' => [
+                        'customflags' => null,
+                    ],
+                ],
+            ],
+            $config['tasks']
         );
 
         $this->assertEquals(
@@ -96,53 +184,6 @@ final class ConfigLoaderTest extends TestCase
                 'D2CCAC42F6295E7D'
             ],
             $config['trusted-keys']
-        );
-    }
-
-    public function testMergeConfiguration(): void
-    {
-        $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-merge.yaml');
-        $config = $loader->getConfig()->asArray();
-
-        $this->assertEquals(
-            [
-                'directories'       => ['src', 'tests'],
-                'repositories'      => [],
-                'artifact'          => '.phpcq/build',
-                'tools'             => [
-                    'author-validation' => ['version' => '^1.0', 'signed' => true],
-                    'phpcpd'            => ['version' => '^2.0', 'signed' => true],
-                ],
-                'trusted-keys' => [],
-                'chains' => ['default' => [
-                    'author-validation' => null,
-                    'phpcpd'            => null,
-                ]],
-                'auth' => [],
-                'tool-config' => [
-                    'author-validation' => [
-                        'directories' => ['src' => null, 'examples' => null
-                        ]
-                    ],
-                    'phpcpd'            => [
-                        'customflags' => '',
-                        'directories' => [
-                            'src'   => null,
-                            'tests' => null,
-                            'a'     => null,
-                            'b'     => null,
-                            'xyz'   => [
-                                'excluded'    => [
-                                    '... a (string)',
-                                    '... b (string)'
-                                ],
-                                'customflags' => null
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            $config
         );
     }
 

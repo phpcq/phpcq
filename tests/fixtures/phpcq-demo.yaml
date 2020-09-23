@@ -18,7 +18,7 @@ phpcq:
     - https://example.com/build-tools/info.json
     - https://example.com/build-tools2/info.json
     - https://example.com/build-tools3/info.json
-  tools:
+  plugins:
     phpunit:
       version: ^7.0
     custom-task-tool:
@@ -35,86 +35,90 @@ phpcq:
 
   chains:
     default:
-      phpcpd: ~
-      author-validation: ~
-      autoload-validation: ~
-      branch-alias-validation: ~
-      composer-validate: ~
-      pdepend: ~
-      phpcs: ~
-      phplint: ~
-      phploc: ~
-      phpmd: ~
-      phpspec: ~
-      travis-configuration-check: ~
+      - phpcpd
+      - author-validation
+      - autoload-validation
+      - branch-alias-validation
+      - composer-validate
+      - pdepend
+      - phpcs
+      - phplint
+      - phploc
+      - phpmd
+      - phpspec
+      - travis-configuration-check
     tests:
-      phpunit:
-        directories:
-          foo: ~
+      - phpunit
 
-tool-config:
+tasks:
   # Read by config parser and passed to ConfigurationPluginInterface
   phpunit:
-   customflags:
+    directories:
+      - foo
+    config:
+      customflags:
 
   phpcpd:
-    customflags: #flags for all directories
     directories:
-      a: # no special flags
-      b:
-      xyz:
-        excluded:
-          - ... a (string)
-          - ... b (string)
-        customflags: # flags for xyz only
+      - a
+      - b
+      - xyz
+    config:
+      customflags:
 
   author-validation:
-    composer: false
-    bower: false
-    packages: false
-    php-files: true
     directories:
-      src: # nothing special
-
+      - src
+    config:
+      composer: false
+      bower: false
+      packages: false
+      php-files: true
 
   autoload-validation:
-    customflags: false
-    excluded: false
+    config:
+      customflags: false
+      excluded: false
 
-  branch-alias-validation: ~
+  branch-alias-validation:
 
-  composer-validate: ~
+  composer-validate:
 
   pdepend:
-    src: ~
-    excluded: ~
-    output: ~
+    config:
+      src: ~
+      excluded: ~
+      output: ~
 
   phpcs:
-    standard: ~
-    excluded: ~
-    src: ~
-    customflags: ~
+    config:
+      standard: ~
+      excluded: ~
+      src: ~
+      customflags: ~
 
   phplint:
-    src: ~
+    config:
+      src: ~
 
   phploc:
-    excluded: ~
-    src: ~
-    output: ~
+    config:
+      excluded: ~
+      src: ~
+      output: ~
 
   phpmd:
-    src: ~
-    excluded: ~
-    format: ~
-    ruleset: ~
-    customflags: ~
+    config:
+      src: ~
+      excluded: ~
+      format: ~
+      ruleset: ~
+      customflags: ~
 
   phpspec:
-    config: ~
-    format: ~
+    config:
+      format: ~
 
   travis-configuration-check:
-    customflags: ~
-
+    config:
+      customflags: ~
