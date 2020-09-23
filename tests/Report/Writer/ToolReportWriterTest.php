@@ -39,7 +39,7 @@ final class ToolReportWriterTest extends AbstractWriterTest
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:tools/>
 </phpcq:tool-report>
 
@@ -65,7 +65,7 @@ XML;
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:tools>
     <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:diagnostics>
@@ -123,7 +123,7 @@ XML;
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:tools>
     <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:diagnostics>
@@ -170,6 +170,6 @@ XML;
     {
         $dom = new DOMDocument('1.0');
         $dom->load($fileName);
-        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../doc/tool-report.xsd'));
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../vendor/phpcq/schema/v1/tool-report.xsd'));
     }
 }

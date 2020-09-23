@@ -39,7 +39,7 @@ final class FileReportWriterTest extends AbstractWriterTest
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/schema/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:abstract/>
   <phpcq:global/>
   <phpcq:files/>
@@ -69,7 +69,7 @@ XML;
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/schema/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:abstract>
     <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:attachments>
@@ -150,7 +150,7 @@ XML;
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
+<phpcq:file-report xmlns:phpcq="https://phpcq.github.io/schema/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:abstract>
     <phpcq:tool name="tool" status="passed" version="1.0.0">
       <phpcq:attachments>
@@ -220,6 +220,6 @@ XML;
     {
         $dom = new DOMDocument('1.0');
         $dom->load($fileName);
-        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../doc/file-report.xsd'));
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../vendor/phpcq/schema/v1/file-report.xsd'));
     }
 }
