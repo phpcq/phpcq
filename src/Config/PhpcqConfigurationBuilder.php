@@ -9,7 +9,6 @@ use Phpcq\Config\Validation\Constraints;
 use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
-use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Throwable;
 
 final class PhpcqConfigurationBuilder
@@ -31,7 +30,7 @@ final class PhpcqConfigurationBuilder
         $this->describeRepositories($this->builder->describeOptionsListOption('repositories', 'Repositories'));
 
         $this->describeTools(
-            $this->builder->describePrototypeOption('tools', 'List of required plugins')->ofOptionsValue()
+            $this->builder->describePrototypeOption('plugins', 'List of required plugins')->ofOptionsValue()
         );
 
         $this->builder
@@ -44,14 +43,11 @@ final class PhpcqConfigurationBuilder
             ->withDefaultValue([])
             ->ofOptionsValue();
 
-        $arrayBuilder = $this->builder
+        $this->builder
             ->describePrototypeOption('chains', 'Available chains. Default chain is required')
             ->withDefaultValue([])
             ->ofPrototypeValue()
-                ->ofOptionsValue();
-        assert($arrayBuilder instanceof OptionsBuilder);
-        /** @psalm-suppress DeprecatedMethod */
-        $arrayBuilder->bypassValueValidation();
+                ->ofStringValue();
     }
 
     /** @psalm-return array<string,mixed> */
