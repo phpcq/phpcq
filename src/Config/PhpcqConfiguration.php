@@ -91,6 +91,9 @@ final class PhpcqConfiguration
     {
         $config = $this->getTaskConfig();
         if (!array_key_exists($name, $config)) {
+            if (array_key_exists($name, $this->getPlugins())) {
+                return [];
+            }
             throw new InvalidArgumentException(sprintf('Unknown task name "%s"', $name));
         }
 

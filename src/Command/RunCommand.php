@@ -218,7 +218,7 @@ final class RunCommand extends AbstractCommand
         Tasklist $taskList
     ): void {
         $configValues = $this->config->getConfigForTask($taskName);
-        $plugin = $plugins->getPluginByName($configValues['plugin']);
+        $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
         $pluginConfig = $configValues['config'] ?? [];
         if ($plugin instanceof DiagnosticsPluginInterface) {
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
