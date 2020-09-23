@@ -27,7 +27,7 @@ use function array_filter;
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
  *
- * @psalm-import-type TUpdateTask from \Phpcq\Runner\Updater\UpdateCalculator
+ * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 abstract class AbstractUpdateCommand extends AbstractCommand
 {
@@ -126,10 +126,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<TUpdateTask> */
+    /** @psalm-return list<TPluginTask> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<TUpdateTask> $tasks */
+    /** @psalm-param list<TPluginTask> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $signatureVerifier = new SignatureVerifier(

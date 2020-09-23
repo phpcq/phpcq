@@ -147,6 +147,7 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($toolName = $this->input->getArgument('tool')) {
             assert(is_string($toolName));
+            /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
             $environment = new Environment(
                 $projectConfig,
                 new TaskFactory(
@@ -159,6 +160,7 @@ final class RunCommand extends AbstractCommand
             $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
         } else {
             foreach (array_keys($chains[$chain]) as $toolName) {
+                /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
                 $environment = new Environment(
                     $projectConfig,
                     new TaskFactory(

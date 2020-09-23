@@ -10,7 +10,7 @@ use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 final class UpdateCommand extends AbstractUpdateCommand
 {
@@ -33,6 +33,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
+    /** @psalm-return list<TPluginTask> */
     protected function calculateTasks(): array
     {
         $factory    = new RepositoryFactory($this->repositoryLoader);
@@ -47,7 +48,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         return $calculator->calculate($this->config->getTools(), $force);
     }
 
-    /** @psalm-param list<TUpdateTask> $tasks */
+    /** @psalm-param list<TPluginTask> $tasks */
     protected function executeTasks(array $tasks): void
     {
         if ($this->input->getOption('dry-run')) {

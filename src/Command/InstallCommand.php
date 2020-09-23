@@ -11,7 +11,7 @@ use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @psalm-import-type TUpdateTask from \Phpcq\ToolUpdate\UpdateCalculator
+ * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 final class InstallCommand extends AbstractUpdateCommand
 {
@@ -23,7 +23,7 @@ final class InstallCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<TUpdateTask> */
+    /** @psalm-return list<TPluginTask> */
     protected function calculateTasks(): array
     {
         $installedRepository = $this->getInstalledRepository(false);
