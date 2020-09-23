@@ -7,7 +7,6 @@ namespace Phpcq\Report;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Runner\Repository\RepositoryInterface;
 
 final class Report implements ReportInterface
 {
