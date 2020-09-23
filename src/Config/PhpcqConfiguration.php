@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Phpcq\Config;
 
+use Phpcq\Exception\InvalidArgumentException;
+
 /**
- * @psalm-type TTool = array{
+ * @psalm-type TPlugin = array{
  *    version: string,
  *    signed: bool
  * }
- * @psalm-type TToolConfig = array{
- *   directories?: array<string, array|null|bool>
+ * @psalm-type TTaskConfig = array{
+ *   directories?: array<string, array|null|bool>,
+ *   plugin?: string
+ *   config: array<string, mixed>
  * }
  * @psalm-type TRepository = array{
  *   type: string,
@@ -21,8 +25,7 @@ namespace Phpcq\Config;
  *   artifact: string,
  *   trusted-keys: list<string>,
  *   chains: array<string,array<string,array|null>>,
- *   tools: array<string,TTool>,
- *   tool-config: array<string,TToolConfig>,
+ *   tasks: array<string,TTaskConfig>,
  *   repositories: list<int, string>,
  *   auth: array
  * }
@@ -59,10 +62,10 @@ final class PhpcqConfiguration
         return $this->options->getString('artifact');
     }
 
-    /** @psalm-return array<string,TTool> */
-    public function getTools(): array
+    /** @psalm-return array<string,TPlugin> */
+    public function getPlugins(): array
     {
-        return $this->options->getOptions('tools');
+        return $this->options->getOptions('plugins');
     }
 
     /** @psalm-return list<TRepository> */
@@ -77,10 +80,21 @@ final class PhpcqConfiguration
         return $this->options->getOptions('chains');
     }
 
-    /** @psalm-return array<string,TToolConfig> */
-    public function getToolConfig(): array
+    /** @psalm-return array<string,TTaskConfig> */
+    public function getTaskConfig(): array
     {
-        return $this->options->getOptions('tool-config');
+        return $this->options->getOptions('tasks');
+    }
+
+    /** @psalm-return TTaskConfig */
+    public function getConfigForTask(string $name): array
+    {
+        $config = $this->getTaskConfig();
+        if (!array_key_exists($name, $config)) {
+            throw new InvalidArgumentException(sprintf('Unknown task name "%s"', $name));
+        }
+
+        return $config[$name];
     }
 
     /** @psalm-return list<string> */
