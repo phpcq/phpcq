@@ -95,7 +95,6 @@ final class UpdateCalculator
     ): array {
         // Determine diff to current installation.
         $tasks = [];
-        /** @var PhpFilePluginVersionInterface $pluginVersion */
         foreach ($desired->iteratePluginVersions() as $pluginVersion) {
             $name = $pluginVersion->getName();
 
@@ -205,6 +204,7 @@ final class UpdateCalculator
         return !$desired->equals($installed);
     }
 
+    /** @SuppressWarnings(PHPMD.CyclomaticComplexity) */
     private function calculateToolTasks(PluginVersionInterface $desired, array $plugins, bool $forceReinstall): array
     {
         $config     = $plugins[$desired->getName()] ?? [];
