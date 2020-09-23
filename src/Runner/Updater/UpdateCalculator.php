@@ -69,7 +69,8 @@ final class UpdateCalculator
     {
         $desired = new Repository();
         foreach ($plugins as $pluginName => $plugin) {
-            $desired->addPluginVersion($pluginVersion = $this->resolver->resolvePluginVersion($pluginName, $plugin['version']));
+            $pluginVersion = $this->resolver->resolvePluginVersion($pluginName, $plugin['version']);
+            $desired->addPluginVersion($pluginVersion);
             $this->output->writeln(
                 'Want ' . $pluginVersion->getName() . ' in version ' . $pluginVersion->getVersion(),
                 OutputInterface::VERBOSITY_DEBUG
@@ -140,7 +141,8 @@ final class UpdateCalculator
         foreach ($this->installed->iteratePlugins() as $installedPlugin) {
             $name = $installedPlugin->getName();
             if (!$desired->hasPluginVersion($name, '*')) {
-                $message = 'Will remove plugin ' . $name . ' version ' . $installedPlugin->getPluginVersion()->getVersion();
+                $message = 'Will remove plugin ' . $name . ' version '
+                    . $installedPlugin->getPluginVersion()->getVersion();
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
                 $tasks[] = [
                     'type'    => 'remove',

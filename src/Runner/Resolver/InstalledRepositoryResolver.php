@@ -31,8 +31,11 @@ final class InstalledRepositoryResolver implements ResolverInterface
         return $version;
     }
 
-    public function resolveToolVersion(string $pluginName, string $toolName, string $versionConstraint): ToolVersionInterface
-    {
+    public function resolveToolVersion(
+        string $pluginName,
+        string $toolName,
+        string $versionConstraint
+    ): ToolVersionInterface {
         $plugin  = $this->repository->getPlugin($pluginName);
         $version = $plugin->getTool($toolName);
         if (! Semver::satisfies($version->getVersion(), $versionConstraint)) {

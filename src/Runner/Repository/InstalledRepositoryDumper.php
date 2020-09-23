@@ -12,6 +12,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirementList;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
+
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -182,4 +183,3 @@ final class InstalledRepositoryDumper
         return $tools;
     }
 }
-

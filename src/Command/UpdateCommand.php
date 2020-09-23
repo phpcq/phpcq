@@ -37,8 +37,12 @@ final class UpdateCommand extends AbstractUpdateCommand
     {
         $factory    = new RepositoryFactory($this->repositoryLoader);
         $pool       = $factory->buildPool($this->config->getRepositories());
-        $calculator = new UpdateCalculator($this->getInstalledRepository(false), new RepositoryPoolResolver($pool), $this->getWrappedOutput());
         $force      = $this->lockFileRepository === null || $this->input->getOption('force-reinstall');
+        $calculator = new UpdateCalculator(
+            $this->getInstalledRepository(false),
+            new RepositoryPoolResolver($pool),
+            $this->getWrappedOutput()
+        );
 
         return $calculator->calculate($this->config->getTools(), $force);
     }

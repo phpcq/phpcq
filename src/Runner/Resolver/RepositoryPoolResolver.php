@@ -24,8 +24,11 @@ final class RepositoryPoolResolver implements ResolverInterface
         return $this->pool->getPluginVersion($pluginName, $versionConstraint);
     }
 
-    public function resolveToolVersion(string $pluginName, string $toolName, string $versionConstraint): ToolVersionInterface
-    {
+    public function resolveToolVersion(
+        string $pluginName,
+        string $toolName,
+        string $versionConstraint
+    ): ToolVersionInterface {
         return $this->pool->getToolVersion($toolName, $versionConstraint);
     }
 }

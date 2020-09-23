@@ -18,6 +18,7 @@ use Phpcq\RepositoryDefinition\Tool\Tool;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Traversable;
+
 use function array_shift;
 use function count;
 use function krsort;

@@ -201,8 +201,11 @@ final class UpdateExecutor
         }
     }
 
-    private function verifyPluginSignature(string $pharPath, PluginVersionInterface $pluginVersion, bool $requireSigned): ?string
-    {
+    private function verifyPluginSignature(
+        string $pharPath,
+        PluginVersionInterface $pluginVersion,
+        bool $requireSigned
+    ): ?string {
         $signature = $pluginVersion->getSignature();
         if (null === $signature) {
             if (! $requireSigned) {

@@ -99,8 +99,12 @@ abstract class AbstractUpdateCommand extends AbstractCommand
 
         $authConfig             = $this->config->getAuth();
         $this->downloader       = new FileDownloader($cachePath, $authConfig);
-        $this->repositoryLoader = new JsonRepositoryLoader($requirementChecker, new DownloadingJsonFileLoader($this->downloader, true));
-        $lockFile               = $this->getLockFileName();
+        $this->repositoryLoader = new JsonRepositoryLoader(
+            $requirementChecker,
+            new DownloadingJsonFileLoader($this->downloader, true)
+        );
+
+        $lockFile = $this->getLockFileName();
         if (file_exists($lockFile)) {
             $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
         }
