@@ -45,6 +45,7 @@ abstract class AbstractReportWriter
             throw new RuntimeException('Only completed reports may be saved');
         }
 
+        /** @psalm-suppress UnsafeInstantiation */
         $instance = new static($targetPath, $report, $minimumSeverity);
         $instance->save();
     }

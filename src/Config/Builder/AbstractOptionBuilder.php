@@ -53,6 +53,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
      *
      * @psalm-return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
+     * @psalm-suppress InvalidReturnType - Works for child classes
      */
     public function isRequired()
     {
@@ -66,6 +67,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
      *
      * @psalm-return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
+     * @psalm-suppress InvalidReturnType - Works for child classes
      */
     public function withNormalizer(callable $normalizer)
     {
@@ -80,6 +82,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
      * @return $this
      * @psalm-return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
+     * @psalm-suppress InvalidReturnType - Works for child classes
      */
     public function withValidator(callable $validator)
     {

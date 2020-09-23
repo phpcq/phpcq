@@ -40,17 +40,17 @@ final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
      * @return self
      */
     public function forRange(
-        int $startLine,
-        ?int $startColumn = null,
-        ?int $endLine = null,
-        ?int $endColumn = null
+        int $line,
+        ?int $column = null,
+        ?int $endline = null,
+        ?int $endcolumn = null
     ): FileDiagnosticBuilderInterface {
         $this->ranges[] = new FileRangeBuffer(
             $this->file,
-            $startLine,
-            $startColumn,
-            $endLine,
-            $endColumn
+            $line,
+            $column,
+            $endline,
+            $endcolumn
         );
 
         return $this;
