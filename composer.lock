@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "22d6b0f0a7904727a1748042c732c21d",
+    "content-hash": "170a18188e5c53c4a3254687f7dba664",
     "packages": [
         {
             "name": "composer/semver",
@@ -514,12 +514,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "9dd52066960d4c56368548b4bd5264df771c8886"
+                "reference": "7780616b3fde64b57626f1ff8188ea4460368192"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/9dd52066960d4c56368548b4bd5264df771c8886",
-                "reference": "9dd52066960d4c56368548b4bd5264df771c8886",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/7780616b3fde64b57626f1ff8188ea4460368192",
+                "reference": "7780616b3fde64b57626f1ff8188ea4460368192",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,53 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-21T10:02:35+00:00"
+            "time": "2020-09-22T13:21:18+00:00"
+        },
+        {
+            "name": "phpcq/schema",
+            "version": "dev-feature/plugin-extension",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpcq/schema.git",
+                "reference": "62f17e1f05f0211e56a6fa98014b852d56261d64"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpcq/schema/zipball/62f17e1f05f0211e56a6fa98014b852d56261d64",
+                "reference": "62f17e1f05f0211e56a6fa98014b852d56261d64",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Schiffler",
+                    "email": "c.schiffler@cyberspectrum.de",
+                    "homepage": "http://cyberspectrum.de",
+                    "role": "lead"
+                },
+                {
+                    "name": "David Molineus",
+                    "email": "david.molineus@netzmacht.de",
+                    "homepage": "https://netzmacht.de",
+                    "role": "lead"
+                }
+            ],
+            "description": "phpcq schema files",
+            "funding": [
+                {
+                    "url": "https://github.com/discordier",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/dmolineus",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-08-19T14:44:43+00:00"
         },
         {
             "name": "psr/container",
@@ -1983,12 +2029,20 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "1.0.0",
+            "alias_normalized": "1.0.0.0",
+            "version": "dev-feature/plugin-extension",
+            "package": "phpcq/schema"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "phpcq/gnupg": 20,
         "phpcq/plugin-api": 20,
-        "phpcq/repository-definition": 20
+        "phpcq/repository-definition": 20,
+        "phpcq/schema": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
