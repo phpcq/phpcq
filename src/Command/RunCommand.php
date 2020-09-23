@@ -32,7 +32,6 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
-use function array_key_exists;
 use function assert;
 use function getcwd;
 use function is_string;
@@ -156,7 +155,7 @@ final class RunCommand extends AbstractCommand
                 ),
                 $tempDirectory
             );
-            $this->handlePlugin($plugins, $chain, $taskName, $environment, $taskList);
+            $this->handleTask($plugins, $taskName, $environment, $taskList);
         } else {
             foreach ($chains[$chain] as $taskName) {
                 /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
@@ -169,7 +168,7 @@ final class RunCommand extends AbstractCommand
                     ),
                     $tempDirectory
                 );
-                $this->handlePlugin($plugins, $chain, $taskName, $environment, $taskList);
+                $this->handleTask($plugins, $taskName, $environment, $taskList);
             }
         }
 
@@ -212,91 +211,40 @@ final class RunCommand extends AbstractCommand
         return [$executable, $finder->findArguments()];
     }
 
-    /**
-     * @param PluginRegistry $plugins
-     * @param string         $chain
-     * @param string         $toolName
-     * @param Environment    $buildConfig
-     * @param Tasklist       $taskList
-     *
-     * @return void
-     */
-    protected function handlePlugin(
+    private function handleTask(
         PluginRegistry $plugins,
-        string $chain,
-        string $toolName,
+        string $taskName,
         Environment $buildConfig,
         Tasklist $taskList
     ): void {
-        $plugin = $plugins->getPluginByName($toolName);
-        $name   = $plugin->getName();
-
-        // Initialize phar files
+        $configValues = $this->config->getConfigForTask($taskName);
+        $plugin = $plugins->getPluginByName($configValues['plugin']);
+        $pluginConfig = $configValues['config'] ?? [];
         if ($plugin instanceof DiagnosticsPluginInterface) {
-            $chains               = $this->config->getChains();
-            $toolConfig           = $this->config->getToolConfig();
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
-            $configuration        = $chains[$chain][$name] ?? $toolConfig[$name];
-
             $plugin->describeConfiguration($configOptionsBuilder);
-            if (!$configOptionsBuilder->hasDirectoriesSupport()) {
-                unset($configuration['directories']);
 
-                $processed = $configOptionsBuilder->normalizeValue($configuration);
+            if ($configOptionsBuilder->hasDirectoriesSupport()) {
+                /** @psalm-var array<string,mixed> $configValues */
+                $pluginConfig += ['directories' => $configValues['directories'] ?? $this->config->getDirectories()];
+            }
+
+            try {
+                /** @psalm-var array<string,mixed> $processed */
+                $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
                 $configOptionsBuilder->validateValue($processed);
-                /** @psalm-var array<string,mixed> $processed */
-                $configuration = new PluginConfiguration($processed);
-
-                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
-                    $taskList->add($task);
-                }
-                return;
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $exception->withOuterPath(['tasks', $taskName, 'config']);
+            } catch (Throwable $exception) {
+                throw ConfigurationValidationErrorException::fromError(['tasks', $taskName, 'config'], $exception);
             }
 
-            /** @psalm-var array<string,mixed> $configuration */
-            foreach ($this->processDirectories($configuration) as $config) {
-                try {
-                    $processed = $configOptionsBuilder->normalizeValue($config);
-                    $configOptionsBuilder->validateValue($processed);
-                } catch (ConfigurationValidationErrorException $exception) {
-                    throw $exception->withOuterPath([$name]);
-                } catch (Throwable $exception) {
-                    throw ConfigurationValidationErrorException::fromError([$name], $exception);
-                }
+            $configuration = new PluginConfiguration($processed);
 
-                /** @psalm-var array<string,mixed> $processed */
-                $configuration = new PluginConfiguration($processed);
-
-                foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
-                    $taskList->add($task);
-                }
+            foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+                $taskList->add($task);
             }
         }
-    }
-
-    /**
-     * @psalm-param array<string,mixed> $configuration
-     * @psalm-return list<array<string,mixed>>
-     */
-    private function processDirectories(array $configuration): array
-    {
-        assert(array_key_exists('directories', $configuration));
-        /** @psalm-var array<string, array<string,mixed>|null> $directories */
-        $directories                  = $configuration['directories'];
-        $configuration['directories'] = [];
-        $configs                      = [$configuration];
-
-        foreach ($directories as $directory => $config) {
-            if (null === $config) {
-                /** @psalm-suppress MixedArrayAssignment */
-                $configs[0]['directories'][] = $directory;
-                continue;
-            }
-
-            $configs[] = $config;
-        }
-
-        return $configs;
     }
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
