@@ -33,7 +33,6 @@ use Symfony\Component\Process\Process;
 use Throwable;
 
 use function array_key_exists;
-use function array_keys;
 use function assert;
 use function getcwd;
 use function is_string;
@@ -62,9 +61,9 @@ final class RunCommand extends AbstractCommand
         );
 
         $this->addArgument(
-            'tool',
+            'task',
             InputArgument::OPTIONAL,
-            'Define a specific tool which should be run'
+            'Define a specific task which should be run'
         );
         $this->addOption(
             'fast-finish',
@@ -145,32 +144,32 @@ final class RunCommand extends AbstractCommand
 
         $plugins = PluginRegistry::buildFromInstalledRepository($installed, $this->phpcqPath);
         $taskList = new Tasklist();
-        if ($toolName = $this->input->getArgument('tool')) {
-            assert(is_string($toolName));
+        if ($taskName = $this->input->getArgument('task')) {
+            assert(is_string($taskName));
             /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
             $environment = new Environment(
                 $projectConfig,
                 new TaskFactory(
                     $this->phpcqPath,
-                    $installed->getPlugin($toolName),
+                    $installed->getPlugin($taskName),
                     ...$this->findPhpCli()
                 ),
                 $tempDirectory
             );
-            $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
+            $this->handlePlugin($plugins, $chain, $taskName, $environment, $taskList);
         } else {
-            foreach (array_keys($chains[$chain]) as $toolName) {
+            foreach ($chains[$chain] as $taskName) {
                 /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
                 $environment = new Environment(
                     $projectConfig,
                     new TaskFactory(
                         $this->phpcqPath,
-                        $installed->getPlugin($toolName),
+                        $installed->getPlugin($taskName),
                         ...$this->findPhpCli()
                     ),
                     $tempDirectory
                 );
-                $this->handlePlugin($plugins, $chain, $toolName, $environment, $taskList);
+                $this->handlePlugin($plugins, $chain, $taskName, $environment, $taskList);
             }
         }
 
