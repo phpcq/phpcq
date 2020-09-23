@@ -23,6 +23,8 @@ use function array_shift;
 use function count;
 use function krsort;
 
+use const SORT_NATURAL;
+
 /**
  * Represents a JSON contained repository.
  */
@@ -178,7 +180,7 @@ class Repository implements RepositoryInterface
             $results[$version] = $versionHunk;
         }
 
-        krsort($results);
+        krsort($results, SORT_NATURAL);
 
         return $results;
     }
