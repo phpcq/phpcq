@@ -23,6 +23,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 
 use function array_filter;
+use function dirname;
+use function file_exists;
+use function is_dir;
+use function mkdir;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
@@ -141,8 +145,12 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /** @psalm-param list<TPluginTask> $tasks */
     protected function executeTasks(array $tasks): void
     {
+        $gnupgPath = dirname($this->phpcqPath) . '/gnupg';
+        if (! is_dir($gnupgPath)) {
+            mkdir($gnupgPath, 0777, true);
+        }
         $signatureVerifier = new SignatureVerifier(
-            (new GnuPGFactory(sys_get_temp_dir()))->create($this->phpcqPath . '/gnupg'),
+            (new GnuPGFactory(sys_get_temp_dir()))->create($gnupgPath),
             new KeyDownloader(new SignatureFileDownloader($this->downloader)),
             $this->getUntrustedKeyStrategy()
         );
