@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Phpcq\Command;
 
 use Phpcq\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Throwable;
 use function array_key_exists;
-use function array_keys;
 use function md5;
 use function serialize;
 use function sprintf;
@@ -34,11 +35,11 @@ final class ValidateCommand extends AbstractCommand
         $plugins    = PluginRegistry::buildFromInstalledRepository($installed, $this->phpcqPath);
 
         $valid = true;
-        foreach ($this->config->getChains() as $chainName => $chainTools) {
+        foreach ($this->config->getChains() as $chainName => $chainTasks) {
             $this->output->writeln('Validate chain "' . $chainName . '":', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
-            foreach (array_keys($chainTools) as $toolName) {
-                if (!$this->validatePlugin($plugins, $toolName, $chainName)) {
+            foreach ($chainTasks as $taskName) {
+                if (!$this->validatePlugin($plugins, $taskName)) {
                     $valid = false;
                 }
             }
@@ -53,60 +54,58 @@ final class ValidateCommand extends AbstractCommand
      * It validates a plugin configuration, creates console output and returns boolean to indicate valid configuration.
      *
      * @param PluginRegistry $plugins  The plugin registry.
-     * @param string         $toolName The tool name being validated.
-     * @param string|null    $chain    Chain
+     * @param string         $taskName The task being validated.
      *
      * @return bool
      */
-    protected function validatePlugin(PluginRegistry $plugins, string $toolName, ?string $chain = null): bool
+    private function validatePlugin(PluginRegistry $plugins, string $taskName): bool
     {
         /** @psalm-var array<string,array<string,bool>> */
         static $cache = [];
 
-        $plugin = $plugins->getPluginByName($toolName);
-        $name   = $plugin->getName();
+        $configValues = $this->config->getConfigForTask($taskName);
+        $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
 
         if (! $plugin instanceof ConfigurationPluginInterface) {
             return true;
         }
 
-        $chains               = $this->config->getChains();
-        $configOptionsBuilder = new PluginConfigurationBuilder($name, 'Plugin configuration');
-        $configuration        = $chain ? $chains[$chain][$name] : null;
+        $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
+        $pluginConfig = $configValues['config'] ?? [];
 
-        if (null === $configuration) {
-            $toolConfig    = $this->config->getToolConfig();
-            $configuration = $toolConfig[$name] ?? [];
-        }
-
-        $hash = md5(serialize($configuration));
-        if (isset($cache[$toolName]) && array_key_exists($hash, $cache[$toolName])) {
+        $hash = md5($taskName . serialize($pluginConfig));
+        if (isset($cache[$taskName]) && array_key_exists($hash, $cache[$taskName])) {
             $this->output->writeln(
-                sprintf(' - %s: <info>configuration already validated</info>', $toolName),
+                sprintf(' - %s: <info>configuration already validated</info>', $taskName),
                 OutputInterface::VERBOSITY_VERY_VERBOSE
             );
 
-            return $cache[$toolName][$hash];
+            return $cache[$taskName][$hash];
         }
 
         $plugin->describeConfiguration($configOptionsBuilder);
 
         try {
-            $configOptionsBuilder->normalizeValue($configuration);
+            /** @psalm-var array<string,mixed> $processed */
+            $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
+            $configOptionsBuilder->validateValue($processed);
 
             $this->output->writeln(
-                sprintf(' - %s: <info>valid configuration</info>', $toolName),
+                sprintf(' - %s: <info>valid configuration</info>', $taskName),
                 OutputInterface::VERBOSITY_VERY_VERBOSE
             );
 
-            return $cache[$toolName][$hash] = true;
-        } catch (InvalidConfigurationException $exception) {
-            $this->output->writeln(
-                sprintf(' - %s: <error>Invalid configuration (%s)</error>', $toolName, $exception->getMessage()),
-                OutputInterface::VERBOSITY_VERBOSE
-            );
-
-            return $cache[$toolName][$hash] = false;
+            return $cache[$taskName][$hash] = true;
+        } catch (ConfigurationValidationErrorException $exception) {
+            $exception = $exception->withOuterPath(['tasks', $taskName, 'config']);
+        } catch (Throwable $exception) {
+            $exception = ConfigurationValidationErrorException::fromError(['tasks', $taskName, 'config'], $exception);
         }
+        $this->output->writeln(
+            sprintf(' - %s: <error>%s</error>', $taskName, $exception->getMessage()),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+
+        return $cache[$taskName][$hash] = false;
     }
 }
