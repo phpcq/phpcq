@@ -291,7 +291,8 @@ final class UpdateCalculator
 
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             // FIXME: Check if configured requirement is within the tool requirement
-            $constraint = $config['requirements'][$toolRequirement->getName()]['version'] ?? $toolRequirement->getConstraint();
+            $constraint = $config['requirements'][$toolRequirement->getName()]['version']
+                ?? $toolRequirement->getConstraint();
             $tool       = $this->resolver->resolveToolVersion($pluginName, $toolRequirement->getName(), $constraint);
 
             if (!$plugin || !$plugin->hasTool($toolRequirement->getName())) {
