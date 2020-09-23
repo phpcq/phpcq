@@ -69,47 +69,11 @@ final class ConfigLoader
         unset($config['phpcq']);
         /** @psalm-var TConfig $processed */
         $processed = array_merge($processed, $config);
-        $merged = $this->mergeConfig($processed);
 
-        if (!array_key_exists('default', $merged['chains'])) {
-            $merged['chains']['default'] = array_fill_keys(array_keys($merged['tools']), null);
+        if (!array_key_exists('default', $processed['chains'])) {
+            $processed['chains']['default'] = array_keys($processed['tasks']);
         }
 
-        return PhpcqConfiguration::fromArray($merged);
-    }
-
-    /**
-     * @psalm-param TConfig $config $config
-     * @psalm-return TConfig
-     */
-    private function mergeConfig(array $config): array
-    {
-        $defaultDirs = [];
-        foreach ($config['directories'] as $directory) {
-            $defaultDirs[$directory] = null;
-        }
-        foreach (array_keys($config['tools']) as $tool) {
-            if (!isset($config['tool-config'][$tool])) {
-                $config['tool-config'][$tool] = [];
-            }
-
-            if (!isset($config['tool-config'][$tool]['directories'])) {
-                $config['tool-config'][$tool]['directories'] = $defaultDirs;
-                continue;
-            }
-            foreach ($config['directories'] as $baseDir) {
-                if (
-                    array_key_exists($baseDir, $config['tool-config'][$tool]['directories'])
-                    && false === $config['tool-config'][$tool]['directories'][$baseDir]
-                ) {
-                    unset($config['tool-config'][$tool]['directories'][$baseDir]);
-                    continue;
-                }
-                $config['tool-config'][$tool]['directories'] = [$baseDir => null]
-                    + $config['tool-config'][$tool]['directories'];
-            }
-        }
-
-        return $config;
+        return PhpcqConfiguration::fromArray($processed);
     }
 }
