@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Config;
 
+use Composer\Semver\VersionParser;
 use Phpcq\Config\Builder\OptionsBuilder;
 use Phpcq\Config\Validation\Constraints;
 use Phpcq\Exception\ConfigurationValidationErrorException;
@@ -29,7 +30,7 @@ final class PhpcqConfigurationBuilder
             ->isRequired();
         $this->describeRepositories($this->builder->describeOptionsListOption('repositories', 'Repositories'));
 
-        $this->describeTools(
+        $this->describePlugins(
             $this->builder->describePrototypeOption('plugins', 'List of required plugins')->ofOptionsValue()
         );
 
@@ -93,11 +94,15 @@ final class PhpcqConfigurationBuilder
             ->describeStringOption('url', 'The url of a remote repository');
     }
 
-    private function describeTools(OptionsBuilderInterface $builder): void
+    private function describePlugins(OptionsBuilderInterface $builder): void
     {
         $builder->describeStringOption('version', 'Version constraint');
         // TODO: Check if we need a version for local tools
         //                        ->isRequired()
+        $validateConstraint = function ($constraint) {
+            $versionParser = new VersionParser();
+            $versionParser->parseConstraints($constraint);
+        };
         $builder->describeStringOption(
             'runner-plugin',
             'Url to the bootstrap file. Use it to override default bootstrap'
@@ -106,5 +111,10 @@ final class PhpcqConfigurationBuilder
             ->describeBoolOption('signed', 'If set to false no signature verification happens')
             ->withDefaultValue(true)
             ->isRequired();
+
+        $builder
+            ->describePrototypeOption('requirements', 'Override the tool requirements of the plugin')
+            ->ofStringValue()
+            ->withValidator($validateConstraint);
     }
 }
