@@ -19,6 +19,9 @@ phpcq:
     phpmd:
       version: ^1.0
       signed: false
+      requirements:
+        phpmd:
+          signed: false
     phpcpd:
       version: ^1.0
       signed: false

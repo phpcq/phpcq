@@ -115,9 +115,15 @@ final class PhpcqConfigurationBuilder
             ->withDefaultValue(true)
             ->isRequired();
 
-        $builder
+        $requirements = $builder
             ->describePrototypeOption('requirements', 'Override the tool requirements of the plugin')
-            ->ofStringValue()
-            ->withValidator($validateConstraint);
+            ->ofOptionsValue();
+        $requirements
+                ->describeStringOption('version', 'The version constraint')
+                ->withValidator($validateConstraint);
+        $requirements
+            ->describeBoolOption('signed', 'If set to false no signature verification happens')
+            ->withDefaultValue(true)
+            ->isRequired();
     }
 }
