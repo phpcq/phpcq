@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Writer;
 
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
@@ -23,20 +23,20 @@ abstract class AbstractWriterTest extends TestCase
     protected function createFullFeaturedReport(): ReportBuffer
     {
         $report = new ReportBuffer();
-        $toolReport = $report->createToolReport('tool', '1.0.0');
-        $toolReport->setStatus(ToolReportInterface::STATUS_PASSED);
-        $toolReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'foo.xml', 'application/xml'));
-        $toolReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'bar.xml', null));
+        $taskReport = $report->createTaskReport('tool', '1.0.0');
+        $taskReport->setStatus(TaskReportInterface::STATUS_PASSED);
+        $taskReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'foo.xml', 'application/xml'));
+        $taskReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'bar.xml', null));
         $report->complete(Report::STATUS_PASSED);
 
-        $report->createToolReport('tool2', '2.0.0')->setStatus(ToolReportInterface::STATUS_FAILED);
+        $report->createTaskReport('tool2', '2.0.0')->setStatus(TaskReportInterface::STATUS_FAILED);
 
-        $toolReport->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Foo bar', 'baz', [], null, null, null)
+        $taskReport->addDiagnostic(
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Foo bar', 'baz', [], null, null, null)
         );
-        $toolReport->addDiagnostic(
+        $taskReport->addDiagnostic(
             new DiagnosticBuffer(
-                ToolReportInterface::SEVERITY_MAJOR,
+                TaskReportInterface::SEVERITY_MAJOR,
                 'Failure',
                 null,
                 [
@@ -50,7 +50,7 @@ abstract class AbstractWriterTest extends TestCase
                 ['category1', 'category2']
             )
         );
-        $toolReport->addDiff(new DiffBuffer(tempnam(self::$tempdir, ''), 'diff1.diff'));
+        $taskReport->addDiff(new DiffBuffer(tempnam(self::$tempdir, ''), 'diff1.diff'));
 
         return $report;
     }

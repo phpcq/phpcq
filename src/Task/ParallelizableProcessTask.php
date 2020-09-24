@@ -8,7 +8,7 @@ use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as TransformerFactory;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface as Transformer;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
@@ -88,11 +88,11 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         return $this->toolName;
     }
 
-    public function runWithReport(ToolReportInterface $report): void
+    public function runWithReport(TaskReportInterface $report): void
     {
         $this->process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
         $command = $this->process->getCommandLine();
-        $report->addDiagnostic(ToolReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
+        $report->addDiagnostic(TaskReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
         $this->transformer = $this->factory->createFor($report);
         $this->errorOffset = 0;
         try {

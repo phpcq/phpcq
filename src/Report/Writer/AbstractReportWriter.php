@@ -8,10 +8,10 @@ use DateTimeImmutable;
 use DOMElement;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
+use Phpcq\Report\Buffer\TaskReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function assert;
@@ -39,7 +39,7 @@ abstract class AbstractReportWriter
     public static function writeReport(
         string $targetPath,
         ReportBuffer $report,
-        string $minimumSeverity = ToolReportInterface::SEVERITY_INFO
+        string $minimumSeverity = TaskReportInterface::SEVERITY_INFO
     ): void {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {
             throw new RuntimeException('Only completed reports may be saved');
@@ -147,7 +147,7 @@ abstract class AbstractReportWriter
         }
     }
 
-    protected function appendAttachments(DOMElement $toolNode, ToolReportBuffer $report): void
+    protected function appendAttachments(DOMElement $toolNode, TaskReportBuffer $report): void
     {
         $attachments = $report->getAttachments();
         if ([] === $attachments) {
@@ -155,7 +155,7 @@ abstract class AbstractReportWriter
         }
 
         $attachmentsNode = $this->xml->createElement('attachments', $toolNode);
-        $filePrefix = $report->getToolName() . '-';
+        $filePrefix = $report->getTaskName() . '-';
         foreach ($attachments as $attachment) {
             $absolutePath = $attachment->getAbsolutePath();
             if (!$this->filesystem->exists($absolutePath)) {
@@ -176,7 +176,7 @@ abstract class AbstractReportWriter
         }
     }
 
-    protected function appendDiffs(DOMElement $toolNode, ToolReportBuffer $report): void
+    protected function appendDiffs(DOMElement $toolNode, TaskReportBuffer $report): void
     {
         $diffs = $report->getDiffs();
         if ([] === $diffs) {
@@ -184,7 +184,7 @@ abstract class AbstractReportWriter
         }
 
         $attachmentsNode = $this->xml->createElement('diffs', $toolNode);
-        $filePrefix = $report->getToolName() . '-';
+        $filePrefix = $report->getTaskName() . '-';
         foreach ($diffs as $attachment) {
             $absolutePath = $attachment->getAbsolutePath();
             if (!$this->filesystem->exists($absolutePath)) {

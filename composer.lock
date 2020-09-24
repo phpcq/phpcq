@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "170a18188e5c53c4a3254687f7dba664",
+    "content-hash": "e7cfff416dedeaf094d73c4e36300b85",
     "packages": [
         {
             "name": "composer/semver",
@@ -445,16 +445,16 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "dev-master",
+            "version": "dev-feature/plugin-extension",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "17b7ec4c15836add54cbd3e3737d99ad740889a2"
+                "reference": "f8f11c745dcadd227f41483ac8e9f2c0ef0c831f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/17b7ec4c15836add54cbd3e3737d99ad740889a2",
-                "reference": "17b7ec4c15836add54cbd3e3737d99ad740889a2",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/f8f11c745dcadd227f41483ac8e9f2c0ef0c831f",
+                "reference": "f8f11c745dcadd227f41483ac8e9f2c0ef0c831f",
                 "shasum": ""
             },
             "require": {
@@ -506,7 +506,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-06-27T18:44:21+00:00"
+            "time": "2020-09-24T11:20:44+00:00"
         },
         {
             "name": "phpcq/repository-definition",
@@ -514,15 +514,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "474a325a0a91fc3101c5e7c87daa805e8ee297ec"
+                "reference": "52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/474a325a0a91fc3101c5e7c87daa805e8ee297ec",
-                "reference": "474a325a0a91fc3101c5e7c87daa805e8ee297ec",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a",
+                "reference": "52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a",
                 "shasum": ""
             },
             "require": {
+                "ext-filter": "*",
                 "ext-hash": "*",
                 "ext-json": "*",
                 "php": "^7.3"
@@ -567,7 +568,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T09:57:50+00:00"
+            "time": "2020-09-24T12:36:13+00:00"
         },
         {
             "name": "phpcq/schema",

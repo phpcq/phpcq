@@ -40,14 +40,14 @@ final class FileReportWriter extends AbstractReportWriter
         $abstractNode       = $this->xml->createElement('abstract', $rootNode);
         $this->fileElements = [];
 
-        foreach ($this->report->getToolReports() as $toolReport) {
+        foreach ($this->report->getTaskReports() as $taskReport) {
             $tool = $this->xml->createElement('tool', $abstractNode);
-            $tool->setAttribute('name', $toolReport->getToolName());
-            $tool->setAttribute('status', $toolReport->getStatus());
-            $tool->setAttribute('version', $toolReport->getToolVersion());
+            $tool->setAttribute('name', $taskReport->getTaskName());
+            $tool->setAttribute('status', $taskReport->getStatus());
+            $tool->setAttribute('version', $taskReport->getMetadata());
 
-            $this->appendAttachments($tool, $toolReport);
-            $this->appendDiffs($tool, $toolReport);
+            $this->appendAttachments($tool, $taskReport);
+            $this->appendDiffs($tool, $taskReport);
         }
 
         $globalNode = $this->xml->createElement('global', $rootNode);
@@ -72,7 +72,7 @@ final class FileReportWriter extends AbstractReportWriter
     private function appendDiagnostic(DiagnosticIteratorEntry $entry, DOMElement $parentNode): void
     {
         $diagnosticElement = $this->createDiagnosticElement($parentNode, $entry);
-        $diagnosticElement->setAttribute('tool', $entry->getTool()->getToolName());
+        $diagnosticElement->setAttribute('tool', $entry->getTool()->getTaskName());
     }
 
     private function getFileElement(string $fileName, DOMElement $parentNode): DOMElement

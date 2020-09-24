@@ -6,17 +6,17 @@ namespace Phpcq\Report;
 
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\FileDiagnosticBuilderInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 
 /**
- * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_NONE
- * |ToolReportInterface::SEVERITY_INFO
- * |ToolReportInterface::SEVERITY_MARGINAL
- * |ToolReportInterface::SEVERITY_MINOR
- * |ToolReportInterface::SEVERITY_MAJOR
- * |ToolReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE
+ * |TaskReportInterface::SEVERITY_INFO
+ * |TaskReportInterface::SEVERITY_MARGINAL
+ * |TaskReportInterface::SEVERITY_MINOR
+ * |TaskReportInterface::SEVERITY_MAJOR
+ * |TaskReportInterface::SEVERITY_FATAL
  */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {
@@ -35,7 +35,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
     /** @var string|null */
     private $source;
 
-    /** @var ToolReportInterface */
+    /** @var TaskReportInterface */
     private $parent;
 
     /**
@@ -60,7 +60,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
      * @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
      * @psalm-param TDiagnosticSeverity $severity
      */
-    public function __construct(ToolReportInterface $parent, string $severity, string $message, callable $callback)
+    public function __construct(TaskReportInterface $parent, string $severity, string $message, callable $callback)
     {
         $this->severity = $severity;
         $this->message  = $message;
@@ -114,7 +114,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
-    public function end(): ToolReportInterface
+    public function end(): TaskReportInterface
     {
         foreach ($this->pendingFiles as $pendingBuilder) {
             $pendingBuilder->end();

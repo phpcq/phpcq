@@ -6,7 +6,7 @@ namespace Phpcq\Report;
 
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -21,7 +21,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
     /** @var string|null */
     private $absolutePath;
 
-    /** @var ToolReportInterface */
+    /** @var TaskReportInterface */
     private $parent;
 
     /** @var string */
@@ -41,7 +41,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
     /** @psalm-param callable(AttachmentBuffer, AttachmentBuilder): void $callback */
     public function __construct(
         string $name,
-        ToolReportInterface $parent,
+        TaskReportInterface $parent,
         string $tempDir,
         Filesystem $filesystem,
         callable $callback
@@ -84,7 +84,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
-    public function end(): ToolReportInterface
+    public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {
             throw new RuntimeException('Must provide content either via fromFile() or via fromString()');

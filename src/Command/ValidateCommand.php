@@ -31,7 +31,7 @@ final class ValidateCommand extends AbstractCommand
         $this->output->writeln('Validate phpcq configuration', OutputInterface::VERBOSITY_VERY_VERBOSE);
 
         $installed  = $this->getInstalledRepository(true);
-        $plugins    = PluginRegistry::buildFromInstalledRepository($installed, $this->getPluginPath());
+        $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $valid = true;
         foreach ($this->config->getChains() as $chainName => $chainTasks) {

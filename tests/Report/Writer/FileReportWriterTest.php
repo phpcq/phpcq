@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Writer;
 
 use DOMDocument;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\FileReportWriter;
@@ -145,7 +145,7 @@ XML;
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/file-report.xml';
 
-        FileReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_MINOR);
+        FileReportWriter::writeReport($tempDir, $report, TaskReportInterface::SEVERITY_MINOR);
 
         // phpcs:disable
         $xml = <<<'XML'

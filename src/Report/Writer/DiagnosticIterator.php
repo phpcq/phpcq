@@ -9,7 +9,7 @@ use Generator;
 use Iterator;
 use IteratorAggregate;
 use LogicException;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 final class DiagnosticIterator implements IteratorAggregate
@@ -26,12 +26,12 @@ final class DiagnosticIterator implements IteratorAggregate
      * }
      */
     private const SEVERITY_LOOKUP = [
-        ToolReportInterface::SEVERITY_NONE     => 0,
-        ToolReportInterface::SEVERITY_INFO     => 1,
-        ToolReportInterface::SEVERITY_MARGINAL => 2,
-        ToolReportInterface::SEVERITY_MINOR    => 3,
-        ToolReportInterface::SEVERITY_MAJOR    => 4,
-        ToolReportInterface::SEVERITY_FATAL    => 5,
+        TaskReportInterface::SEVERITY_NONE     => 0,
+        TaskReportInterface::SEVERITY_INFO     => 1,
+        TaskReportInterface::SEVERITY_MARGINAL => 2,
+        TaskReportInterface::SEVERITY_MINOR    => 3,
+        TaskReportInterface::SEVERITY_MAJOR    => 4,
+        TaskReportInterface::SEVERITY_FATAL    => 5,
     ];
 
     /**
@@ -79,7 +79,7 @@ final class DiagnosticIterator implements IteratorAggregate
     private static function toolSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
-            return $entry1->getTool()->getToolName() <=> $entry2->getTool()->getToolName();
+            return $entry1->getTool()->getTaskName() <=> $entry2->getTool()->getTaskName();
         };
     }
 
@@ -183,15 +183,15 @@ final class DiagnosticIterator implements IteratorAggregate
     /** @psalm-return Generator<int, DiagnosticIteratorEntry> */
     private static function reportIterator(ReportBuffer $report): Generator
     {
-        foreach ($report->getToolReports() as $toolReport) {
-            foreach ($toolReport->getDiagnostics() as $diagnostic) {
+        foreach ($report->getTaskReports() as $taskReport) {
+            foreach ($taskReport->getDiagnostics() as $diagnostic) {
                 if ($diagnostic->hasFileRanges()) {
                     foreach ($diagnostic->getFileRanges() as $range) {
-                        yield new DiagnosticIteratorEntry($toolReport, $diagnostic, $range);
+                        yield new DiagnosticIteratorEntry($taskReport, $diagnostic, $range);
                     }
                     continue;
                 }
-                yield new DiagnosticIteratorEntry($toolReport, $diagnostic, null);
+                yield new DiagnosticIteratorEntry($taskReport, $diagnostic, null);
             }
         }
     }

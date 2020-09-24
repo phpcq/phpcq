@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report\Writer;
 
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -22,10 +22,10 @@ final class GithubActionConsoleWriterTest extends TestCase
     {
         return [
             'writes simple error' => [
-                'expected' => '::error ::Custom error (reported by tool-name)',
-                'tool' => 'tool-name',
+                'expected' => '::error ::Custom error (reported by task-name)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     null,
                     null,
@@ -35,10 +35,10 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes error with source' => [
-                'expected' => '::error ::Custom error (reported by tool-name: Codestyle.rule)',
-                'tool' => 'tool-name',
+                'expected' => '::error ::Custom error (reported by task-name: Codestyle.rule)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     null,
@@ -48,10 +48,10 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes error with external url' => [
-                'expected' => '::error ::Custom error (reported by tool-name: Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                'expected' => '::error ::Custom error (reported by task-name: Codestyle.rule, see https://example.org)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     null,
@@ -61,11 +61,11 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes error with file path' => [
-                'expected' => '::error file=rotten/code/example.php::Custom error (reported by tool-name: '
+                'expected' => '::error file=rotten/code/example.php::Custom error (reported by task-name: '
                     . 'Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', null, null, null, null)],
@@ -75,11 +75,11 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes error with file path and line' => [
-                'expected' => '::error file=rotten/code/example.php,line=20::Custom error (reported by tool-name: '
+                'expected' => '::error file=rotten/code/example.php,line=20::Custom error (reported by task-name: '
                     . 'Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, null, null, null)],
@@ -90,10 +90,10 @@ final class GithubActionConsoleWriterTest extends TestCase
             ],
             'writes error with file path, line and column' => [
                 'expected' => '::error file=rotten/code/example.php,line=20,col=108::Custom error (reported by '
-                    . 'tool-name: Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                    . 'task-name: Codestyle.rule, see https://example.org)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, 108, null, null)],
@@ -104,10 +104,10 @@ final class GithubActionConsoleWriterTest extends TestCase
             ],
             'writes error with range prefix' => [
                 'expected' => '::error file=rotten/code/example.php,line=20,col=108::[20:108 - 70:2] Custom error '
-                    . '(reported by tool-name: Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                    . '(reported by task-name: Codestyle.rule, see https://example.org)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_MAJOR,
                     'Custom error',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, 108, 70, 2)],
@@ -117,10 +117,10 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes simple warning' => [
-                'expected' => '::warning ::Custom warning (reported by tool-name)',
-                'tool' => 'tool-name',
+                'expected' => '::warning ::Custom warning (reported by task-name)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     null,
                     null,
@@ -130,10 +130,10 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes warning with source' => [
-                'expected' => '::warning ::Custom warning (reported by tool-name: Codestyle.rule)',
-                'tool' => 'tool-name',
+                'expected' => '::warning ::Custom warning (reported by task-name: Codestyle.rule)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     null,
@@ -143,11 +143,11 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes warning with external url' => [
-                'expected' => '::warning ::Custom warning (reported by tool-name: Codestyle.rule, see '
+                'expected' => '::warning ::Custom warning (reported by task-name: Codestyle.rule, see '
                     . 'https://example.org)',
-                'tool' => 'tool-name',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     null,
@@ -157,11 +157,11 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes warning with file path' => [
-                'expected' => '::warning file=rotten/code/example.php::Custom warning (reported by tool-name: '
+                'expected' => '::warning file=rotten/code/example.php::Custom warning (reported by task-name: '
                     . 'Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', null, null, null, null)],
@@ -171,11 +171,11 @@ final class GithubActionConsoleWriterTest extends TestCase
                 )
             ],
             'writes warning with file path and line' => [
-                'expected' => '::warning file=rotten/code/example.php,line=20::Custom warning (reported by tool-name: '
+                'expected' => '::warning file=rotten/code/example.php,line=20::Custom warning (reported by task-name: '
                     . 'Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, null, null, null)],
@@ -186,10 +186,10 @@ final class GithubActionConsoleWriterTest extends TestCase
             ],
             'writes warning with file path, line and column' => [
                 'expected' => '::warning file=rotten/code/example.php,line=20,col=108::Custom warning (reported by '
-                    . 'tool-name: Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                    . 'task-name: Codestyle.rule, see https://example.org)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, 108, null, null)],
@@ -200,10 +200,10 @@ final class GithubActionConsoleWriterTest extends TestCase
             ],
             'writes warning with range prefix' => [
                 'expected' => '::warning file=rotten/code/example.php,line=20,col=108::[20:108 - 70:2] Custom warning '
-                    . '(reported by tool-name: Codestyle.rule, see https://example.org)',
-                'tool' => 'tool-name',
+                    . '(reported by task-name: Codestyle.rule, see https://example.org)',
+                'tool' => 'task-name',
                 'diagnostic' => new DiagnosticBuffer(
-                    ToolReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MINOR,
                     'Custom warning',
                     'Codestyle.rule',
                     [new FileRangeBuffer('rotten/code/example.php', 20, 108, 70, 2)],
@@ -218,7 +218,7 @@ final class GithubActionConsoleWriterTest extends TestCase
     /**
      * @dataProvider writeErrorsProvider
      */
-    public function testWriteErrors(string $expected, string $tool, DiagnosticBuffer $diagnostic): void
+    public function testWriteErrors(string $expected, string $task, DiagnosticBuffer $diagnostic): void
     {
         $output = $this->getMockForAbstractClass(OutputInterface::class);
         $output
@@ -227,7 +227,7 @@ final class GithubActionConsoleWriterTest extends TestCase
             ->with($expected);
 
         $report = new ReportBuffer();
-        $toolReport = $report->createToolReport($tool, '1.0.0');
+        $toolReport = $report->createTaskReport($task);
         $toolReport->addDiagnostic($diagnostic);
 
         $instance = new GithubActionConsoleWriter($output, $report);
@@ -237,8 +237,8 @@ final class GithubActionConsoleWriterTest extends TestCase
     public function ignoredSeveritiesProvider(): array
     {
         return [
-            'ignores info severity' => [ToolReportInterface::SEVERITY_INFO],
-            'ignores notice severity' => [ToolReportInterface::SEVERITY_MARGINAL],
+            'ignores info severity' => [TaskReportInterface::SEVERITY_INFO],
+            'ignores notice severity' => [TaskReportInterface::SEVERITY_MARGINAL],
         ];
     }
 
@@ -253,7 +253,7 @@ final class GithubActionConsoleWriterTest extends TestCase
             ->method('writeln');
 
         $report = new ReportBuffer();
-        $toolReport = $report->createToolReport('tool-name', '1.0.0');
+        $toolReport = $report->createTaskReport('task-name');
         $toolReport->addDiagnostic(new DiagnosticBuffer($severity, 'Message', null, null, null, null, null));
 
         $instance = new GithubActionConsoleWriter($output, $report);

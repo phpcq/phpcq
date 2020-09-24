@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Buffer;
 
 use DateTimeImmutable;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
+use Phpcq\Report\Buffer\TaskReportBuffer;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Report\Buffer\ReportBuffer */
@@ -20,7 +20,7 @@ class ReportBufferTest extends TestCase
         $this->assertSame('started', $buffer->getStatus());
         $this->assertEqualsWithDelta(new DateTimeImmutable(), $buffer->getStartedAt(), 1);
         $this->assertNull($buffer->getCompletedAt());
-        $this->assertSame([], $buffer->getToolReports());
+        $this->assertSame([], $buffer->getTaskReports());
     }
 
     public function testCallingCompleteClosesReport(): void
@@ -33,70 +33,70 @@ class ReportBufferTest extends TestCase
         $this->assertEqualsWithDelta(new DateTimeImmutable(), $buffer->getCompletedAt(), 1);
     }
 
-    public function testCreatesToolReport(): void
+    public function testCreatesTaskReport(): void
     {
         $buffer = new ReportBuffer();
 
-        $toolBuffer = $buffer->createToolReport('tool-name', '1.0.0');
+        $toolBuffer = $buffer->createTaskReport('task-name');
 
-        $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer);
-        $this->assertSame('tool-name', $toolBuffer->getToolName());
-        $this->assertSame([$toolBuffer], $buffer->getToolReports());
+        $this->assertInstanceOf(TaskReportBuffer::class, $toolBuffer);
+        $this->assertSame('task-name', $toolBuffer->getTaskName());
+        $this->assertSame([$toolBuffer], $buffer->getTaskReports());
     }
 
-    public function testCreatesToolReportWithIncrementedNameWhenToolAlreadyExists(): void
+    public function testCreatesTaskReportWithIncrementedNameWhenToolAlreadyExists(): void
     {
         $buffer = new ReportBuffer();
 
-        $toolBuffer1 = $buffer->createToolReport('tool-name', '1.0.0');
-        $toolBuffer2 = $buffer->createToolReport('tool-name', '1.0.0');
+        $toolBuffer1 = $buffer->createTaskReport('task-name');
+        $toolBuffer2 = $buffer->createTaskReport('task-name');
 
-        $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer1);
-        $this->assertInstanceOf(ToolReportBuffer::class, $toolBuffer2);
-        $this->assertSame('tool-name', $toolBuffer1->getReportName());
-        $this->assertSame('tool-name-1', $toolBuffer2->getReportName());
-        $this->assertSame([$toolBuffer1, $toolBuffer2], $buffer->getToolReports());
+        $this->assertInstanceOf(TaskReportBuffer::class, $toolBuffer1);
+        $this->assertInstanceOf(TaskReportBuffer::class, $toolBuffer2);
+        $this->assertSame('task-name', $toolBuffer1->getReportName());
+        $this->assertSame('task-name-1', $toolBuffer2->getReportName());
+        $this->assertSame([$toolBuffer1, $toolBuffer2], $buffer->getTaskReports());
     }
 
     public function testCountDiagnosticsGroupedBySeverity(): void
     {
         $buffer = new ReportBuffer();
-        $toolBuffer = $buffer->createToolReport('tool-name', '1.0.0');
+        $toolBuffer = $buffer->createTaskReport('task-name');
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Info 1', null, null, null, null, null),
         );
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Info 2', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Info 2', null, null, null, null, null),
         );
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MARGINAL, 'Notice 1', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_MARGINAL, 'Notice 1', null, null, null, null, null),
         );
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 1', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_MAJOR, 'Error 1', null, null, null, null, null),
         );
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 2', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_MAJOR, 'Error 2', null, null, null, null, null),
         );
         $toolBuffer->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_MAJOR, 'Error 3', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_MAJOR, 'Error 3', null, null, null, null, null),
         );
 
-        $toolBuffer2 = $buffer->createToolReport('tool2-name', '2.0.0');
+        $toolBuffer2 = $buffer->createTaskReport('task2-name');
         $toolBuffer2->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Tool 2 Info 1', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Tool 2 Info 1', null, null, null, null, null),
         );
         $toolBuffer2->addDiagnostic(
-            new DiagnosticBuffer(ToolReportInterface::SEVERITY_INFO, 'Tool 2 Info 2', null, null, null, null, null),
+            new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Tool 2 Info 2', null, null, null, null, null),
         );
 
         $this->assertEquals(
             [
-                ToolReportInterface::SEVERITY_FATAL    => 0,
-                ToolReportInterface::SEVERITY_MAJOR    => 3,
-                ToolReportInterface::SEVERITY_MINOR    => 0,
-                ToolReportInterface::SEVERITY_MARGINAL => 1,
-                ToolReportInterface::SEVERITY_INFO     => 4,
-                ToolReportInterface::SEVERITY_NONE     => 0,
+                TaskReportInterface::SEVERITY_FATAL    => 0,
+                TaskReportInterface::SEVERITY_MAJOR    => 3,
+                TaskReportInterface::SEVERITY_MINOR    => 0,
+                TaskReportInterface::SEVERITY_MARGINAL => 1,
+                TaskReportInterface::SEVERITY_INFO     => 4,
+                TaskReportInterface::SEVERITY_NONE     => 0,
             ],
             $buffer->countDiagnosticsGroupedBySeverity()
         );

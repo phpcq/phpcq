@@ -20,14 +20,14 @@ class ReportTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function testAddToolReportIsDelegated(): void
+    public function testAddTaskReportIsDelegated(): void
     {
         $buffer = new ReportBuffer();
         $report = new Report($buffer, self::$tempdir);
 
-        $report->addToolReport('tool-name');
+        $report->addTaskReport('task-name');
 
-        $tools = $buffer->getToolReports();
-        $this->assertSame('tool-name', $tools[0]->getToolName());
+        $tools = $buffer->getTaskReports();
+        $this->assertSame('task-name', $tools[0]->getTaskName());
     }
 }

@@ -6,25 +6,25 @@ namespace Phpcq\Report\Writer;
 
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
+use Phpcq\Report\Buffer\TaskReportBuffer;
 
 final class DiagnosticIteratorEntry
 {
-    /** @var ToolReportBuffer */
+    /** @var TaskReportBuffer */
     private $tool;
     /** @var DiagnosticBuffer */
     private $diagnostic;
     /** @var null|FileRangeBuffer */
     private $range;
 
-    public function __construct(ToolReportBuffer $tool, DiagnosticBuffer $diagnostic, ?FileRangeBuffer $range)
+    public function __construct(TaskReportBuffer $tool, DiagnosticBuffer $diagnostic, ?FileRangeBuffer $range)
     {
         $this->tool       = $tool;
         $this->diagnostic = $diagnostic;
         $this->range      = $range;
     }
 
-    public function getTool(): ToolReportBuffer
+    public function getTool(): TaskReportBuffer
     {
         return $this->tool;
     }

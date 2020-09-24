@@ -6,7 +6,7 @@ namespace Phpcq\Report;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\DiffBuilderInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\DiffBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -18,7 +18,7 @@ final class DiffBuilder implements DiffBuilderInterface
     /** @var string|null */
     private $absolutePath;
 
-    /** @var ToolReportInterface */
+    /** @var TaskReportInterface */
     private $parent;
 
     /** @var string */
@@ -36,7 +36,7 @@ final class DiffBuilder implements DiffBuilderInterface
     /** @psalm-param callable(DiffBuffer, DiffBuilder): void $callback */
     public function __construct(
         string $name,
-        ToolReportInterface $parent,
+        TaskReportInterface $parent,
         string $tempDir,
         Filesystem $filesystem,
         callable $callback
@@ -72,7 +72,7 @@ final class DiffBuilder implements DiffBuilderInterface
         return $this;
     }
 
-    public function end(): ToolReportInterface
+    public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {
             throw new RuntimeException('Must provide content either via fromFile() or via fromString()');

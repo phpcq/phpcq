@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report\Writer;
 
 use DOMDocument;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
-use Phpcq\Report\Writer\ToolReportWriter;
+use Phpcq\Report\Writer\TaskReportWriter;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
 
 use function file_get_contents;
@@ -20,9 +20,9 @@ use const DATE_ATOM;
 
 /**
  * @covers \Phpcq\Report\Writer\AbstractReportWriter
- * @covers \Phpcq\Report\Writer\ToolReportWriter
+ * @covers \Phpcq\Report\Writer\TaskReportWriter
  */
-final class ToolReportWriterTest extends AbstractWriterTest
+final class TaskReportWriterTest extends AbstractWriterTest
 {
     use TemporaryFileProducingTestTrait;
 
@@ -34,7 +34,7 @@ final class ToolReportWriterTest extends AbstractWriterTest
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
-        ToolReportWriter::writeReport($tempDir, $report);
+        TaskReportWriter::writeReport($tempDir, $report);
 
         // phpcs:disable
         $xml = <<<'XML'
@@ -60,7 +60,7 @@ XML;
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
-        ToolReportWriter::writeReport($tempDir, $report);
+        TaskReportWriter::writeReport($tempDir, $report);
 
         // phpcs:disable
         $xml = <<<'XML'
@@ -118,7 +118,7 @@ XML;
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
         $fileName = $tempDir . '/tool-report.xml';
 
-        ToolReportWriter::writeReport($tempDir, $report, ToolReportInterface::SEVERITY_MINOR);
+        TaskReportWriter::writeReport($tempDir, $report, TaskReportInterface::SEVERITY_MINOR);
 
         // phpcs:disable
         $xml = <<<'XML'

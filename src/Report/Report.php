@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Report;
 
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 
 final class Report implements ReportInterface
@@ -24,9 +24,8 @@ final class Report implements ReportInterface
         $this->tempDir = $tempDir;
     }
 
-    public function addToolReport(string $toolName): ToolReportInterface
+    public function addTaskReport(string $taskName, array $metadata = []): TaskReportInterface
     {
-        // FIXME: Rework tool reports to task reports
-        return new ToolReport($this->report->createToolReport($toolName, 'unknown'), $this->tempDir);
+        return new TaskReport($this->report->createTaskReport($taskName, $metadata), $this->tempDir);
     }
 }

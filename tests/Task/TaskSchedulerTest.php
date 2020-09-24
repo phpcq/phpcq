@@ -7,7 +7,7 @@ namespace Phpcq\Test\Task;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
@@ -341,8 +341,8 @@ class TaskSchedulerTest extends TestCase
         $scheduler->run();
 
         $result = [];
-        foreach ($buffer->getToolReports() as $report) {
-            $result[$report->getToolName()] = $report->getStatus();
+        foreach ($buffer->getTaskReports() as $report) {
+            $result[$report->getTaskName()] = $report->getStatus();
         }
 
         $this->assertSame($expected, $result);
@@ -386,7 +386,7 @@ class TaskSchedulerTest extends TestCase
 
         $mock
             ->method('runWithReport')
-            ->willReturnCallback(function (ToolReportInterface $report) use ($result) {
+            ->willReturnCallback(function (TaskReportInterface $report) use ($result) {
                 if ($result instanceof Throwable) {
                     $report->close(ReportInterface::STATUS_FAILED);
                     throw $result;
@@ -450,7 +450,7 @@ class TaskSchedulerTest extends TestCase
         $taskReport = null;
         $mock
             ->method('runWithReport')
-            ->willReturnCallback(function (ToolReportInterface $report) use ($result, &$taskReport) {
+            ->willReturnCallback(function (TaskReportInterface $report) use ($result, &$taskReport) {
                 $taskReport = $report;
             });
         $mock

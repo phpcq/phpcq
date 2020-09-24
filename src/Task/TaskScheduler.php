@@ -9,7 +9,7 @@ use Phpcq\Exception\Exception;
 use Phpcq\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\Report\Report;
@@ -48,7 +48,7 @@ class TaskScheduler
     /** @var int */
     private $runningThreads;
 
-    /** @var SplObjectStorage<ParallelTaskInterface, ToolReportInterface> */
+    /** @var SplObjectStorage<ParallelTaskInterface, TaskReportInterface> */
     private $threads;
 
     public function __construct(
@@ -126,7 +126,7 @@ class TaskScheduler
         $report = $this->threads->offsetGet($thread);
         $this->threads->detach($thread);
         $this->runningThreads -= $thread->getCost();
-        $this->success = $this->success && $report->getStatus() === ToolReportInterface::STATUS_PASSED;
+        $this->success = $this->success && $report->getStatus() === TaskReportInterface::STATUS_PASSED;
         if ($this->fastFinish && !$this->success) {
             $this->stop = true;
         }
@@ -165,7 +165,7 @@ class TaskScheduler
         // Start it up.
         $name = $task->getToolName();
         $this->output->writeln(sprintf(self::LOG_START, $name), OutputInterface::VERBOSITY_DEBUG);
-        $report = $this->report->addToolReport($name);
+        $report = $this->report->addTaskReport($name);
         try {
             $task->runWithReport($report);
         } catch (PluginApiRuntimeException $throwable) {
@@ -178,7 +178,7 @@ class TaskScheduler
 
         // We could not run this task parallel, do not attach.
         if (!$task instanceof ParallelTaskInterface) {
-            $this->success = $this->success && $report->getStatus() === ToolReportInterface::STATUS_PASSED;
+            $this->success = $this->success && $report->getStatus() === TaskReportInterface::STATUS_PASSED;
             if ($this->fastFinish && !$this->success) {
                 $this->stop = true;
             }

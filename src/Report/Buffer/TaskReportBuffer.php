@@ -6,11 +6,11 @@ namespace Phpcq\Report\Buffer;
 
 use Generator;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 
 /**
  * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
- * @psalm-type TToolReportSummary = array{
+ * @psalm-type TTaskReportSummary = array{
  *  none: int,
  *  info: int,
  *  marginal: int,
@@ -19,10 +19,10 @@ use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
  *  fatal: int
  * }
  */
-final class ToolReportBuffer
+final class TaskReportBuffer
 {
     /** @var string */
-    private $toolName;
+    private $taskName;
 
     /** @var string */
     private $status;
@@ -39,15 +39,16 @@ final class ToolReportBuffer
     /** @var string */
     private $reportName;
 
-    /** @var string */
-    private $toolVersion;
+    /** @var array<string,string> */
+    private $metadata;
 
-    public function __construct(string $toolName, string $reportName, string $toolVersion)
+    /** @psam-param array<string,string> $metadata */
+    public function __construct(string $taskName, string $reportName, array $metadata = [])
     {
-        $this->toolName    = $toolName;
-        $this->reportName  = $reportName;
-        $this->toolVersion = $toolVersion;
-        $this->status      = ReportInterface::STATUS_STARTED;
+        $this->taskName   = $taskName;
+        $this->reportName = $reportName;
+        $this->metadata   = $metadata;
+        $this->status     = ReportInterface::STATUS_STARTED;
     }
 
     /**
@@ -55,14 +56,14 @@ final class ToolReportBuffer
      *
      * @return string
      */
-    public function getToolName(): string
+    public function getTaskName(): string
     {
-        return $this->toolName;
+        return $this->taskName;
     }
 
-    public function getToolVersion(): string
+    public function getMetadata(): array
     {
-        return $this->toolVersion;
+        return $this->metadata;
     }
 
     public function getReportName(): string
@@ -138,17 +139,17 @@ final class ToolReportBuffer
         return array_values($this->diffs);
     }
 
-    /** @psalm-return TToolReportSummary */
+    /** @psalm-return TTaskReportSummary */
     public function countDiagnosticsGroupedBySeverity(): array
     {
-        /** @psalm-var TToolReportSummary $summary */
+        /** @psalm-var TTaskReportSummary $summary */
         $summary = [
-            ToolReportInterface::SEVERITY_FATAL    => 0,
-            ToolReportInterface::SEVERITY_MAJOR    => 0,
-            ToolReportInterface::SEVERITY_MINOR    => 0,
-            ToolReportInterface::SEVERITY_MARGINAL => 0,
-            ToolReportInterface::SEVERITY_INFO     => 0,
-            ToolReportInterface::SEVERITY_NONE     => 0,
+            TaskReportInterface::SEVERITY_FATAL    => 0,
+            TaskReportInterface::SEVERITY_MAJOR    => 0,
+            TaskReportInterface::SEVERITY_MINOR    => 0,
+            TaskReportInterface::SEVERITY_MARGINAL => 0,
+            TaskReportInterface::SEVERITY_INFO     => 0,
+            TaskReportInterface::SEVERITY_NONE     => 0,
         ];
 
         foreach ($this->getDiagnostics() as $diagnostic) {

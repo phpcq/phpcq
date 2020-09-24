@@ -11,9 +11,9 @@ use Phpcq\Report\Buffer\ReportBuffer;
 /**
  * Write reports to a file.
  */
-final class ToolReportWriter extends AbstractReportWriter
+final class TaskReportWriter extends AbstractReportWriter
 {
-    public const XML_NAMESPACE = 'https://phpcq.github.io/schema/v1/tool-report.xsd';
+    public const XML_NAMESPACE = 'https://phpcq.github.io/schema/v1/task-report.xsd';
     public const ROOT_NODE_NAME = 'tool-report';
     public const REPORT_FILE = '/tool-report.xml';
 
@@ -39,7 +39,7 @@ final class ToolReportWriter extends AbstractReportWriter
 
         if ($this->diagnostics->valid()) {
             do {
-                $this->appendToolReport($outputNode);
+                $this->appendTaskReport($outputNode);
             } while ($this->diagnostics->valid());
         }
     }
@@ -67,16 +67,16 @@ final class ToolReportWriter extends AbstractReportWriter
         } while ($this->diagnostics->valid() && $diagnostic === $entry->getDiagnostic());
     }
 
-    private function appendToolReport(DOMElement $node): void
+    private function appendTaskReport(DOMElement $node): void
     {
         /** @var DiagnosticIteratorEntry $entry */
         $entry = $this->diagnostics->current();
         $report = $entry->getTool();
 
         $tool = $this->xml->createElement('tool', $node);
-        $tool->setAttribute('name', $report->getToolName());
+        $tool->setAttribute('name', $report->getTaskName());
         $tool->setAttribute('status', $report->getStatus());
-        $tool->setAttribute('version', $report->getToolVersion());
+        $tool->setAttribute('version', $report->getMetadata());
         $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
         do {
             $this->createDiagnosticElement($diagnosticsElement, $entry);

@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use Generator;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\ToolReport;
+use Phpcq\Report\TaskReport;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -105,11 +105,11 @@ final class ConsoleWriter
     private function writeSummary(): void
     {
         $rows = [];
-        foreach ($this->report->getToolReports() as $toolReport) {
+        foreach ($this->report->getTaskReports() as $taskReport) {
             $rows[] = [
-                $toolReport->getToolName(),
-                $toolReport->getToolVersion(),
-                $this->renderToolStatus($toolReport->getStatus()),
+                $taskReport->getTaskName(),
+                $taskReport->getMetadata()['version'] ?? 'unknown',
+                $this->renderToolStatus($taskReport->getStatus()),
             ];
         }
 
@@ -141,7 +141,7 @@ final class ConsoleWriter
             ));
         }
 
-        $source = $entry->getTool()->getToolName();
+        $source = $entry->getTool()->getTaskName();
         if (null !== ($diagnosticSource = $diagnostic->getSource())) {
             $source .= ' (' . $diagnosticSource . ')';
         }
@@ -177,13 +177,13 @@ final class ConsoleWriter
     private function renderToolStatus(string $status): string
     {
         switch ($status) {
-            case ToolReport::STATUS_STARTED:
+            case TaskReport::STATUS_STARTED:
                 return '<fg=yellow>' . $status . '</>';
 
-            case ToolReport::STATUS_PASSED:
+            case TaskReport::STATUS_PASSED:
                 return '<fg=green>' . $status . '</>';
 
-            case ToolReport::STATUS_FAILED:
+            case TaskReport::STATUS_FAILED:
                 return '<fg=red>' . $status . '</>';
         }
 
@@ -217,16 +217,16 @@ final class ConsoleWriter
         $message = $message ?: $severity;
 
         switch ($severity) {
-            case ToolReport::SEVERITY_NONE:
-            case ToolReport::SEVERITY_INFO:
+            case TaskReport::SEVERITY_NONE:
+            case TaskReport::SEVERITY_INFO:
                 return '<fg=white>' . $message . '</>';
 
-            case ToolReport::SEVERITY_MARGINAL:
-            case ToolReport::SEVERITY_MINOR:
+            case TaskReport::SEVERITY_MARGINAL:
+            case TaskReport::SEVERITY_MINOR:
                 return '<fg=yellow>' . $message . '</>';
 
-            case ToolReport::SEVERITY_MAJOR:
-            case ToolReport::SEVERITY_FATAL:
+            case TaskReport::SEVERITY_MAJOR:
+            case TaskReport::SEVERITY_FATAL:
                 return '<fg=red>' . $message . '</>';
         }
 

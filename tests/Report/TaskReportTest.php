@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Phpcq\Test\Report;
 
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
-use Phpcq\Report\ToolReport;
+use Phpcq\Report\Buffer\TaskReportBuffer;
+use Phpcq\Report\TaskReport;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-/** @covers \Phpcq\Report\ToolReport */
-class ToolReportTest extends TestCase
+/** @covers \Phpcq\Report\TaskReport */
+class TaskReportTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 
     public function testCanBeInstantiated(): void
     {
-        new ToolReport(
-            new ToolReportBuffer('tool-name', 'report-name', '1.0.0'),
+        new TaskReport(
+            new TaskReportBuffer('task-name', 'report-name'),
             self::$tempdir
         );
         $this->expectNotToPerformAssertions();
@@ -30,12 +30,12 @@ class ToolReportTest extends TestCase
 
     public function testAddsDiagnostic(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, self::$tempdir);
+        $buffer = new TaskReportBuffer('task-name', 'report-name');
+        $report = new TaskReport($buffer, self::$tempdir);
 
         $this->assertSame(
             $report,
-            $report->addDiagnostic(ToolReportInterface::SEVERITY_MAJOR, 'This is an error')->end()
+            $report->addDiagnostic(TaskReportInterface::SEVERITY_MAJOR, 'This is an error')->end()
         );
 
         $diagnostics = iterator_to_array($buffer->getDiagnostics());
@@ -43,33 +43,33 @@ class ToolReportTest extends TestCase
         /** @var DiagnosticBuffer $diagnostic */
         $diagnostic = $diagnostics[0];
 
-        $this->assertSame(ToolReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
+        $this->assertSame(TaskReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
         $this->assertSame('This is an error', $diagnostic->getMessage());
     }
 
     public function testEndIsCalledForPendingDiagnosticBuilderFromFinish(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, self::$tempdir);
+        $buffer = new TaskReportBuffer('task-name', 'report-name');
+        $report = new TaskReport($buffer, self::$tempdir);
 
-        $report->addDiagnostic(ToolReportInterface::SEVERITY_MAJOR, 'This is an error');
+        $report->addDiagnostic(TaskReportInterface::SEVERITY_MAJOR, 'This is an error');
 
-        $report->close(ToolReport::STATUS_PASSED);
+        $report->close(TaskReport::STATUS_PASSED);
 
         $diagnostics = iterator_to_array($buffer->getDiagnostics());
         $this->assertCount(1, $diagnostics);
         /** @var DiagnosticBuffer $diagnostic */
         $diagnostic = $diagnostics[0];
 
-        $this->assertSame(ToolReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
+        $this->assertSame(TaskReportInterface::SEVERITY_MAJOR, $diagnostic->getSeverity());
         $this->assertSame('This is an error', $diagnostic->getMessage());
     }
 
     public function testAddsAttachment(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, self::$tempdir, $filesystem);
+        $buffer     = new TaskReportBuffer('task-name', 'report-name');
+        $report     = new TaskReport($buffer, self::$tempdir, $filesystem);
 
         $this->assertSame($report, $report->addAttachment('local')->fromFile('/some/file')->end());
 
@@ -87,14 +87,14 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingAttachmentBuilderFromFinish(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
+        $buffer     = new TaskReportBuffer('task-name', 'report-name');
+        $report     = new TaskReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
         $report->addAttachment('foo')->fromFile('/some/dir/file.foo')->setMimeType('application/foo');
         $report->addAttachment('bar')->fromFile('/some/dir/file.bar');
 
-        $report->close(ToolReport::STATUS_PASSED);
+        $report->close(TaskReport::STATUS_PASSED);
 
         $this->assertEquals(
             [
@@ -108,8 +108,8 @@ class ToolReportTest extends TestCase
     public function testAddsDiff(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, self::$tempdir, $filesystem);
+        $buffer     = new TaskReportBuffer('task-name', 'report-name');
+        $report     = new TaskReport($buffer, self::$tempdir, $filesystem);
 
         $this->assertSame($report, $report->addDiff('local')->fromFile('/some/patch-file.diff')->end());
 
@@ -126,14 +126,14 @@ class ToolReportTest extends TestCase
     public function testEndIsCalledForPendingDiffBuilderFromFinish(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();
-        $buffer     = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report     = new ToolReport($buffer, '/our/temp/dir', $filesystem);
+        $buffer     = new TaskReportBuffer('task-name', 'report-name');
+        $report     = new TaskReport($buffer, '/our/temp/dir', $filesystem);
 
         // "forgotten" end calls on file builders.
         $report->addDiff('foo')->fromFile('/some/dir/file.diff');
         $report->addDiff('bar')->fromFile('/some/dir/file.diff');
 
-        $report->close(ToolReport::STATUS_PASSED);
+        $report->close(TaskReport::STATUS_PASSED);
 
         $this->assertEquals(
             [
@@ -146,8 +146,8 @@ class ToolReportTest extends TestCase
 
     public function testFinishSetsTheStatus(): void
     {
-        $buffer = new ToolReportBuffer('tool-name', 'report-name', '1.0.0');
-        $report = new ToolReport($buffer, self::$tempdir);
+        $buffer = new TaskReportBuffer('task-name', 'report-name');
+        $report = new TaskReport($buffer, self::$tempdir);
 
         $report->close('passed');
 

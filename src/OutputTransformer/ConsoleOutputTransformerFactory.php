@@ -7,16 +7,16 @@ namespace Phpcq\OutputTransformer;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 
 /**
- * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_NONE
- * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_INFO
- * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MARGINAL
- * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MINOR
- * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_MAJOR
- * |\Phpcq\PluginApi\Version10\Report\ToolReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_NONE
+ * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_INFO
+ * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MARGINAL
+ * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MINOR
+ * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MAJOR
+ * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_FATAL
  */
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
@@ -36,10 +36,10 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
     }
 
     /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
-    public function createFor(ToolReportInterface $report): OutputTransformerInterface
+    public function createFor(TaskReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
-            /** @var ToolReportInterface */
+            /** @var TaskReportInterface */
             private $report;
             /** @var BufferedLineReader */
             private $data;
@@ -51,7 +51,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             /**
              * Create a new instance.
              */
-            public function __construct(ToolReportInterface $report)
+            public function __construct(TaskReportInterface $report)
             {
                 $this->report = $report;
                 $this->data   = BufferedLineReader::create();
@@ -102,13 +102,13 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             {
                 if (0 === $exitCode) {
                     return [
-                        ToolReportInterface::STATUS_PASSED,
-                        ToolReportInterface::SEVERITY_INFO,
+                        TaskReportInterface::STATUS_PASSED,
+                        TaskReportInterface::SEVERITY_INFO,
                     ];
                 }
                 return [
-                    ToolReportInterface::STATUS_FAILED,
-                    ToolReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::STATUS_FAILED,
+                    TaskReportInterface::SEVERITY_MAJOR,
                 ];
             }
         };

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Report\Buffer;
 
 use DateTimeImmutable;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use function array_values;
 
 /**
@@ -32,26 +32,27 @@ final class ReportBuffer
     private $completedAt;
 
     /**
-     * @psalm-var array<string,ToolReportBuffer>
-     * @var ToolReportBuffer[]
+     * @psalm-var array<string,TaskReportBuffer>
+     * @var TaskReportBuffer[]
      */
-    private $toolReports = [];
+    private $taskReports = [];
 
     public function __construct()
     {
         $this->startedAt = new DateTimeImmutable();
     }
 
-    public function createToolReport(string $toolName, string $toolVersion): ToolReportBuffer
+    /** @psam-param array<string,string> $metadata */
+    public function createTaskReport(string $taskName, array $metadata = []): TaskReportBuffer
     {
-        $reportName = $toolName;
-        if (isset($this->toolReports[$reportName])) {
+        $reportName = $taskName;
+        if (isset($this->taskReports[$reportName])) {
             $number = 0;
             do {
-                $reportName = $toolName . '-' . ++$number;
-            } while (isset($this->toolReports[$reportName]));
+                $reportName = $taskName . '-' . ++$number;
+            } while (isset($this->taskReports[$reportName]));
         }
-        return $this->toolReports[$reportName] = new ToolReportBuffer($toolName, $reportName, $toolVersion);
+        return $this->taskReports[$reportName] = new TaskReportBuffer($taskName, $reportName, $metadata);
     }
 
     public function complete(string $status): void
@@ -76,13 +77,13 @@ final class ReportBuffer
     }
 
     /**
-     * @return ToolReportBuffer[]|iterable
+     * @return TaskReportBuffer[]|iterable
      *
-     * @psalm-return list<ToolReportBuffer>
+     * @psalm-return list<TaskReportBuffer>
      */
-    public function getToolReports(): iterable
+    public function getTaskReports(): iterable
     {
-        return array_values($this->toolReports);
+        return array_values($this->taskReports);
     }
 
     /**
@@ -92,16 +93,16 @@ final class ReportBuffer
     {
         /** @psalm-var TReportSummary $summary */
         $summary = [
-            ToolReportInterface::SEVERITY_FATAL    => 0,
-            ToolReportInterface::SEVERITY_MAJOR    => 0,
-            ToolReportInterface::SEVERITY_MINOR    => 0,
-            ToolReportInterface::SEVERITY_MARGINAL => 0,
-            ToolReportInterface::SEVERITY_INFO     => 0,
-            ToolReportInterface::SEVERITY_NONE     => 0,
+            TaskReportInterface::SEVERITY_FATAL    => 0,
+            TaskReportInterface::SEVERITY_MAJOR    => 0,
+            TaskReportInterface::SEVERITY_MINOR    => 0,
+            TaskReportInterface::SEVERITY_MARGINAL => 0,
+            TaskReportInterface::SEVERITY_INFO     => 0,
+            TaskReportInterface::SEVERITY_NONE     => 0,
         ];
 
-        foreach ($this->getToolReports() as $toolReport) {
-            foreach ($toolReport->countDiagnosticsGroupedBySeverity() as $severity => $count) {
+        foreach ($this->getTaskReports() as $taskReport) {
+            foreach ($taskReport->countDiagnosticsGroupedBySeverity() as $severity => $count) {
                 $summary[$severity] += $count;
             }
         }

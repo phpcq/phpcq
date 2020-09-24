@@ -19,7 +19,7 @@ final class TaskBuilderTest extends TestCase
     public function testBuilds(): void
     {
         $builder = new TaskBuilder(
-            'tool-name',
+            'task-name',
             ['foo', 'bar', 'baz']
         );
 
@@ -44,7 +44,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetCostOnSingleThread(): void
     {
-        $builder = new TaskBuilder('tool-name', ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo']);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not set cost for single process forced task.');
@@ -56,7 +56,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetSingleThreadOnTaskWithHigherCostThanOne(): void
     {
-        $builder = new TaskBuilder('tool-name', ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo']);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not force task with cost > 1 to run as single process');
@@ -69,7 +69,7 @@ final class TaskBuilderTest extends TestCase
     public function testBuildsParallel(): void
     {
         $builder = new TaskBuilder(
-            'tool-name',
+            'task-name',
             ['foo', 'bar', 'baz']
         );
 

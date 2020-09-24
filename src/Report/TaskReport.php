@@ -4,28 +4,27 @@ declare(strict_types=1);
 
 namespace Phpcq\Report;
 
-use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\DiffBuilderInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use Phpcq\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Report\Buffer\DiffBuffer;
-use Phpcq\Report\Buffer\ToolReportBuffer;
+use Phpcq\Report\Buffer\TaskReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * @psalm-type TDiagnosticSeverity = ToolReportInterface::SEVERITY_NONE
- * |ToolReportInterface::SEVERITY_INFO
- * |ToolReportInterface::SEVERITY_MARGINAL
- * |ToolReportInterface::SEVERITY_MINOR
- * |ToolReportInterface::SEVERITY_MAJOR
- * |ToolReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE
+ * |TaskReportInterface::SEVERITY_INFO
+ * |TaskReportInterface::SEVERITY_MARGINAL
+ * |TaskReportInterface::SEVERITY_MINOR
+ * |TaskReportInterface::SEVERITY_MAJOR
+ * |TaskReportInterface::SEVERITY_FATAL
  */
-class ToolReport implements ToolReportInterface
+class TaskReport implements TaskReportInterface
 {
-    /** @var ToolReportBuffer */
+    /** @var TaskReportBuffer */
     private $report;
 
     /** @var string */
@@ -43,7 +42,7 @@ class ToolReport implements ToolReportInterface
     /** @var DiffBuilder[] */
     private $pendingDiffs = [];
 
-    public function __construct(ToolReportBuffer $report, string $tempDir, Filesystem $filesystem = null)
+    public function __construct(TaskReportBuffer $report, string $tempDir, Filesystem $filesystem = null)
     {
         $this->report     = $report;
         $this->tempDir    = $tempDir;

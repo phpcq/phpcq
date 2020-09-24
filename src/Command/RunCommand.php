@@ -9,9 +9,9 @@ use Phpcq\Config\PluginConfiguration;
 use Phpcq\Config\ProjectConfiguration;
 use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Exception\RuntimeException;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
 use Phpcq\Report\Report;
 use Phpcq\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Environment;
@@ -20,7 +20,7 @@ use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Writer\ConsoleWriter;
 use Phpcq\Report\Writer\FileReportWriter;
 use Phpcq\Report\Writer\GithubActionConsoleWriter;
-use Phpcq\Report\Writer\ToolReportWriter;
+use Phpcq\Report\Writer\TaskReportWriter;
 use Phpcq\Task\TaskFactory;
 use Phpcq\Task\Tasklist;
 use Phpcq\Task\TaskScheduler;
@@ -43,7 +43,7 @@ final class RunCommand extends AbstractCommand
 
     /** @var array<string, class-string<\Phpcq\Report\Writer\AbstractReportWriter>> */
     private const REPORT_FORMATS = [
-        'tool-report' => ToolReportWriter::class,
+        'tool-report' => TaskReportWriter::class,
         'file-report' => FileReportWriter::class,
         'checkstyle'  => CheckstyleReportWriter::class,
     ];
@@ -95,14 +95,14 @@ final class RunCommand extends AbstractCommand
             InputOption::VALUE_REQUIRED,
             'Set the minimum threshold for diagnostics to be reported, Available options are (in ascending order): "' .
             implode('", "', [
-                ToolReportInterface::SEVERITY_NONE,
-                ToolReportInterface::SEVERITY_INFO,
-                ToolReportInterface::SEVERITY_MINOR,
-                ToolReportInterface::SEVERITY_MARGINAL,
-                ToolReportInterface::SEVERITY_MAJOR,
-                ToolReportInterface::SEVERITY_FATAL,
+                TaskReportInterface::SEVERITY_NONE,
+                TaskReportInterface::SEVERITY_INFO,
+                TaskReportInterface::SEVERITY_MINOR,
+                TaskReportInterface::SEVERITY_MARGINAL,
+                TaskReportInterface::SEVERITY_MAJOR,
+                TaskReportInterface::SEVERITY_FATAL,
             ]) . '"',
-            ToolReportInterface::SEVERITY_MARGINAL
+            TaskReportInterface::SEVERITY_MARGINAL
         );
 
         $numCores = $this->getCores();
@@ -284,8 +284,8 @@ final class RunCommand extends AbstractCommand
 
         // Clean up attachments.
         $fileSystem = new Filesystem();
-        foreach ($report->getToolReports() as $toolReport) {
-            foreach ($toolReport->getAttachments() as $attachment) {
+        foreach ($report->getTaskReports() as $taskReport) {
+            foreach ($taskReport->getAttachments() as $attachment) {
                 $fileSystem->remove($attachment->getAbsolutePath());
             }
         }

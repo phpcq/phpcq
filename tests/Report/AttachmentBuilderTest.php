@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report;
 
 use Phpcq\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\AttachmentBuilder;
 use Phpcq\Report\Buffer\AttachmentBuffer;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +20,7 @@ class AttachmentBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,
@@ -43,7 +43,7 @@ class AttachmentBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,
@@ -70,7 +70,7 @@ class AttachmentBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,
@@ -99,7 +99,7 @@ class AttachmentBuilderTest extends TestCase
                 $this->assertSame('file contents', $data);
             });
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,
@@ -126,7 +126,7 @@ class AttachmentBuilderTest extends TestCase
 
         $filesystem->expects($this->once())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,
@@ -155,7 +155,7 @@ class AttachmentBuilderTest extends TestCase
         $filesystem->expects($this->once())->method('dumpFile');
 
         $called = false;
-        $report = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new AttachmentBuilder(
             'some-file.txt',
             $report,

@@ -89,7 +89,7 @@ final class CheckstyleReportWriter
 
         $source = $error->getSource();
 
-        $toolName = $entry->getTool()->getToolName();
+        $toolName = $entry->getTool()->getTaskName();
         $this->xml->setAttribute($node, 'source', null !== $source ? sprintf('%s: %s', $toolName, $source) : $toolName);
     }
 }

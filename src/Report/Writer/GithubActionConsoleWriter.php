@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Report\Writer;
 
 use Generator;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,7 +46,7 @@ final class GithubActionConsoleWriter
         $this->wrapWidth   = $wrapWidth;
         $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity(
             $report,
-            ToolReportInterface::SEVERITY_MINOR
+            TaskReportInterface::SEVERITY_MINOR
         )
             ->thenSortByFileAndRange()
             ->getIterator();
@@ -65,7 +65,7 @@ final class GithubActionConsoleWriter
         $range   = $this->compileRange($entry);
 
         switch ($entry->getDiagnostic()->getSeverity()) {
-            case ToolReportInterface::SEVERITY_MINOR:
+            case TaskReportInterface::SEVERITY_MINOR:
                 $this->output->writeln(sprintf('::warning %s::%s', $range, $message));
                 break;
             default:
@@ -78,7 +78,7 @@ final class GithubActionConsoleWriter
         $diagnostic = $entry->getDiagnostic();
         $message    = $this->renderRangePrefix($entry) . $entry->getDiagnostic()->getMessage();
 
-        $reportedBy = 'reported by ' . $entry->getTool()->getToolName();
+        $reportedBy = 'reported by ' . $entry->getTool()->getTaskName();
         if (null !== ($source = $diagnostic->getSource())) {
             $reportedBy .= ': ' . $source;
         }

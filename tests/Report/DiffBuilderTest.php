@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Test\Report;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Report\DiffBuilder;
 use Phpcq\Report\Buffer\DiffBuffer;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +20,7 @@ class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -43,7 +43,7 @@ class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -69,7 +69,7 @@ class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -98,7 +98,7 @@ class DiffBuilderTest extends TestCase
                 $this->assertSame('file contents', $data);
             });
 
-        $report  = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -126,7 +126,7 @@ class DiffBuilderTest extends TestCase
         $filesystem->expects($this->once())->method('dumpFile');
 
         $called = false;
-        $report = $this->getMockForAbstractClass(ToolReportInterface::class);
+        $report = $this->getMockForAbstractClass(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,

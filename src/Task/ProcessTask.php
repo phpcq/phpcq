@@ -7,7 +7,7 @@ namespace Phpcq\Task;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as TransformerFactory;
-use Phpcq\PluginApi\Version10\Report\ToolReportInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Symfony\Component\Process\Process;
@@ -93,10 +93,10 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         return $this->toolName;
     }
 
-    public function runWithReport(ToolReportInterface $report): void
+    public function runWithReport(TaskReportInterface $report): void
     {
         $command = implode(' ', $this->command);
-        $report->addDiagnostic(ToolReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
+        $report->addDiagnostic(TaskReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
 
         $process     = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
         $transformer = $this->transformer->createFor($report);
@@ -122,7 +122,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
             $transformer->finish((int) $process->getExitCode());
         }
 
-        if ($report->getStatus() !== ToolReportInterface::STATUS_PASSED) {
+        if ($report->getStatus() !== TaskReportInterface::STATUS_PASSED) {
             throw new RuntimeException(
                 'Tool report did not pass (Status ' . $report->getStatus() . '). Process exited code '
                 . (string) $process->getExitCode() . ': ' . $command,
