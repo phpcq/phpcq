@@ -141,7 +141,7 @@ final class RunCommand extends AbstractCommand
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
-        $plugins = PluginRegistry::buildFromInstalledRepository($installed, $this->getPluginPath());
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed);
         $taskList = new Tasklist();
         if ($taskName = $this->input->getArgument('task')) {
             assert(is_string($taskName));

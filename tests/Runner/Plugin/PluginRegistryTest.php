@@ -30,7 +30,7 @@ class PluginRegistryTest extends TestCase
         $version1->expects($this->once())->method('getFilePath')->willReturn($this->getBootstrap('phar-1~1.0.0.php'));
         $version2->expects($this->once())->method('getFilePath')->willReturn($this->getBootstrap('phar-2~1.1.0.php'));
 
-        $registry = PluginRegistry::buildFromInstalledRepository($instance, __DIR__);
+        $registry = PluginRegistry::buildFromInstalledRepository($instance);
         $this->assertInstanceOf(PluginRegistry::class, $registry);
     }
 
