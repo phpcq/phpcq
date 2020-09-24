@@ -14,13 +14,16 @@ trait InstalledRepositoryLoadingCommandTrait
 {
     protected function getInstalledRepository(bool $failIfNotExist): InstalledRepository
     {
-        if (!is_file($this->phpcqPath . '/installed.json')) {
+        $installedPath = $this->getPluginPath() . '/installed.json';
+        if (!is_file($installedPath)) {
             if (!$failIfNotExist) {
                 return new InstalledRepository();
             }
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
 
-        return (new InstalledRepositoryLoader())->loadFile($this->phpcqPath . '/installed.json');
+        return (new InstalledRepositoryLoader())->loadFile($installedPath);
     }
+
+    abstract protected function getPluginPath(): string;
 }

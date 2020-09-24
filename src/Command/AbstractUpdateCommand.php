@@ -145,7 +145,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /** @psalm-param list<TPluginTask> $tasks */
     protected function executeTasks(array $tasks): void
     {
-        $gnupgPath = dirname($this->phpcqPath) . '/gnupg';
+        $gnupgPath = $this->phpcqPath . '/gnupg';
         if (! is_dir($gnupgPath)) {
             mkdir($gnupgPath, 0777, true);
         }
@@ -158,7 +158,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         $executor = new UpdateExecutor(
             $this->downloader,
             $signatureVerifier,
-            $this->phpcqPath,
+            $this->getPluginPath(),
             $this->getWrappedOutput()
         );
         $executor->execute($tasks);

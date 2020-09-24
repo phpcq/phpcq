@@ -67,12 +67,12 @@ final class UpdateExecutor
     public function __construct(
         FileDownloader $downloader,
         SignatureVerifier $verifier,
-        string $phpcqPath,
+        string $pluginPath,
         OutputInterface $output
     ) {
         $this->downloader          = $downloader;
         $this->verifier            = $verifier;
-        $this->installedPluginPath = $phpcqPath;
+        $this->installedPluginPath = $pluginPath;
         $this->output              = $output;
         $this->filesystem          = new Filesystem();
     }

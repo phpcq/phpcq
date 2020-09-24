@@ -70,11 +70,11 @@ abstract class AbstractCommand extends Command
             getcwd() . '/.phpcq.yaml'
         );
         $this->addOption(
-            'tools',
-            't',
+            'home-dir',
+            null,
             InputOption::VALUE_REQUIRED,
-            'Path to the phpcq tool directory',
-            getcwd() . '/.phpcq/plugins'
+            'Path to the phpcq home directory',
+            getcwd() . '/.phpcq'
         );
         $this->addOption(
             'ignore-platform-reqs',
@@ -129,7 +129,7 @@ abstract class AbstractCommand extends Command
 
     private function determinePhpcqPath(): string
     {
-        $phpcqPath = $this->input->getOption('tools');
+        $phpcqPath = $this->input->getOption('home-dir');
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
         if ($this->output->isVeryVerbose()) {
@@ -146,5 +146,10 @@ abstract class AbstractCommand extends Command
         }
 
         return 80;
+    }
+
+    protected function getPluginPath(): string
+    {
+        return $this->phpcqPath . '/plugins';
     }
 }

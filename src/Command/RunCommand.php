@@ -141,7 +141,7 @@ final class RunCommand extends AbstractCommand
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
-        $plugins = PluginRegistry::buildFromInstalledRepository($installed, $this->phpcqPath);
+        $plugins = PluginRegistry::buildFromInstalledRepository($installed, $this->getPluginPath());
         $taskList = new Tasklist();
         if ($taskName = $this->input->getArgument('task')) {
             assert(is_string($taskName));
@@ -149,7 +149,7 @@ final class RunCommand extends AbstractCommand
             $environment = new Environment(
                 $projectConfig,
                 new TaskFactory(
-                    $this->phpcqPath,
+                    $this->getPluginPath(),
                     $installed->getPlugin($taskName),
                     ...$this->findPhpCli()
                 ),
@@ -162,7 +162,7 @@ final class RunCommand extends AbstractCommand
                 $environment = new Environment(
                     $projectConfig,
                     new TaskFactory(
-                        $this->phpcqPath,
+                        $this->getPluginPath(),
                         $installed->getPlugin($taskName),
                         ...$this->findPhpCli()
                     ),
