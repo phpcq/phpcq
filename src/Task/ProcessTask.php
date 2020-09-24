@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as Transf
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;
@@ -22,9 +23,9 @@ use function implode;
 class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterface
 {
     /**
-     * @var string
+     * @var ToolVersionInterface
      */
-    private $toolName;
+    private $tool;
 
     /**
      * @var string[]
@@ -71,7 +72,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
      * @param int|float|null                   $timeout     The timeout in seconds or null to disable
      */
     public function __construct(
-        string $toolName,
+        ToolVersionInterface $tool,
         array $command,
         TransformerFactory $transformer,
         string $cwd = null,
@@ -79,7 +80,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         $input = null,
         ?float $timeout = 60
     ) {
-        $this->toolName = $toolName;
+        $this->tool        = $tool;
         $this->command     = $command;
         $this->cwd         = $cwd;
         $this->env         = $env;
@@ -90,11 +91,14 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
 
     public function getToolName(): string
     {
-        return $this->toolName;
+        return $this->tool->getName();
     }
 
     public function runWithReport(TaskReportInterface $report): void
     {
+        $report->addMetadata('tool', $this->tool->getName());
+        $report->addMetadata('version', $this->tool->getVersion());
+
         $command = implode(' ', $this->command);
         $report->addDiagnostic(TaskReportInterface::SEVERITY_INFO, 'Executing: ' . $command);
 

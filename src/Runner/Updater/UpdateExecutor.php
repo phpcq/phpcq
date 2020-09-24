@@ -256,7 +256,7 @@ final class UpdateExecutor
      *
      * @return ToolVersionInterface[]
      *
-     * @psalm-return array<string,ToolVersionInterface>
+     * @psalm-return list<ToolVersionInterface>
      */
     private function executePluginTasks(array $tasks, InstalledPlugin $plugin): array
     {
@@ -265,17 +265,17 @@ final class UpdateExecutor
             switch ($task['type']) {
                 case 'keep':
                     /** @psalm-var TKeepToolTask $task */
-                    $tools[$task['tool']->getName()] = $task['tool'];
+                    $tools[] = $task['tool'];
                     $plugin->addTool($task['tool']);
                     break;
                 case 'install':
                     /** @psalm-var TInstallToolTask $task */
-                    $tools[$task['tool']->getName()] = $task['tool'];
+                    $tools[] = $task['tool'];
                     $this->installTool($plugin, $task['tool'], $task['signed']);
                     break;
                 case 'upgrade':
                     /** @psalm-var TUpgradeToolTask $task */
-                    $tools[$task['tool']->getName()] = $task['tool'];
+                    $tools[] = $task['tool'];
                     $this->upgradeTool($plugin, $task['tool'], $task['old'], $task['signed']);
                     break;
                 case 'remove':

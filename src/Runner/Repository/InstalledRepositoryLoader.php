@@ -129,7 +129,7 @@ final class InstalledRepositoryLoader
 
         $tools = [];
         foreach ($information['tools'] as $toolName => $toolConfig) {
-            $tools[$toolName] = $this->createToolVersion($toolName, $toolConfig, $baseDir);
+            $tools[] = $this->createToolVersion($toolName, $toolConfig, $baseDir);
         }
 
         return new InstalledPlugin($version, $tools);

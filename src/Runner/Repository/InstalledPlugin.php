@@ -19,17 +19,19 @@ final class InstalledPlugin
      *
      * @psalm-var array<string,ToolVersionInterface>
      */
-    private $tools;
+    private $tools = [];
 
     /**
      * @param array|ToolVersionInterface[] $tools
      *
-     * @psalm-param array<string,ToolVersionInterface> $tools
+     * @psalm-param list<ToolVersionInterface> $tools
      */
     public function __construct(PluginVersionInterface $version, array $tools = [])
     {
         $this->version = $version;
-        $this->tools   = $tools;
+        foreach ($tools as $tool) {
+            $this->tools[$tool->getName()] = $tool;
+        }
     }
 
     public function getName(): string

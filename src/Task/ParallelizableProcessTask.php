@@ -10,14 +10,15 @@ use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as Transf
 use Phpcq\PluginApi\Version10\Output\OutputTransformerInterface as Transformer;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;
 
 class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
 {
-    /** @var string */
-    private $toolName;
+    /** @var ToolVersionInterface */
+    private $tool;
 
     /** @var string[] */
     private $command;
@@ -50,13 +51,13 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
     private $errorOffset;
 
     /**
-     * @param string                           $toolName    The name of the tool the task belongs to
-     * @param string[] $command                             The command to run and its arguments listed as separate
+     * @param ToolVersionInterface             $tool        The tool the task belongs to
+     * @param string[]                         $command     The command to run and its arguments listed as separate
      *                                                      entries
      * @param TransformerFactory               $transformer The output transformer
      * @param string|null                      $cwd         The working directory or null to use the working dir of the
      *                                                      current PHP process
-     * @param string[]|null $env                            The environment variables or null to use the same
+     * @param string[]|null                    $env         The environment variables or null to use the same
      *                                                      environment
      *                                                      as the current PHP process
      * @param resource|string|Traversable|null $input       The input as stream resource, scalar or \Traversable, or
@@ -64,7 +65,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
      * @param int|float|null                   $timeout     The timeout in seconds or null to disable
      */
     public function __construct(
-        string $toolName,
+        ToolVersionInterface $tool,
         array $command,
         TransformerFactory $transformer,
         int $cost,
@@ -73,8 +74,8 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         $input = null,
         ?float $timeout = 60
     ) {
-        $this->toolName = $toolName;
-        $this->command  = $command;
+        $this->tool    = $tool;
+        $this->command = $command;
         $this->cost     = $cost;
         $this->cwd      = $cwd;
         $this->env      = $env;
@@ -85,11 +86,14 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
 
     public function getToolName(): string
     {
-        return $this->toolName;
+        return $this->tool->getName();
     }
 
     public function runWithReport(TaskReportInterface $report): void
     {
+        $report->addMetadata('tool', $this->tool->getName());
+        $report->addMetadata('version', $this->tool->getVersion());
+
         $this->process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
         $command = $this->process->getCommandLine();
         $report->addDiagnostic(TaskReportInterface::SEVERITY_INFO, 'Executing: ' . $command);

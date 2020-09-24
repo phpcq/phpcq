@@ -9,14 +9,15 @@ use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Traversable;
 
 final class TaskBuilder implements TaskBuilderInterface
 {
     /**
-     * @var string
+     * @var ToolVersionInterface
      */
-    private $toolName;
+    private $tool;
 
     /**
      * @var string[]
@@ -59,9 +60,9 @@ final class TaskBuilder implements TaskBuilderInterface
      *
      * @param string[] $command
      */
-    public function __construct(string $toolName, array $command)
+    public function __construct(ToolVersionInterface $tool, array $command)
     {
-        $this->toolName = $toolName;
+        $this->tool    = $tool;
         $this->command = $command;
     }
 
@@ -151,12 +152,12 @@ final class TaskBuilder implements TaskBuilderInterface
     {
         $transformerFactory = $this->transformerFactory;
         if (null === $transformerFactory) {
-            $transformerFactory = new ConsoleOutputTransformerFactory($this->toolName);
+            $transformerFactory = new ConsoleOutputTransformerFactory($this->tool->getName());
         }
 
         if ($this->parallel) {
             return new ParallelizableProcessTask(
-                $this->toolName,
+                $this->tool,
                 $this->command,
                 $transformerFactory,
                 $this->cost,
@@ -168,7 +169,7 @@ final class TaskBuilder implements TaskBuilderInterface
         }
 
         return new ProcessTask(
-            $this->toolName,
+            $this->tool,
             $this->command,
             $transformerFactory,
             $this->cwd,

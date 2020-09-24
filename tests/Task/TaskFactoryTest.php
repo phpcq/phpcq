@@ -19,8 +19,11 @@ final class TaskFactoryTest extends TestCase
 {
     public function testBuildRunProcess(): void
     {
+        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool->method('getName')->willReturn('task-name');
+
         $factory = new TaskFactory(
-            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), []),
+            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -33,13 +36,11 @@ final class TaskFactoryTest extends TestCase
 
     public function testBuildRunPhar(): void
     {
+        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool->method('getName')->willReturn('phar-name');
+
         $factory = new TaskFactory(
-            new InstalledPlugin(
-                $this->getMockForAbstractClass(PluginVersionInterface::class),
-                [
-                    'phar-name' => $tool = $this->getMockForAbstractClass(ToolVersionInterface::class)
-                ]
-            ),
+            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -59,8 +60,11 @@ final class TaskFactoryTest extends TestCase
 
     public function testBuildPhpProcess(): void
     {
+        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool->method('getName')->willReturn('task-name');
+
         $factory = new TaskFactory(
-            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class)),
+            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );

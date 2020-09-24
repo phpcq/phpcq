@@ -20,7 +20,9 @@ final class InstalledPluginTest extends TestCase
         $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
         $version->expects(self::once())->method('getName')->willReturn('plugin1');
 
-        $tools   = ['tool1' => $this->getMockForAbstractClass(ToolVersionInterface::class)];
+        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool->method('getName')->willReturn('tool1');
+        $tools   = [$tool];
         $plugin  = new InstalledPlugin($version, $tools);
 
         self::assertSame('plugin1', $plugin->getName());
