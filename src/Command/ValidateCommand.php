@@ -8,10 +8,9 @@ use Phpcq\Config\Builder\PluginConfigurationBuilder;
 use Phpcq\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Throwable;
+
 use function array_key_exists;
 use function md5;
 use function serialize;

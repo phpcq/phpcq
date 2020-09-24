@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace Phpcq\Test\Runner\Plugin;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
-use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
-use Phpcq\RepositoryDefinition\RepositoryInterface;
 use Phpcq\Runner\Plugin\PluginRegistry;
-use Phpcq\PluginApi\Version10\PluginInterface;
-use Phpcq\Repository\InstalledBootstrap;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
-use Phpcq\Runner\Repository\Repository;
 use PHPUnit\Framework\TestCase;
-use function sys_get_temp_dir;
 
 /**
  * @covers \Phpcq\Runner\Plugin\PluginRegistry

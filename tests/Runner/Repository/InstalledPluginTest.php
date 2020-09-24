@@ -8,6 +8,7 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use PHPUnit\Framework\TestCase;
+
 use function array_values;
 use function iterator_to_array;
 
