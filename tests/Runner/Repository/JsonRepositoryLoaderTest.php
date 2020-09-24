@@ -40,6 +40,6 @@ class JsonRepositoryLoaderTest extends TestCase
         $this->assertTrue($repository->hasPluginVersion('phpmd', '1.0.0'));
         $version = $repository->getPluginVersion('phpmd', '1.0.0');
         $this->assertSame('1.0.0', $version->getVersion());
-        $this->assertSame('<?php // The code', $version->getCode());
+        $this->assertSame('https://example.org/foo.php', $version->getFilePath());
     }
 }
