@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
-use Phpcq\Output\BufferedOutput;
+use Phpcq\Runner\Output\BufferedOutput;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
-use Phpcq\Task\TaskFactory;
+use Phpcq\Runner\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Process\PhpExecutableFinder;

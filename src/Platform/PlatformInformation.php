@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Platform;
+namespace Phpcq\Runner\Platform;
 
 use Composer\XdebugHandler\XdebugHandler;
 

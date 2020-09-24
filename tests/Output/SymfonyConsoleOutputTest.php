@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Output;
+namespace Phpcq\Runner\Test\Output;
 
-use Phpcq\Output\SymfonyConsoleOutput;
-use Phpcq\Output\SymfonyOutput;
+use Phpcq\Runner\Output\SymfonyConsoleOutput;
+use Phpcq\Runner\Output\SymfonyOutput;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @covers \Phpcq\Output\SymfonyConsoleOutput
+ * @covers \Phpcq\Runner\Output\SymfonyConsoleOutput
  */
 class SymfonyConsoleOutputTest extends TestCase
 {

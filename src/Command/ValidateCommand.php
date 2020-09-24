@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\Config\Builder\PluginConfigurationBuilder;
-use Phpcq\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Symfony\Component\Console\Output\OutputInterface;

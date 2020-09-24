@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq;
+namespace Phpcq\Runner;
 
-use Phpcq\Config\PhpcqConfiguration;
-use Phpcq\Config\PhpcqConfigurationBuilder;
+use Phpcq\Runner\Config\PhpcqConfiguration;
+use Phpcq\Runner\Config\PhpcqConfigurationBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -13,8 +13,8 @@ use function array_key_exists;
 use function array_keys;
 
 /**
- * @psalm-import-type TPlugin from \Phpcq\Config\PhpcqConfiguration
- * @psalm-import-type TConfig from \Phpcq\Config\PhpcqConfiguration
+ * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
+ * @psalm-import-type TConfig from \Phpcq\Runner\Config\PhpcqConfiguration
  * @psalm-type TTaskConfig = array{
  *   directories?: array<string, array|null|bool>
  * }

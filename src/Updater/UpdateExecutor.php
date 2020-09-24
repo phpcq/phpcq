@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Updater;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
+use Phpcq\Runner\Exception\RuntimeException;
+use Phpcq\Runner\FileDownloader;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\DiagnosticBuilder;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\DiagnosticBuilder;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\DiagnosticBuilder */
+/** @covers \Phpcq\Runner\Report\DiagnosticBuilder */
 final class DiagnosticBuilderTest extends TestCase
 {
     public function testBuildsMinimal(): void

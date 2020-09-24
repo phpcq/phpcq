@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Task;
+namespace Phpcq\Runner\Test\Task;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
@@ -10,15 +10,15 @@ use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
-use Phpcq\Task\TasklistInterface;
-use Phpcq\Task\TaskScheduler;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Report;
+use Phpcq\Runner\Task\TasklistInterface;
+use Phpcq\Runner\Task\TaskScheduler;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
-/** @covers \Phpcq\Task\TaskScheduler */
+/** @covers \Phpcq\Runner\Task\TaskScheduler */
 class TaskSchedulerTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
@@ -55,7 +55,7 @@ class TaskSchedulerTest extends TestCase
 
         $scheduler = new TaskScheduler($list, 1, $report, $output, false);
         $scheduler->run();
-        $this->expectException(\Phpcq\Exception\RuntimeException::class);
+        $this->expectException(\Phpcq\Runner\Exception\RuntimeException::class);
         $this->expectExceptionMessage('Can not run twice.');
         $scheduler->run();
     }

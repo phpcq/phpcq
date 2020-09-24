@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Signature;
+namespace Phpcq\Runner\Signature;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\FileDownloader;
+use Phpcq\Runner\Exception\RuntimeException;
+use Phpcq\Runner\FileDownloader;
 use Phpcq\GnuPG\Downloader\FileDownloaderInterface;
 use Phpcq\GnuPG\Exception\DownloadFailureException;
 

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config;
+namespace Phpcq\Runner\Test\Config;
 
-use Phpcq\Environment;
+use Phpcq\Runner\Environment;
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Environment
+ * @covers \Phpcq\Runner\Environment
  */
 final class BuildConfigurationTest extends TestCase
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Buffer;
+namespace Phpcq\Runner\Report\Buffer;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 
 /**
  * Holds information for a diff.

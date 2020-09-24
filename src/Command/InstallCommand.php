@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
 use Phpcq\Runner\Resolver\InstalledRepositoryResolver;

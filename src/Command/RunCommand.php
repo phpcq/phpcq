@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\Config\Builder\PluginConfigurationBuilder;
-use Phpcq\Config\PluginConfiguration;
-use Phpcq\Config\ProjectConfiguration;
-use Phpcq\Exception\ConfigurationValidationErrorException;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Runner\Config\PluginConfiguration;
+use Phpcq\Runner\Config\ProjectConfiguration;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\Report\Report;
-use Phpcq\Report\Writer\CheckstyleReportWriter;
-use Phpcq\Environment;
+use Phpcq\Runner\Report\Report;
+use Phpcq\Runner\Report\Writer\CheckstyleReportWriter;
+use Phpcq\Runner\Environment;
 use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Writer\ConsoleWriter;
-use Phpcq\Report\Writer\FileReportWriter;
-use Phpcq\Report\Writer\GithubActionConsoleWriter;
-use Phpcq\Report\Writer\TaskReportWriter;
-use Phpcq\Task\TaskFactory;
-use Phpcq\Task\Tasklist;
-use Phpcq\Task\TaskScheduler;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Writer\ConsoleWriter;
+use Phpcq\Runner\Report\Writer\FileReportWriter;
+use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
+use Phpcq\Runner\Report\Writer\TaskReportWriter;
+use Phpcq\Runner\Task\TaskFactory;
+use Phpcq\Runner\Task\Tasklist;
+use Phpcq\Runner\Task\TaskScheduler;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -41,7 +41,7 @@ final class RunCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
 
-    /** @var array<string, class-string<\Phpcq\Report\Writer\AbstractReportWriter>> */
+    /** @var array<string, class-string<\Phpcq\Runner\Report\Writer\AbstractReportWriter>> */
     private const REPORT_FORMATS = [
         'task-report' => TaskReportWriter::class,
         'file-report' => FileReportWriter::class,

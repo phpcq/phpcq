@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Validation;
+namespace Phpcq\Runner\Test\Config\Validation;
 
-use Phpcq\Config\Validation\Constraints;
-use Phpcq\Config\Validation\Validator;
+use Phpcq\Runner\Config\Validation\Constraints;
+use Phpcq\Runner\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Validation\Validator */
+/** @covers \Phpcq\Runner\Config\Validation\Validator */
 final class ValidatorTest extends TestCase
 {
     use ConstraintProviderTrait;

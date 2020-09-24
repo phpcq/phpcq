@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\FileDiagnosticBuilder;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\FileDiagnosticBuilder;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\FileDiagnosticBuilder */
+/** @covers \Phpcq\Runner\Report\FileDiagnosticBuilder */
 final class FileDiagnosticBuilderTest extends TestCase
 {
     public function testBuildWithoutRanges(): void

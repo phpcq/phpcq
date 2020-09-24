@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Platform;
+namespace Phpcq\Runner\Platform;
 
 /**
  * Plattform information contains information about the current php environment

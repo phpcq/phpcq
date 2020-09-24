@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\FloatOptionBuilder;
+use Phpcq\Runner\Config\Builder\FloatOptionBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Builder\FloatOptionBuilder */
+/** @covers \Phpcq\Runner\Config\Builder\FloatOptionBuilder */
 final class FloatOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;

@@ -4,7 +4,7 @@ namespace Phpcq\Runner\Plugin;
 
 use Generator;
 use IteratorAggregate;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Repository\InstalledRepository;

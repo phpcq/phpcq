@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config;
+namespace Phpcq\Runner\Config;
 
 use Composer\Semver\VersionParser;
-use Phpcq\Config\Builder\OptionsBuilder;
-use Phpcq\Config\Validation\Constraints;
-use Phpcq\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Config\Builder\OptionsBuilder;
+use Phpcq\Runner\Config\Validation\Constraints;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Throwable;

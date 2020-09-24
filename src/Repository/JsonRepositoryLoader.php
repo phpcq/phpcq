@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\Platform\PlatformRequirementCheckerInterface;
+use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\RepositoryDefinition\JsonFileLoaderInterface;
 use Phpcq\RepositoryDefinition\RepositoryLoader;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\Exception\ToolVersionNotFoundException;
+use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
 trait RepositoryHasToolVersionTrait

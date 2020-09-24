@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Task;
+namespace Phpcq\Runner\Test\Task;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
-use Phpcq\Task\ParallelizableProcessTask;
-use Phpcq\Task\ProcessTask;
-use Phpcq\Task\TaskBuilder;
+use Phpcq\Runner\Task\ParallelizableProcessTask;
+use Phpcq\Runner\Task\ProcessTask;
+use Phpcq\Runner\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 /**
- * @covers \Phpcq\Task\TaskBuilder
+ * @covers \Phpcq\Runner\Task\TaskBuilder
  */
 final class TaskBuilderTest extends TestCase
 {

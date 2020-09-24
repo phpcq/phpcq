@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
 
-/** @covers \Phpcq\Config\Builder\PluginConfigurationBuilder */
+/** @covers \Phpcq\Runner\Config\Builder\PluginConfigurationBuilder */
 final class PluginConfigurationBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;

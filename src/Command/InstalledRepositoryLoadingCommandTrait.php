@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\InstalledRepositoryLoader;
 

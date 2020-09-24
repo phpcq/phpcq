@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Config\Validation\Validator;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Config\Validation\Validator;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\IntOptionBuilderInterface;

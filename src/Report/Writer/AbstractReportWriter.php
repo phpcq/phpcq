@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
 use DateTimeImmutable;
 use DOMElement;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function assert;

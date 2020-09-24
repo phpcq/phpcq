@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Exception;
+namespace Phpcq\Runner\Test\Exception;
 
-use Phpcq\Exception\InvalidHashException;
+use Phpcq\Runner\Exception\InvalidHashException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Exception\InvalidHashException
+ * @covers \Phpcq\Runner\Exception\InvalidHashException
  */
 class InvalidHashExceptionTest extends TestCase
 {

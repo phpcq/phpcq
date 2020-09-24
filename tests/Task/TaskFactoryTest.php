@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Task;
+namespace Phpcq\Runner\Test\Task;
 
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
-use Phpcq\Task\TaskFactory;
-use Phpcq\Task\TaskBuilder;
+use Phpcq\Runner\Task\TaskFactory;
+use Phpcq\Runner\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 /**
- * @covers \Phpcq\Task\TaskFactory
+ * @covers \Phpcq\Runner\Task\TaskFactory
  */
 final class TaskFactoryTest extends TestCase
 {

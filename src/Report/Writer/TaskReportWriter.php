@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
 use DOMElement;
 use Generator;
-use Phpcq\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
 /**
  * Write reports to a file.

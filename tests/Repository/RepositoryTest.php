@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Repository;
+namespace Phpcq\Runner\Test\Runner\Repository;
 
 use ArrayIterator;
-use Phpcq\Platform\PlatformRequirementCheckerInterface;
+use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;

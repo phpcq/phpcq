@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config;
+namespace Phpcq\Runner\Config;
 
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationInterface;
 

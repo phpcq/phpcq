@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report;
+namespace Phpcq\Runner\Report;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\AttachmentBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\AttachmentBuffer;
+use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class AttachmentBuilder implements AttachmentBuilderInterface

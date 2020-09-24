@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Updater;
+namespace Phpcq\Runner\Test\Runner\Updater;
 
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginHash;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Buffer;
+namespace Phpcq\Runner\Test\Report\Buffer;
 
-use Phpcq\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Buffer\FileRangeBuffer */
+/** @covers \Phpcq\Runner\Report\Buffer\FileRangeBuffer */
 final class FileRangeBufferTest extends TestCase
 {
     public function testConstructionCreatesWithFilePosition(): void

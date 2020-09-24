@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Repository;
+namespace Phpcq\Runner\Test\Runner\Repository;
 
-use Phpcq\Exception\PluginVersionNotFoundException;
+use Phpcq\Runner\Exception\PluginVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\Runner\Repository\RepositoryHasPluginVersionTrait;
 use PHPUnit\Framework\TestCase;

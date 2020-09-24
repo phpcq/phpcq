@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Repository;
 
 use Generator;
-use Phpcq\Exception\PluginVersionNotFoundException;
-use Phpcq\Exception\ToolVersionNotFoundException;
+use Phpcq\Runner\Exception\PluginVersionNotFoundException;
+use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 

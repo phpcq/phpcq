@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Report;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Report */
+/** @covers \Phpcq\Runner\Report\Report */
 class ReportTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;

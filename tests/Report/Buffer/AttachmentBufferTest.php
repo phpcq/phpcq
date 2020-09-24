@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Buffer;
+namespace Phpcq\Runner\Test\Report\Buffer;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Report\Buffer\AttachmentBuffer;
+use Phpcq\Runner\Exception\RuntimeException;
+use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Buffer\AttachmentBuffer */
+/** @covers \Phpcq\Runner\Report\Buffer\AttachmentBuffer */
 class AttachmentBufferTest extends TestCase
 {
     public function testConstructionCreatesWithCorrectValues(): void

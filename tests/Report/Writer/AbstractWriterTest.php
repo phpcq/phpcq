@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Writer;
+namespace Phpcq\Runner\Test\Report\Writer;
 
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\AttachmentBuffer;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\DiffBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\DiffBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Report;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 use function tempnam;

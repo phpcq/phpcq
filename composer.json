@@ -46,12 +46,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Phpcq\\": "src/"
+      "Phpcq\\Runner\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Phpcq\\Test\\": "tests/"
+      "Phpcq\\Runner\\Test\\": "tests/"
     }
   },
   "bin": [

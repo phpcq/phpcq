@@ -20,7 +20,7 @@ use function sprintf;
 use function version_compare;
 
 /**
- * @psalm-import-type TPlugin from \Phpcq\Config\PhpcqConfiguration
+ * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
  *
  * @psalm-type TInstallToolTask = array{
  *    type: 'install',

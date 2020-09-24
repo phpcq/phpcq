@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Config\Validation\Validator;
+use Phpcq\Runner\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 
 /**
- * @psalm-import-type TValidator from \Phpcq\Config\Validation\Validator
+ * @psalm-import-type TValidator from \Phpcq\Runner\Config\Validation\Validator
  * @extends AbstractOptionBuilder<FloatOptionBuilderInterface, float>
  */
 final class FloatOptionBuilder extends AbstractOptionBuilder implements FloatOptionBuilderInterface

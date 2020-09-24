@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Buffer;
+namespace Phpcq\Runner\Report\Buffer;
 
 use Generator;
 

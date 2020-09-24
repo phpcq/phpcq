@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test;
+namespace Phpcq\Runner\Test;
 
-use Phpcq\FileDownloader;
+use Phpcq\Runner\FileDownloader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\FileDownloader
+ * @covers \Phpcq\Runner\FileDownloader
  */
 class FileDownloaderTest extends TestCase
 {

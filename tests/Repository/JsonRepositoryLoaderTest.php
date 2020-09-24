@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Repository;
+namespace Phpcq\Runner\Test\Runner\Repository;
 
-use Phpcq\FileDownloader;
-use Phpcq\Platform\PlatformRequirementCheckerInterface;
+use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\Runner\Repository\DownloadingJsonFileLoader;
 use Phpcq\Runner\Repository\JsonRepositoryLoader;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,7 +28,7 @@ class JsonRepositoryLoaderTest extends TestCase
             ->willReturn(true);
 
         $loader = new JsonRepositoryLoader($requirementChecker, new DownloadingJsonFileLoader($downloader));
-        $repository = $loader->loadFile(__DIR__ . '/../../fixtures/repositories/repository.json');
+        $repository = $loader->loadFile(__DIR__ . '/../fixtures/repositories/repository.json');
 
         // Test the included version exists.
         $this->assertTrue($repository->hasToolVersion('phpmd', '2.8.2'));

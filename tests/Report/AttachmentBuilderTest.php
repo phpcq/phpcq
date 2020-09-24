@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\AttachmentBuilder;
-use Phpcq\Report\Buffer\AttachmentBuffer;
+use Phpcq\Runner\Report\AttachmentBuilder;
+use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-/** @covers \Phpcq\Report\AttachmentBuilder */
+/** @covers \Phpcq\Runner\Report\AttachmentBuilder */
 class AttachmentBuilderTest extends TestCase
 {
     public function testCallingEndThrowsWhenNoDataHasBeenAdded(): void

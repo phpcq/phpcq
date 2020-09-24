@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Config\Validation\Validator;
+use Phpcq\Runner\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 
 /**
- * @psalm-import-type TValidator from \Phpcq\Config\Validation\Validator
+ * @psalm-import-type TValidator from \Phpcq\Runner\Config\Validation\Validator
  * @extends AbstractOptionBuilder<BoolOptionBuilderInterface, bool>
  */
 final class BoolOptionBuilder extends AbstractOptionBuilder implements BoolOptionBuilderInterface

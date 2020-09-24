@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Plugin;
+namespace Phpcq\Runner\Test\Plugin;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Plugin\PluginRegistry;
@@ -36,6 +36,6 @@ class PluginRegistryTest extends TestCase
 
     private function getBootstrap(string $fileName): string
     {
-        return __DIR__ . '/../../fixtures/repositories/installed-repository/' . $fileName;
+        return __DIR__ . '/../fixtures/repositories/installed-repository/' . $fileName;
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Command;
+namespace Phpcq\Runner\Test\Command;
 
-use Phpcq\Command\UpdateCommand;
+use Phpcq\Runner\Command\UpdateCommand;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Command\UpdateCommand
+ * @covers \Phpcq\Runner\Command\UpdateCommand
  */
 final class UpdateCommandTest extends TestCase
 {

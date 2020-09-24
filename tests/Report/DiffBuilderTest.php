@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\DiffBuilder;
-use Phpcq\Report\Buffer\DiffBuffer;
+use Phpcq\Runner\Report\DiffBuilder;
+use Phpcq\Runner\Report\Buffer\DiffBuffer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-/** @covers \Phpcq\Report\DiffBuilder */
+/** @covers \Phpcq\Runner\Report\DiffBuilder */
 class DiffBuilderTest extends TestCase
 {
     public function testCallingEndThrowsWhenNoDataHasBeenAdded(): void

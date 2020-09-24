@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Platform;
+namespace Phpcq\Runner\Test\Platform;
 
-use Phpcq\Platform\PlatformInformation;
-use Phpcq\Platform\PlatformInformationInterface;
-use Phpcq\Platform\PlatformRequirementChecker;
+use Phpcq\Runner\Platform\PlatformInformation;
+use Phpcq\Runner\Platform\PlatformInformationInterface;
+use Phpcq\Runner\Platform\PlatformRequirementChecker;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Platform\PlatformRequirementChecker
+ * @covers \Phpcq\Runner\Platform\PlatformRequirementChecker
  */
 class PlatformRequirementCheckerTest extends TestCase
 {

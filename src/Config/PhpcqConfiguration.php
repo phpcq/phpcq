@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config;
+namespace Phpcq\Runner\Config;
 
-use Phpcq\Exception\InvalidArgumentException;
+use Phpcq\Runner\Exception\InvalidArgumentException;
 
 /**
  * @psalm-type TPlugin = array{

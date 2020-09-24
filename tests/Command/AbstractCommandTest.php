@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Command;
+namespace Phpcq\Runner\Test\Command;
 
-use Phpcq\Command\AbstractCommand;
+use Phpcq\Runner\Command\AbstractCommand;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Command\AbstractCommand
+ * @covers \Phpcq\Runner\Command\AbstractCommand
  */
 class AbstractCommandTest extends TestCase
 {

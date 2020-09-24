@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Buffer;
+namespace Phpcq\Runner\Test\Report\Buffer;
 
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Report\Buffer\DiffBuffer;
+use Phpcq\Runner\Exception\RuntimeException;
+use Phpcq\Runner\Report\Buffer\DiffBuffer;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Buffer\DiffBuffer */
+/** @covers \Phpcq\Runner\Report\Buffer\DiffBuffer */
 class DiffBufferTest extends TestCase
 {
     public function testConstructionCreatesWithCorrectValues(): void

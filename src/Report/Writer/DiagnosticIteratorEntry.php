@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 
 final class DiagnosticIteratorEntry
 {

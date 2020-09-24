@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Validation;
+namespace Phpcq\Runner\Test\Config\Validation;
 
 trait ConstraintProviderTrait
 {

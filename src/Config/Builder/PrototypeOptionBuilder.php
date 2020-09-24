@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Config\Validation\Constraints;
-use Phpcq\Exception\ConfigurationValidationErrorException;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Config\Validation\Constraints;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\EnumOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\FloatOptionBuilderInterface;

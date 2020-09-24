@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Task;
+namespace Phpcq\Runner\Task;
 
 use IteratorAggregate;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;

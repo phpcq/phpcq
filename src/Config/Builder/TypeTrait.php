@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 
 trait TypeTrait
 {

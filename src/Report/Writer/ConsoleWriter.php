@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
 use DateTimeImmutable;
 use Generator;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\TaskReport;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\TaskReport;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 

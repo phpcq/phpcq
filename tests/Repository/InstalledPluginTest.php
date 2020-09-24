@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Repository;
+namespace Phpcq\Runner\Test\Runner\Repository;
 
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;

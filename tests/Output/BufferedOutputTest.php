@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Output;
+namespace Phpcq\Runner\Test\Output;
 
-use Phpcq\Output\BufferedOutput;
+use Phpcq\Runner\Output\BufferedOutput;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Output\BufferedOutput
+ * @covers \Phpcq\Runner\Output\BufferedOutput
  */
 class BufferedOutputTest extends TestCase
 {

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Task;
+namespace Phpcq\Runner\Task;
 
 use Generator;
-use Phpcq\Exception\Exception;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\Exception;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\ParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\Report\Report;
+use Phpcq\Runner\Report\Report;
 use SplObjectStorage;
 
 class TaskScheduler

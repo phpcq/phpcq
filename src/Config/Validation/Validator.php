@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Validation;
+namespace Phpcq\Runner\Config\Validation;
 
 /**
  * @psalm-type TValidator = callable(mixed): void

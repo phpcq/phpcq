@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Writer;
+namespace Phpcq\Runner\Test\Report\Writer;
 
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Writer\DiagnosticIterator;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Writer\DiagnosticIterator;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Report\Writer\DiagnosticIterator
+ * @covers \Phpcq\Runner\Report\Writer\DiagnosticIterator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class DiagnosticIteratorTest extends TestCase

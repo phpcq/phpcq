@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Validation;
+namespace Phpcq\Runner\Config\Validation;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 

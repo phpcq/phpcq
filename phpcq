@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use Phpcq\Command\ExecCommand;
-use Phpcq\Command\InstallCommand;
-use Phpcq\Command\PlatformInformationCommand;
-use Phpcq\Command\RunCommand;
-use Phpcq\Command\UpdateCommand;
-use Phpcq\Command\ValidateCommand;
+use Phpcq\Runner\Command\ExecCommand;
+use Phpcq\Runner\Command\InstallCommand;
+use Phpcq\Runner\Command\PlatformInformationCommand;
+use Phpcq\Runner\Command\RunCommand;
+use Phpcq\Runner\Command\UpdateCommand;
+use Phpcq\Runner\Command\ValidateCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test;
+namespace Phpcq\Runner\Test;
 
-use Phpcq\ConfigLoader;
+use Phpcq\Runner\ConfigLoader;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\ConfigLoader
+ * @covers \Phpcq\Runner\ConfigLoader
  */
 final class ConfigLoaderTest extends TestCase
 {

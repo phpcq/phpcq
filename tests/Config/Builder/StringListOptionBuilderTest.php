@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\StringListOptionBuilder;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Config\Builder\StringListOptionBuilder;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Builder\StringListOptionBuilder */
+/** @covers \Phpcq\Runner\Config\Builder\StringListOptionBuilder */
 class StringListOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;

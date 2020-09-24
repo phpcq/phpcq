@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config;
+namespace Phpcq\Runner\Test\Config;
 
-use Phpcq\Config\PhpcqConfigurationBuilder;
+use Phpcq\Runner\Config\PhpcqConfigurationBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Config\PhpcqConfigurationBuilder
+ * @covers \Phpcq\Runner\Config\PhpcqConfigurationBuilder
  */
 final class PhpcqConfigurationBuilderTest extends TestCase
 {

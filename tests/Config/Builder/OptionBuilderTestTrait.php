@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\AbstractOptionBuilder;
-use Phpcq\Config\Builder\ConfigOptionBuilderInterface;
+use Phpcq\Runner\Config\Builder\AbstractOptionBuilder;
+use Phpcq\Runner\Config\Builder\ConfigOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 

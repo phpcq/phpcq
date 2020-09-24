@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Signature;
+namespace Phpcq\Runner\Signature;
 
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;

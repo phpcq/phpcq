@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\FileDownloader;
+use Phpcq\Runner\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\AlwaysStrategy;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
-use Phpcq\Platform\PlatformRequirementChecker;
+use Phpcq\Runner\Platform\PlatformRequirementChecker;
 use Phpcq\Runner\Repository\DownloadingJsonFileLoader;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\InstalledRepositoryLoader;
 use Phpcq\Runner\Repository\JsonRepositoryLoader;
-use Phpcq\Signature\InteractiveQuestionKeyTrustStrategy;
-use Phpcq\Signature\SignatureFileDownloader;
+use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
+use Phpcq\Runner\Signature\SignatureFileDownloader;
 use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;

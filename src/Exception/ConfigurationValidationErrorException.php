@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Exception;
+namespace Phpcq\Runner\Exception;
 
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Throwable;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config;
+namespace Phpcq\Runner\Config;
 
-use Phpcq\Config\Validation\Constraints;
-use Phpcq\Config\Validation\Validator;
-use Phpcq\Exception\InvalidArgumentException;
+use Phpcq\Runner\Config\Validation\Constraints;
+use Phpcq\Runner\Config\Validation\Validator;
+use Phpcq\Runner\Exception\InvalidArgumentException;
 use Phpcq\PluginApi\Version10\Configuration\OptionsInterface;
 
 class Options implements OptionsInterface

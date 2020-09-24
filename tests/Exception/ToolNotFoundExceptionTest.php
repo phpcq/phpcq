@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Exception;
+namespace Phpcq\Runner\Test\Exception;
 
 use Exception;
-use Phpcq\Exception\ToolVersionNotFoundException;
+use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Exception\ToolVersionNotFoundException
+ * @covers \Phpcq\Runner\Exception\ToolVersionNotFoundException
  */
 final class ToolNotFoundExceptionTest extends TestCase
 {

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\PrototypeOptionBuilder;
+use Phpcq\Runner\Config\Builder\PrototypeOptionBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
 
-/** @covers \Phpcq\Config\Builder\PrototypeOptionBuilder */
+/** @covers \Phpcq\Runner\Config\Builder\PrototypeOptionBuilder */
 final class PrototypeOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;

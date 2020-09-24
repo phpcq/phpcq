@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Platform;
+namespace Phpcq\Runner\Test\Platform;
 
-use Phpcq\Platform\PlatformInformation;
+use Phpcq\Runner\Platform\PlatformInformation;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Platform\PlatformInformation
+ * @covers \Phpcq\Runner\Platform\PlatformInformation
  */
 class PlatformInformationTest extends TestCase
 {

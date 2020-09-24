@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report;
+namespace Phpcq\Runner\Report;
 
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\FileDiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 
 /**
  * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE

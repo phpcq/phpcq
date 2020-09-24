@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Validation;
+namespace Phpcq\Runner\Test\Config\Validation;
 
-use Phpcq\Config\Validation\Constraints;
+use Phpcq\Runner\Config\Validation\Constraints;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Validation\Constraints */
+/** @covers \Phpcq\Runner\Config\Validation\Constraints */
 final class ConstraintsTest extends TestCase
 {
     use ConstraintProviderTrait;

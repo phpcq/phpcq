@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Throwable;
 
 use function sprintf;
@@ -12,7 +12,7 @@ use function sprintf;
 /**
  * @psalm-template TReturnType
  * @psalm-template TType
- * @psalm-import-type TValidator from \Phpcq\Config\Validation\Validator
+ * @psalm-import-type TValidator from \Phpcq\Runner\Config\Validation\Validator
  */
 abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 {

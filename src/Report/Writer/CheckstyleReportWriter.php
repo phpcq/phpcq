@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
 use DOMElement;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
 /**
  * Write reports to a file in checkstyle format.

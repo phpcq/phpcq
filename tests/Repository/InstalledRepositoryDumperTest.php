@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Runner\Repository;
+namespace Phpcq\Runner\Test\Runner\Repository;
 
 use Phpcq\RepositoryDefinition\Plugin\PluginHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
@@ -14,7 +14,7 @@ use Phpcq\RepositoryDefinition\VersionRequirement;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\InstalledRepositoryDumper;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 

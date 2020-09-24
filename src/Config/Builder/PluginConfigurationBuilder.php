@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Exception\InvalidArgumentException;
+use Phpcq\Runner\Exception\InvalidArgumentException;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 
 class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Writer;
+namespace Phpcq\Runner\Test\Report\Writer;
 
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Writer\GithubActionConsoleWriter;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @covers \Phpcq\Report\Writer\GithubActionConsoleWriter
+ * @covers \Phpcq\Runner\Report\Writer\GithubActionConsoleWriter
  */
 final class GithubActionConsoleWriterTest extends TestCase
 {

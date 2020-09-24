@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report;
+namespace Phpcq\Runner\Test\Report;
 
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\AttachmentBuffer;
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\DiffBuffer;
-use Phpcq\Report\Buffer\TaskReportBuffer;
-use Phpcq\Report\TaskReport;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\DiffBuffer;
+use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\TaskReport;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
-/** @covers \Phpcq\Report\TaskReport */
+/** @covers \Phpcq\Runner\Report\TaskReport */
 class TaskReportTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;

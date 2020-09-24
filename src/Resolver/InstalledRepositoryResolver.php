@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Resolver;
 
 use Composer\Semver\Semver;
-use Phpcq\Exception\PluginVersionNotFoundException;
-use Phpcq\Exception\ToolVersionNotFoundException;
+use Phpcq\Runner\Exception\PluginVersionNotFoundException;
+use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledRepository;

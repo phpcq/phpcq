@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Writer;
+namespace Phpcq\Runner\Test\Report\Writer;
 
-use Phpcq\Report\Buffer\DiagnosticBuffer;
-use Phpcq\Report\Buffer\FileRangeBuffer;
-use Phpcq\Report\Buffer\TaskReportBuffer;
-use Phpcq\Report\Writer\DiagnosticIteratorEntry;
+use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\Writer\DiagnosticIteratorEntry;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Report\Writer\DiagnosticIteratorEntry */
+/** @covers \Phpcq\Runner\Report\Writer\DiagnosticIteratorEntry */
 class DiagnosticIteratorEntryTest extends TestCase
 {
     public function testCanBeInstantiatedWithoutFileRange(): void

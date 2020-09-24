@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Output;
+namespace Phpcq\Runner\Output;
 
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 

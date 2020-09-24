@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Task;
+namespace Phpcq\Runner\Test\Task;
 
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
-use Phpcq\Task\Tasklist;
+use Phpcq\Runner\Task\Tasklist;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test the task list implementation.
  *
- * @covers \Phpcq\Task\Tasklist
+ * @covers \Phpcq\Runner\Task\Tasklist
  */
 class TasklistTest extends TestCase
 {

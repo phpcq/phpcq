@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
-use Phpcq\Report\Buffer\FileRangeBuffer;
+use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 
 trait RenderRangeTrait
 {

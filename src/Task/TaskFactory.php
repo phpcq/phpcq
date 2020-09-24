@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Task;
+namespace Phpcq\Runner\Task;
 
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;

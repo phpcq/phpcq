@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Config\Builder;
+namespace Phpcq\Runner\Test\Config\Builder;
 
-use Phpcq\Config\Builder\IntOptionBuilder;
+use Phpcq\Runner\Config\Builder\IntOptionBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
-/** @covers \Phpcq\Config\Builder\IntOptionBuilder */
+/** @covers \Phpcq\Runner\Config\Builder\IntOptionBuilder */
 final class IntOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;

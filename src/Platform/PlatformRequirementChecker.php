@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Platform;
+namespace Phpcq\Runner\Platform;
 
 use Closure;
 use Composer\Semver\Constraint\Constraint;

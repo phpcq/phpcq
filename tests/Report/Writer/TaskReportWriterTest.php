@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Report\Writer;
+namespace Phpcq\Runner\Test\Report\Writer;
 
 use DOMDocument;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
-use Phpcq\Report\Report;
-use Phpcq\Report\Writer\TaskReportWriter;
-use Phpcq\Test\TemporaryFileProducingTestTrait;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Report;
+use Phpcq\Runner\Report\Writer\TaskReportWriter;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 
 use function file_get_contents;
 use function sprintf;
@@ -19,8 +19,8 @@ use function unlink;
 use const DATE_ATOM;
 
 /**
- * @covers \Phpcq\Report\Writer\AbstractReportWriter
- * @covers \Phpcq\Report\Writer\TaskReportWriter
+ * @covers \Phpcq\Runner\Report\Writer\AbstractReportWriter
+ * @covers \Phpcq\Runner\Report\Writer\TaskReportWriter
  */
 final class TaskReportWriterTest extends AbstractWriterTest
 {

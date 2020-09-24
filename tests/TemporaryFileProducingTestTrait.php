@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test;
+namespace Phpcq\Runner\Test;
 
 use Symfony\Component\Filesystem\Filesystem;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report\Writer;
+namespace Phpcq\Runner\Report\Writer;
 
 use CallbackFilterIterator;
 use Generator;
@@ -10,7 +10,7 @@ use Iterator;
 use IteratorAggregate;
 use LogicException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
 final class DiagnosticIterator implements IteratorAggregate
 {

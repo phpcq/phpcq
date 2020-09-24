@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Test\Command;
+namespace Phpcq\Runner\Test\Command;
 
-use Phpcq\Command\ExecCommand;
+use Phpcq\Runner\Command\ExecCommand;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Command\ExecCommand
+ * @covers \Phpcq\Runner\Command\ExecCommand
  */
 class ExecCommandTest extends TestCase
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Command;
+namespace Phpcq\Runner\Command;
 
-use Phpcq\Config\PhpcqConfiguration;
-use Phpcq\ConfigLoader;
-use Phpcq\Exception\RuntimeException;
-use Phpcq\Output\SymfonyConsoleOutput;
-use Phpcq\Output\SymfonyOutput;
+use Phpcq\Runner\Config\PhpcqConfiguration;
+use Phpcq\Runner\ConfigLoader;
+use Phpcq\Runner\Exception\RuntimeException;
+use Phpcq\Runner\Output\SymfonyConsoleOutput;
+use Phpcq\Runner\Output\SymfonyOutput;
 use Phpcq\PluginApi\Version10\Output\OutputInterface as PluginApiOutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

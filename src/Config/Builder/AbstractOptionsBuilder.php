@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Config\Builder;
+namespace Phpcq\Runner\Config\Builder;
 
-use Phpcq\Config\Validation\Constraints;
-use Phpcq\Config\Validation\Validator;
-use Phpcq\Exception\ConfigurationValidationErrorException;
+use Phpcq\Runner\Config\Validation\Constraints;
+use Phpcq\Runner\Config\Validation\Validator;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq;
+namespace Phpcq\Runner;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Phpcq\Exception\InvalidHashException;
-use Phpcq\Exception\RuntimeException;
+use Phpcq\Runner\Exception\InvalidHashException;
+use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\RepositoryDefinition\AbstractHash;
 
 use function dirname;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\OutputTransformer;
+namespace Phpcq\Runner\OutputTransformer;
 
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;

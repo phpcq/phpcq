@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Report;
+namespace Phpcq\Runner\Report;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\DiffBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
-use Phpcq\Report\Buffer\DiffBuffer;
+use Phpcq\Runner\Report\Buffer\DiffBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class DiffBuilder implements DiffBuilderInterface
