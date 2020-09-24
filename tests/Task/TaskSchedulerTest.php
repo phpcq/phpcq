@@ -12,7 +12,6 @@ use Phpcq\PluginApi\Version10\Task\ReportWritingParallelTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\Report\Buffer\ReportBuffer;
 use Phpcq\Report\Report;
-use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Task\TasklistInterface;
 use Phpcq\Task\TaskScheduler;
 use Phpcq\Test\TemporaryFileProducingTestTrait;
@@ -29,11 +28,7 @@ class TaskSchedulerTest extends TestCase
         $output = $this->getMockForAbstractClass(OutputInterface::class);
 
         // Dummy report - not used but can not mock due to lack of interface.
-        $report = new Report(
-            new ReportBuffer(),
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            self::$tempdir
-        );
+        $report = new Report(new ReportBuffer(), self::$tempdir);
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () {
@@ -50,11 +45,7 @@ class TaskSchedulerTest extends TestCase
         $output = $this->getMockForAbstractClass(OutputInterface::class);
 
         // Dummy report - not used but can not mock due to lack of interface.
-        $report = new Report(
-            new ReportBuffer(),
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            self::$tempdir
-        );
+        $report = new Report(new ReportBuffer(), self::$tempdir);
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () {
@@ -225,11 +216,7 @@ class TaskSchedulerTest extends TestCase
             });
 
         // Dummy report - not used but can not mock due to lack of interface.
-        $report = new Report(
-            new ReportBuffer(),
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            self::$tempdir
-        );
+        $report = new Report(new ReportBuffer(), self::$tempdir);
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () use ($tasks) {
@@ -340,11 +327,7 @@ class TaskSchedulerTest extends TestCase
     public function testFastFinishWorksAsExpected(array $expected, bool $fastFinish, array $tasks): void
     {
         $output = $this->getMockForAbstractClass(OutputInterface::class);
-        $report = new Report(
-            $buffer = new ReportBuffer(),
-            $this->getMockForAbstractClass(RepositoryInterface::class),
-            self::$tempdir
-        );
+        $report = new Report($buffer = new ReportBuffer(), self::$tempdir);
 
         $list = $this->getMockForAbstractClass(TasklistInterface::class);
         $generator = function () use ($tasks) {
