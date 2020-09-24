@@ -6,7 +6,6 @@ Thumbs.db
 .buildpath
 .project
 .settings/
-.phpcq/build
 .external*/
 .idea/
 nbproject/
