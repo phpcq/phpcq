@@ -68,7 +68,8 @@ abstract class AbstractCommand extends Command
             'config',
             'c',
             InputOption::VALUE_REQUIRED,
-            'The configuration file to use. If not defined following paths are checked in the cwd: <i>.phpcq.yml, phpcq.yml, .phpcq.yml.dist, phpcq.yml.dist</i>'
+            'The configuration file to use. If not defined following paths are checked in the cwd: <i>.phpcq.yml, '
+            . 'phpcq.yml, .phpcq.yml.dist, phpcq.yml.dist</i>'
         );
         $this->addOption(
             'home-dir',
@@ -101,7 +102,7 @@ abstract class AbstractCommand extends Command
                     break;
                 }
             }
-            if (null === $configFile) {
+            if (!is_string($configFile)) {
                 throw new RuntimeException(
                     'Could not determine configuration file. File must be configured or exist in the cwd at the'
                     . ' following paths: .phpcq.yml, phpcq.yml, .phpcq.yml.dist or phpcq.yml.dist'

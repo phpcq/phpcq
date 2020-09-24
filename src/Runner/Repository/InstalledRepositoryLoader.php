@@ -42,13 +42,12 @@ use Phpcq\RepositoryDefinition\VersionRequirement;
  *   composer?: array<string, string>,
  * }
  * @psalm-type TInstalledPluginVersion = array{
- *   type: 'php-file'|'php-inline',
+ *   type: 'php-file',
  *   version: string,
  *   api-version: string,
  *   requirements?: TRepositoryPluginRequirements,
  *   url: string,
- *   code?: string,
- *   checksum?: TRepositoryCheckSum,
+ *   checksum: TRepositoryCheckSum,
  *   signature?: string,
  *   tools: array<string,TInstalledToolVersion>
  * }
@@ -109,7 +108,7 @@ final class InstalledRepositoryLoader
             $this->loadPluginRequirements($information['requirements'] ?? []),
             $information['url'],
             $information['signature'] ?? null,
-            $this->loadPluginHash($information['checksum'] ?? null)
+            $this->loadPluginHash($information['checksum'])
         );
 
         $tools = [];
@@ -134,14 +133,10 @@ final class InstalledRepositoryLoader
     }
 
     /**
-     * @psalm-param TRepositoryCheckSum|null $hash
+     * @psalm-param TRepositoryCheckSum $hash
      */
-    private function loadPluginHash(?array $hash): ?PluginHash
+    private function loadPluginHash(array $hash): PluginHash
     {
-        if (null === $hash) {
-            return null;
-        }
-
         return PluginHash::create($hash['type'], $hash['value']);
     }
 

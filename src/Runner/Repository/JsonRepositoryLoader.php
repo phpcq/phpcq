@@ -20,19 +20,13 @@ use Phpcq\RepositoryDefinition\RepositoryLoader;
  *   type: 'sha-1'|'sha-256'|'sha-384'|'sha-512',
  *   value: string
  * }
- * @psalm-type TBootstrapInline = array{
- *    type: 'inline',
- *    code: string,
- *    plugin-version: string,
- *    hash: ?TRepositoryCheckSum
- * }
  * @psalm-type TBootstrapFile = array{
  *    type: 'file',
  *    url: string,
  *    plugin-version: string,
  *    hash: ?TRepositoryCheckSum
  * }
- * @psalm-type TBootstrap = TBootstrapInline|TBootstrapFile
+ * @psalm-type TBootstrap = TBootstrapFile
  * @psalm-type TToolConfigJson = array{
  *    version: string,
  *    phar-url: string,

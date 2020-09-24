@@ -32,14 +32,7 @@
       }
     },
     "RepositoryPluginVersionItem": {
-      "anyOf": [
-        {
-          "$ref": "#/definitions/RepositoryPluginVersionItemInline"
-        },
-        {
-          "$ref": "#/definitions/RepositoryPluginVersionItemExternal"
-        }
-      ]
+      "$ref": "#/definitions/RepositoryPluginVersionItemExternal",
     },
     "RepositoryPluginVersionItemExternal": {
       "$comment": "Definition of a downloadable plugin version and it's requirements",
@@ -86,44 +79,6 @@
         "requirements",
         "url",
         "checksum",
-        "tools"
-      ]
-    },
-    "RepositoryPluginVersionItemInline": {
-      "$comment": "Definition of an inline plugin version and its requirements",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "type": {
-          "type": "string",
-          "const": "php-inline"
-        },
-        "api-version": {
-          "$comment": "API version used in this plugin",
-          "type": "string",
-          "const": "1.0.0"
-        },
-        "version": {
-          "$comment": "Version of the plugin",
-          "type": "string",
-          "$ref": "#/definitions/VersionExpression"
-        },
-        "requirements": {
-          "$ref": "#/definitions/RepositoryPluginVersionItemRequirements"
-        },
-        "code": {
-          "type": "string"
-        },
-        "tools": {
-          "$ref": "#/definitions/RepositoryToolList"
-        }
-      },
-      "required": [
-        "type",
-        "api-version",
-        "version",
-        "requirements",
-        "code",
         "tools"
       ]
     },

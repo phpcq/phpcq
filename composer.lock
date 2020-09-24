@@ -514,12 +514,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "7780616b3fde64b57626f1ff8188ea4460368192"
+                "reference": "474a325a0a91fc3101c5e7c87daa805e8ee297ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/7780616b3fde64b57626f1ff8188ea4460368192",
-                "reference": "7780616b3fde64b57626f1ff8188ea4460368192",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/474a325a0a91fc3101c5e7c87daa805e8ee297ec",
+                "reference": "474a325a0a91fc3101c5e7c87daa805e8ee297ec",
                 "shasum": ""
             },
             "require": {
@@ -567,7 +567,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-22T13:21:18+00:00"
+            "time": "2020-09-24T09:57:50+00:00"
         },
         {
             "name": "phpcq/schema",
@@ -575,12 +575,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/schema.git",
-                "reference": "62f17e1f05f0211e56a6fa98014b852d56261d64"
+                "reference": "8b74566ee17c189844010a64b73c8a58d17dac9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/schema/zipball/62f17e1f05f0211e56a6fa98014b852d56261d64",
-                "reference": "62f17e1f05f0211e56a6fa98014b852d56261d64",
+                "url": "https://api.github.com/repos/phpcq/schema/zipball/8b74566ee17c189844010a64b73c8a58d17dac9d",
+                "reference": "8b74566ee17c189844010a64b73c8a58d17dac9d",
                 "shasum": ""
             },
             "type": "library",
@@ -613,7 +613,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-08-19T14:44:43+00:00"
+            "time": "2020-09-24T09:45:16+00:00"
         },
         {
             "name": "psr/container",

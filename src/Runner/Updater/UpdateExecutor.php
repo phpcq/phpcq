@@ -186,7 +186,7 @@ final class UpdateExecutor
             $this->deleteFile($this->installedPluginPath . '/' . $pluginVersion->getFilePath());
         }
 
-        if ($signatureUrl = $pluginVersion->getSignature()) {
+        if ($signatureUrl = $pluginVersion->getSignaturePath()) {
             $this->deleteFile($this->installedPluginPath . '/' . $signatureUrl);
         }
     }
@@ -213,7 +213,7 @@ final class UpdateExecutor
         PluginVersionInterface $pluginVersion,
         bool $requireSigned
     ): ?string {
-        $signature = $pluginVersion->getSignature();
+        $signature = $pluginVersion->getSignaturePath();
         if (null === $signature) {
             if (! $requireSigned) {
                 return null;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
+use Phpcq\Exception\RuntimeException;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
@@ -139,26 +140,16 @@ final class InstalledRepositoryDumper
     {
         $version = $plugin->getPluginVersion();
 
-        $data = [
+        return [
             'api-version'  => $version->getApiVersion(),
             'version'      => $version->getVersion(),
             'type'         => 'php-file',
+            'url'          => $version->getFilePath(),
+            'signature'    => $version->getSignaturePath(),
             'requirements' => $this->encodePluginRequirements($version->getRequirements()),
             'checksum'     => $this->encodeHash($version->getHash()),
             'tools'        => $this->dumpTools($plugin),
         ];
-
-        if ($version instanceof PhpFilePluginVersionInterface) {
-            $data['type']      = 'php-file';
-            $data['url']       = $version->getFilePath();
-            $data['signature'] = $version->getSignaturePath();
-        } else {
-            $data['type']      = 'php-inline';
-            $data['code']      = $version->getCode();
-            $data['signature'] = $version->getSignature();
-        }
-
-        return $data;
     }
 
     protected function dumpTool(ToolVersionInterface $version): array
