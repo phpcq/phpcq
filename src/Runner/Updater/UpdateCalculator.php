@@ -20,13 +20,7 @@ use function sprintf;
 use function version_compare;
 
 /**
- * @psalm-import-type TTool from \Phpcq\ConfigLoader
- *
- * @psalm-type TPlugin = array{
- *    version: string,
- *    requirements: array<string,array{version: string, signed?: bool}>,
- *    signed?: bool
- * }
+ * @psalm-import-type TPlugin from \Phpcq\Config\PhpcqConfiguration
  *
  * @psalm-type TInstallToolTask = array{
  *    type: 'install',
@@ -253,6 +247,8 @@ final class UpdateCalculator
 
         $installed = $this->installed->getPlugin($desired->getName());
         if (Semver::satisfies($installed->getPluginVersion()->getVersion(), $desired->getVersion())) {
+            // FIXME: Remove usage of hasHashChanged
+            /** @psalm-suppress DeprecatedMethod */
             return $this->hasHashChanged($desired->getHash(), $installed->getPluginVersion()->getHash());
         }
 
@@ -351,6 +347,8 @@ final class UpdateCalculator
     {
         $installed = $plugin->getTool($desired->getName());
         if (Semver::satisfies($installed->getVersion(), $desired->getVersion())) {
+            // FIXME: Remove usage of hasHashChanged
+            /** @psalm-suppress DeprecatedMethod */
             return $this->hasHashChanged($desired->getHash(), $installed->getHash());
         }
 

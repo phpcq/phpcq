@@ -96,7 +96,7 @@ final class PhpcqConfigurationBuilder
 
     private function describePlugins(OptionsBuilderInterface $builder): void
     {
-        $validateConstraint = function ($constraint) {
+        $validateConstraint = static function (string $constraint): void {
             $versionParser = new VersionParser();
             $versionParser->parseConstraints($constraint);
         };

@@ -9,27 +9,14 @@ use Phpcq\Config\PhpcqConfigurationBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
-use function array_fill_keys;
 use function array_key_exists;
 use function array_keys;
 
 /**
- * @psalm-type TTool = array{
- *    version: string,
- *    signed: bool
- * }
- * @psalm-type TToolConfig = array{
+ * @psalm-import-type TPlugin from \Phpcq\Config\PhpcqConfiguration
+ * @psalm-import-type TConfig from \Phpcq\Config\PhpcqConfiguration
+ * @psalm-type TTaskConfig = array{
  *   directories?: array<string, array|null|bool>
- * }
- * @psalm-type TConfig = array{
- *   directories: list<string>,
- *   artifact: string,
- *   trusted-keys: list<string>,
- *   chains: array<string,array<string,array|null>>,
- *   tools: array<string,TTool>,
- *   tool-config: array<string,TToolConfig>,
- *   repositories: list<int, string>,
- *   auth: array
  * }
  */
 final class ConfigLoader

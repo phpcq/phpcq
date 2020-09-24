@@ -9,24 +9,27 @@ use Phpcq\Exception\InvalidArgumentException;
 /**
  * @psalm-type TPlugin = array{
  *    version: string,
- *    signed: bool
+ *    signed: bool,
+ *    requirements?: array<string,array{version?: string, signed?: bool}
  * }
  * @psalm-type TTaskConfig = array{
- *   directories?: array<string, array|null|bool>,
- *   plugin?: string
+ *   directories?: list<string>,
+ *   plugin?: string,
  *   config: array<string, mixed>
  * }
  * @psalm-type TRepository = array{
  *   type: string,
  *   url?: string
  * }
+ * @psalm-type TChain = array<string,list<string>>
  * @psalm-type TConfig = array{
+ *   repositories: list<string>,
  *   directories: list<string>,
  *   artifact: string,
+ *   plugins: array<string,TPlugin>,
  *   trusted-keys: list<string>,
- *   chains: array<string,array<string,array|null>>,
+ *   chains: TChain,
  *   tasks: array<string,TTaskConfig>,
- *   repositories: list<int, string>,
  *   auth: array
  * }
  */
@@ -74,7 +77,7 @@ final class PhpcqConfiguration
         return $this->options->getOptionsList('repositories');
     }
 
-    /** @psalm-return array<string,array<string,array|null>> */
+    /** @psalm-return TChain */
     public function getChains(): array
     {
         return $this->options->getOptions('chains');

@@ -219,12 +219,16 @@ final class DiagnosticIterator implements IteratorAggregate
     public function getIterator(): Generator
     {
         if ($this->previous instanceof self && $this->previous->sortCallback) {
-            yield from $this->iterateSorted();
+            foreach ($this->iterateSorted() as $entry) {
+                yield $entry;
+            }
             return;
         }
 
         if (null === $this->sortCallback) {
-            yield from $this->previous;
+            foreach ($this->previous as $entry) {
+                yield $entry;
+            }
             return;
         }
 
@@ -250,6 +254,7 @@ final class DiagnosticIterator implements IteratorAggregate
         if (!$parent->valid()) {
             return;
         }
+        /** @var DiagnosticIteratorEntry $entry1 */
         $entry1 = $parent->current();
         $parent->next();
         // Single item - no need to sort.
