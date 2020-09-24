@@ -71,7 +71,7 @@ XML;
 <?xml version="1.0"?>
 <phpcq:file-report xmlns:phpcq="https://phpcq.github.io/schema/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:abstract>
-    <phpcq:tool name="tool" status="passed" version="1.0.0">
+    <phpcq:tool name="tool" status="passed" version="unknown">
       <phpcq:attachments>
         <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
         <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
@@ -80,7 +80,7 @@ XML;
         <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
       </phpcq:diffs>
     </phpcq:tool>
-    <phpcq:tool name="tool2" status="failed" version="2.0.0"/>
+    <phpcq:tool name="tool2" status="failed" version="unknown"/>
   </phpcq:abstract>
   <phpcq:global>
     <phpcq:diagnostic severity="info" source="baz" tool="tool">
@@ -152,7 +152,7 @@ XML;
 <?xml version="1.0"?>
 <phpcq:file-report xmlns:phpcq="https://phpcq.github.io/schema/v1/file-report.xsd" status="passed" started_at="%s" completed_at="%s">
   <phpcq:abstract>
-    <phpcq:tool name="tool" status="passed" version="1.0.0">
+    <phpcq:tool name="tool" status="passed" version="unknown">
       <phpcq:attachments>
         <phpcq:attachment name="foo.xml" filename="tool-foo.xml" mime="application/xml"/>
         <phpcq:attachment name="bar.xml" filename="tool-bar.xml"/>
@@ -161,7 +161,7 @@ XML;
         <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
       </phpcq:diffs>
     </phpcq:tool>
-    <phpcq:tool name="tool2" status="failed" version="2.0.0"/>
+    <phpcq:tool name="tool2" status="failed" version="unknown"/>
   </phpcq:abstract>
   <phpcq:global/>
   <phpcq:files>

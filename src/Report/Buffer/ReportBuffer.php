@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Report\Buffer;
 
 use DateTimeImmutable;
-
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
+
 use function array_values;
 
 /**
@@ -42,7 +42,7 @@ final class ReportBuffer
         $this->startedAt = new DateTimeImmutable();
     }
 
-    /** @psam-param array<string,string> $metadata */
+    /** @psalm-param array<string,string> $metadata */
     public function createTaskReport(string $taskName, array $metadata = []): TaskReportBuffer
     {
         $reportName = $taskName;

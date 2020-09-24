@@ -54,6 +54,13 @@ class TaskReport implements TaskReportInterface
         return $this->report->getStatus();
     }
 
+    public function addMetadata(string $name, string $value): TaskReportInterface
+    {
+        $this->report->addMetadata($name, $value);
+
+        return $this;
+    }
+
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
         /** @psalm-var TDiagnosticSeverity $severity */

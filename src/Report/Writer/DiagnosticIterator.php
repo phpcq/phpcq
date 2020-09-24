@@ -79,7 +79,7 @@ final class DiagnosticIterator implements IteratorAggregate
     private static function toolSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
-            return $entry1->getTool()->getTaskName() <=> $entry2->getTool()->getTaskName();
+            return $entry1->getTask()->getTaskName() <=> $entry2->getTask()->getTaskName();
         };
     }
 

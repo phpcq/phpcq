@@ -44,7 +44,7 @@ final class FileReportWriter extends AbstractReportWriter
             $tool = $this->xml->createElement('tool', $abstractNode);
             $tool->setAttribute('name', $taskReport->getTaskName());
             $tool->setAttribute('status', $taskReport->getStatus());
-            $tool->setAttribute('version', $taskReport->getMetadata());
+            $tool->setAttribute('version', $taskReport->getMetadata()['version'] ?? 'unknown');
 
             $this->appendAttachments($tool, $taskReport);
             $this->appendDiffs($tool, $taskReport);
@@ -72,7 +72,7 @@ final class FileReportWriter extends AbstractReportWriter
     private function appendDiagnostic(DiagnosticIteratorEntry $entry, DOMElement $parentNode): void
     {
         $diagnosticElement = $this->createDiagnosticElement($parentNode, $entry);
-        $diagnosticElement->setAttribute('tool', $entry->getTool()->getTaskName());
+        $diagnosticElement->setAttribute('tool', $entry->getTask()->getTaskName());
     }
 
     private function getFileElement(string $fileName, DOMElement $parentNode): DOMElement

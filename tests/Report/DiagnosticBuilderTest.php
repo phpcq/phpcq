@@ -111,7 +111,7 @@ final class DiagnosticBuilderTest extends TestCase
         $builder->end();
     }
 
-    /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+    /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     public function testCallingEndCallsCallback(): void
     {
         $called = false;

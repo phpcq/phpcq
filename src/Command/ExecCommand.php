@@ -78,7 +78,6 @@ final class ExecCommand extends AbstractCommand
 
         /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
-            $this->getPluginPath(),
             $this->getInstalledRepository(true)->getPlugin($this->input->getArgument('plugin')),
             ...$this->findPhpCli()
         );

@@ -49,7 +49,7 @@
         "api-version": "1.0.0",
         "version": "1.0.0",
         "type": "php-file",
-        "url": "https://path-to-bootstrap",
+        "url": "https://path-to-bootstrap.org/bootstrap.json",
         "checksum": {
           "type": "sha-512",
           "value": "1e81b12a8d48b8ae61725cc423fa50a49daf3c6d530886e1b8b13ece9b8047a2765d397cc3006fafdf2da47b558a3bcadd52db99b44afa14f8f4d59aed6a0968"

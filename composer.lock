@@ -449,12 +449,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "f8f11c745dcadd227f41483ac8e9f2c0ef0c831f"
+                "reference": "f12c03db3a46e545dfbfb3ae72d7be185cbbe139"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/f8f11c745dcadd227f41483ac8e9f2c0ef0c831f",
-                "reference": "f8f11c745dcadd227f41483ac8e9f2c0ef0c831f",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/f12c03db3a46e545dfbfb3ae72d7be185cbbe139",
+                "reference": "f12c03db3a46e545dfbfb3ae72d7be185cbbe139",
                 "shasum": ""
             },
             "require": {
@@ -506,7 +506,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T11:20:44+00:00"
+            "time": "2020-09-24T14:01:32+00:00"
         },
         {
             "name": "phpcq/repository-definition",
@@ -514,12 +514,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a"
+                "reference": "ac1125918abe624d1277debbf2f68d668b0594a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a",
-                "reference": "52b6c71d2b3f67ab3ab05bb8a7934ce32968b08a",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/ac1125918abe624d1277debbf2f68d668b0594a1",
+                "reference": "ac1125918abe624d1277debbf2f68d668b0594a1",
                 "shasum": ""
             },
             "require": {
@@ -568,7 +568,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T12:36:13+00:00"
+            "time": "2020-09-24T14:11:20+00:00"
         },
         {
             "name": "phpcq/schema",
@@ -576,12 +576,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/schema.git",
-                "reference": "8b74566ee17c189844010a64b73c8a58d17dac9d"
+                "reference": "90c003a0b68e1236de57d5d14752c5e727e52a3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/schema/zipball/8b74566ee17c189844010a64b73c8a58d17dac9d",
-                "reference": "8b74566ee17c189844010a64b73c8a58d17dac9d",
+                "url": "https://api.github.com/repos/phpcq/schema/zipball/90c003a0b68e1236de57d5d14752c5e727e52a3e",
+                "reference": "90c003a0b68e1236de57d5d14752c5e727e52a3e",
                 "shasum": ""
             },
             "type": "library",
@@ -614,7 +614,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T09:45:16+00:00"
+            "time": "2020-09-24T13:41:37+00:00"
         },
         {
             "name": "psr/container",

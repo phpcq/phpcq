@@ -16,11 +16,11 @@ class DiagnosticIteratorEntryTest extends TestCase
     public function testCanBeInstantiatedWithoutFileRange(): void
     {
         $entry = new DiagnosticIteratorEntry(
-            $tool = new TaskReportBuffer('task-name', 'report-name'),
+            $task = new TaskReportBuffer('task-name', 'report-name'),
             $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             null
         );
-        $this->assertSame($tool, $entry->getTool());
+        $this->assertSame($task, $entry->getTask());
         $this->assertSame($diagnostic, $entry->getDiagnostic());
         $this->assertNull($entry->getRange());
         $this->assertFalse($entry->isFileRelated());
@@ -30,11 +30,11 @@ class DiagnosticIteratorEntryTest extends TestCase
     public function testCanBeInstantiatedWithFileRange(): void
     {
         $entry = new DiagnosticIteratorEntry(
-            $tool = new TaskReportBuffer('task-name', 'report-name'),
+            $task = new TaskReportBuffer('task-name', 'report-name'),
             $diagnostic = new DiagnosticBuffer('error', 'message', null, null, null, null, null),
             $range = new FileRangeBuffer('some/file', null, null, null, null)
         );
-        $this->assertSame($tool, $entry->getTool());
+        $this->assertSame($task, $entry->getTask());
         $this->assertSame($diagnostic, $entry->getDiagnostic());
         $this->assertSame($range, $entry->getRange());
         $this->assertTrue($entry->isFileRelated());

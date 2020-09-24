@@ -39,10 +39,10 @@ final class TaskReportBuffer
     /** @var string */
     private $reportName;
 
-    /** @var array<string,string> */
+    /** @psalm-var array<string,string> */
     private $metadata;
 
-    /** @psam-param array<string,string> $metadata */
+    /** @psalm-param array<string,string> $metadata */
     public function __construct(string $taskName, string $reportName, array $metadata = [])
     {
         $this->taskName   = $taskName;
@@ -61,9 +61,15 @@ final class TaskReportBuffer
         return $this->taskName;
     }
 
+    /** @return array<string,string> */
     public function getMetadata(): array
     {
         return $this->metadata;
+    }
+
+    public function addMetadata(string $name, string $value): void
+    {
+        $this->metadata[$name] = $value;
     }
 
     public function getReportName(): string

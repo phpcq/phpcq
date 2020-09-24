@@ -78,7 +78,7 @@ final class GithubActionConsoleWriter
         $diagnostic = $entry->getDiagnostic();
         $message    = $this->renderRangePrefix($entry) . $entry->getDiagnostic()->getMessage();
 
-        $reportedBy = 'reported by ' . $entry->getTool()->getTaskName();
+        $reportedBy = 'reported by ' . $entry->getTask()->getTaskName();
         if (null !== ($source = $diagnostic->getSource())) {
             $reportedBy .= ': ' . $source;
         }

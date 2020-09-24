@@ -23,13 +23,13 @@ abstract class AbstractWriterTest extends TestCase
     protected function createFullFeaturedReport(): ReportBuffer
     {
         $report = new ReportBuffer();
-        $taskReport = $report->createTaskReport('tool', '1.0.0');
+        $taskReport = $report->createTaskReport('tool');
         $taskReport->setStatus(TaskReportInterface::STATUS_PASSED);
         $taskReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'foo.xml', 'application/xml'));
         $taskReport->addAttachment(new AttachmentBuffer(tempnam(self::$tempdir, ''), 'bar.xml', null));
         $report->complete(Report::STATUS_PASSED);
 
-        $report->createTaskReport('tool2', '2.0.0')->setStatus(TaskReportInterface::STATUS_FAILED);
+        $report->createTaskReport('tool2')->setStatus(TaskReportInterface::STATUS_FAILED);
 
         $taskReport->addDiagnostic(
             new DiagnosticBuffer(TaskReportInterface::SEVERITY_INFO, 'Foo bar', 'baz', [], null, null, null)

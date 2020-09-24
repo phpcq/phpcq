@@ -147,7 +147,9 @@ class AttachmentBuilderTest extends TestCase
         $this->assertSame($report, $builder->end());
     }
 
-    /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function testCallingEndCallsCallback(): void
     {
         $filesystem = $this->getMockBuilder(Filesystem::class)->getMock();

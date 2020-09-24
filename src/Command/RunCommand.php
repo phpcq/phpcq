@@ -43,7 +43,7 @@ final class RunCommand extends AbstractCommand
 
     /** @var array<string, class-string<\Phpcq\Report\Writer\AbstractReportWriter>> */
     private const REPORT_FORMATS = [
-        'tool-report' => TaskReportWriter::class,
+        'task-report' => TaskReportWriter::class,
         'file-report' => FileReportWriter::class,
         'checkstyle'  => CheckstyleReportWriter::class,
     ];
@@ -76,7 +76,7 @@ final class RunCommand extends AbstractCommand
             'r',
             InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
             'Set the report formats which should be created. Available options are <info>file-report</info>, '
-            . '<info>tool-report</info> and <info>checkstyle</info>".',
+            . '<info>task-report</info> and <info>checkstyle</info>".',
             ['file-report']
         );
 
@@ -149,7 +149,6 @@ final class RunCommand extends AbstractCommand
             $environment = new Environment(
                 $projectConfig,
                 new TaskFactory(
-                    $this->getPluginPath(),
                     $installed->getPlugin($taskName),
                     ...$this->findPhpCli()
                 ),
@@ -162,7 +161,6 @@ final class RunCommand extends AbstractCommand
                 $environment = new Environment(
                     $projectConfig,
                     new TaskFactory(
-                        $this->getPluginPath(),
                         $installed->getPlugin($taskName),
                         ...$this->findPhpCli()
                     ),

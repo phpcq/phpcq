@@ -24,11 +24,6 @@ class TaskFactory implements TaskFactoryInterface
     private $phpCliBinary;
 
     /**
-     * @var string
-     */
-    private $phpcqPath;
-
-    /**
      * @var string[]
      */
     private $phpArguments;
@@ -36,18 +31,15 @@ class TaskFactory implements TaskFactoryInterface
     /**
      * Create a new instance.
      *
-     * @param string          $phpcqPath
      * @param InstalledPlugin $installed
      * @param string          $phpCliBinary
      * @param string[]        $phpArguments
      */
     public function __construct(
-        string $phpcqPath,
         InstalledPlugin $installed,
         string $phpCliBinary,
         array $phpArguments
     ) {
-        $this->phpcqPath    = $phpcqPath;
         $this->installed    = $installed;
         $this->phpCliBinary = $phpCliBinary;
         $this->phpArguments = $phpArguments;
@@ -79,7 +71,7 @@ class TaskFactory implements TaskFactoryInterface
         return $this->buildRunProcess($toolName, array_merge(
             [$this->phpCliBinary],
             $this->phpArguments,
-            [$this->phpcqPath . '/' . $pharUrl],
+            [$pharUrl],
             $arguments
         ));
     }

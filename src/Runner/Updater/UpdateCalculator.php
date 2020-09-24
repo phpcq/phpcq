@@ -224,6 +224,7 @@ final class UpdateCalculator
         PluginVersionInterface $oldVersion,
         PluginVersionInterface $plugin
     ): string {
+        /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
         switch (version_compare($oldVersion->getVersion(), $plugin->getVersion())) {
             case 1:
                 return 'Will downgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
@@ -359,6 +360,7 @@ final class UpdateCalculator
         ToolVersionInterface $oldVersion,
         ToolVersionInterface $tool
     ): string {
+        /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
         switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
             case 1:
                 return 'Will downgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()

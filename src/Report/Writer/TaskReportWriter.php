@@ -14,8 +14,8 @@ use Phpcq\Report\Buffer\ReportBuffer;
 final class TaskReportWriter extends AbstractReportWriter
 {
     public const XML_NAMESPACE = 'https://phpcq.github.io/schema/v1/task-report.xsd';
-    public const ROOT_NODE_NAME = 'tool-report';
-    public const REPORT_FILE = '/tool-report.xml';
+    public const ROOT_NODE_NAME = 'task-report';
+    public const REPORT_FILE = '/task-report.xml';
 
     /**
      * @var Generator|DiagnosticIteratorEntry[]
@@ -35,7 +35,7 @@ final class TaskReportWriter extends AbstractReportWriter
 
     protected function appendReportXml(DOMElement $rootNode): void
     {
-        $outputNode = $this->xml->createElement('tools', $rootNode);
+        $outputNode = $this->xml->createElement('tasks', $rootNode);
 
         if ($this->diagnostics->valid()) {
             do {
@@ -71,22 +71,22 @@ final class TaskReportWriter extends AbstractReportWriter
     {
         /** @var DiagnosticIteratorEntry $entry */
         $entry = $this->diagnostics->current();
-        $report = $entry->getTool();
+        $report = $entry->getTask();
 
-        $tool = $this->xml->createElement('tool', $node);
-        $tool->setAttribute('name', $report->getTaskName());
-        $tool->setAttribute('status', $report->getStatus());
-        $tool->setAttribute('version', $report->getMetadata());
-        $diagnosticsElement = $this->xml->createElement('diagnostics', $tool);
+        $task = $this->xml->createElement('task', $node);
+        $task->setAttribute('name', $report->getTaskName());
+        $task->setAttribute('status', $report->getStatus());
+        $task->setAttribute('version', $report->getMetadata()['version'] ?? 'unknown');
+        $diagnosticsElement = $this->xml->createElement('diagnostics', $task);
         do {
             $this->createDiagnosticElement($diagnosticsElement, $entry);
             if (!$this->diagnostics->valid()) {
                 break;
             }
             $entry = $this->diagnostics->current();
-        } while ($this->diagnostics->valid() && $report === $entry->getTool());
+        } while ($this->diagnostics->valid() && $report === $entry->getTask());
 
-        $this->appendAttachments($tool, $report);
-        $this->appendDiffs($tool, $report);
+        $this->appendAttachments($task, $report);
+        $this->appendDiffs($task, $report);
     }
 }

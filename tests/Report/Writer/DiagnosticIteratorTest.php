@@ -240,7 +240,7 @@ class DiagnosticIteratorTest extends TestCase
     public function testIterateOverDuplicateFileLists(): void
     {
         $report = new ReportBuffer();
-        $tool   = $report->createTaskReport('tool', '1.0.0');
+        $tool   = $report->createTaskReport('tool');
         $tool->addDiagnostic($this->diagnostic('error', 'file1.74', null, $this->range('file1', 74, 10)));
         $tool->addDiagnostic($this->diagnostic('error', 'file1.82', null, $this->range('file1', 82, 10)));
         $tool->addDiagnostic($this->diagnostic('error', 'file1.83', null, $this->range('file1', 83, 10)));
@@ -324,8 +324,8 @@ class DiagnosticIteratorTest extends TestCase
         $report = new ReportBuffer();
 
         // Create inverse, to ensure we have some sorting action.
-        $tool2 = $report->createTaskReport('tool2', '1.0.0');
-        $tool1 = $report->createTaskReport('tool1', '1.0.0');
+        $tool2 = $report->createTaskReport('tool2');
+        $tool1 = $report->createTaskReport('tool1');
 
         $tool1->addDiagnostic($this->diagnostic(TaskReportInterface::SEVERITY_MAJOR, 'tool1.error1.no-file'));
         $tool1->addDiagnostic($this->diagnostic(TaskReportInterface::SEVERITY_INFO, 'tool1.info1.info'));

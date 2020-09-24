@@ -141,7 +141,7 @@ final class ConsoleWriter
             ));
         }
 
-        $source = $entry->getTool()->getTaskName();
+        $source = $entry->getTask()->getTaskName();
         if (null !== ($diagnosticSource = $diagnostic->getSource())) {
             $source .= ' (' . $diagnosticSource . ')';
         }

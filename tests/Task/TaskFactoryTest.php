@@ -20,7 +20,6 @@ final class TaskFactoryTest extends TestCase
     public function testBuildRunProcess(): void
     {
         $factory = new TaskFactory(
-            '/phpcq/path',
             new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), []),
             '/path/to/php-cli',
             ['php', 'arguments']
@@ -35,7 +34,6 @@ final class TaskFactoryTest extends TestCase
     public function testBuildRunPhar(): void
     {
         $factory = new TaskFactory(
-            '/phpcq/path',
             new InstalledPlugin(
                 $this->getMockForAbstractClass(PluginVersionInterface::class),
                 [
@@ -46,7 +44,7 @@ final class TaskFactoryTest extends TestCase
             ['php', 'arguments']
         );
 
-        $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('phar-file-name.phar');
+        $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('/phpcq/path/phar-file-name.phar');
 
         $builder = $factory->buildRunPhar('phar-name', ['phar-arg1', 'phar-arg2']);
 
@@ -62,7 +60,6 @@ final class TaskFactoryTest extends TestCase
     public function testBuildPhpProcess(): void
     {
         $factory = new TaskFactory(
-            '/phpcq/path',
             new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class)),
             '/path/to/php-cli',
             ['php', 'arguments']

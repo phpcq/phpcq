@@ -32,16 +32,16 @@ final class TaskReportWriterTest extends AbstractWriterTest
         $report->complete(Report::STATUS_PASSED);
 
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
-        $fileName = $tempDir . '/tool-report.xml';
+        $fileName = $tempDir . '/task-report.xml';
 
         TaskReportWriter::writeReport($tempDir, $report);
 
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
-  <phpcq:tools/>
-</phpcq:tool-report>
+<phpcq:task-report xmlns:phpcq="https://phpcq.github.io/schema/v1/task-report.xsd" status="passed" started_at="%s" completed_at="%s">
+  <phpcq:tasks/>
+</phpcq:task-report>
 
 XML;
         // phpcs:enable
@@ -58,16 +58,16 @@ XML;
         $report = $this->createFullFeaturedReport();
 
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
-        $fileName = $tempDir . '/tool-report.xml';
+        $fileName = $tempDir . '/task-report.xml';
 
         TaskReportWriter::writeReport($tempDir, $report);
 
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
-  <phpcq:tools>
-    <phpcq:tool name="tool" status="passed" version="1.0.0">
+<phpcq:task-report xmlns:phpcq="https://phpcq.github.io/schema/v1/task-report.xsd" status="passed" started_at="%s" completed_at="%s">
+  <phpcq:tasks>
+    <phpcq:task name="tool" status="passed" version="unknown">
       <phpcq:diagnostics>
         <phpcq:diagnostic severity="info" source="baz">
           <phpcq:message>Foo bar</phpcq:message>
@@ -91,9 +91,9 @@ XML;
       <phpcq:diffs>
         <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
       </phpcq:diffs>
-    </phpcq:tool>
-  </phpcq:tools>
-</phpcq:tool-report>
+    </phpcq:task>
+  </phpcq:tasks>
+</phpcq:task-report>
 
 XML;
         // phpcs:enable
@@ -116,16 +116,16 @@ XML;
         $report = $this->createFullFeaturedReport();
 
         $tempDir = self::$tempdir . '/' . uniqid('phpcq', true);
-        $fileName = $tempDir . '/tool-report.xml';
+        $fileName = $tempDir . '/task-report.xml';
 
         TaskReportWriter::writeReport($tempDir, $report, TaskReportInterface::SEVERITY_MINOR);
 
         // phpcs:disable
         $xml = <<<'XML'
 <?xml version="1.0"?>
-<phpcq:tool-report xmlns:phpcq="https://phpcq.github.io/schema/v1/tool-report.xsd" status="passed" started_at="%s" completed_at="%s">
-  <phpcq:tools>
-    <phpcq:tool name="tool" status="passed" version="1.0.0">
+<phpcq:task-report xmlns:phpcq="https://phpcq.github.io/schema/v1/task-report.xsd" status="passed" started_at="%s" completed_at="%s">
+  <phpcq:tasks>
+    <phpcq:task name="tool" status="passed" version="unknown">
       <phpcq:diagnostics>
         <phpcq:diagnostic severity="major" external_info_url="https://example.org/super-helpful-tip">
           <phpcq:class_name name="Some\Class\Name"/>
@@ -146,9 +146,9 @@ XML;
       <phpcq:diffs>
         <phpcq:diff name="diff1.diff" filename="tool-diff1.diff"/>
       </phpcq:diffs>
-    </phpcq:tool>
-  </phpcq:tools>
-</phpcq:tool-report>
+    </phpcq:task>
+  </phpcq:tasks>
+</phpcq:task-report>
 
 XML;
         // phpcs:enable
@@ -170,6 +170,6 @@ XML;
     {
         $dom = new DOMDocument('1.0');
         $dom->load($fileName);
-        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../vendor/phpcq/schema/v1/tool-report.xsd'));
+        $this->assertTrue($dom->schemaValidate(__DIR__ . '/../../../vendor/phpcq/schema/v1/task-report.xsd'));
     }
 }
