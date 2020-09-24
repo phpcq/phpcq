@@ -26,7 +26,7 @@ class RepositoryTest extends TestCase
         $pluginRequirements->method('getPhpRequirements')->willReturn($this->createMock(VersionRequirementList::class));
 
         $version = $this->createMock(PluginVersionInterface::class);
-        $version->method('getPluginVersion')->willReturn('1.0.0');
+        $version->method('getVersion')->willReturn('1.0.0');
         $version->method('getName')->willReturn('supertool');
         $version->method('getRequirements')->willReturn($pluginRequirements);
 
@@ -44,12 +44,12 @@ class RepositoryTest extends TestCase
         $pluginRequirements->method('getPhpRequirements')->willReturn($this->createMock(VersionRequirementList::class));
 
         $version1 = $this->createMock(PluginVersionInterface::class);
-        $version1->method('getPluginVersion')->willReturn('1.0.0');
+        $version1->method('getVersion')->willReturn('1.0.0');
         $version1->method('getName')->willReturn('supertool');
         $version1->method('getRequirements')->willReturn($pluginRequirements);
 
         $version2 = $this->createMock(PluginVersionInterface::class);
-        $version2->method('getPluginVersion')->willReturn('1.0.1');
+        $version2->method('getVersion')->willReturn('1.0.1');
         $version2->method('getName')->willReturn('supertool');
         $version2->method('getRequirements')->willReturn($pluginRequirements);
 
@@ -89,7 +89,7 @@ class RepositoryTest extends TestCase
         $requirements->method('getPhpRequirements')->willReturn($phpRequirements);
 
         $version1 = $this->createMock(PluginVersionInterface::class);
-        $version1->method('getPluginVersion')->willReturn('1.0.0');
+        $version1->method('getVersion')->willReturn('1.0.0');
         $version1->method('getName')->willReturn('supertool');
         $version1->method('getRequirements')->willReturn($requirements);
 
@@ -105,7 +105,7 @@ class RepositoryTest extends TestCase
         $requirements->method('getPhpRequirements')->willReturn($phpRequirements);
 
         $version2 = $this->createMock(PluginVersionInterface::class);
-        $version2->method('getPluginVersion')->willReturn('2.0.1');
+        $version2->method('getVersion')->willReturn('2.0.1');
         $version2->method('getName')->willReturn('supertool');
         $version2->method('getRequirements')->willReturn($requirements);
 
