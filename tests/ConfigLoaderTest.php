@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class ConfigLoaderTest extends TestCase
 {
+    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function testFullFeaturedConfigFile(): void
     {
         $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-demo.yaml');

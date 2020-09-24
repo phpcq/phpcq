@@ -224,11 +224,7 @@ final class UpdateCalculator
         PluginVersionInterface $oldVersion,
         PluginVersionInterface $plugin
     ): string {
-
         switch (version_compare($oldVersion->getVersion(), $plugin->getVersion())) {
-            case 0:
-                return 'Will reinstall plugin ' . $plugin->getName() . ' in version ' . $plugin->getVersion();
-
             case 1:
                 return 'Will downgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $plugin->getVersion();
@@ -236,7 +232,11 @@ final class UpdateCalculator
             case -1:
                 return 'Will upgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $plugin->getVersion();
+
+            case 0:
+            default:
         }
+        return 'Will reinstall plugin ' . $plugin->getName() . ' in version ' . $plugin->getVersion();
     }
 
     private function isPluginUpgradeRequired(PluginVersionInterface $desired): bool
@@ -359,18 +359,16 @@ final class UpdateCalculator
         ToolVersionInterface $oldVersion,
         ToolVersionInterface $tool
     ): string {
-
         switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
-            case 0:
-                return 'Will reinstall tool ' . $tool->getName() . ' in version ' . $tool->getVersion();
-
             case 1:
                 return 'Will downgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $tool->getVersion();
-
             case -1:
                 return 'Will upgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
                     . ' to version ' . $tool->getVersion();
+            case 0:
+            default:
         }
+        return 'Will reinstall tool ' . $tool->getName() . ' in version ' . $tool->getVersion();
     }
 }

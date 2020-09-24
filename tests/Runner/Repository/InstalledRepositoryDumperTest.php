@@ -25,6 +25,7 @@ class InstalledRepositoryDumperTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 
+    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
     public function testLockFileDump(): void
     {
         $repository = new InstalledRepository();
@@ -87,7 +88,9 @@ class InstalledRepositoryDumperTest extends TestCase
                         ],
                         'checksum' => [
                             'type'  => PluginHash::SHA_512,
-                            'value' => '1d2e73a06f2883832c702f2888e7b1795b892698b8f4363f84d170970a0c9d2f8d2f923fd2c0582fa6ce6f0dfeffdc3b296d016a35f517995e2c30dd83eef4f5',
+                            'value' =>
+                                '1d2e73a06f2883832c702f2888e7b1795b892698b8f4363f84d170970a0c9d2f8d2f923fd2c0582fa6ce' .
+                                '6f0dfeffdc3b296d016a35f517995e2c30dd83eef4f5',
                         ],
                         'tools' => [
                         ],
@@ -105,7 +108,9 @@ class InstalledRepositoryDumperTest extends TestCase
                         ],
                         'checksum' => [
                             'type'  => PluginHash::SHA_512,
-                            'value' => '28ee6ad4daf9c8549b46390019a4cd285b3fdfaf8699a6863a7171f58d518e5339b65d08ab365058407088e1c38a1ff5412f7c7efac101d57fb183ceb6ad12b1',
+                            'value' =>
+                                '28ee6ad4daf9c8549b46390019a4cd285b3fdfaf8699a6863a7171f58d518e5339b65d08ab3650584070' .
+                                '88e1c38a1ff5412f7c7efac101d57fb183ceb6ad12b1',
                         ],
                         'tools' => [
                             'tool1' => [
@@ -118,7 +123,9 @@ class InstalledRepositoryDumperTest extends TestCase
                                 ],
                                 'checksum' => [
                                     'type'  => ToolHash::SHA_512,
-                                    'value' => '358882523c47fbb7eb7ca4cf20a2e069efcdfdf2e0ef43490d72d674bf959965a28ef6724341f8fcf93dcdfc70f0390a1c99601bdaef1c20d49895e7ad69431f',
+                                    'value' =>
+                                        '358882523c47fbb7eb7ca4cf20a2e069efcdfdf2e0ef43490d72d674bf959965a28ef6724341' .
+                                        'f8fcf93dcdfc70f0390a1c99601bdaef1c20d49895e7ad69431f',
                                 ],
                                 'signature' => 'https://example.org/tool-code2.phar.asc',
                             ],
@@ -129,7 +136,5 @@ class InstalledRepositoryDumperTest extends TestCase
             ],
             $data
         );
-
-        unlink($fileName);
     }
 }

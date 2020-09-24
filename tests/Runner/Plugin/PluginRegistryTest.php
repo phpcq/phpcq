@@ -24,8 +24,8 @@ class PluginRegistryTest extends TestCase
         $version2->expects($this->once())->method('getName')->willReturn('tool2');
 
         $instance = new InstalledRepository();
-        $instance->addPlugin($plugin1 = new InstalledPlugin($version1));
-        $instance->addPlugin($plugin2 = new InstalledPlugin($version2));
+        $instance->addPlugin(new InstalledPlugin($version1));
+        $instance->addPlugin(new InstalledPlugin($version2));
 
         $version1->expects($this->once())->method('getFilePath')->willReturn($this->getBootstrap('phar-1~1.0.0.php'));
         $version2->expects($this->once())->method('getFilePath')->willReturn($this->getBootstrap('phar-2~1.1.0.php'));

@@ -14,8 +14,6 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
-use Phpcq\Runner\Repository\Repository;
-use Phpcq\Runner\Repository\RepositoryPool;
 use Phpcq\Runner\Resolver\ResolverInterface;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use PHPUnit\Framework\TestCase;
@@ -27,8 +25,6 @@ final class UpdateCalculatorTest extends TestCase
 {
     public function testKeepsAlreadyCurrentTools(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -36,14 +32,14 @@ final class UpdateCalculatorTest extends TestCase
         $installedToolVersion->method('getName')->willReturn('tool');
         $installedToolVersion->method('getVersion')->willReturn('2.0.0');
 
-        $installedRequirements  = new PluginRequirements();
-        $installedRequirements->getToolRequirements()->add(new VersionRequirement('tool', '^2.0.0'));
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('plugin');
-        $installedPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn($installedRequirements);
+        $pluginRequirements  = new PluginRequirements();
+        $pluginRequirements->getToolRequirements()->add(new VersionRequirement('tool', '^2.0.0'));
+        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $pluginVersion->method('getName')->willReturn('plugin');
+        $pluginVersion->method('getVersion')->willReturn('1.0.0');
+        $pluginVersion->method('getRequirements')->willReturn($pluginRequirements);
 
-        $installedPlugin = new InstalledPlugin($installedPluginVersion, ['tool' => $installedToolVersion]);
+        $installedPlugin = new InstalledPlugin($pluginVersion, ['tool' => $installedToolVersion]);
 
         $installed->addPlugin($installedPlugin);
         $installed->addToolVersion($installedToolVersion);
@@ -62,7 +58,7 @@ final class UpdateCalculatorTest extends TestCase
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('plugin', '^1.0.0')
-            ->willReturn($installedPluginVersion);
+            ->willReturn($pluginVersion);
         $resolver
             ->expects($this->once())
             ->method('resolveToolVersion')
@@ -79,7 +75,7 @@ final class UpdateCalculatorTest extends TestCase
             [
                 'type'            => 'keep',
                 'plugin'          => $installedPlugin,
-                'version'         => $installedPluginVersion,
+                'version'         => $pluginVersion,
                 'message'         => 'Will keep plugin plugin in version 1.0.0',
                 'tasks'           => [
                     [
@@ -118,8 +114,6 @@ final class UpdateCalculatorTest extends TestCase
      */
     public function testReinstallPluginsHashMatcher(?PluginHash $newHash, ?PluginHash $oldHash, bool $keep): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
         $message   = $keep ? 'Will keep plugin foo in version 1.0.0' : 'Will reinstall plugin foo in version 1.0.0';
@@ -131,18 +125,18 @@ final class UpdateCalculatorTest extends TestCase
                 [$message],
             );
 
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $installedPluginVersion->method('getHash')->willReturn($oldHash);
-        $installedPlugin = new InstalledPlugin($installedPluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('1.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn($oldHash);
+        $installedPlugin = new InstalledPlugin($installedVersion);
 
-        $desiredPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $desiredPluginVersion->method('getName')->willReturn('foo');
-        $desiredPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $desiredPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $desiredPluginVersion->method('getHash')->willReturn($newHash);
+        $desiredVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $desiredVersion->method('getName')->willReturn('foo');
+        $desiredVersion->method('getVersion')->willReturn('1.0.0');
+        $desiredVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $desiredVersion->method('getHash')->willReturn($newHash);
 
         $installed->addPlugin($installedPlugin);
 
@@ -151,7 +145,7 @@ final class UpdateCalculatorTest extends TestCase
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('foo', '^1.0.0')
-            ->willReturn($desiredPluginVersion);
+            ->willReturn($desiredVersion);
 
         $calculator = new UpdateCalculator($installed, $resolver, $output);
 
@@ -165,7 +159,7 @@ final class UpdateCalculatorTest extends TestCase
                     [
                         'type'            => 'keep',
                         'plugin'          => $installedPlugin,
-                        'version'         => $installedPluginVersion,
+                        'version'         => $installedVersion,
                         'message'         => $message,
                         'tasks'           => []
                     ],
@@ -177,8 +171,8 @@ final class UpdateCalculatorTest extends TestCase
                 [
                     [
                         'type'            => 'upgrade',
-                        'version'         => $desiredPluginVersion,
-                        'old'             => $installedPluginVersion,
+                        'version'         => $desiredVersion,
+                        'old'             => $installedVersion,
                         'message'         => $message,
                         'signed'          => true,
                         'tasks'           => []
@@ -230,8 +224,6 @@ final class UpdateCalculatorTest extends TestCase
      */
     public function testReinstallToolHashMatcher(?ToolHash $newHash, ?ToolHash $oldHash, bool $keep): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
         $message   = $keep ? 'Will keep tool bar in version 2.0.0' : 'Will reinstall tool bar in version 2.0.0';
@@ -248,13 +240,13 @@ final class UpdateCalculatorTest extends TestCase
         $installedToolVersion->method('getVersion')->willReturn('2.0.0');
         $installedToolVersion->method('getHash')->willReturn($oldHash);
 
-        $installedRequirements  = new PluginRequirements();
-        $installedRequirements->getToolRequirements()->add(new VersionRequirement('bar', '^2.0.0'));
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn($installedRequirements);
-        $installedPlugin = new InstalledPlugin($installedPluginVersion, ['bar' => $installedToolVersion]);
+        $pluginRequirements  = new PluginRequirements();
+        $pluginRequirements->getToolRequirements()->add(new VersionRequirement('bar', '^2.0.0'));
+        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $pluginVersion->method('getName')->willReturn('foo');
+        $pluginVersion->method('getVersion')->willReturn('1.0.0');
+        $pluginVersion->method('getRequirements')->willReturn($pluginRequirements);
+        $installedPlugin = new InstalledPlugin($pluginVersion, ['bar' => $installedToolVersion]);
 
         $desiredToolVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
         $desiredToolVersion->method('getName')->willReturn('bar');
@@ -270,7 +262,7 @@ final class UpdateCalculatorTest extends TestCase
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('foo', '^1.0.0')
-            ->willReturn($installedPluginVersion);
+            ->willReturn($pluginVersion);
         $resolver
             ->expects($this->once())
             ->method('resolveToolVersion')
@@ -289,7 +281,7 @@ final class UpdateCalculatorTest extends TestCase
                     [
                         'type'            => 'keep',
                         'plugin'          => $installedPlugin,
-                        'version'         => $installedPluginVersion,
+                        'version'         => $pluginVersion,
                         'message'         => 'Will keep plugin foo in version 1.0.0',
                         'tasks'           => [
                             [
@@ -308,7 +300,7 @@ final class UpdateCalculatorTest extends TestCase
                     [
                         'type'            => 'keep',
                         'plugin'          => $installedPlugin,
-                        'version'         => $installedPluginVersion,
+                        'version'         => $pluginVersion,
                         'message'         => 'Will keep plugin foo in version 1.0.0',
                         'tasks'           => [
                             [
@@ -328,8 +320,6 @@ final class UpdateCalculatorTest extends TestCase
 
     public function testInstallsMissingPlugins(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -373,8 +363,6 @@ final class UpdateCalculatorTest extends TestCase
 
     public function testUpgradesOutdatedPlugins(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -386,26 +374,26 @@ final class UpdateCalculatorTest extends TestCase
                 ['Will upgrade plugin foo from version 1.0.0 to version 1.0.1'],
             );
 
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $installedPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
-        $installedPlugin = new InstalledPlugin($installedPluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('1.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
+        $installedPlugin = new InstalledPlugin($installedVersion);
         $installed->addPlugin($installedPlugin);
 
-        $desiredPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $desiredPluginVersion->method('getName')->willReturn('foo');
-        $desiredPluginVersion->method('getVersion')->willReturn('1.0.1');
-        $desiredPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $desiredPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'new-hash'));
+        $desiredVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $desiredVersion->method('getName')->willReturn('foo');
+        $desiredVersion->method('getVersion')->willReturn('1.0.1');
+        $desiredVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $desiredVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'new-hash'));
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
         $resolver
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('foo', '^1.0.0')
-            ->willReturn($desiredPluginVersion);
+            ->willReturn($desiredVersion);
 
         $calculator = new UpdateCalculator($installed, $resolver, $output);
 
@@ -416,8 +404,8 @@ final class UpdateCalculatorTest extends TestCase
         $this->assertSame([
             [
                 'type'    => 'upgrade',
-                'version' => $desiredPluginVersion,
-                'old'     => $installedPluginVersion,
+                'version' => $desiredVersion,
+                'old'     => $installedVersion,
                 'message' => 'Will upgrade plugin foo from version 1.0.0 to version 1.0.1',
                 'signed'  => true,
                 'tasks'   => [],
@@ -427,8 +415,6 @@ final class UpdateCalculatorTest extends TestCase
 
     public function testDowngradesPlugins(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -440,26 +426,26 @@ final class UpdateCalculatorTest extends TestCase
                 ['Will downgrade plugin foo from version 2.0.0 to version 1.0.1'],
             );
 
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('2.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $installedPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
-        $installedPlugin = new InstalledPlugin($installedPluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('2.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
+        $installedPlugin = new InstalledPlugin($installedVersion);
         $installed->addPlugin($installedPlugin);
 
-        $desiredPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $desiredPluginVersion->method('getName')->willReturn('foo');
-        $desiredPluginVersion->method('getVersion')->willReturn('1.0.1');
-        $desiredPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $desiredPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'new-hash'));
+        $desiredVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $desiredVersion->method('getName')->willReturn('foo');
+        $desiredVersion->method('getVersion')->willReturn('1.0.1');
+        $desiredVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $desiredVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'new-hash'));
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
         $resolver
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('foo', '^1.0.0')
-            ->willReturn($desiredPluginVersion);
+            ->willReturn($desiredVersion);
 
         $calculator = new UpdateCalculator($installed, $resolver, $output);
 
@@ -470,8 +456,8 @@ final class UpdateCalculatorTest extends TestCase
         $this->assertSame([
             [
                 'type'    => 'upgrade',
-                'version' => $desiredPluginVersion,
-                'old'     => $installedPluginVersion,
+                'version' => $desiredVersion,
+                'old'     => $installedVersion,
                 'message' => 'Will downgrade plugin foo from version 2.0.0 to version 1.0.1',
                 'signed'  => true,
                 'tasks'   => [],
@@ -481,8 +467,6 @@ final class UpdateCalculatorTest extends TestCase
 
     public function testRemovesPlugins(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -493,12 +477,12 @@ final class UpdateCalculatorTest extends TestCase
                 ['Will remove plugin foo version 2.0.0'],
             );
 
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('2.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $installedPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
-        $installedPlugin = new InstalledPlugin($installedPluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('2.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
+        $installedPlugin = new InstalledPlugin($installedVersion);
         $installed->addPlugin($installedPlugin);
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
@@ -511,7 +495,7 @@ final class UpdateCalculatorTest extends TestCase
             [
                 'type'    => 'remove',
                 'plugin'  => $installedPlugin,
-                'version' => $installedPluginVersion,
+                'version' => $installedVersion,
                 'message' => 'Will remove plugin foo version 2.0.0',
             ]
         ], $tasks);
@@ -519,8 +503,6 @@ final class UpdateCalculatorTest extends TestCase
 
     public function testReinstallPlugins(): void
     {
-        $pool = new RepositoryPool();
-        $pool->addRepository($repository = new Repository());
         $installed = new InstalledRepository();
         $output    = $this->getMockForAbstractClass(OutputInterface::class);
 
@@ -532,26 +514,26 @@ final class UpdateCalculatorTest extends TestCase
                 ['Will reinstall plugin foo in version 1.0.0'],
             );
 
-        $installedPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $installedPluginVersion->method('getName')->willReturn('foo');
-        $installedPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $installedPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $installedPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'hash'));
-        $installedPlugin = new InstalledPlugin($installedPluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('1.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'hash'));
+        $installedPlugin = new InstalledPlugin($installedVersion);
         $installed->addPlugin($installedPlugin);
 
-        $desiredPluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $desiredPluginVersion->method('getName')->willReturn('foo');
-        $desiredPluginVersion->method('getVersion')->willReturn('1.0.0');
-        $desiredPluginVersion->method('getRequirements')->willReturn(new PluginRequirements());
-        $desiredPluginVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'hash'));
+        $desiredVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $desiredVersion->method('getName')->willReturn('foo');
+        $desiredVersion->method('getVersion')->willReturn('1.0.0');
+        $desiredVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $desiredVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'hash'));
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
         $resolver
             ->expects($this->once())
             ->method('resolvePluginVersion')
             ->with('foo', '^1.0.0')
-            ->willReturn($desiredPluginVersion);
+            ->willReturn($desiredVersion);
 
         $calculator = new UpdateCalculator($installed, $resolver, $output);
 
@@ -565,8 +547,8 @@ final class UpdateCalculatorTest extends TestCase
         $this->assertSame([
             [
                 'type'    => 'upgrade',
-                'version' => $desiredPluginVersion,
-                'old'     => $installedPluginVersion,
+                'version' => $desiredVersion,
+                'old'     => $installedVersion,
                 'message' => 'Will reinstall plugin foo in version 1.0.0',
                 'signed'  => true,
                 'tasks'   => [],
