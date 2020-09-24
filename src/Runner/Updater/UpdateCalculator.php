@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Updater;
 
-use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\Semver;
 use Composer\Semver\VersionParser;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
@@ -254,17 +253,18 @@ final class UpdateCalculator
 
         $installed = $this->installed->getPlugin($desired->getName());
         if (Semver::satisfies($installed->getPluginVersion()->getVersion(), $desired->getVersion())) {
-            return false;
+            return $this->hasHashChanged($desired->getHash(), $installed->getPluginVersion()->getHash());
         }
 
-        return $this->hasHashChanged($desired->getHash(), $installed->getPluginVersion()->getHash());
+        return true;
     }
 
+    /** @deprecated Remove when we have versioned plugins */
     private function hasHashChanged(?AbstractHash $desired, ?AbstractHash $installed): bool
     {
         // No hash given. We can't verify changes, force reinstall
         if (null === $desired) {
-            return true;
+            return false;
         }
 
         // No hash given for installed tool but new version has a hash, forche reinstall
@@ -349,14 +349,12 @@ final class UpdateCalculator
 
     private function isToolUpgradeRequired(InstalledPlugin $plugin, ToolVersionInterface $desired): bool
     {
-        $constraints = $this->versionParser->parseConstraints($desired->getVersion());
-        $installed   = $plugin->getTool($desired->getName());
-
-        if ($constraints->matches(new Constraint('=', $installed->getVersion()))) {
-            return false;
+        $installed = $plugin->getTool($desired->getName());
+        if (Semver::satisfies($installed->getVersion(), $desired->getVersion())) {
+            return $this->hasHashChanged($desired->getHash(), $installed->getHash());
         }
 
-        return $this->hasHashChanged($desired->getHash(), $installed->getHash());
+        return true;
     }
 
     private function getToolTaskMessage(
