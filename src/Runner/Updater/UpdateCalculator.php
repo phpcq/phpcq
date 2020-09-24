@@ -260,7 +260,7 @@ final class UpdateCalculator
     {
         // No hash given. We can't verify changes, force reinstall
         if (null === $desired) {
-            return false;
+            return true;
         }
 
         // No hash given for installed tool but new version has a hash, forche reinstall
@@ -349,7 +349,7 @@ final class UpdateCalculator
         if (Semver::satisfies($installed->getVersion(), $desired->getVersion())) {
             // FIXME: Remove usage of hasHashChanged
             /** @psalm-suppress DeprecatedMethod */
-            return $this->hasHashChanged($desired->getHash(), $installed->getHash());
+            return $desired->getHash() && $this->hasHashChanged($desired->getHash(), $installed->getHash());
         }
 
         return true;
