@@ -53,10 +53,10 @@ phpcq:
     fix:
       - composer-normalize
       - phpcbf
-    verify: &verify
+    verify:
       - composer-require-checker
       - composer-normalize
-    analyze: &analyze
+    analyze:
       - phploc
       - phpcpd
       - phpmd
@@ -64,8 +64,14 @@ phpcq:
       - psalm
       - phpunit
     default:
-      <<: *verify
-      <<: *analyze
+      - composer-require-checker
+      - composer-normalize
+      - phploc
+      - phpcpd
+      - phpmd
+      - phpcs
+      - psalm
+      - phpunit
 
 tasks:
   phpcpd:
