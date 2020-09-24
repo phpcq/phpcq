@@ -17,8 +17,10 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Terminal;
 
+use function file_exists;
 use function getcwd;
 use function is_dir;
+use function is_string;
 use function mkdir;
 use function sprintf;
 
@@ -66,8 +68,7 @@ abstract class AbstractCommand extends Command
             'config',
             'c',
             InputOption::VALUE_REQUIRED,
-            'The configuration file to use',
-            getcwd() . '/.phpcq.yaml'
+            'The configuration file to use. If not defined following paths are checked in the cwd: <i>.phpcq.yml, phpcq.yml, .phpcq.yml.dist, phpcq.yml.dist</i>'
         );
         $this->addOption(
             'home-dir',
@@ -92,7 +93,22 @@ abstract class AbstractCommand extends Command
         $this->phpcqPath = $this->determinePhpcqPath();
 
         $configFile = $this->input->getOption('config');
-        assert(is_string($configFile));
+        if (!is_string($configFile)) {
+            $cwd = getcwd();
+            foreach (['.phpcq.yaml', 'phpcq.yaml', '.phpcq.yaml.dist', 'phpcq.yaml.dist'] as $file) {
+                $configFile = $cwd . '/' . $file;
+                if (file_exists($configFile)) {
+                    break;
+                }
+            }
+            if (null === $configFile) {
+                throw new RuntimeException(
+                    'Could not determine configuration file. File must be configured or exist in the cwd at the'
+                    . ' following paths: .phpcq.yml, phpcq.yml, .phpcq.yml.dist or phpcq.yml.dist'
+                );
+            }
+        }
+
         $this->config = ConfigLoader::load($configFile);
 
         return $this->doExecute();
