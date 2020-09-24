@@ -1,108 +1,62 @@
 {
-  "bootstraps": {
-    "fii": {
-      "type": "inline",
-      "code": "<?php\n\nuse Phpcq\\Config\\BuildConfigInterface;\nuse Phpcq\\Exception\\InvalidConfigException;\nuse Phpcq\\Plugin\\ConfigurationPluginInterface;\nuse Phpcq\\Task\\TaskRunnerInterface;\nuse Symfony\\Component\\Console\\Output\\OutputInterface;\n\nreturn new class implements ConfigurationPluginInterface {\n    public function getName() : string\n    {\n        return 'demo-plugin';\n    }\n\n    public function validateConfig(array $config) : void\n    {\n        if (!isset($config['demo-key'])) {\n            throw new InvalidConfigException('Invalid config, missing key demo-key');\n        }\n    }\n\n    public function processConfig(array $config, BuildConfigInterface $buildConfig) : iterable\n    {\n        yield new class ($config) implements TaskRunnerInterface {\n            private $config;\n\n            public function __construct(array $config)\n            {\n                $this->config = $config;\n            }\n\n            public function run(OutputInterface $output) : void\n            {\n                $output->writeln(var_export($this->config, true));\n            }\n        };\n    }\n};",
-      "plugin-version": "1.0.0"
-    }
-  },
-  "phars": {
-    "phpmd": {
-      "url": "./repository-include.json",
-      "checksum": {
-        "type": "sha-512",
-        "value": "5d8eb564bbd08c998ce7c28b00dfff02ae40de8f2cd1e41743535959af2e9ac46278adcaa2853ec5017bd48e3bb0d5f4496086737dfd9f42db4b15c71d54bf59"
-      }
-    },
-    "phpunit": [
+  "tools": {
+    "phpmd": [
       {
-        "version": "7.0.0",
-        "phar-url": "https://phar.phpunit.de/phpunit-7.3.5.phar",
-        "bootstrap": {
-          "type": "file",
-          "url": "https://path-to-bootstrap",
-          "plugin-version": "1.0.0"
-        },
+        "version": "2.8.2",
+        "url": "https://github.com/phpmd/phpmd/releases/download/2.8.2/phpmd.phar",
         "requirements": {
-          "php": "^7.1"
+          "php": {
+            "php": "^7.1"
+          }
         }
       }
     ],
-    "travis-validate": [
+    "phpunit": [
       {
-        "version": "1.2.3",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": "fii",
+        "version": "7.0.0",
+        "url": "https://phar.phpunit.de/phpunit-7.3.5.phar",
         "requirements": {
-          "php": "^5.4 || ^7.1"
+          "php": {
+            "php": "^7.1"
+          }
         }
-      },
+      }
+    ]
+  },
+  "plugins": {
+    "phpmd": [
       {
-        "version": "1.2.2",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": "fii",
+        "api-version": "1.0.0",
+        "version": "1.0.0",
+        "type": "php-inline",
+        "code": "<?php // The code",
         "requirements": {
-          "php": "^5.4 || ^7.1"
+          "php": {
+            "php": "^7.1"
+          },
+          "tool": {
+            "phpmd": "^2.8"
+          }
         }
-      },
+      }
+    ],
+    "phpunit": [
       {
-        "version": "1.2.1",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": {
-          "type": "inline",
-          "code": "bootstrap-code",
-          "plugin-version": "1.0.0"
+        "api-version": "1.0.0",
+        "version": "1.0.0",
+        "type": "php-file",
+        "url": "https://path-to-bootstrap",
+        "checksum": {
+          "type": "sha-512",
+          "value": "1e81b12a8d48b8ae61725cc423fa50a49daf3c6d530886e1b8b13ece9b8047a2765d397cc3006fafdf2da47b558a3bcadd52db99b44afa14f8f4d59aed6a0968"
         },
         "requirements": {
-          "php": "^5.4 || ^7.1"
-        }
-      },
-      {
-        "version": "1.2.0",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": {
-          "type": "inline",
-          "code": "bootstrap-code",
-          "plugin-version": "1.0.0"
-        },
-        "requirements": {
-          "php": "^5.4 || ^7.1"
-        }
-      },
-      {
-        "version": "1.1.3",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": {
-          "type": "inline",
-          "code": "bootstrap-code",
-          "plugin-version": "1.0.0"
-        },
-        "requirements": {
-          "php": "^5.4 || ^7.1"
-        }
-      },
-      {
-        "version": "1.1.2",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": {
-          "type": "inline",
-          "code": "bootstrap-code",
-          "plugin-version": "1.0.0"
-        },
-        "requirements": {
-          "php": "^5.4 || ^7.1"
-        }
-      },
-      {
-        "version": "1.3.0",
-        "phar-url": "https://api.github.com/repos/phpcq/travis-configuration-check/releases/assets/17391832",
-        "bootstrap": {
-          "type": "inline",
-          "code": "bootstrap-code",
-          "plugin-version": "1.0.0"
-        },
-        "requirements": {
-          "php": "^5.4 || ^7.1"
+          "php": {
+            "php": "^7.1"
+          },
+          "tool": {
+            "phpunit": "^7.0"
+          }
         }
       }
     ]
