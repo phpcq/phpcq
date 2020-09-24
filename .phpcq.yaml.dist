@@ -85,6 +85,7 @@ tasks:
         - AttachmentBuilderTest.php
         - OptionsBuilderTest.php
         - PluginConfigurationBuilderTest.php
+        - UpdateCalculatorTest.php
     #  regexps_exclude:
     #  log:
     #  min_lines:
