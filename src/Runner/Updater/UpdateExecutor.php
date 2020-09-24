@@ -302,7 +302,7 @@ final class UpdateExecutor
             $this->downloader->downloadFileTo($pharUrl, $pharPath);
             $this->validateHash($pharPath, $tool->getHash());
             $signatureName = $this->verifyToolSignature($pharPath, $plugin, $tool, $requireSigned);
-            $hash          = ToolHash::createForFile($pharPath);
+            $hash = $tool->getHash() ?: ToolHash::createForFile($pharPath);
         }
 
         $plugin->addTool(
