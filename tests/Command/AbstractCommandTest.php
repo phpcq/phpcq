@@ -22,9 +22,9 @@ class AbstractCommandTest extends TestCase
         $this->assertTrue($option->isValueRequired());
         $this->assertSame($option->getDefault(), null);
 
-        $this->assertTrue($definition->hasOption('tools'));
-        $option = $definition->getOption('tools');
+        $this->assertTrue($definition->hasOption('home-dir'));
+        $option = $definition->getOption('home-dir');
         $this->assertTrue($option->isValueRequired());
-        $this->assertSame($option->getDefault(), getcwd() . '/.phpcq/plugins');
+        $this->assertSame($option->getDefault(), getcwd() . '/.phpcq');
     }
 }
