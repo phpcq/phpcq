@@ -177,8 +177,8 @@ final class UpdateCalculator
                 continue;
             }
             // Installed in another version => upgrade.
+            $installed = $this->installed->getPlugin($name);
             if ($forceReinstall || $this->isPluginUpgradeRequired($pluginVersion)) {
-                $installed = $this->installed->getPlugin($name);
                 $message   = $this->getPluginTaskMessage($installed->getPluginVersion(), $pluginVersion);
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
                 $tasks[] = [
@@ -194,8 +194,8 @@ final class UpdateCalculator
             // Keep the tool otherwise.
             $tasks[] = [
                 'type'    => 'keep',
-                'plugin'  => $this->installed->getPlugin($name),
-                'version' => $pluginVersion,
+                'plugin'  => $installed,
+                'version' => $installed->getPluginVersion(),
                 'message' => 'Will keep plugin ' . $name . ' in version ' . $pluginVersion->getVersion(),
                 'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
             ];
@@ -304,8 +304,8 @@ final class UpdateCalculator
                 continue;
             }
             // Installed in another version => upgrade.
+            $installed = $plugin->getTool($tool->getName());
             if ($forceReinstall || $this->isToolUpgradeRequired($plugin, $tool)) {
-                $installed = $plugin->getTool($tool->getName());
                 $message   = $this->getToolTaskMessage($installed, $tool);
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
 
@@ -321,8 +321,8 @@ final class UpdateCalculator
             // Keep the tool otherwise.
             $tasks[] = [
                 'type'    => 'keep',
-                'tool'    => $tool,
-                'message' => 'Will keep tool ' . $tool->getName() . ' in version ' . $tool->getVersion(),
+                'tool'    => $installed,
+                'message' => 'Will keep tool ' . $installed->getName() . ' in version ' . $installed->getVersion(),
             ];
         }
 
