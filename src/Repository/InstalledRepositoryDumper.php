@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\RepositoryDefinition\AbstractHash;
-use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
