@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Platform;
 
+use Composer\Semver\VersionParser;
 use Composer\XdebugHandler\XdebugHandler;
 
+use UnexpectedValueException;
 use function curl_version;
 use function defined;
 use function get_loaded_extensions;
@@ -35,6 +37,9 @@ use const PCRE_VERSION;
  */
 class PlatformInformation implements PlatformInformationInterface
 {
+    /** @var VersionParser */
+    public static $versionParser;
+
     /** @var string */
     private $phpVersion;
 
@@ -60,8 +65,11 @@ class PlatformInformation implements PlatformInformationInterface
 
     public static function createFromCurrentPlatform(): self
     {
+        if (!isset(static::$versionParser)) {
+            static::$versionParser = new VersionParser();
+        }
         return new self(
-            phpversion(),
+            self::normalizeVersion(phpversion()),
             self::detectExtensions(),
             self::detectLibraries()
         );
@@ -142,7 +150,7 @@ class PlatformInformation implements PlatformInformationInterface
                 }
             }
 
-            $extensions['ext-' . strtolower($name)] = $prettyVersion;
+            $extensions['ext-' . strtolower($name)] = self::normalizeVersion($prettyVersion);
         }
 
         // Check for Xdebug in a restarted process
@@ -263,9 +271,18 @@ class PlatformInformation implements PlatformInformationInterface
             }
 
             /** @var string $prettyVersion */
-            $libraries['lib-' . $name] = $prettyVersion;
+            $libraries['lib-' . $name] = self::normalizeVersion($prettyVersion);
         }
 
         return $libraries;
+    }
+
+    private static function normalizeVersion($prettyVersion): string
+    {
+        try {
+            return static::$versionParser->normalize($prettyVersion);
+        } catch (UnexpectedValueException $e) {
+            return static::$versionParser->normalize(preg_replace('#^([^~+-]+).*$#', '$1', $prettyVersion));
+        }
     }
 }
