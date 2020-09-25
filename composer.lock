@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7cfff416dedeaf094d73c4e36300b85",
+    "content-hash": "edc0290148d70455b22953016567af49",
     "packages": [
         {
             "name": "composer/semver",
@@ -445,7 +445,7 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "dev-feature/plugin-extension",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
@@ -572,19 +572,24 @@
         },
         {
             "name": "phpcq/schema",
-            "version": "dev-feature/plugin-extension",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/schema.git",
-                "reference": "90c003a0b68e1236de57d5d14752c5e727e52a3e"
+                "reference": "aff755eed61faf73c812c1adb38824d0e9fa7df1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/schema/zipball/90c003a0b68e1236de57d5d14752c5e727e52a3e",
-                "reference": "90c003a0b68e1236de57d5d14752c5e727e52a3e",
+                "url": "https://api.github.com/repos/phpcq/schema/zipball/aff755eed61faf73c812c1adb38824d0e9fa7df1",
+                "reference": "aff755eed61faf73c812c1adb38824d0e9fa7df1",
                 "shasum": ""
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -614,7 +619,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T13:41:37+00:00"
+            "time": "2020-09-25T08:07:04+00:00"
         },
         {
             "name": "psr/container",
@@ -2030,14 +2035,7 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [
-        {
-            "alias": "1.0.0",
-            "alias_normalized": "1.0.0.0",
-            "version": "dev-feature/plugin-extension",
-            "package": "phpcq/schema"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "phpcq/gnupg": 20,
