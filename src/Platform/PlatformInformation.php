@@ -6,8 +6,8 @@ namespace Phpcq\Runner\Platform;
 
 use Composer\Semver\VersionParser;
 use Composer\XdebugHandler\XdebugHandler;
-
 use UnexpectedValueException;
+
 use function curl_version;
 use function defined;
 use function get_loaded_extensions;

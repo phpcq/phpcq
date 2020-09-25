@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Test\Platform;
 
+use Composer\Semver\VersionParser;
 use Phpcq\Runner\Platform\PlatformInformation;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 /**
  * @covers \Phpcq\Runner\Platform\PlatformInformation
@@ -24,7 +26,7 @@ class PlatformInformationTest extends TestCase
     public function testPhpVersion(): void
     {
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
-        $this->assertSame(phpversion(), $platformInformation->getPhpVersion());
+        $this->assertSame(self::normalizeVersion(phpversion()), $platformInformation->getPhpVersion());
     }
 
     public function testCurrentPlatformExtensions(): void
@@ -88,17 +90,30 @@ class PlatformInformationTest extends TestCase
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
         if (version_compare(PHP_VERSION, '7.4.0', '>=')) {
             // NOTE: as mysqlnd is bundled with php, we expect the same version here.
-            self::assertSame(PHP_VERSION, $platformInformation->getInstalledVersion('ext-mysqlnd'));
+            self::assertSame(
+                self::normalizeVersion(PHP_VERSION),
+                $platformInformation->getInstalledVersion('ext-mysqlnd')
+            );
             return;
         }
         // Allow to validate for older PHP versions.
         self::assertContains($platformInformation->getInstalledVersion('ext-mysqlnd'), [
             // Since PHP 7.4.0RC1
-            PHP_VERSION,
+            self::normalizeVersion(PHP_VERSION),
             // Since PHP 7.0.0-alpha1: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
             '5.0.12-dev',
             // Since PHP 5.5.0-alpha1: "mysqlnd 5.0.11-dev - 20120503 - $Id$"
             '5.0.11-dev',
         ]);
+    }
+
+    private static function normalizeVersion($prettyVersion): string
+    {
+        $versionParser = new VersionParser();
+        try {
+            return $versionParser->normalize($prettyVersion);
+        } catch (UnexpectedValueException $e) {
+            return $versionParser->normalize(preg_replace('#^([^~+-]+).*$#', '$1', $prettyVersion));
+        }
     }
 }
