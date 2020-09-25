@@ -80,12 +80,16 @@ final class InstalledRepositoryLoader
      */
     private $jsonFileLoader;
 
+    /** @var bool */
+    private $failOnError;
+
     /**
      * @param JsonFileLoaderInterface|null $jsonFileLoader
      */
-    public function __construct(?JsonFileLoaderInterface $jsonFileLoader = null)
+    public function __construct(?JsonFileLoaderInterface $jsonFileLoader = null, bool $failOnError = true)
     {
         $this->jsonFileLoader = $jsonFileLoader ?: new FileGetContentsJsonFileLoader();
+        $this->failOnError    = $failOnError;
     }
 
     public function loadFile(string $filePath): InstalledRepository
@@ -103,10 +107,24 @@ final class InstalledRepositoryLoader
         $repository = new InstalledRepository();
 
         foreach ($installed['plugins'] as $name => $config) {
-            $repository->addPlugin($this->createInstalledPlugin($name, $config, $baseDir));
+            try {
+                $repository->addPlugin($this->createInstalledPlugin($name, $config, $baseDir));
+            } catch (RuntimeException $exception) {
+                // FIXME: throw a different exception here?
+                if ($this->failOnError) {
+                    throw $exception;
+                }
+            }
         }
         foreach ($installed['tools'] as $name => $config) {
-            $repository->addToolVersion($this->createToolVersion($name, $config, $baseDir));
+            try {
+                $repository->addToolVersion($this->createToolVersion($name, $config, $baseDir));
+            } catch (RuntimeException $exception) {
+                // FIXME: throw a different exception here?
+                if ($this->failOnError) {
+                    throw $exception;
+                }
+            }
         }
 
         return $repository;
@@ -129,7 +147,14 @@ final class InstalledRepositoryLoader
 
         $tools = [];
         foreach ($information['tools'] as $toolName => $toolConfig) {
-            $tools[] = $this->createToolVersion($toolName, $toolConfig, $baseDir);
+            try {
+                $tools[] = $this->createToolVersion($toolName, $toolConfig, $baseDir);
+            } catch (RuntimeException $exception) {
+                // FIXME: throw a different exception here?
+                if ($this->failOnError) {
+                    throw $exception;
+                }
+            }
         }
 
         return new InstalledPlugin($version, $tools);

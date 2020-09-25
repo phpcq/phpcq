@@ -22,7 +22,7 @@ trait InstalledRepositoryLoadingCommandTrait
             throw new RuntimeException('Please install the tools first ("phpcq update").');
         }
 
-        return (new InstalledRepositoryLoader())->loadFile($installedPath);
+        return (new InstalledRepositoryLoader(null, $failIfNotExist))->loadFile($installedPath);
     }
 
     abstract protected function getPluginPath(): string;
