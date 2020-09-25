@@ -39,3 +39,9 @@ jobs:
 
       - name: Run tests
         run: $GITHUB_WORKSPACE/phpcq run -o github-action -o default
+
+      - name: Compile .phar file
+        run: $GITHUB_WORKSPACE/phpcq run build -v
+
+      - name: Run .phar file
+        run: $GITHUB_WORKSPACE/phpcq.phar -v
