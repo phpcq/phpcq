@@ -9,15 +9,14 @@ use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
-use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Traversable;
 
 final class TaskBuilder implements TaskBuilderInterface
 {
     /**
-     * @var ToolVersionInterface
+     * @var string
      */
-    private $tool;
+    private $taskName;
 
     /**
      * @var string[]
@@ -55,15 +54,20 @@ final class TaskBuilder implements TaskBuilderInterface
     /** @var int */
     private $cost = 1;
 
+    /** @var array<string,string> */
+    private $metadata;
+
     /**
      * Create a new instance.
      *
-     * @param string[] $command
+     * @param string[]             $command
+     * @param array<string,string> $metadata
      */
-    public function __construct(ToolVersionInterface $tool, array $command)
+    public function __construct(string $taskName, array $command, array $metadata = [])
     {
-        $this->tool    = $tool;
-        $this->command = $command;
+        $this->taskName = $taskName;
+        $this->metadata = $metadata;
+        $this->command  = $command;
     }
 
     /**
@@ -152,30 +156,32 @@ final class TaskBuilder implements TaskBuilderInterface
     {
         $transformerFactory = $this->transformerFactory;
         if (null === $transformerFactory) {
-            $transformerFactory = new ConsoleOutputTransformerFactory($this->tool->getName());
+            $transformerFactory = new ConsoleOutputTransformerFactory($this->taskName);
         }
 
         if ($this->parallel) {
             return new ParallelizableProcessTask(
-                $this->tool,
+                $this->taskName,
                 $this->command,
                 $transformerFactory,
                 $this->cost,
                 $this->cwd,
                 $this->env,
                 $this->input,
-                $this->timeout
+                $this->timeout,
+                $this->metadata,
             );
         }
 
         return new ProcessTask(
-            $this->tool,
+            $this->taskName,
             $this->command,
             $transformerFactory,
             $this->cwd,
             $this->env,
             $this->input,
-            $this->timeout
+            $this->timeout,
+            $this->metadata,
         );
     }
 }

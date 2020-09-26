@@ -17,8 +17,8 @@ use Traversable;
 
 class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
 {
-    /** @var ToolVersionInterface */
-    private $tool;
+    /** @var string */
+    private $taskName;
 
     /** @var string[] */
     private $command;
@@ -50,8 +50,11 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
     /** @var int|null */
     private $errorOffset;
 
+    /** @var array<string,string> */
+    private $metadata;
+
     /**
-     * @param ToolVersionInterface             $tool        The tool the task belongs to
+     * @param string                           $taskName    The name of the task
      * @param string[]                         $command     The command to run and its arguments listed as separate
      *                                                      entries
      * @param TransformerFactory               $transformer The output transformer
@@ -63,36 +66,40 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
      * @param resource|string|Traversable|null $input       The input as stream resource, scalar or \Traversable, or
      *                                                      null for no input
      * @param int|float|null                   $timeout     The timeout in seconds or null to disable
+     * @param array<string,string>             $metadata    Process metadata
      */
     public function __construct(
-        ToolVersionInterface $tool,
+        string $taskName,
         array $command,
         TransformerFactory $transformer,
         int $cost,
         string $cwd = null,
         array $env = null,
         $input = null,
-        ?float $timeout = 60
+        ?float $timeout = 60,
+        array $metadata = []
     ) {
-        $this->tool    = $tool;
-        $this->command = $command;
+        $this->taskName = $taskName;
+        $this->command  = $command;
         $this->cost     = $cost;
         $this->cwd      = $cwd;
         $this->env      = $env;
         $this->input    = $input;
         $this->timeout  = $timeout;
         $this->factory  = $transformer;
+        $this->metadata = $metadata;
     }
 
     public function getToolName(): string
     {
-        return $this->tool->getName();
+        return $this->taskName;
     }
 
     public function runWithReport(TaskReportInterface $report): void
     {
-        $report->addMetadata('tool', $this->tool->getName());
-        $report->addMetadata('version', $this->tool->getVersion());
+        foreach ($this->metadata as $key => $value) {
+            $report->addMetadata($key, $value);
+        }
 
         $this->process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
         $command = $this->process->getCommandLine();

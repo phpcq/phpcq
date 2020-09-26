@@ -19,11 +19,8 @@ final class TaskBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
-        $tool->method('getName')->willReturn('task-name');
-
         $builder = new TaskBuilder(
-            $tool,
+            'task-name',
             ['foo', 'bar', 'baz']
         );
 
@@ -48,10 +45,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetCostOnSingleThread(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
-        $tool->method('getName')->willReturn('task-name');
-
-        $builder = new TaskBuilder($tool, ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo']);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not set cost for single process forced task.');
@@ -63,10 +57,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetSingleThreadOnTaskWithHigherCostThanOne(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
-        $tool->method('getName')->willReturn('task-name');
-
-        $builder = new TaskBuilder($tool, ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo']);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not force task with cost > 1 to run as single process');
@@ -78,11 +69,8 @@ final class TaskBuilderTest extends TestCase
 
     public function testBuildsParallel(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
-        $tool->method('getName')->willReturn('task-name');
-
         $builder = new TaskBuilder(
-            $tool,
+            'task-name',
             ['foo', 'bar', 'baz']
         );
 

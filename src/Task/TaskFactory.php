@@ -52,7 +52,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($this->installed->getTool($toolName), $command);
+        return new TaskBuilder($toolName, $command, $this->getMetadata($toolName));
     }
 
     /**
@@ -89,5 +89,22 @@ class TaskFactory implements TaskFactoryInterface
             $this->phpArguments,
             $arguments
         ));
+    }
+
+    /** @return array<string,string> */
+    private function getMetadata(string $toolName): array
+    {
+        $metadata = [
+            'plugin_name'     => $this->installed->getName(),
+            'plugin_version' => $this->installed->getPluginVersion()->getVersion(),
+        ];
+
+        if ($this->installed->hasTool($toolName)) {
+            $tool                     = $this->installed->getTool($toolName);
+            $metadata['tool_name']    = $tool->getName();
+            $metadata['tool_version'] = $tool->getVersion();
+        }
+
+        return $metadata;
     }
 }
