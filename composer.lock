@@ -379,17 +379,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/gnupg.git",
-                "reference": "fadc9420857bb3aa9b8c056b778a037cae6bfc3e"
+                "reference": "0eba758c074a88419fba14deff718fad45892517"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/gnupg/zipball/fadc9420857bb3aa9b8c056b778a037cae6bfc3e",
-                "reference": "fadc9420857bb3aa9b8c056b778a037cae6bfc3e",
+                "url": "https://api.github.com/repos/phpcq/gnupg/zipball/0eba758c074a88419fba14deff718fad45892517",
+                "reference": "0eba758c074a88419fba14deff718fad45892517",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.3",
-                "symfony/process": "^4.0||^5.0"
+                "symfony/process": "^4.0 || ^5.0"
             },
             "conflict": {
                 "psr/http-client": ">=2.0",
@@ -441,7 +441,17 @@
                 }
             ],
             "description": "PHP code quality project GnuPG libary.",
-            "time": "2020-04-16T14:16:14+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/discordier",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/dmolineus",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-09-25T14:56:47+00:00"
         },
         {
             "name": "phpcq/plugin-api",
@@ -449,12 +459,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "f12c03db3a46e545dfbfb3ae72d7be185cbbe139"
+                "reference": "7570d992a8d49c46658716eb4a82700454532c3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/f12c03db3a46e545dfbfb3ae72d7be185cbbe139",
-                "reference": "f12c03db3a46e545dfbfb3ae72d7be185cbbe139",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/7570d992a8d49c46658716eb4a82700454532c3e",
+                "reference": "7570d992a8d49c46658716eb4a82700454532c3e",
                 "shasum": ""
             },
             "require": {
@@ -506,7 +516,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T14:01:32+00:00"
+            "time": "2020-09-25T16:45:13+00:00"
         },
         {
             "name": "phpcq/repository-definition",
@@ -514,12 +524,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "ac1125918abe624d1277debbf2f68d668b0594a1"
+                "reference": "cdab4d7e7e4fb3c7559cc177090b71e1d74d3b6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/ac1125918abe624d1277debbf2f68d668b0594a1",
-                "reference": "ac1125918abe624d1277debbf2f68d668b0594a1",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/cdab4d7e7e4fb3c7559cc177090b71e1d74d3b6b",
+                "reference": "cdab4d7e7e4fb3c7559cc177090b71e1d74d3b6b",
                 "shasum": ""
             },
             "require": {
@@ -568,7 +578,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-09-24T14:11:20+00:00"
+            "time": "2020-09-26T11:44:08+00:00"
         },
         {
             "name": "phpcq/schema",
