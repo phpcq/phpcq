@@ -53,6 +53,12 @@ final class UpdateCalculatorTest extends TestCase
                 ['Will keep foo in version 1.0.0'],
             );
 
+        $desiredToolVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $desiredToolVersion->method('getName')->willReturn('tool');
+        $desiredToolVersion->method('getVersion')->willReturn('2.0.0');
+        $desiredToolVersion->method('getRequirements')->willReturn(new ToolRequirements());
+        $desiredToolVersion->method('getHash')->willReturn(null);
+
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
         $resolver
             ->expects($this->once())
@@ -63,7 +69,7 @@ final class UpdateCalculatorTest extends TestCase
             ->expects($this->once())
             ->method('resolveToolVersion')
             ->with('plugin', 'tool', '^2.0.0')
-            ->willReturn($installedToolVersion);
+            ->willReturn($desiredToolVersion);
 
         $calculator = new UpdateCalculator($installed, $resolver, $output);
 
@@ -79,9 +85,10 @@ final class UpdateCalculatorTest extends TestCase
                 'message'         => 'Will keep plugin plugin in version 1.0.0',
                 'tasks'           => [
                     [
-                        'type'    => 'keep',
-                        'tool'    => $installedToolVersion,
-                        'message' => 'Will keep tool tool in version 2.0.0',
+                        'type'      => 'keep',
+                        'tool'      => $desiredToolVersion,
+                        'installed' => $installedToolVersion,
+                        'message'   => 'Will keep tool tool in version 2.0.0',
                     ],
                 ],
             ]
@@ -285,9 +292,10 @@ final class UpdateCalculatorTest extends TestCase
                         'message'         => 'Will keep plugin foo in version 1.0.0',
                         'tasks'           => [
                             [
-                                'type'    => 'keep',
-                                'tool'    => $installedToolVersion,
-                                'message' => $message,
+                                'type'      => 'keep',
+                                'tool'      => $desiredToolVersion,
+                                'installed' => $installedToolVersion,
+                                'message'   => $message,
                             ],
                         ]
                     ],

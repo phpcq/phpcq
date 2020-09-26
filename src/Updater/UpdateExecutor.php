@@ -270,7 +270,7 @@ final class UpdateExecutor
                 case 'keep':
                     /** @psalm-var TKeepToolTask $task */
                     $tools[] = $task['tool'];
-                    $plugin->addTool($task['tool']);
+                    $plugin->addTool($task['installed']);
                     break;
                 case 'install':
                     /** @psalm-var TInstallToolTask $task */

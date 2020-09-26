@@ -41,6 +41,7 @@ use function version_compare;
  * @psalm-type TKeepToolTask = array{
  *    type: 'keep',
  *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
+ *    installed: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
  *    message: string,
  * }
  *
@@ -321,9 +322,10 @@ final class UpdateCalculator
             }
             // Keep the tool otherwise.
             $tasks[] = [
-                'type'    => 'keep',
-                'tool'    => $installed,
-                'message' => 'Will keep tool ' . $installed->getName() . ' in version ' . $installed->getVersion(),
+                'type'      => 'keep',
+                'tool'      => $tool,
+                'installed' => $installed,
+                'message'   => 'Will keep tool ' . $installed->getName() . ' in version ' . $installed->getVersion(),
             ];
         }
 
