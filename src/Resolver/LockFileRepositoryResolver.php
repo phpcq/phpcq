@@ -11,7 +11,7 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
 
-final class InstalledRepositoryResolver implements ResolverInterface
+final class LockFileRepositoryResolver implements ResolverInterface
 {
     /** @var InstalledRepository */
     protected $repository;

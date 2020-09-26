@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
-use Phpcq\Runner\Resolver\InstalledRepositoryResolver;
+use Phpcq\Runner\Resolver\LockFileRepositoryResolver;
 use Phpcq\Runner\Resolver\RepositoryPoolResolver;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +31,7 @@ final class InstallCommand extends AbstractUpdateCommand
         if (null !== $this->lockFileRepository) {
             $this->output->writeln('Install tools from lock file.', OutputInterface::VERBOSITY_VERBOSE);
 
-            $resolver = new InstalledRepositoryResolver($this->lockFileRepository);
+            $resolver = new LockFileRepositoryResolver($this->lockFileRepository);
             $force    = false;
         } else {
             $this->output->writeln('No lock file found. Install configured tools.', OutputInterface::VERBOSITY_VERBOSE);
