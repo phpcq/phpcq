@@ -195,7 +195,7 @@ final class UpdateCalculator
             $tasks[] = [
                 'type'    => 'keep',
                 'plugin'  => $installed,
-                'version' => $installed->getPluginVersion(),
+                'version' => $pluginVersion,
                 'message' => 'Will keep plugin ' . $name . ' in version ' . $pluginVersion->getVersion(),
                 'tasks'   => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall)
             ];

@@ -159,7 +159,7 @@ final class UpdateCalculatorTest extends TestCase
                     [
                         'type'            => 'keep',
                         'plugin'          => $installedPlugin,
-                        'version'         => $installedVersion,
+                        'version'         => $desiredVersion,
                         'message'         => $message,
                         'tasks'           => []
                     ],
