@@ -17,6 +17,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\InstalledRepositoryDumper;
+use Phpcq\Runner\Repository\LockFileDumper;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function assert;
@@ -117,8 +118,11 @@ final class UpdateExecutor
         }
 
         // Save installed repository.
-        $dumper = new InstalledRepositoryDumper(new Filesystem());
+        $filesystem = new Filesystem();
+        $dumper = new InstalledRepositoryDumper($filesystem);
         $dumper->dump($installed, $this->installedPluginPath . '/installed.json');
+
+        $dumper = new LockFileDumper($filesystem);
         $dumper->dump($lockRepository, getcwd() . '/.phpcq.lock');
     }
 
@@ -203,7 +207,7 @@ final class UpdateExecutor
             return;
         }
 
-        if (!    $hash->equals($hash::createForFile($pathToPhar, $hash->getType()))) {
+        if (!$hash->equals($hash::createForFile($pathToPhar, $hash->getType()))) {
             throw new RuntimeException('Invalid hash for file: ' . $pathToPhar);
         }
     }

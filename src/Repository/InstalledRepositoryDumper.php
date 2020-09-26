@@ -4,170 +4,100 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\RepositoryDefinition\AbstractHash;
-use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
-use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
-use Phpcq\RepositoryDefinition\VersionRequirementList;
 use stdClass;
-use Symfony\Component\Filesystem\Filesystem;
 
 use function json_encode;
 
-use const JSON_THROW_ON_ERROR;
-use const JSON_UNESCAPED_SLASHES;
-use const JSON_UNESCAPED_UNICODE;
-
-final class InstalledRepositoryDumper
+final class InstalledRepositoryDumper extends AbstractDumper
 {
-    /** @var int */
-    private const JSON_OPTIONS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR;
-
-    /** @var Filesystem */
-    private $filesystem;
-
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
     public function dump(InstalledRepository $repository, string $fileName): void
     {
         $this->filesystem->dumpFile(
             $fileName,
-            json_encode($this->dumpRepository($repository), self::JSON_OPTIONS)
+            json_encode($this->dumpRepository($repository, dirname($fileName)), AbstractDumper::JSON_OPTIONS)
         );
     }
 
-    protected function dumpRepository(InstalledRepository $repository): array
+    private function dumpRepository(InstalledRepository $repository, string $baseDir): array
     {
         return [
-            'plugins' => $this->dumpInstalledPlugins($repository),
-            'tools'   => $this->dumpInstalledTools($repository)
+            'plugins' => $this->dumpInstalledPlugins($repository, $baseDir),
+            'tools'   => $this->dumpInstalledTools($repository, $baseDir)
         ];
     }
 
-    protected function dumpInstalledPlugins(InstalledRepository $repository): array
+    private function dumpInstalledPlugins(InstalledRepository $repository, string $baseDir): array
     {
         $plugins = [];
 
         /** @var InstalledPlugin $plugin */
         foreach ($repository->iteratePlugins() as $plugin) {
-            $plugins[$plugin->getPluginVersion()->getName()] = $this->dumpInstalledPlugin($plugin);
+            $plugins[$plugin->getPluginVersion()->getName()] = $this->dumpInstalledPlugin($plugin, $baseDir);
         }
 
         return $plugins;
     }
 
-
-    protected function dumpInstalledTools(InstalledRepository $repository): array
+    private function dumpInstalledTools(InstalledRepository $repository, string $baseDir): array
     {
         $tools = [];
 
         /** @var ToolVersionInterface $toolVersion */
         foreach ($repository->iterateToolVersions() as $toolVersion) {
-            $tools[$toolVersion->getName()] = $this->dumpTool($toolVersion);
+            $tools[$toolVersion->getName()] = $this->dumpTool($toolVersion, $baseDir);
         }
 
         return $tools;
     }
 
-    protected function encodePluginRequirements(PluginRequirements $requirements): stdClass
-    {
-        $output = new stdClass();
-        foreach (
-            [
-                'php'      => $requirements->getPhpRequirements(),
-                'tool'     => $requirements->getToolRequirements(),
-                'plugin'   => $requirements->getPluginRequirements(),
-                'composer' => $requirements->getComposerRequirements(),
-            ] as $key => $list
-        ) {
-            if ([] !== $encoded = $this->encodeRequirements($list)) {
-                $output->{$key} = $encoded;
-            }
-        }
-
-        return $output;
-    }
-
-    protected function encodeToolRequirements(ToolRequirements $requirements): stdClass
-    {
-        $output = new stdClass();
-        foreach (
-            [
-                'php'      => $requirements->getPhpRequirements(),
-                'composer' => $requirements->getComposerRequirements(),
-            ] as $key => $list
-        ) {
-            if ([] !== $encoded = $this->encodeRequirements($list)) {
-                $output->{$key} = $encoded;
-            }
-        }
-
-        return $output;
-    }
-
-    protected function encodeRequirements(VersionRequirementList $requirementList): array
-    {
-        $requirements = [];
-        foreach ($requirementList->getIterator() as $requirement) {
-            $requirements[$requirement->getName()] = $requirement->getConstraint();
-        }
-
-        return $requirements;
-    }
-
-    /**
-     * @return null|string[]
-     *
-     * @psalm-return array{type: string, value: string}|null
-     */
-    protected function encodeHash(?AbstractHash $hash): ?array
-    {
-        if (null === $hash) {
-            return null;
-        }
-        return [
-            'type'  => $hash->getType(),
-            'value' => $hash->getValue(),
-        ];
-    }
-
-    protected function dumpInstalledPlugin(InstalledPlugin $plugin): array
+    private function dumpInstalledPlugin(InstalledPlugin $plugin, string $baseDir): array
     {
         $version = $plugin->getPluginVersion();
+        $signaturePath = $version->getSignaturePath();
 
         return [
             'api-version'  => $version->getApiVersion(),
             'version'      => $version->getVersion(),
             'type'         => 'php-file',
-            'url'          => $version->getFilePath(),
-            'signature'    => $version->getSignaturePath(),
+            'url'          => $this->getRelativePath($version->getFilePath(), $baseDir),
+            'signature'    => $signaturePath ? $this->getRelativePath($signaturePath, $baseDir) : null,
             'requirements' => $this->encodePluginRequirements($version->getRequirements()),
             'checksum'     => $this->encodeHash($version->getHash()),
-            'tools'        => $this->dumpTools($plugin),
+            'tools'        => $this->dumpTools($plugin, $baseDir),
         ];
     }
 
-    protected function dumpTool(ToolVersionInterface $version): array
+    private function dumpTool(ToolVersionInterface $version, string $baseDir): array
     {
+        $signatureUrl = $version->getSignatureUrl();
+        $pharUrl      = $version->getPharUrl();
+
         return [
             'version'      => $version->getVersion(),
-            'url'          => $version->getPharUrl(),
+            'url'          => $pharUrl ? $this->getRelativePath($pharUrl, $baseDir) : null,
             'requirements' => $this->encodeToolRequirements($version->getRequirements()),
             'checksum'     => $this->encodeHash($version->getHash()),
-            'signature'    => $version->getSignatureUrl(),
+            'signature'    => $signatureUrl ? $this->getRelativePath($signatureUrl, $baseDir) : null,
         ];
     }
 
-    private function dumpTools(InstalledPlugin $plugin): stdClass
+    private function dumpTools(InstalledPlugin $plugin, string $baseDir): stdClass
     {
         $tools = new stdClass();
         foreach ($plugin->iterateTools() as $toolVersion) {
-            $tools->{$toolVersion->getName()} = $this->dumpTool($toolVersion);
+            $tools->{$toolVersion->getName()} = $this->dumpTool($toolVersion, $baseDir);
         }
 
         return $tools;
+    }
+
+    private function getRelativePath(string $path, string $baseDir): string
+    {
+        if (strpos($path, $baseDir) === 0) {
+            return substr($path, strlen($baseDir) + 1);
+        }
+
+        return $path;
     }
 }
