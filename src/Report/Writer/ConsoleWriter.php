@@ -106,14 +106,16 @@ final class ConsoleWriter
     {
         $rows = [];
         foreach ($this->report->getTaskReports() as $taskReport) {
+            $metadata = $taskReport->getMetadata();
             $rows[] = [
                 $taskReport->getTaskName(),
-                $taskReport->getMetadata()['version'] ?? 'unknown',
+                $taskReport->getMetadata()['plugin_name'],
+                ($metadata['tool_version'] ?? ''),
                 $this->renderToolStatus($taskReport->getStatus()),
             ];
         }
 
-        $this->style->table(['Tool', 'Version', 'State'], $rows);
+        $this->style->table(['Task', 'Plugin', 'Version', 'State'], $rows);
     }
 
     private function writeEntryReport(DiagnosticIteratorEntry $entry): void
