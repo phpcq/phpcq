@@ -151,7 +151,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         }
         $signatureVerifier = new SignatureVerifier(
             (new GnuPGFactory(sys_get_temp_dir()))->create($gnupgPath),
-            new KeyDownloader(new SignatureFileDownloader($this->downloader)),
+            new KeyDownloader(new SignatureFileDownloader($this->downloader, $this->output)),
             $this->getUntrustedKeyStrategy()
         );
 
