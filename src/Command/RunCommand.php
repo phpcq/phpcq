@@ -21,6 +21,7 @@ use Phpcq\Runner\Report\Writer\ConsoleWriter;
 use Phpcq\Runner\Report\Writer\FileReportWriter;
 use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
 use Phpcq\Runner\Report\Writer\TaskReportWriter;
+use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\Tasklist;
 use Phpcq\Runner\Task\TaskScheduler;
@@ -145,28 +146,10 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($taskName = $this->input->getArgument('task')) {
             assert(is_string($taskName));
-            /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
-            $environment = new Environment(
-                $projectConfig,
-                new TaskFactory(
-                    $installed->getPlugin($taskName),
-                    ...$this->findPhpCli()
-                ),
-                $tempDirectory
-            );
-            $this->handleTask($plugins, $taskName, $environment, $taskList);
+            $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList);
         } else {
             foreach ($chains[$chain] as $taskName) {
-                /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
-                $environment = new Environment(
-                    $projectConfig,
-                    new TaskFactory(
-                        $installed->getPlugin($taskName),
-                        ...$this->findPhpCli()
-                    ),
-                    $tempDirectory
-                );
-                $this->handleTask($plugins, $taskName, $environment, $taskList);
+                $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList);
             }
         }
 
@@ -211,13 +194,24 @@ final class RunCommand extends AbstractCommand
 
     private function handleTask(
         PluginRegistry $plugins,
+        InstalledRepository $installed,
         string $taskName,
-        Environment $buildConfig,
+        ProjectConfiguration $projectConfig,
+        string $tempDirectory,
         Tasklist $taskList
     ): void {
         $configValues = $this->config->getConfigForTask($taskName);
         $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
         $pluginConfig = $configValues['config'] ?? [];
+        /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
+        $environment = new Environment(
+            $projectConfig,
+            new TaskFactory(
+                $installed->getPlugin($plugin->getName()),
+                ...$this->findPhpCli()
+            ),
+            $tempDirectory
+        );
         if ($plugin instanceof DiagnosticsPluginInterface) {
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
             $plugin->describeConfiguration($configOptionsBuilder);
@@ -239,7 +233,7 @@ final class RunCommand extends AbstractCommand
 
             $configuration = new PluginConfiguration($processed);
 
-            foreach ($plugin->createDiagnosticTasks($configuration, $buildConfig) as $task) {
+            foreach ($plugin->createDiagnosticTasks($configuration, $environment) as $task) {
                 $taskList->add($task);
             }
         }
