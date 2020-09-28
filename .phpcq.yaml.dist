@@ -7,6 +7,12 @@ phpcq:
   artifact: .phpcq/build
 
   plugins:
+    box:
+      version: ^1.0
+      signed: false
+      requirements:
+        box:
+          signed: false
     phpunit:
       version: ^1.0
       signed: false
