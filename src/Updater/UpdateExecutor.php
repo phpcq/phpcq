@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Updater;
 
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\FileDownloader;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
@@ -185,8 +186,7 @@ final class UpdateExecutor
 
     private function deletePluginFiles(PluginVersionInterface $pluginVersion): void
     {
-        $this->filesystem->remove($this->installedPluginPath . '/' . $pluginVersion->getName());
-        if ($pluginVersion instanceof PhpFilePluginVersion) {
+        if ($pluginVersion instanceof PhpFilePluginVersionInterface) {
             $this->deleteFile($this->installedPluginPath . '/' . $pluginVersion->getFilePath());
         }
 
