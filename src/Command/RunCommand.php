@@ -146,10 +146,18 @@ final class RunCommand extends AbstractCommand
         $taskList = new Tasklist();
         if ($taskName = $this->input->getArgument('task')) {
             assert(is_string($taskName));
-            $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList);
+            $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList, $maxCores);
         } else {
             foreach ($chains[$chain] as $taskName) {
-                $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList);
+                $this->handleTask(
+                    $plugins,
+                    $installed,
+                    $taskName,
+                    $projectConfig,
+                    $tempDirectory,
+                    $taskList,
+                    $maxCores
+                );
             }
         }
 
@@ -198,7 +206,8 @@ final class RunCommand extends AbstractCommand
         string $taskName,
         ProjectConfiguration $projectConfig,
         string $tempDirectory,
-        Tasklist $taskList
+        Tasklist $taskList,
+        int $availableThreads
     ): void {
         $configValues = $this->config->getConfigForTask($taskName);
         $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
@@ -210,7 +219,8 @@ final class RunCommand extends AbstractCommand
                 $installed->getPlugin($plugin->getName()),
                 ...$this->findPhpCli()
             ),
-            $tempDirectory
+            $tempDirectory,
+            $availableThreads
         );
         if ($plugin instanceof DiagnosticsPluginInterface) {
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');

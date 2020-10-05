@@ -19,11 +19,13 @@ final class EnvironmentTest extends TestCase
         $configuration = new Environment(
             $projectConfig = $this->getMockForAbstractClass(ProjectConfigInterface::class),
             $taskFactory = $this->getMockForAbstractClass(TaskFactoryInterface::class),
-            '/temp/dir'
+            '/temp/dir',
+            10
         );
 
         self::assertSame($projectConfig, $configuration->getProjectConfiguration());
         self::assertSame($taskFactory, $configuration->getTaskFactory());
         self::assertSame('/temp/dir', $configuration->getBuildTempDir());
+        self::assertSame(10, $configuration->getAvailableThreads());
     }
 }

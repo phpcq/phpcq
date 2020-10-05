@@ -26,6 +26,9 @@ class Environment implements EnvironmentInterface
      */
     private $tempDirectory;
 
+    /** @var int */
+    private $availableThreads;
+
     /**
      * @param ProjectConfigInterface $projectConfiguration
      * @param TaskFactoryInterface   $taskFactory
@@ -34,11 +37,13 @@ class Environment implements EnvironmentInterface
     public function __construct(
         ProjectConfigInterface $projectConfiguration,
         TaskFactoryInterface $taskFactory,
-        string $tempDirectory
+        string $tempDirectory,
+        int $availableThreads
     ) {
         $this->projectConfiguration = $projectConfiguration;
         $this->taskFactory          = $taskFactory;
         $this->tempDirectory        = $tempDirectory;
+        $this->availableThreads     = $availableThreads;
     }
 
     public function getProjectConfiguration(): ProjectConfigInterface
@@ -64,5 +69,10 @@ class Environment implements EnvironmentInterface
         }
 
         return $this->getBuildTempDir() . '/' . $fileName;
+    }
+
+    public function getAvailableThreads(): int
+    {
+        return $this->availableThreads;
     }
 }
