@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Environment
  */
-final class BuildConfigurationTest extends TestCase
+final class EnvironmentTest extends TestCase
 {
     public function testCreate(): void
     {
