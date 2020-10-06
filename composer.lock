@@ -461,12 +461,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "38ec0705f9e9262118c733fcb0f8c0d9f67624c4"
+                "reference": "822837013fc433e591ef1092c38150677fc578da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/38ec0705f9e9262118c733fcb0f8c0d9f67624c4",
-                "reference": "38ec0705f9e9262118c733fcb0f8c0d9f67624c4",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/822837013fc433e591ef1092c38150677fc578da",
+                "reference": "822837013fc433e591ef1092c38150677fc578da",
                 "shasum": ""
             },
             "require": {
@@ -518,7 +518,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-05T07:50:25+00:00"
+            "time": "2020-10-05T09:06:39+00:00"
         },
         {
             "name": "phpcq/repository-definition",
