@@ -39,6 +39,12 @@
     "symfony/process": "^5.0.7",
     "symfony/yaml": "^5.0.7"
   },
+  "replace": {
+    "symfony/polyfill-php70": "*",
+    "symfony/polyfill-php71": "*",
+    "symfony/polyfill-php72": "*",
+    "symfony/polyfill-php73": "*"
+  },
   "extra": {
     "branch-alias": {
       "dev-dev-2.0": "2.x-dev"
