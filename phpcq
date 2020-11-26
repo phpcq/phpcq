@@ -20,9 +20,6 @@ if ((!$loader = includeIfExists(__DIR__.'/vendor/autoload.php')) && (!$loader = 
 
 $application = new Application();
 
-$application->addCommands([
-]);
-
 $argv = $_SERVER['argv'];
 $input = new ArgvInput($argv);
 if ($input->getFirstArgument() === 'exec') {
@@ -33,6 +30,14 @@ if ($input->getFirstArgument() === 'exec') {
         $application->setDefaultCommand('exec', true);
     }
     $input = new ArgvInput($argv);
+}
+
+// Restore "--help" invocation.
+if (null === $input->getFirstArgument() && (true === $input->hasParameterOption(['--help', '-h'], true))) {
+    $application->setDefaultCommand('list');
+    $input = new ArgvInput(array_filter($argv, function (string $value) {
+        return !in_array($value, ['--help', '-h']);
+    }));
 }
 
 $application->setAutoExit(true);
