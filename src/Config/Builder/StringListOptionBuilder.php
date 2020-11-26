@@ -38,7 +38,10 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         return parent::withValidator($validator);
     }
 
-    /** @psalm-param list<string> $values */
+    /**
+     * @psalm-param list<string> $values
+     * @return $this
+     */
     public function withDefaultValue(array $values): StringListOptionBuilderInterface
     {
         $this->defaultValue = $values;

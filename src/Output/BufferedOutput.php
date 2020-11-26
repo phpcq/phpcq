@@ -6,12 +6,16 @@ namespace Phpcq\Runner\Output;
 
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 
+/**
+ * @psalm-import-type TOutputVerbosity from \Phpcq\PluginApi\Version10\Output\OutputInterface
+ * @psalm-import-type TOutputChannel from \Phpcq\PluginApi\Version10\Output\OutputInterface
+ */
 class BufferedOutput implements OutputInterface
 {
     /**
      * @var mixed[][]
      *
-     * @psalm-var list<array{0: bool, 1: array{0: string, 1: int, 2: int}}>
+     * @psalm-var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
      */
     private $buffer = [];
 
@@ -48,10 +52,8 @@ class BufferedOutput implements OutputInterface
     {
         foreach ($this->buffer as $message) {
             if ($message[0]) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 $this->output->writeln(...$message[1]);
             } else {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 $this->output->write(...$message[1]);
             }
         }
