@@ -15,6 +15,7 @@ vendor/
 .phpcq
 .phpunit.result.cache
 .phpcq.yaml
+phpcq.phar
 
 # Transifex
 /.tx/

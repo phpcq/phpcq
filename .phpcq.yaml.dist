@@ -7,6 +7,12 @@ phpcq:
   artifact: .phpcq/build
 
   plugins:
+    box:
+      version: ^1.0
+      signed: false
+      requirements:
+        box:
+          signed: false
     phpunit:
       version: ^1.0
       signed: false
@@ -19,9 +25,6 @@ phpcq:
     phpmd:
       version: ^1.0
       signed: false
-      requirements:
-        phpmd:
-          signed: false
     phpcpd:
       version: ^1.0
       signed: false
@@ -48,6 +51,8 @@ phpcq:
     - 31C7E470E2138192
     # Composer normalize
     - C00543248C87FB13
+    # phpmd
+    - 0F9684B8B16B7AB0
 
   chains:
     fix:
@@ -63,6 +68,8 @@ phpcq:
       - phpcs
       - psalm
       - phpunit
+    build:
+      - box
     default:
       - composer-require-checker
       - composer-normalize
@@ -74,6 +81,28 @@ phpcq:
       - phpunit
 
 tasks:
+  box:
+    config:
+      algorithm: "SHA512"
+      alias: "phpcq"
+      banner: |
+        This file is part of the phpcq project.
+
+        Copyright (c) Christian Schiffler <c.schiffler@cyberspectrum.de>
+        David Molineus <david.molineus@netzmacht.de>
+
+        This source file is subject to the MIT license that is bundled
+        with this source code in the file LICENSE.
+      check_requirements: false
+      compression: "GZ"
+      compactors:
+        - "KevinGH\\Box\\Compactor\\Php"
+        - "KevinGH\\Box\\Compactor\\PhpScoper"
+        - "KevinGH\\Box\\Compactor\\Json"
+      datetime: "release-date"
+      git_version: "git-version"
+      php_scoper: ".phpcq/phar/scoper.inc.php"
+
   phpcpd:
     plugin: phpcpd
     config:

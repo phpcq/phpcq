@@ -1,0 +1,75 @@
+name: rebuild-phar
+
+env:
+  TARGET_REPOSITORY: phpcq/distrib
+  TARGET_BRANCH: master
+  TARGET_DIRECTORY: ./web
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  compile:
+    name: Rebuild unstable phar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v2
+
+      - name: Cache composer cache directory
+        uses: actions/cache@v1
+        env:
+          cache-name: composer-cache-dir
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Cache vendor directory
+        uses: actions/cache@v1
+        env:
+          cache-name: phpcq-vendor
+        with:
+          path: $GITHUB_WORKSPACE/vendor
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Install phpcq toolchain
+        run: $GITHUB_WORKSPACE/phpcq install -v
+
+      - name: Run tests
+        run: $GITHUB_WORKSPACE/phpcq run -v
+
+      - name: Compile .phar file
+        run: $GITHUB_WORKSPACE/phpcq run build -v
+
+      - name: Run phpcq.phar file to ensure it is stable and check itself.
+        run: $GITHUB_WORKSPACE/phpcq.phar -v
+
+      - name: Checkout target directory
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_BRANCH }}
+          path: ${{ env.TARGET_DIRECTORY }}
+          token: ${{ secrets.BUILDER_GITHUB_TOKEN }}
+
+      - name: Copy phar file to target
+        id: copy
+        run: cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Storing unstable build of ${{ github.sha }}
+          branch: ${{ env.TARGET_BRANCH }}
+          repository: ${{ env.TARGET_DIRECTORY }}
+          commit_user_name: PHP Code Quality Bot
+          commit_user_email: phpcq-bot@users.noreply.github.com
+          commit_author: PHP Code Quality Bot <phpcq-bot@users.noreply.github.com>

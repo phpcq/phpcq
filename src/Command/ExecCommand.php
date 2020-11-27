@@ -119,7 +119,7 @@ final class ExecCommand extends AbstractCommand
         return $exitCode;
     }
 
-    /** @psalm-return array{0: string, 1: array} */
+    /** @psalm-return array{string, list<string>} */
     private function findPhpCli(): array
     {
         $finder     = new PhpExecutableFinder();
@@ -128,7 +128,9 @@ final class ExecCommand extends AbstractCommand
         if (!is_string($executable)) {
             throw new RuntimeException('PHP executable not found');
         }
+        /** @psalm-var list<string> $arguments */
+        $arguments = $finder->findArguments();
 
-        return [$executable, $finder->findArguments()];
+        return [$executable, $arguments];
     }
 }

@@ -101,9 +101,9 @@ class PlatformInformationTest extends TestCase
             // Since PHP 7.4.0RC1
             self::normalizeVersion(PHP_VERSION),
             // Since PHP 7.0.0-alpha1: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
-            '5.0.12-dev',
+            '5.0.12.0-dev',
             // Since PHP 5.5.0-alpha1: "mysqlnd 5.0.11-dev - 20120503 - $Id$"
-            '5.0.11-dev',
+            '5.0.11.0-dev',
         ]);
     }
 

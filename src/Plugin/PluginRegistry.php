@@ -36,12 +36,9 @@ final class PluginRegistry implements IteratorAggregate
     /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function loadPluginFile(string $filePath): void
     {
-        /**
-         * @psalm-suppress UnresolvableInclude
-         *
-         * @var PluginInterface
-         */
+        /** @psalm-suppress UnresolvableInclude */
         $plugin = require_once $filePath;
+        assert(is_object($plugin));
         if (!$plugin instanceof PluginInterface) {
             throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
         }
