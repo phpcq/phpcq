@@ -6,7 +6,7 @@ matrix:
   fast_finish: true
   include:
     # latest requirement test
-    - php: nightly
+    - php: 8.0snapshot
       env:
         - PLATFORM_FLAGS="--ignore-platform-reqs"
     - php: 7.4
@@ -16,7 +16,7 @@ matrix:
       env:
         - COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
   allow_failures:
-    - php: nightly
+    - php: 8.0snapshot
 
 before_install:
   - echo "memory_limit = -1" > travis.php.ini && phpenv config-add travis.php.ini
