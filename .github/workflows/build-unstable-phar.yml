@@ -8,7 +8,7 @@ env:
 on:
   push:
     branches:
-      - 'feature/compile-phar'
+      - 'master'
 
 jobs:
   compile:
