@@ -58,6 +58,7 @@ jobs:
           repository: ${{ env.TARGET_REPOSITORY }}
           ref: ${{ env.TARGET_BRANCH }}
           path: ${{ env.TARGET_DIRECTORY }}
+          token: ${{ secrets.BUILDER_GITHUB_TOKEN }}
 
       - name: Copy phar file to target
         id: copy
