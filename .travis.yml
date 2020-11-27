@@ -35,7 +35,7 @@ install:
         || echo dev-${TRAVIS_BRANCH}) \
         travis_retry composer update $COMPOSER_FLAGS $PLATFORM_FLAGS --prefer-dist --no-interaction;
     fi
-  - ./phpcq install -v $PLATFORM_FLAGS
+  - ./phpcq install -v $PLATFORM_FLAGS --trust-keys
 
 script:
   - ./phpcq run -v $PLATFORM_FLAGS
