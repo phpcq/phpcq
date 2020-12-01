@@ -75,7 +75,7 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: ${{ steps.generate_commit_message.outputs.message) }}
+          commit_message: ${{ steps.generate_commit_message.outputs.message }}
           branch: ${{ env.TARGET_BRANCH }}
           repository: ${{ env.TARGET_DIRECTORY }}
           commit_user_name: PHP Code Quality Bot
