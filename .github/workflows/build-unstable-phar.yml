@@ -67,11 +67,11 @@ jobs:
 
       - name: Generate Commit Message
         run: |
-          echo "COMMIT_MSG<<EOF" >> $COMMIT_MSG
+          echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
           echo "Storing unstable build of phpcq.phar"
           echo ""
           echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}"
-          echo 'EOF' >> $COMMIT_MSG
+          echo 'EOF' >> $GITHUB_ENV
         id: generate_commit_message
 
       - name: Commit changes
