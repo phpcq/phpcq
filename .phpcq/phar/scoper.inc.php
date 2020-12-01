@@ -21,7 +21,8 @@ $symfonyPolyfill = (static function (): array {
 
 return [
     'whitelist' => [
-        '\Phpcq\PluginApi\*'
+        '\Phpcq\PluginApi\*',
+        '\Symfony\Polyfill\*',
     ],
     'files-whitelist' => $symfonyPolyfill,
 ];
