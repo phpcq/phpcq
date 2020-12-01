@@ -28,9 +28,6 @@ jobs:
           path: ~/.cache/composer
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
-      - name: Install composer dependencies
-        run: composer install
-
       - name: Cache vendor directory
         uses: actions/cache@v1
         env:
@@ -40,6 +37,9 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Install composer dependencies
+        run: composer install
 
       - name: Install phpcq toolchain
         run: $GITHUB_WORKSPACE/phpcq install -v
