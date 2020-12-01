@@ -67,15 +67,17 @@ jobs:
 
       - name: Generate Commit Message
         run: |
+          echo "COMMIT_MSG<<EOF" >> $COMMIT_MSG
           echo "Storing unstable build of phpcq.phar"
           echo ""
           echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}"
+          echo 'EOF' >> $COMMIT_MSG
         id: generate_commit_message
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: ${{join(steps.generate_commit_message.outputs.*, '\n')}}
+          commit_message: ${{ env.COMMIT_MSG }}
           branch: ${{ env.TARGET_BRANCH }}
           repository: ${{ env.TARGET_DIRECTORY }}
           commit_user_name: PHP Code Quality Bot
