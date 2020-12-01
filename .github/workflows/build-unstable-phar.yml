@@ -68,9 +68,9 @@ jobs:
       - name: Generate Commit Message
         run: |
           echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
-          echo "Storing unstable build of phpcq.phar"
-          echo ""
-          echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}"
+          echo "Storing unstable build of phpcq.phar" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         id: generate_commit_message
 
