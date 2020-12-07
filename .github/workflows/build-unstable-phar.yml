@@ -63,7 +63,9 @@ jobs:
 
       - name: Copy phar file to target
         id: copy
-        run: cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
+        run: |
+          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
+          ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/phpcq.phar --version > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
 
       - name: Generate Commit Message
         run: |
