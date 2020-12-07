@@ -100,6 +100,7 @@ tasks:
         - "KevinGH\\Box\\Compactor\\PhpScoper"
         - "KevinGH\\Box\\Compactor\\Json"
       datetime: "release-date"
+      datetime_format: "Y-m-d-H-i-s-T"
       git_version: "git-version"
       php_scoper: ".phpcq/phar/scoper.inc.php"
 
