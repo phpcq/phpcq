@@ -20,6 +20,12 @@ jobs:
       - name: Pull source
         uses: actions/checkout@v2
 
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: xdebug2
+
       - name: Cache composer cache directory
         uses: actions/cache@v1
         env:
@@ -85,3 +91,10 @@ jobs:
           commit_user_name: PHP Code Quality Bot
           commit_user_email: phpcq-bot@users.noreply.github.com
           commit_author: PHP Code Quality Bot <phpcq-bot@users.noreply.github.com>
+
+      - name: Upload build directory to artifact
+        uses: actions/upload-artifact@v2
+        if: ${{ success() }} || ${{ failure() }}
+        with:
+          name: phpcq-builds
+          path: .phpcq/build/
