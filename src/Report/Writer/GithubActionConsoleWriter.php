@@ -9,6 +9,8 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use function str_replace;
+
 final class GithubActionConsoleWriter
 {
     use RenderRangeTrait;
@@ -76,7 +78,8 @@ final class GithubActionConsoleWriter
     private function compileMessage(DiagnosticIteratorEntry $entry): string
     {
         $diagnostic = $entry->getDiagnostic();
-        $message    = $this->renderRangePrefix($entry) . $entry->getDiagnostic()->getMessage();
+        $message    = $this->renderRangePrefix($entry)
+            . str_replace("\n", '%0A', $entry->getDiagnostic()->getMessage());
 
         $reportedBy = 'reported by ' . $entry->getTask()->getTaskName();
         if (null !== ($source = $diagnostic->getSource())) {
