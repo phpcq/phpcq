@@ -202,7 +202,6 @@ final class UpdateCalculator
             ];
         }
         // Determine uninstalls now.
-        /** @var InstalledPlugin $installedPlugin */
         foreach ($this->installed->iteratePlugins() as $installedPlugin) {
             $name = $installedPlugin->getName();
             if (!$desired->hasPluginVersion($name, '*')) {
@@ -289,24 +288,26 @@ final class UpdateCalculator
 
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             // FIXME: Check if configured requirement is within the tool requirement
-            $constraint = $config['requirements'][$toolRequirement->getName()]['version']
+            $requirementName = $toolRequirement->getName();
+            $constraint = $config['requirements'][$requirementName]['version']
                 ?? $toolRequirement->getConstraint();
-            $tool       = $this->resolver->resolveToolVersion($pluginName, $toolRequirement->getName(), $constraint);
+            $tool       = $this->resolver->resolveToolVersion($pluginName, $requirementName, $constraint);
+            $toolName   = $tool->getName();
 
-            if (!$plugin || !$plugin->hasTool($toolRequirement->getName())) {
-                $message = sprintf('Will install tool %s in version %s', $tool->getName(), $tool->getVersion());
+            if (!$plugin || !$plugin->hasTool($requirementName)) {
+                $message = sprintf('Will install tool %s in version %s', $toolName, $tool->getVersion());
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
 
                 $tasks[] = [
                     'type'    => 'install',
                     'tool'    => $tool,
                     'message' => $message,
-                    'signed'  => $config['requirements'][$tool->getName()]['signed'] ?? true,
+                    'signed'  => $config['requirements'][$toolName]['signed'] ?? true,
                 ];
                 continue;
             }
             // Installed in another version => upgrade.
-            $installed = $plugin->getTool($tool->getName());
+            $installed = $plugin->getTool($toolName);
             if ($forceReinstall || $this->isToolUpgradeRequired($plugin, $tool)) {
                 $message   = $this->getToolTaskMessage($installed, $tool);
                 $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
@@ -316,7 +317,7 @@ final class UpdateCalculator
                     'tool'    => $tool,
                     'message' => $message,
                     'old'     => $installed,
-                    'signed'  => $config['requirements'][$tool->getName()]['signed'] ?? true,
+                    'signed'  => $config['requirements'][$toolName]['signed'] ?? true,
                 ];
                 continue;
             }

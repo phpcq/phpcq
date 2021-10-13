@@ -139,7 +139,6 @@ class Repository implements RepositoryInterface
         $constraint = $this->parser->parseConstraints($versionConstraint);
         $results    = [];
 
-        /** @var PluginVersionInterface $versionHunk */
         foreach ($this->repository->getPlugin($name) as $versionHunk) {
             $version = $versionHunk->getVersion();
             if (!$constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {
@@ -168,7 +167,6 @@ class Repository implements RepositoryInterface
         $constraint = $this->parser->parseConstraints($versionConstraint);
         $results    = [];
 
-        /** @var ToolVersionInterface $versionHunk */
         foreach ($this->repository->getTool($name) as $versionHunk) {
             $version = $versionHunk->getVersion();
             if (!$constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {

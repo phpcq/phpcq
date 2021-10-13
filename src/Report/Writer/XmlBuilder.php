@@ -31,7 +31,7 @@ final class XmlBuilder
         $this->targetPath    = $targetPath;
         $this->document      = new DOMDocument('1.0');
         $this->rootNameSpace = $rootNameSpace;
-        $this->document->appendChild($rootNode = $this->createElement($rootNode));
+        $this->document->appendChild($this->createElement($rootNode));
     }
 
     public function write(string $fileName): void

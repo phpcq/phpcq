@@ -71,12 +71,12 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
         return $this->normalizeOptions($value);
     }
 
-    public function validateValue($options): void
+    public function validateValue($value): void
     {
-        parent::validateValue($options);
+        parent::validateValue($value);
 
-        /** @var array $options - We validate it withing parent validator */
-        $diff = array_diff_key($options, $this->options);
+        /** @var array $value - We validate it withing parent validator */
+        $diff = array_diff_key($value, $this->options);
         if (count($diff) > 0) {
             /** @psalm-var list<string> $keys */
             $keys = array_keys($diff);
@@ -88,7 +88,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
 
         foreach ($this->options as $key => $builder) {
             try {
-                $builder->validateValue($options[$key] ?? null);
+                $builder->validateValue($value[$key] ?? null);
             } catch (ConfigurationValidationErrorException $exception) {
                 throw $exception->withOuterPath([$key]);
             } catch (InvalidConfigurationException $exception) {

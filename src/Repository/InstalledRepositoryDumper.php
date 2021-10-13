@@ -31,7 +31,6 @@ final class InstalledRepositoryDumper extends AbstractDumper
     {
         $plugins = [];
 
-        /** @var InstalledPlugin $plugin */
         foreach ($repository->iteratePlugins() as $plugin) {
             $plugins[$plugin->getPluginVersion()->getName()] = $this->dumpInstalledPlugin($plugin, $baseDir);
         }
@@ -43,7 +42,6 @@ final class InstalledRepositoryDumper extends AbstractDumper
     {
         $tools = [];
 
-        /** @var ToolVersionInterface $toolVersion */
         foreach ($repository->iterateToolVersions() as $toolVersion) {
             $tools[$toolVersion->getName()] = $this->dumpTool($toolVersion, $baseDir);
         }

@@ -76,9 +76,8 @@ final class ExecCommand extends AbstractCommand
     {
         // FIXME: Introduce own interface and rewrite the command
 
-        /** @psalm-suppress PossiblyInvalidArgument */
         $taskFactory = new TaskFactory(
-            $this->getInstalledRepository(true)->getPlugin($this->input->getArgument('plugin')),
+            $this->getInstalledRepository(true)->getPlugin((string) $this->input->getArgument('plugin')),
             ...$this->findPhpCli()
         );
 

@@ -43,7 +43,6 @@ final class PluginRegistry implements IteratorAggregate
             throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
         }
 
-        /** @var string */
         $name = $plugin->getName();
         if (isset($this->plugins[$name])) {
             throw new RuntimeException('Plugin already registered: ' . $name);

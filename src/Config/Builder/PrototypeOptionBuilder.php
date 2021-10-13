@@ -130,11 +130,11 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         $this->valueBuilder->selfValidate();
     }
 
-    public function normalizeValue($values): ?array
+    public function normalizeValue($raw): ?array
     {
         /** @psalm-suppress MixedAssignment */
-        $values = parent::normalizeValue($values);
-        if ($values === null) {
+        $raw = parent::normalizeValue($raw);
+        if ($raw === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
             }
@@ -142,40 +142,40 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
             return null;
         }
 
-        $values = Constraints::arrayConstraint($values);
-        if ($this->required && count($values) === 0) {
+        $raw = Constraints::arrayConstraint($raw);
+        if ($this->required && count($raw) === 0) {
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 
         /**
-         * @psalm-var array<string, mixed> $values
+         * @psalm-var array<string, mixed> $raw
          * @psalm-suppress MixedAssignment
          */
-        foreach ($values as $key => $value) {
+        foreach ($raw as $key => $value) {
             /** @psalm-suppress MixedAssignment */
-            $values[$key] = $this->valueBuilder->normalizeValue($value);
+            $raw[$key] = $this->valueBuilder->normalizeValue($value);
         }
 
-        return $values;
+        return $raw;
     }
 
-    public function validateValue($values): void
+    public function validateValue($value): void
     {
-        parent::validateValue($values);
-        if (null === $values) {
+        parent::validateValue($value);
+        if (null === $value) {
             return;
         }
 
         try {
-            $values = Constraints::arrayConstraint($values);
+            $value = Constraints::arrayConstraint($value);
         } catch (InvalidConfigurationException $exception) {
             throw ConfigurationValidationErrorException::fromError([$this->name], $exception);
         }
 
         /** @psalm-suppress MixedAssignment */
-        foreach ($values as $index => $value) {
+        foreach ($value as $index => $option) {
             try {
-                $this->valueBuilder->validateValue($value);
+                $this->valueBuilder->validateValue($option);
             } catch (ConfigurationValidationErrorException $exception) {
                 $path = $exception->getPath();
                 array_splice($path, 0, 1, [(string) $index]);

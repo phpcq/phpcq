@@ -98,12 +98,14 @@ final class InstalledRepositoryLoader
         /** @psalm-var TInstalledRepository $installed */
         $installed = $this->jsonFileLoader->load($this->validateUrlOrFile($filePath, $baseDir));
         // BC compatibility for old style repository, simulate an empty one.
+        // FIXME: remove this, this bc compat causes the MixedArgumentTypeCoercion below
         foreach (['plugins', 'tools'] as $key) {
             if (!array_key_exists($key, $installed)) {
                 $installed[$key] = [];
             }
         }
 
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         return $this->createRepository($installed, $baseDir);
     }
 

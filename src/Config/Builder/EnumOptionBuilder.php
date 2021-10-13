@@ -41,6 +41,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 
     public function ofStringValues(string ...$values): StringOptionBuilderInterface
     {
+        /** @var list<string> $values */
         $this->declareType('string');
         $this
             ->withValidator(Validator::stringValidator())
@@ -51,6 +52,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 
     public function ofIntValues(int ...$values): IntOptionBuilderInterface
     {
+        /** @var list<int> $values */
         $this->declareType('int');
         $this
             ->withValidator(Validator::intValidator())
@@ -61,6 +63,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 
     public function ofFloatValues(float ...$values): FloatOptionBuilderInterface
     {
+        /** @var list<float> $values */
         $this->declareType('float');
         $this
             ->withValidator(Validator::floatValidator())

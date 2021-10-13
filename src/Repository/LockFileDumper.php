@@ -31,7 +31,6 @@ final class LockFileDumper extends AbstractDumper
     {
         $plugins = [];
 
-        /** @var InstalledPlugin $plugin */
         foreach ($repository->iteratePlugins() as $plugin) {
             $plugins[$plugin->getPluginVersion()->getName()] = $this->dumpInstalledPlugin($plugin);
         }
@@ -43,7 +42,6 @@ final class LockFileDumper extends AbstractDumper
     {
         $tools = [];
 
-        /** @var ToolVersionInterface $toolVersion */
         foreach ($repository->iterateToolVersions() as $toolVersion) {
             $tools[$toolVersion->getName()] = $this->dumpTool($toolVersion);
         }

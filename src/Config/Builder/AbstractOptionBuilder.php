@@ -91,16 +91,16 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $this;
     }
 
-    public function normalizeValue($value)
+    public function normalizeValue($raw)
     {
-        if (null === $value) {
-            $value = $this->defaultValue;
+        if (null === $raw) {
+            $raw = $this->defaultValue;
         }
 
         try {
             foreach ($this->normalizer as $normalizer) {
                 /** @psalm-suppress MixedAssignment */
-                $value = $normalizer($value);
+                $raw = $normalizer($raw);
             }
         } catch (ConfigurationValidationErrorException $exception) {
             throw $exception->withOuterPath([$this->name]);
@@ -108,7 +108,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
             throw ConfigurationValidationErrorException::fromError([$this->name], $exception);
         }
 
-        return $value;
+        return $raw;
     }
 
     public function validateValue($value): void

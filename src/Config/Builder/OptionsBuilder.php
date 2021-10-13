@@ -25,9 +25,9 @@ final class OptionsBuilder extends AbstractOptionsBuilder
         $this->bypassValidation = true;
     }
 
-    public function validateValue($options): void
+    public function validateValue($value): void
     {
-        if (null === $options) {
+        if (null === $value) {
             if (!$this->required) {
                 return;
             }
@@ -41,7 +41,7 @@ final class OptionsBuilder extends AbstractOptionsBuilder
         if ($this->bypassValidation) {
             try {
                 foreach ($this->validators as $validator) {
-                    $validator($options);
+                    $validator($value);
                 }
             } catch (ConfigurationValidationErrorException $exception) {
                 throw $exception->withOuterPath([$this->name]);
@@ -52,6 +52,6 @@ final class OptionsBuilder extends AbstractOptionsBuilder
             return;
         }
 
-        parent::validateValue($options);
+        parent::validateValue($value);
     }
 }

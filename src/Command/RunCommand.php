@@ -229,7 +229,6 @@ final class RunCommand extends AbstractCommand
             $plugin->describeConfiguration($configOptionsBuilder);
 
             if ($configOptionsBuilder->hasDirectoriesSupport()) {
-                /** @psalm-var array<string,mixed> $configValues */
                 $pluginConfig += ['directories' => $configValues['directories'] ?? $this->config->getDirectories()];
             }
 
@@ -253,8 +252,8 @@ final class RunCommand extends AbstractCommand
 
     private function writeReports(ReportBuffer $report, ProjectConfiguration $projectConfig): void
     {
-        /** @psalm-suppress PossiblyInvalidCast - We know it is a string */
         $threshold = (string) $this->input->getOption('threshold');
+        /** @var list<string> $formats */
         $formats   = (array) $this->input->getOption('output');
         if ([] !== ($unsupported = array_diff($formats, ['github-action', 'default']))) {
             throw new RuntimeException(sprintf('Output formats "%s" are not supported', implode(', ', $unsupported)));

@@ -40,12 +40,12 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         return $this;
     }
 
-    public function normalizeValue($values): ?array
+    public function normalizeValue($raw): ?array
     {
-        if (null === $values) {
-            $values = $this->defaultValue;
+        if (null === $raw) {
+            $raw = $this->defaultValue;
         }
-        if ($values === null) {
+        if ($raw === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
             }
@@ -53,13 +53,13 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             return null;
         }
 
-        /** @psalm-var list<array<string,mixed>> $values */
-        $values = Constraints::listConstraint($values);
-        foreach ($values as $index => $options) {
+        /** @psalm-var list<array<string,mixed>> $raw */
+        $raw = Constraints::listConstraint($raw);
+        foreach ($raw as $index => $options) {
             foreach ($this->normalizer as $normalizer) {
                 try {
                     /** @psalm-var array<string,mixed> */
-                    $values[$index] = $normalizer($options);
+                    $raw[$index] = $normalizer($options);
                 } catch (ConfigurationValidationErrorException $exception) {
                     throw $exception->withOuterPath([$this->name, (string) $index]);
                 } catch (Throwable $exception) {
@@ -67,15 +67,15 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
                 }
             }
 
-            $values[$index] = $this->normalizeOptions($values[$index]);
+            $raw[$index] = $this->normalizeOptions($raw[$index]);
         }
 
-        return $values;
+        return $raw;
     }
 
-    public function validateValue($options): void
+    public function validateValue($value): void
     {
-        if (null === $options) {
+        if (null === $value) {
             if (!$this->required) {
                 return;
             }
@@ -83,12 +83,12 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 
-        /** @psalm-var list<array<string,mixed>> $options */
-        $options = Constraints::listConstraint($options, Validator::arrayValidator());
-        foreach ($options as $key => $value) {
+        /** @psalm-var list<array<string,mixed>> $value */
+        $value = Constraints::listConstraint($value, Validator::arrayValidator());
+        foreach ($value as $key => $option) {
             foreach ($this->validators as $validator) {
                 try {
-                    $validator($value);
+                    $validator($option);
                 } catch (ConfigurationValidationErrorException $exception) {
                     throw $exception->withOuterPath([$this->name, (string) $key]);
                 } catch (Throwable $exception) {

@@ -63,7 +63,6 @@ class TaskReport implements TaskReportInterface
 
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
-        /** @psalm-var TDiagnosticSeverity $severity */
         $builder = new DiagnosticBuilder(
             $this,
             $severity,

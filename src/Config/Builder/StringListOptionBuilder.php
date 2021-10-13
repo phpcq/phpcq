@@ -39,22 +39,22 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
     }
 
     /**
-     * @psalm-param list<string> $values
+     * @psalm-param list<string> $defaultValue
      * @return $this
      */
-    public function withDefaultValue(array $values): StringListOptionBuilderInterface
+    public function withDefaultValue(array $defaultValue): StringListOptionBuilderInterface
     {
-        $this->defaultValue = $values;
+        $this->defaultValue = $defaultValue;
 
         return $this;
     }
 
-    public function normalizeValue($values): ?array
+    public function normalizeValue($raw): ?array
     {
-        if (null === $values) {
-            $values = $this->defaultValue;
+        if (null === $raw) {
+            $raw = $this->defaultValue;
         }
-        if ($values === null) {
+        if ($raw === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
             }
@@ -62,13 +62,13 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
             return null;
         }
 
-        $values = Constraints::listConstraint($values);
+        $raw = Constraints::listConstraint($raw);
         /** @psalm-suppress MixedAssignment */
-        foreach ($values as $index => $options) {
+        foreach ($raw as $index => $options) {
             try {
                 foreach ($this->normalizer as $normalizer) {
                     /** @psalm-suppress MixedAssignment */
-                    $values[$index] = $normalizer($options);
+                    $raw[$index] = $normalizer($options);
                 }
             } catch (ConfigurationValidationErrorException $exception) {
                 throw $exception->withOuterPath([$this->name, (string) $index]);
@@ -77,12 +77,12 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
             }
         }
 
-        return $values;
+        return $raw;
     }
 
-    public function validateValue($options): void
+    public function validateValue($value): void
     {
-        if (null === $options) {
+        if (null === $value) {
             if (!$this->required) {
                 return;
             }
@@ -93,12 +93,12 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
             );
         }
 
-        $options = Constraints::listConstraint($options, Validator::stringValidator());
-        /** @psalm-var list<string> $options */
-        foreach ($options as $index => $value) {
+        $value = Constraints::listConstraint($value, Validator::stringValidator());
+        /** @psalm-var list<string> $value */
+        foreach ($value as $index => $option) {
             try {
                 foreach ($this->validators as $validator) {
-                    $validator($value);
+                    $validator($option);
                 }
             } catch (ConfigurationValidationErrorException $exception) {
                 throw $exception->withOuterPath([$this->name, (string) $index]);

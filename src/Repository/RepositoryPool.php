@@ -24,7 +24,6 @@ final class RepositoryPool implements IteratorAggregate
 
     public function hasPlugin(string $name, string $versionConstraint): bool
     {
-        /** @var RepositoryInterface $repository */
         foreach ($this as $repository) {
             if ($repository->hasPluginVersion($name, $versionConstraint)) {
                 return true;

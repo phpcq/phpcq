@@ -86,7 +86,6 @@ final class UpdateExecutor
         $lockRepository = new InstalledRepository();
 
         foreach ($tasks as $task) {
-            /** @var PluginVersionInterface $desired */
             $desired = $task['version'];
 
             switch ($task['type']) {
