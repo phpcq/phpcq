@@ -270,8 +270,12 @@ class PlatformInformation implements PlatformInformationInterface
                     continue 2;
             }
 
-            /** @var string $prettyVersion */
-            $libraries['lib-' . $name] = self::normalizeVersion($prettyVersion);
+            try {
+                /** @var string $prettyVersion */
+                $libraries['lib-' . $name] = self::normalizeVersion($prettyVersion);
+            } catch (UnexpectedValueException $e) {
+                // This may occur eg. for alpine linux PHP and lib-iconv which reports as "unknown".
+            }
         }
 
         return $libraries;
