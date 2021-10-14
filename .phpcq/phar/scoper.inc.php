@@ -15,6 +15,14 @@ $symfonyPolyfill = (static function (): array {
     ) {
         $files[] = $bootstrap->getPathName();
     }
+    foreach (
+        Finder::create()
+            ->files()
+            ->in(__DIR__ . '/../../vendor/symfony/polyfill-*/Resources/stubs')
+            ->name('*.php') as $bootstrap
+    ) {
+        $files[] = $bootstrap->getPathName();
+    }
 
     return $files;
 })();
