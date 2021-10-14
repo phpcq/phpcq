@@ -56,6 +56,8 @@ final class ValidateCommand extends AbstractCommand
      * @param string         $taskName The task being validated.
      *
      * @return bool
+     *
+     * @psalm-suppress UnusedVariable
      */
     private function validatePlugin(PluginRegistry $plugins, string $taskName): bool
     {
