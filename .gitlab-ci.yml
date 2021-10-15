@@ -1,0 +1,62 @@
+stages:
+  - pre-test
+  - build
+  - test
+
+pre-test:php-7.4:
+  image: discordier/php-runner:7.4-alpine
+  stage: pre-test
+  before_script:
+    - composer self-update -vvv && composer --version
+    - composer install --prefer-dist --no-interaction --no-progress --no-scripts
+  script:
+    - ./phpcq install -vvv
+    - ./phpcq run -o default
+  cache:
+    paths:
+      - vendor/
+      - ~/.cache/composer/
+      - .phpcq/plugins
+  artifacts:
+    paths:
+      - .phpcq/build*
+    expire_in: 1 week
+    name: pre-test
+
+build:php-7.4:
+  image: discordier/php-runner:7.4-alpine
+  stage: build
+  before_script:
+    - composer self-update -vvv && composer --version
+    - composer install --prefer-dist --no-interaction --no-progress --no-scripts
+  script:
+    - ./phpcq install -vvv
+    - ./phpcq run build -v
+  cache:
+    paths:
+      - vendor/
+      - ~/.cache/composer/
+      - .phpcq/plugins
+  artifacts:
+    paths:
+      - .phpcq/build*
+      - phpcq.phar
+    expire_in: 1 week
+    name: build
+
+test:php-7.4:
+  image: discordier/php-runner:7.4-alpine
+  stage: test
+  script:
+    - ./phpcq.phar install -vvv
+    - ./phpcq.phar run -o default
+  cache:
+    paths:
+      - .phpcq/plugins
+  dependencies:
+    - build:php-7.4
+  artifacts:
+    paths:
+      - .phpcq/build*
+    expire_in: 1 week
+    name: test
