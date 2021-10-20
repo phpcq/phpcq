@@ -17,6 +17,7 @@ use Phpcq\Runner\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Runner\Environment;
 use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Writer\CodeClimateReportWriter;
 use Phpcq\Runner\Report\Writer\ConsoleWriter;
 use Phpcq\Runner\Report\Writer\FileReportWriter;
 use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
@@ -44,9 +45,10 @@ final class RunCommand extends AbstractCommand
 
     /** @var array<string, class-string<\Phpcq\Runner\Report\Writer\AbstractReportWriter>> */
     private const REPORT_FORMATS = [
-        'task-report' => TaskReportWriter::class,
-        'file-report' => FileReportWriter::class,
-        'checkstyle'  => CheckstyleReportWriter::class,
+        'task-report'  => TaskReportWriter::class,
+        'file-report'  => FileReportWriter::class,
+        'checkstyle'   => CheckstyleReportWriter::class,
+        'code-climate' => CodeClimateReportWriter::class,
     ];
 
     protected function configure(): void

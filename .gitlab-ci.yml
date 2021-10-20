@@ -11,7 +11,7 @@ pre-test:php-7.4:
     - composer install --prefer-dist --no-interaction --no-progress --no-scripts
   script:
     - ./phpcq install -vvv
-    - ./phpcq run -o default
+    - ./phpcq run -o default -r code-climate
   cache:
     paths:
       - vendor/
@@ -22,6 +22,8 @@ pre-test:php-7.4:
       - .phpcq/build*
     expire_in: 1 week
     name: pre-test
+    reports:
+      codequality: .phpcq/build/code-climate.json
 
 build:php-7.4:
   image: discordier/php-runner:7.4-alpine
@@ -49,7 +51,7 @@ test:php-7.4:
   stage: test
   script:
     - ./phpcq.phar install -vvv
-    - ./phpcq.phar run -o default
+    - ./phpcq.phar run -o default -r code-climate
   cache:
     paths:
       - .phpcq/plugins
@@ -60,3 +62,5 @@ test:php-7.4:
       - .phpcq/build*
     expire_in: 1 week
     name: test
+    reports:
+      codequality: .phpcq/build/code-climate.json
