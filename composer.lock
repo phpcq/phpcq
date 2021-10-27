@@ -509,17 +509,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "ef7a076c064e5c35a8ccc48458ad5e620be7e615"
+                "reference": "85d733ce7c0b3524c43672ceb0b44d55fe24ef27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/ef7a076c064e5c35a8ccc48458ad5e620be7e615",
-                "reference": "ef7a076c064e5c35a8ccc48458ad5e620be7e615",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/85d733ce7c0b3524c43672ceb0b44d55fe24ef27",
+                "reference": "85d733ce7c0b3524c43672ceb0b44d55fe24ef27",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
-                "php": "^7.3"
+                "php": "^7.3 || ^8.0"
             },
             "require-dev": {
                 "phpcq/runner-bootstrap": "^1.0@dev"
@@ -569,7 +569,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-08-19T16:34:25+00:00"
+            "time": "2021-10-20T14:46:24+00:00"
         },
         {
             "name": "phpcq/repository-definition",
