@@ -52,7 +52,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($toolName, $command, $this->getMetadata($toolName));
+        return new TaskBuilder($toolName, array_values($command), $this->getMetadata($toolName));
     }
 
     /**

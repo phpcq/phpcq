@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Test\Task;
 
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
-use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Task\ParallelizableProcessTask;
 use Phpcq\Runner\Task\ProcessTask;
 use Phpcq\Runner\Task\TaskBuilder;
@@ -13,16 +12,14 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 /**
+ * @covers \Phpcq\Runner\Task\AbstractTaskBuilder
  * @covers \Phpcq\Runner\Task\TaskBuilder
  */
 final class TaskBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
-        $builder = new TaskBuilder(
-            'task-name',
-            ['foo', 'bar', 'baz']
-        );
+        $builder = new TaskBuilder('task-name', ['foo', 'bar', 'baz'], []);
 
         $builder
             ->forceSingleProcess()
@@ -45,7 +42,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetCostOnSingleThread(): void
     {
-        $builder = new TaskBuilder('task-name', ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo'], []);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not set cost for single process forced task.');
@@ -57,7 +54,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testThrowsExceptionWhenTryingToSetSingleThreadOnTaskWithHigherCostThanOne(): void
     {
-        $builder = new TaskBuilder('task-name', ['foo']);
+        $builder = new TaskBuilder('task-name', ['foo'], []);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can not force task with cost > 1 to run as single process');
@@ -69,10 +66,7 @@ final class TaskBuilderTest extends TestCase
 
     public function testBuildsParallel(): void
     {
-        $builder = new TaskBuilder(
-            'task-name',
-            ['foo', 'bar', 'baz']
-        );
+        $builder = new TaskBuilder('task-name', ['foo', 'bar', 'baz'], []);
 
         $builder
             ->withWorkingDirectory('/path/to/working-directory')
