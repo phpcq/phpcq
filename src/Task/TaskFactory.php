@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Task;
 
+use Phpcq\PluginApi\Version10\Task\PhpTaskBuilderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
@@ -18,14 +19,10 @@ class TaskFactory implements TaskFactoryInterface
      */
     private $installed;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $phpCliBinary;
 
-    /**
-     * @var string[]
-     */
+    /** @var list<string> */
     private $phpArguments;
 
     /**
@@ -33,7 +30,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @param InstalledPlugin $installed
      * @param string          $phpCliBinary
-     * @param string[]        $phpArguments
+     * @param list<string>    $phpArguments
      */
     public function __construct(
         InstalledPlugin $installed,
@@ -52,43 +49,40 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($toolName, $command, $this->getMetadata($toolName));
+        return new TaskBuilder($toolName, array_values($command), $this->getMetadata($toolName));
     }
 
     /**
      * @param string   $toolName
      * @param string[] $arguments
      *
-     * @return TaskBuilder
+     * @return TaskBuilderPhp
      */
-    public function buildRunPhar(string $toolName, array $arguments = []): TaskBuilderInterface
+    public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         $pharUrl = $this->installed->getTool($toolName)->getPharUrl();
         if (null === $pharUrl) {
             throw new RuntimeException('Tool ' . $toolName . ' does not have a phar');
         }
 
-        return $this->buildRunProcess($toolName, array_merge(
-            [$this->phpCliBinary],
-            $this->phpArguments,
-            [$pharUrl],
-            $arguments
-        ));
+        return $this->buildPhpProcess($toolName, array_merge([$pharUrl], $arguments));
     }
 
     /**
      * @param string   $toolName
      * @param string[] $arguments
      *
-     * @return TaskBuilder
+     * @return TaskBuilderPhp
      */
-    public function buildPhpProcess(string $toolName, array $arguments = []): TaskBuilderInterface
+    public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
-        return $this->buildRunProcess($toolName, array_merge(
-            [$this->phpCliBinary],
+        return new TaskBuilderPhp(
+            $toolName,
+            $this->phpCliBinary,
             $this->phpArguments,
-            $arguments
-        ));
+            array_values($arguments),
+            $this->getMetadata($toolName)
+        );
     }
 
     /** @return array<string,string> */
