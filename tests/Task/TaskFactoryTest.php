@@ -7,6 +7,7 @@ namespace Phpcq\Runner\Test\Task;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
+use Phpcq\Runner\Task\TaskBuilderPhp;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\TaskBuilder;
 use PHPUnit\Framework\TestCase;
@@ -45,17 +46,14 @@ final class TaskFactoryTest extends TestCase
             ['php', 'arguments']
         );
 
-        $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('/phpcq/path/phar-file-name.phar');
+        $tool->expects(self::atLeastOnce())->method('getPharUrl')->willReturn('/phar-file-name.phar');
 
         $builder = $factory->buildRunPhar('phar-name', ['phar-arg1', 'phar-arg2']);
 
-        $this->assertInstanceOf(TaskBuilder::class, $builder);
-        $this->assertPrivateProperty([
-            '/path/to/php-cli',
-            'php', 'arguments',
-            '/phpcq/path/phar-file-name.phar',
-            'phar-arg1', 'phar-arg2',
-        ], 'command', $builder);
+        $this->assertInstanceOf(TaskBuilderPhp::class, $builder);
+        $this->assertPrivateProperty('/path/to/php-cli', 'phpCliBinary', $builder);
+        $this->assertPrivateProperty(['php', 'arguments'], 'phpArguments', $builder);
+        $this->assertPrivateProperty(['/phar-file-name.phar', 'phar-arg1', 'phar-arg2'], 'arguments', $builder);
     }
 
     public function testBuildPhpProcess(): void
@@ -71,12 +69,10 @@ final class TaskFactoryTest extends TestCase
 
         $builder = $factory->buildPhpProcess('task-name', ['command', 'arg1', 'arg2']);
 
-        $this->assertInstanceOf(TaskBuilder::class, $builder);
-        $this->assertPrivateProperty([
-            '/path/to/php-cli',
-            'php', 'arguments',
-            'command', 'arg1', 'arg2'
-        ], 'command', $builder);
+        $this->assertInstanceOf(TaskBuilderPhp::class, $builder);
+        $this->assertPrivateProperty('/path/to/php-cli', 'phpCliBinary', $builder);
+        $this->assertPrivateProperty(['php', 'arguments'], 'phpArguments', $builder);
+        $this->assertPrivateProperty(['command', 'arg1', 'arg2'], 'arguments', $builder);
     }
 
     private function assertPrivateProperty($expected, string $property, object $instance): void
