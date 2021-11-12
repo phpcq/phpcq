@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
 use Phpcq\Runner\Config\PluginConfiguration;
 use Phpcq\Runner\Config\ProjectConfiguration;
 use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
+use Phpcq\Runner\Plugin\ChainPlugin;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\Runner\Plugin\TaskCollectionPluginInterface;
 use Phpcq\Runner\Report\Report;
 use Phpcq\Runner\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Runner\Environment;
@@ -56,16 +59,10 @@ final class RunCommand extends AbstractCommand
         $this->setName('run')->setDescription('Run configured build tasks');
 
         $this->addArgument(
-            'chain',
-            InputArgument::OPTIONAL,
-            'Define the tool chain. Using default chain if none passed',
-            'default'
-        );
-
-        $this->addArgument(
             'task',
             InputArgument::OPTIONAL,
-            'Define a specific task which should be run'
+            'Define a specific task which should be run',
+            'default'
         );
         $this->addOption(
             'fast-finish',
@@ -132,13 +129,6 @@ final class RunCommand extends AbstractCommand
         $fileSystem->mkdir($tempDirectory);
 
         $installed = $this->getInstalledRepository(true);
-        $chain = $this->input->getArgument('chain');
-        assert(is_string($chain));
-
-        $chains = $this->config->getChains();
-        if (!isset($chains[$chain])) {
-            throw new RuntimeException(sprintf('Unknown chain "%s"', $chain));
-        }
 
         $outputPath = $projectConfig->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
@@ -146,22 +136,18 @@ final class RunCommand extends AbstractCommand
 
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
         $taskList = new Tasklist();
-        if ($taskName = $this->input->getArgument('task')) {
-            assert(is_string($taskName));
-            $this->handleTask($plugins, $installed, $taskName, $projectConfig, $tempDirectory, $taskList, $maxCores);
-        } else {
-            foreach ($chains[$chain] as $taskName) {
-                $this->handleTask(
-                    $plugins,
-                    $installed,
-                    $taskName,
-                    $projectConfig,
-                    $tempDirectory,
-                    $taskList,
-                    $maxCores
-                );
-            }
-        }
+        $taskName = $this->input->getArgument('task');
+        assert(is_string($taskName));
+
+        $this->handleTask(
+            $plugins,
+            $installed,
+            $taskName,
+            $projectConfig,
+            $tempDirectory,
+            $taskList,
+            $maxCores
+        );
 
         // Stage 2: execution.
         $reportBuffer  = new ReportBuffer();
@@ -226,7 +212,8 @@ final class RunCommand extends AbstractCommand
             $tempDirectory,
             $availableThreads
         );
-        if ($plugin instanceof DiagnosticsPluginInterface) {
+        $configuration = null;
+        if ($plugin instanceof ConfigurationPluginInterface) {
             $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
             $plugin->describeConfiguration($configOptionsBuilder);
 
@@ -245,6 +232,28 @@ final class RunCommand extends AbstractCommand
             }
 
             $configuration = new PluginConfiguration($processed);
+        }
+
+        if ($plugin instanceof TaskCollectionPluginInterface) {
+            assert($configuration instanceof PluginConfiguration);
+
+            foreach ($plugin->getTaskNames($configuration) as $childTask) {
+                $this->handleTask(
+                    $plugins,
+                    $installed,
+                    $childTask,
+                    $projectConfig,
+                    $tempDirectory,
+                    $taskList,
+                    $availableThreads
+                );
+            }
+
+            return;
+        }
+
+        if ($plugin instanceof DiagnosticsPluginInterface) {
+            assert($configuration instanceof PluginConfiguration);
 
             foreach ($plugin->createDiagnosticTasks($configuration, $environment) as $task) {
                 $taskList->add($task);

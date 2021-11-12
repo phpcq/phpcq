@@ -12,7 +12,8 @@ nbproject/
 
 # composer related & toolchain
 vendor/
-.phpcq
+.phpcq/*
+!.phpcq/local
 .phpunit.result.cache
 .phpcq.yaml
 phpcq.phar

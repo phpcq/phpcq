@@ -1,5 +1,6 @@
 phpcq:
   repositories:
+    - ./.phpcq/local/repository.json
     - https://phpcq.github.io/repository/repository.json
   directories:
     - src
@@ -7,6 +8,9 @@ phpcq:
   artifact: .phpcq/build
 
   plugins:
+    chain:
+      version: ^1.0
+      signed: false
     box:
       version: ^1.0
       signed: false
@@ -55,33 +59,46 @@ phpcq:
     # Composer normalize
     - C00543248C87FB13
 
-  chains:
-    fix:
-      - composer-normalize
-      - phpcbf
-    verify:
-      - composer-require-checker
-      - composer-normalize
-    analyze:
-      - phploc
-      - phpcpd
-      - phpmd
-      - phpcs
-      - psalm
-      - phpunit
-    build:
-      - box
-    default:
-      - composer-require-checker
-      - composer-normalize
-      - phploc
-      - phpcpd
-      - phpmd
-      - phpcs
-      - psalm
-      - phpunit
-
 tasks:
+  fix:
+    plugin: chain
+    config:
+      tasks:
+        - composer-normalize
+        - phpcbf
+  verify:
+    plugin: chain
+    config:
+      tasks:
+        - composer-require-checker
+        - composer-normalize
+  analyze:
+    plugin: chain
+    config:
+      tasks:
+        - phploc
+        - phpcpd
+        - phpmd
+        - phpcs
+        - psalm
+        - phpunit
+  build:
+    plugin: chain
+    config:
+      tasks:
+        - box
+  default:
+    plugin: chain
+    config:
+      tasks:
+        - composer-require-checker
+        - composer-normalize
+        - phploc
+        - phpcpd
+        - phpmd
+        - phpcs
+        - psalm
+        - phpunit
   box:
     config:
       algorithm: "SHA512"

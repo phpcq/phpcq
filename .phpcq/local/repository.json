@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "chain": [
+      {
+        "api-version": "1.0.0",
+        "version": "1.0.0",
+        "type": "php-file",
+        "url": "chain-plugin.php",
+        "checksum": {
+          "type": "sha-512",
+          "value": "311fbcbc9b17673e8824e5dd079f552c3c3b52fd181a1be96dd08918afaaf08053270e1ca88ed341281b9e91bdc8b8a707d6634155be1a234da452a88e6ebe35"
+        }
+      }
+    ]
+  }
+}
