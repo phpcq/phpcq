@@ -14,7 +14,6 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Plugin\ChainPlugin;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\Runner\Plugin\TaskCollectionPluginInterface;
 use Phpcq\Runner\Report\Report;
 use Phpcq\Runner\Report\Writer\CheckstyleReportWriter;
 use Phpcq\Runner\Environment;
@@ -234,7 +233,7 @@ final class RunCommand extends AbstractCommand
             $configuration = new PluginConfiguration($processed);
         }
 
-        if ($plugin instanceof TaskCollectionPluginInterface) {
+        if ($plugin instanceof ChainPlugin) {
             assert($configuration instanceof PluginConfiguration);
 
             foreach ($plugin->getTaskNames($configuration) as $childTask) {

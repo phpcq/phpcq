@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+namespace Phpcq\Runner\Plugin;
+
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationInterface;
-use Phpcq\Runner\Plugin\TaskCollectionPluginInterface;
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 
-return new class implements TaskCollectionPluginInterface {
+final class ChainPlugin implements ConfigurationPluginInterface
+{
+    public const VERSION = '1.0.0';
+
     public function getName(): string
     {
         return 'chain';
@@ -19,8 +24,9 @@ return new class implements TaskCollectionPluginInterface {
             ->isRequired();
     }
 
+    /** @return list<string> */
     public function getTaskNames(PluginConfigurationInterface $pluginConfiguration): array
     {
         return $pluginConfiguration->getStringList('tasks');
     }
-};
+}

@@ -1,6 +1,5 @@
 phpcq:
   repositories:
-    - ./.phpcq/local/repository.json
     - https://phpcq.github.io/repository/repository.json
   directories:
     - src
@@ -8,9 +7,6 @@ phpcq:
   artifact: .phpcq/build
 
   plugins:
-    chain:
-      version: ^1.0
-      signed: false
     box:
       version: ^1.0
       signed: false
