@@ -114,7 +114,7 @@ final class InstalledRepositoryLoader
     private function createRepository(array $installed, string $baseDir): InstalledRepository
     {
         $repository = new InstalledRepository();
-        $repository->addPlugin($this->createInstalledChainPlugin());
+        $repository->addPlugin(ChainPlugin::createInstalledPlugin());
 
         foreach ($installed['plugins'] as $name => $config) {
             try {
@@ -276,20 +276,5 @@ final class InstalledRepositoryLoader
 
         // Did not understand.
         throw new RuntimeException('Invalid URI passed: ' . $url);
-    }
-
-    private function createInstalledChainPlugin(): InstalledPlugin
-    {
-        return new InstalledPlugin(
-            new PhpFilePluginVersion(
-                'chain',
-                ChainPlugin::VERSION,
-                '1.0.0',
-                null,
-                __DIR__ . '/../Resources/plugins/chain-plugin.php',
-                null,
-                PluginHash::createForFile(__DIR__ . '/../Resources/plugins/chain-plugin.php')
-            )
-        );
     }
 }
