@@ -10,6 +10,7 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\Repository;
@@ -203,6 +204,10 @@ final class UpdateCalculator
         }
         // Determine uninstalls now.
         foreach ($this->installed->iteratePlugins() as $installedPlugin) {
+            if ($installedPlugin instanceof BuiltInPlugin) {
+                continue;
+            }
+
             $name = $installedPlugin->getName();
             if (!$desired->hasPluginVersion($name, '*')) {
                 $message = 'Will remove plugin ' . $name . ' version '

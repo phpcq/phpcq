@@ -12,6 +12,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolHash;
 use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Resolver\ResolverInterface;
@@ -20,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Phpcq\Runner\Updater\UpdateCalculator
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 final class UpdateCalculatorTest extends TestCase
 {
@@ -562,5 +565,30 @@ final class UpdateCalculatorTest extends TestCase
                 'tasks'   => [],
             ]
         ], $tasks);
+    }
+
+    public function testIgnoresBuiltInPlugins(): void
+    {
+        $installed = new InstalledRepository();
+        $output    = $this->getMockForAbstractClass(OutputInterface::class);
+
+        $output
+            ->expects(self::never())
+            ->method('writeln');
+
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion->method('getName')->willReturn('foo');
+        $installedVersion->method('getVersion')->willReturn('2.0.0');
+        $installedVersion->method('getRequirements')->willReturn(new PluginRequirements());
+        $installedVersion->method('getHash')->willReturn(PluginHash::create(PluginHash::SHA_1, 'old-hash'));
+        $installedPlugin = new BuiltInPlugin($installedVersion);
+        $installed->addPlugin($installedPlugin);
+
+        $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
+
+        $calculator = new UpdateCalculator($installed, $resolver, $output);
+
+        $tasks = $calculator->calculate([]);
+        $this->assertSame([], $tasks);
     }
 }

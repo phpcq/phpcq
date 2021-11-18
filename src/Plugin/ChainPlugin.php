@@ -9,7 +9,7 @@ use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationInterface;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersion;
 use Phpcq\RepositoryDefinition\Plugin\PluginHash;
-use Phpcq\Runner\Repository\InstalledPlugin;
+use Phpcq\Runner\Repository\BuiltInPlugin;
 
 final class ChainPlugin implements ConfigurationPluginInterface
 {
@@ -17,9 +17,9 @@ final class ChainPlugin implements ConfigurationPluginInterface
 
     private const API_VERSION = '1.0.0';
 
-    public static function createInstalledPlugin(): InstalledPlugin
+    public static function createInstalledPlugin(): BuiltInPlugin
     {
-        return new InstalledPlugin(
+        return new BuiltInPlugin(
             new PhpFilePluginVersion(
                 'chain',
                 self::VERSION,
