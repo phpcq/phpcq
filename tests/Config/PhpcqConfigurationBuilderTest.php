@@ -29,7 +29,6 @@ final class PhpcqConfigurationBuilderTest extends TestCase
                 'bar'
             ],
             'artifact' => './phpcq/build',
-            'chains' => [],
             'auth' => [],
             'trusted-keys' => [],
         ];
@@ -50,7 +49,6 @@ final class PhpcqConfigurationBuilderTest extends TestCase
                     'bar'
                 ],
                 'artifact' => './phpcq/build',
-                'chains' => [],
                 'auth' => [],
                 'trusted-keys' => [],
             ],

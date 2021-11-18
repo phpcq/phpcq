@@ -57,44 +57,29 @@ phpcq:
 
 tasks:
   fix:
-    plugin: chain
-    config:
-      tasks:
-        - composer-normalize
-        - phpcbf
+    - composer-normalize
+    - phpcbf
   verify:
-    plugin: chain
-    config:
-      tasks:
-        - composer-require-checker
-        - composer-normalize
+    - composer-require-checker
+    - composer-normalize
   analyze:
-    plugin: chain
-    config:
-      tasks:
-        - phploc
-        - phpcpd
-        - phpmd
-        - phpcs
-        - psalm
-        - phpunit
+    - phploc
+    - phpcpd
+    - phpmd
+    - phpcs
+    - psalm
+    - phpunit
   build:
-    plugin: chain
-    config:
-      tasks:
-        - box
+    - box
   default:
-    plugin: chain
-    config:
-      tasks:
-        - composer-require-checker
-        - composer-normalize
-        - phploc
-        - phpcpd
-        - phpmd
-        - phpcs
-        - psalm
-        - phpunit
+    - composer-require-checker
+    - composer-normalize
+    - phploc
+    - phpcpd
+    - phpmd
+    - phpcs
+    - psalm
+    - phpunit
   box:
     config:
       algorithm: "SHA512"

@@ -43,12 +43,6 @@ final class PhpcqConfigurationBuilder
             ->describePrototypeOption('auth', 'Authentication configuration. Not defined yet.')
             ->withDefaultValue([])
             ->ofOptionsValue();
-
-        $this->builder
-            ->describePrototypeOption('chains', 'Available chains. Default chain is required')
-            ->withDefaultValue([])
-            ->ofPrototypeValue()
-                ->ofStringValue();
     }
 
     /** @psalm-return array<string,mixed> */

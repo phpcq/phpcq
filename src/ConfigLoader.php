@@ -14,9 +14,17 @@ use function array_keys;
 
 /**
  * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
- * @psalm-import-type TConfig from \Phpcq\Runner\Config\PhpcqConfiguration
- * @psalm-type TTaskConfig = array{
+ * @psalm-type TTaskConfig = null|list<string>|array{
  *   directories?: array<string, array|null|bool>
+ * }
+ * @psalm-type TConfig = array{
+ *   repositories: list<string>,
+ *   directories: list<string>,
+ *   artifact: string,
+ *   plugins: array<string,TPlugin>,
+ *   trusted-keys: list<string>,
+ *   tasks: array<string,TTaskConfig>,
+ *   auth: array
  * }
  */
 final class ConfigLoader
@@ -57,8 +65,26 @@ final class ConfigLoader
         /** @psalm-var TConfig $processed */
         $processed = array_merge($processed, $config);
 
-        if (!array_key_exists('default', $processed['chains'])) {
-            $processed['chains']['default'] = array_keys($processed['tasks']);
+        // Support simplified chain plugin configuration
+        foreach ($processed['tasks'] ?? [] as $task => $taskConfig) {
+            if (is_array($taskConfig) && $taskConfig === array_values($taskConfig)) {
+                $processed['tasks'][$task] = [
+                    'plugin' => 'chain',
+                    'config' => [
+                        'tasks' => $taskConfig
+                    ]
+                ];
+            }
+        }
+
+        // Define default task if not defined
+        if (!array_key_exists('default', $processed['tasks'])) {
+            $processed['tasks']['default'] = [
+                'plugin' => 'chain',
+                'config' => [
+                    'tasks' => array_keys($processed['tasks'])
+                ]
+            ];
         }
 
         return PhpcqConfiguration::fromArray($processed);
