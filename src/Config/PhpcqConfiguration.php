@@ -21,14 +21,12 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  *   type: string,
  *   url?: string
  * }
- * @psalm-type TChain = array<string,list<string>>
  * @psalm-type TConfig = array{
  *   repositories: list<string>,
  *   directories: list<string>,
  *   artifact: string,
  *   plugins: array<string,TPlugin>,
  *   trusted-keys: list<string>,
- *   chains: TChain,
  *   tasks: array<string,TTaskConfig>,
  *   auth: array
  * }
@@ -75,12 +73,6 @@ final class PhpcqConfiguration
     public function getRepositories(): array
     {
         return $this->options->getOptionsList('repositories');
-    }
-
-    /** @psalm-return TChain */
-    public function getChains(): array
-    {
-        return $this->options->getOptions('chains');
     }
 
     /** @psalm-return array<string,TTaskConfig> */

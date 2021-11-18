@@ -15,6 +15,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersion;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\Runner\Plugin\ChainPlugin;
 
 use function array_map;
 use function dirname;
@@ -113,6 +114,7 @@ final class InstalledRepositoryLoader
     private function createRepository(array $installed, string $baseDir): InstalledRepository
     {
         $repository = new InstalledRepository();
+        $repository->addPlugin(ChainPlugin::createInstalledPlugin());
 
         foreach ($installed['plugins'] as $name => $config) {
             try {

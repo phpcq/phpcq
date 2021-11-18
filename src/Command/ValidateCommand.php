@@ -34,13 +34,9 @@ final class ValidateCommand extends AbstractCommand
         $plugins    = PluginRegistry::buildFromInstalledRepository($installed);
 
         $valid = true;
-        foreach ($this->config->getChains() as $chainName => $chainTasks) {
-            $this->output->writeln('Validate chain "' . $chainName . '":', OutputInterface::VERBOSITY_VERY_VERBOSE);
-
-            foreach ($chainTasks as $taskName) {
-                if (!$this->validatePlugin($plugins, $taskName)) {
-                    $valid = false;
-                }
+        foreach (array_keys($this->config->getTaskConfig()) as $taskName) {
+            if (!$this->validatePlugin($plugins, $taskName)) {
+                $valid = false;
             }
         }
 

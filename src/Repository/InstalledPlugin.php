@@ -9,7 +9,7 @@ use Phpcq\RepositoryDefinition\Exception\ToolNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
-final class InstalledPlugin
+class InstalledPlugin
 {
     /** @var PluginVersionInterface */
     private $version;

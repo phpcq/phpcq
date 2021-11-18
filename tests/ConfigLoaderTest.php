@@ -64,33 +64,36 @@ final class ConfigLoaderTest extends TestCase
             $config['plugins']
         );
 
-        $this->assertArrayHasKey('chains', $config);
-        $this->assertEquals(
-            [
-                'default' => [
-                    'phpcpd',
-                    'author-validation',
-                    'autoload-validation',
-                    'branch-alias-validation',
-                    'composer-validate',
-                    'pdepend',
-                    'phpcs',
-                    'phplint',
-                    'phploc',
-                    'phpmd',
-                    'phpspec',
-                    'travis-configuration-check',
-                ],
-                'tests' => [
-                    'phpunit'
-                ]
-            ],
-            $config['chains']
-        );
-
         $this->assertArrayHasKey('tasks', $config);
         $this->assertEquals(
             [
+                'default' => [
+                    'plugin' => 'chain',
+                    'config' => [
+                        'tasks' => [
+                            'phpcpd',
+                            'author-validation',
+                            'autoload-validation',
+                            'branch-alias-validation',
+                            'composer-validate',
+                            'pdepend',
+                            'phpcs',
+                            'phplint',
+                            'phploc',
+                            'phpmd',
+                            'phpspec',
+                            'travis-configuration-check',
+                        ]
+                    ]
+                ],
+                'tests' => [
+                    'plugin' => 'chain',
+                    'config' => [
+                        'tasks' => [
+                            'phpunit',
+                        ]
+                    ]
+                ],
                 'phpunit' => [
                     'directories' => [
                         'foo'

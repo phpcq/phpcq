@@ -55,33 +55,31 @@ phpcq:
     # Composer normalize
     - C00543248C87FB13
 
-  chains:
-    fix:
-      - composer-normalize
-      - phpcbf
-    verify:
-      - composer-require-checker
-      - composer-normalize
-    analyze:
-      - phploc
-      - phpcpd
-      - phpmd
-      - phpcs
-      - psalm
-      - phpunit
-    build:
-      - box
-    default:
-      - composer-require-checker
-      - composer-normalize
-      - phploc
-      - phpcpd
-      - phpmd
-      - phpcs
-      - psalm
-      - phpunit
-
 tasks:
+  fix:
+    - composer-normalize
+    - phpcbf
+  verify:
+    - composer-require-checker
+    - composer-normalize
+  analyze:
+    - phploc
+    - phpcpd
+    - phpmd
+    - phpcs
+    - psalm
+    - phpunit
+  build:
+    - box
+  default:
+    - composer-require-checker
+    - composer-normalize
+    - phploc
+    - phpcpd
+    - phpmd
+    - phpcs
+    - psalm
+    - phpunit
   box:
     config:
       algorithm: "SHA512"
