@@ -30,6 +30,11 @@ class Environment implements EnvironmentInterface
     private $availableThreads;
 
     /**
+     * @var string
+     */
+    private $pluginDirectory;
+
+    /**
      * @param ProjectConfigInterface $projectConfiguration
      * @param TaskFactoryInterface   $taskFactory
      * @param string                 $tempDirectory
@@ -38,12 +43,14 @@ class Environment implements EnvironmentInterface
         ProjectConfigInterface $projectConfiguration,
         TaskFactoryInterface $taskFactory,
         string $tempDirectory,
-        int $availableThreads
+        int $availableThreads,
+        string $pluginDirectory
     ) {
         $this->projectConfiguration = $projectConfiguration;
         $this->taskFactory          = $taskFactory;
         $this->tempDirectory        = $tempDirectory;
         $this->availableThreads     = $availableThreads;
+        $this->pluginDirectory      = $pluginDirectory;
     }
 
     public function getProjectConfiguration(): ProjectConfigInterface
@@ -74,5 +81,18 @@ class Environment implements EnvironmentInterface
     public function getAvailableThreads(): int
     {
         return $this->availableThreads;
+    }
+
+    public function getInstalledDir(): string
+    {
+        return $this->pluginDirectory;
+    }
+
+    public function withInstalledDir(string $installedDir): self
+    {
+        $clone = clone $this;
+        $clone->pluginDirectory = $installedDir;
+
+        return $clone;
     }
 }

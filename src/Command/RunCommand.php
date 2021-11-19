@@ -6,7 +6,9 @@ namespace Phpcq\Runner\Command;
 
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
+use Phpcq\Runner\Config\PhpcqConfiguration;
 use Phpcq\Runner\Config\PluginConfiguration;
+use Phpcq\Runner\Config\PluginConfigurationFactory;
 use Phpcq\Runner\Config\ProjectConfiguration;
 use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Exception\RuntimeException;
@@ -39,6 +41,7 @@ use Throwable;
 
 use function array_keys;
 use function assert;
+use function dirname;
 use function getcwd;
 use function is_string;
 use function min;
@@ -55,6 +58,15 @@ final class RunCommand extends AbstractCommand
         'checkstyle'   => CheckstyleReportWriter::class,
         'code-climate' => CodeClimateReportWriter::class,
     ];
+
+    /**
+     * Only valid when examined from within doExecute().
+     *
+     * @var PluginConfigurationFactory
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private $pluginConfigFactory;
 
     protected function configure(): void
     {
@@ -137,6 +149,8 @@ final class RunCommand extends AbstractCommand
         $taskName = $this->input->getArgument('task') ?: 'default';
         assert(is_string($taskName));
 
+        $this->pluginConfigFactory = new PluginConfigurationFactory($this->config, $plugins, $installed);
+
         $this->handleTask(
             $plugins,
             $installed,
@@ -216,7 +230,6 @@ final class RunCommand extends AbstractCommand
     ): void {
         $configValues = $this->config->getConfigForTask($taskName);
         $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
-        $pluginConfig = $configValues['config'] ?? [];
         /** @psalm-suppress PossiblyInvalidArgument - type fom findPhpCli() is not inferred */
         $environment = new Environment(
             $projectConfig,
@@ -226,28 +239,18 @@ final class RunCommand extends AbstractCommand
                 ...$this->findPhpCli()
             ),
             $tempDirectory,
-            $availableThreads
+            $availableThreads,
+            dirname($installed->getPlugin($plugin->getName())->getPluginVersion()->getFilePath())
         );
         $configuration = null;
         if ($plugin instanceof ConfigurationPluginInterface) {
-            $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
-            $plugin->describeConfiguration($configOptionsBuilder);
-
-            if ($configOptionsBuilder->hasDirectoriesSupport()) {
-                $pluginConfig += ['directories' => $configValues['directories'] ?? $this->config->getDirectories()];
-            }
-
             try {
-                /** @psalm-var array<string,mixed> $processed */
-                $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
-                $configOptionsBuilder->validateValue($processed);
+                $configuration = $this->pluginConfigFactory->createForTask($taskName, $environment);
             } catch (ConfigurationValidationErrorException $exception) {
                 throw $exception->withOuterPath(['tasks', $taskName, 'config']);
             } catch (Throwable $exception) {
                 throw ConfigurationValidationErrorException::fromError(['tasks', $taskName, 'config'], $exception);
             }
-
-            $configuration = new PluginConfiguration($processed);
         }
 
         if ($plugin instanceof ChainPlugin) {
