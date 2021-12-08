@@ -42,6 +42,7 @@ use function assert;
 use function getcwd;
 use function is_string;
 use function min;
+use function sort;
 
 final class RunCommand extends AbstractCommand
 {
@@ -170,7 +171,9 @@ final class RunCommand extends AbstractCommand
     protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         if ($input->mustSuggestArgumentValuesFor('task')) {
-            $suggestions->suggestValues(array_keys($this->config->getTaskConfig()));
+            $tasks = array_keys($this->config->getTaskConfig());
+            sort($tasks);
+            $suggestions->suggestValues($tasks);
         }
     }
 
