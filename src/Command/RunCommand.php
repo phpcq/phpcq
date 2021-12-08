@@ -28,6 +28,8 @@ use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\Tasklist;
 use Phpcq\Runner\Task\TaskScheduler;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -61,7 +63,7 @@ final class RunCommand extends AbstractCommand
             'task',
             InputArgument::OPTIONAL,
             'Define a specific task which should be run',
-            'default'
+            null
         );
         $this->addOption(
             'fast-finish',
@@ -135,7 +137,7 @@ final class RunCommand extends AbstractCommand
 
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
         $taskList = new Tasklist();
-        $taskName = $this->input->getArgument('task');
+        $taskName = $this->input->getArgument('task') ?: 'default';
         assert(is_string($taskName));
 
         $this->handleTask(
@@ -163,6 +165,13 @@ final class RunCommand extends AbstractCommand
         $fileSystem->remove($tempDirectory);
 
         return $exitCode;
+    }
+
+    protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        if ($input->mustSuggestArgumentValuesFor('task')) {
+            $suggestions->suggestValues(array_keys($this->config->getTaskConfig()));
+        }
     }
 
     private function runTasks(Tasklist $taskList, Report $report, OutputInterface $output): int

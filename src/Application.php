@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner;
 
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Command\CompleteCommand;
+use Symfony\Component\Console\Command\DumpCompletionCommand;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Command\ListCommand;
 use Phpcq\Runner\Command\ExecCommand;
@@ -30,6 +32,8 @@ class Application extends BaseApplication
         return [
             new HelpCommand(),
             new ListCommand(),
+            new CompleteCommand(),
+            new DumpCompletionCommand(),
             new RunCommand(),
             new UpdateCommand(),
             new InstallCommand(),

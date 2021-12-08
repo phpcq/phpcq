@@ -11,6 +11,8 @@ use Phpcq\Runner\Output\SymfonyConsoleOutput;
 use Phpcq\Runner\Output\SymfonyOutput;
 use Phpcq\PluginApi\Version10\Output\OutputInterface as PluginApiOutputInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -88,9 +90,22 @@ abstract class AbstractCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->input  = $input;
         $this->output = $output;
 
+        $this->prepare($input);
+
+        return $this->doExecute();
+    }
+
+    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        $this->prepare($input);
+        $this->doComplete($input, $suggestions);
+    }
+
+    protected function prepare(InputInterface $input): void
+    {
+        $this->input     = $input;
         $this->phpcqPath = $this->determinePhpcqPath();
 
         $configFile = $this->input->getOption('config');
@@ -111,11 +126,16 @@ abstract class AbstractCommand extends Command
         }
 
         $this->config = ConfigLoader::load($configFile);
-
-        return $this->doExecute();
     }
 
     abstract protected function doExecute(): int;
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+    }
 
     /**
      * Create a directory if not exists.
@@ -149,7 +169,9 @@ abstract class AbstractCommand extends Command
         $phpcqPath = $this->input->getOption('home-dir');
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
-        if ($this->output->isVeryVerbose()) {
+
+        /** @psalm-suppress RedundantConditionGivenDocblockType */
+        if ($this->output && $this->output->isVeryVerbose()) {
             $this->output->writeln('Using HOME: ' . $phpcqPath);
         }
 
