@@ -135,7 +135,7 @@ final class CodeClimateReportWriter
         ];
         // Optional. A Trace object representing other interesting source code locations related to this issue.
         if (count($locations)) {
-            $result['other_locations'] = array_values($locations);
+            $result['other_locations'] = $locations;
         }
 
         return $result;
