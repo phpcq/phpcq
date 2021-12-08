@@ -65,7 +65,7 @@ final class RunCommand extends AbstractCommand
             'task',
             InputArgument::OPTIONAL,
             'Define a specific task which should be run',
-            null
+            'default'
         );
         $this->addOption(
             'fast-finish',
@@ -171,7 +171,10 @@ final class RunCommand extends AbstractCommand
 
     protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
-        if ($input->mustSuggestArgumentValuesFor('task')) {
+        if (
+            $input->mustSuggestArgumentValuesFor('task')
+            || (CompletionInput::TYPE_NONE === $input->getCompletionType() && 'default' === $input->getArgument('task'))
+        ) {
             $tasks = array_keys($this->config->getTaskConfig());
             sort($tasks);
             $suggestions->suggestValues($tasks);
