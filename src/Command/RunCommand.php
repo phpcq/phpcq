@@ -38,6 +38,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
+use function array_keys;
 use function assert;
 use function getcwd;
 use function is_string;
@@ -174,6 +175,29 @@ final class RunCommand extends AbstractCommand
             $tasks = array_keys($this->config->getTaskConfig());
             sort($tasks);
             $suggestions->suggestValues($tasks);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('output')) {
+            $suggestions->suggestValues(['github-action', 'default']);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('report')) {
+            $reports = array_keys(self::REPORT_FORMATS);
+            sort($reports);
+            $suggestions->suggestValues($reports);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('threshold')) {
+            $suggestions->suggestValues(
+                [
+                    TaskReportInterface::SEVERITY_NONE,
+                    TaskReportInterface::SEVERITY_INFO,
+                    TaskReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MARGINAL,
+                    TaskReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_FATAL
+                ]
+            );
         }
     }
 
