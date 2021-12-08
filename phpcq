@@ -23,7 +23,7 @@ $application = new Application();
 $argv = $_SERVER['argv'];
 $input = new ArgvInput($argv);
 if ($input->getFirstArgument() === 'exec') {
-    $argv = ExecCommand::prepare($argv);
+    $argv = ExecCommand::prepareArguments($argv);
     // strip the application name.
     if ($argv[0] === 'exec') {
         array_shift($argv);

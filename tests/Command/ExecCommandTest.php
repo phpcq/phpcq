@@ -63,6 +63,6 @@ class ExecCommandTest extends TestCase
      */
     public function testPreparesInputCorrectly(array $expected, array $argv): void
     {
-        $this->assertSame($expected, ExecCommand::prepare($argv));
+        $this->assertSame($expected, ExecCommand::prepareArguments($argv));
     }
 }

@@ -24,7 +24,7 @@ final class ExecCommand extends AbstractCommand
      * If no '--' is to be found in the args (used to separate options for phpcq from the args and options for the tool,
      * insert it just before the tool name.
      */
-    public static function prepare(array $argv): array
+    public static function prepareArguments(array $argv): array
     {
         if (false !== array_search('--', $argv, true)) {
             return $argv;
