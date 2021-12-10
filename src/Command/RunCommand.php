@@ -173,7 +173,10 @@ final class RunCommand extends AbstractCommand
     {
         if (
             $input->mustSuggestArgumentValuesFor('task')
-            || (CompletionInput::TYPE_NONE === $input->getCompletionType() && 'default' === $input->getArgument('task'))
+            || ((false === strpos($input->__toString(), 'default'))
+                && CompletionInput::TYPE_NONE === $input->getCompletionType()
+                && 'default' === $input->getArgument('task')
+            )
         ) {
             $tasks = array_keys($this->config->getTaskConfig());
             sort($tasks);
