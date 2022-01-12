@@ -38,8 +38,8 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
     /** @var array{defaultValue: mixed, valueSeparator: string}|null */
     private $keyValueMap;
 
-    /** @var string */
-    private $valueSeparator = ConsoleOptionBuilderInterface::VALUE_SEPARATOR_EQUAL_SIGN;
+    /** @var string|null */
+    private $valueSeparator = null;
 
     /** @var bool */
     private $onlyShortcut = false;
@@ -66,6 +66,10 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
 
     public function withRequiredValue(?string $name = null): ConsoleOptionBuilderInterface
     {
+        if (null !== $this->keyValueMap) {
+            throw new RuntimeException('Only able to define option values or key value map.');
+        }
+
         $this->isValueRequired = true;
         $this->optionValues[$name ?? -1] = null;
 
@@ -96,6 +100,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
             throw new RuntimeException('Only able to define option values or key value map.');
         }
 
+        $this->isValueRequired = true;
         $this->keyValueMap = [
             'defaultValue' => $defaultValue,
             'valueSeparator' => $valueSeparator ?: ConsoleOptionBuilderInterface::VALUE_SEPARATOR_EQUAL_SIGN

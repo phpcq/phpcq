@@ -16,6 +16,8 @@ return new class implements PluginInterface, ExecPluginInterface {
         ExecTaskDefinitionBuilderInterface $definitionBuilder,
         EnvironmentInterface $environment
     ): void {
+        $definitionBuilder->describeApplication('Example 1', 'foo');
+        $definitionBuilder->describeApplication('Example 2', 'bar');
     }
 
     public function createExecTask(
