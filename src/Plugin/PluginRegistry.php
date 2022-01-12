@@ -37,7 +37,7 @@ final class PluginRegistry implements IteratorAggregate
     private function loadPluginFile(string $filePath): void
     {
         /** @psalm-suppress UnresolvableInclude */
-        $plugin = require_once $filePath;
+        $plugin = require $filePath;
         assert(is_object($plugin));
         if (!$plugin instanceof PluginInterface) {
             throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
@@ -66,5 +66,21 @@ final class PluginRegistry implements IteratorAggregate
     public function getIterator(): iterable
     {
         yield from $this->plugins;
+    }
+
+    /**
+     * @param class-string<T> $pluginType
+     *
+     * @template T
+     *
+     * @return Generator<string, T, mixed, void>
+     */
+    public function getByType(string $pluginType): iterable
+    {
+        foreach ($this->getIterator() as $plugin) {
+            if ($plugin instanceof $pluginType) {
+                yield $plugin->getName() => $plugin;
+            }
+        }
     }
 }
