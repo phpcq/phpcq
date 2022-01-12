@@ -157,6 +157,7 @@ abstract class AbstractCommand extends Command
             $filesystem = new Filesystem();
         }
 
+        assert($filesystem instanceof Filesystem);
         $filesystem->mkdir($path);
     }
 
