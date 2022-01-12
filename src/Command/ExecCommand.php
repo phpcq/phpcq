@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
+use Phpcq\PluginApi\Version10\EnvironmentInterface;
 use Phpcq\PluginApi\Version10\ExecPluginInterface;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
+use Phpcq\RepositoryDefinition\Exception\ToolNotFoundException;
 use Phpcq\Runner\Environment;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Runner\Exception\RuntimeException;
@@ -16,6 +20,7 @@ use Phpcq\Runner\Task\SingleProcessTaskFactory;
 use Phpcq\Runner\Task\TaskFactory;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
 final class ExecCommand extends AbstractCommand
 {
@@ -80,14 +85,9 @@ final class ExecCommand extends AbstractCommand
         }
 
         [$pluginName, $applicationName] = array_pad(explode(':', $fullName), 2, null);
+        assert(is_string($pluginName));
 
-        $instance = $plugins->getPluginByName((string) $pluginName);
-        if (! $instance instanceof ExecPluginInterface) {
-            throw new \RuntimeException(
-                sprintf('Plugin "%s" does not implement the "ExecPluginInterface" interface', $instance->getName())
-            );
-        }
-
+        $instance = $plugins->getPluginByName($pluginName);
         /** @psalm-var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
         $environment = new Environment(
@@ -100,15 +100,14 @@ final class ExecCommand extends AbstractCommand
             1
         );
 
-        // Wrap console output
-        $consoleOutput = $this->getWrappedOutput();
-        $exitCode      = 0;
-        $taskOutput    = new BufferedOutput($consoleOutput);
-        $task          = $instance->createExecTask($applicationName, $toolArguments, $environment);
-
+        $task = $this->createTask($instance, $applicationName, $toolArguments, $environment);
         if (! $task instanceof OutputWritingTaskInterface) {
             throw new RuntimeException('Task has to be an instance of ' . OutputWritingTaskInterface::class);
         }
+
+        $consoleOutput = $this->getWrappedOutput();
+        $exitCode      = 0;
+        $taskOutput    = new BufferedOutput($consoleOutput);
 
         try {
             $task->runForOutput($taskOutput);
@@ -125,5 +124,37 @@ final class ExecCommand extends AbstractCommand
         $taskOutput->release();
 
         return $exitCode;
+    }
+
+    /** @param list<string> $arguments */
+    private function createTask(
+        PluginInterface $plugin,
+        ?string $applicationName,
+        array $arguments,
+        EnvironmentInterface $environment
+    ): TaskInterface {
+        if ($plugin instanceof ExecPluginInterface) {
+            return $plugin->createExecTask($applicationName, $arguments, $environment);
+        }
+
+        $toolName = $applicationName ?: $plugin->getName();
+        $this->output->writeln(
+            sprintf(
+                'Plugin "%s" dos not implement ExecPluginInterface. Try to exec guessed tool "%s"',
+                $plugin->getName(),
+                $toolName
+            ),
+            SymfonyOutputInterface::VERBOSITY_VERBOSE
+        );
+
+        try {
+            return $environment->getTaskFactory()
+                ->buildRunPhar($toolName, $arguments)
+                ->build();
+        } catch (ToolNotFoundException $exception) {
+            throw new RuntimeException(
+                'Plugin "' . $plugin->getName() . '" was not able to build task: ' . $exception->getMessage()
+            );
+        }
     }
 }
