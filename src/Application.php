@@ -65,7 +65,7 @@ class Application extends BaseApplication
             EOF,
             $this->getName(),
             $this->getVersion(),
-            \DateTime::createFromFormat('Y-m-d-H-i-s-T', '@release-date@')->format('Y-m-d H:i:s T')
+            (\DateTime::createFromFormat('Y-m-d-H-i-s-T', '@release-date@') ?: new \DateTime())->format('Y-m-d H:i:s T')
         );
     }
 }
