@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Config\PhpcqConfiguration;
+use Phpcq\Runner\Config\ProjectConfiguration;
 use Phpcq\Runner\ConfigLoader;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Output\SymfonyConsoleOutput;
@@ -18,14 +19,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Terminal;
-
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
+
 use function file_exists;
 use function getcwd;
 use function is_dir;
 use function is_string;
-use function mkdir;
-use function sprintf;
 
 abstract class AbstractCommand extends Command
 {
@@ -147,13 +147,25 @@ abstract class AbstractCommand extends Command
      */
     protected function createDirectory(string $path): void
     {
+        static $filesystem = null;
+
         if (is_dir($path)) {
             return;
         }
 
-        if (!mkdir($path, 0777, true) && !is_dir($path)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $path));
+        if ($filesystem === null) {
+            $filesystem = new Filesystem();
         }
+
+        $filesystem->mkdir($path);
+    }
+
+    protected function createTempDirectory(): string
+    {
+        $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
+        $this->createDirectory($tempDirectory);
+
+        return $tempDirectory;
     }
 
     protected function getWrappedOutput(): PluginApiOutputInterface
@@ -206,5 +218,29 @@ abstract class AbstractCommand extends Command
         $arguments = $finder->findArguments();
 
         return [$executable, $arguments];
+    }
+
+    /**
+     * Create project configuration.
+     *
+     * Method is only available within doExecute().
+     *
+     * @return ProjectConfiguration
+     */
+    protected function createProjectConfiguration(int $maxCores): ProjectConfiguration
+    {
+        /** @psalm-suppress DocblockTypeContradiction */
+        if ($this->config === null) {
+            throw new RuntimeException(
+                'Phpcq configuration is not set. Method is only available within doExecute().'
+            );
+        }
+
+        return new ProjectConfiguration(
+            getcwd(),
+            $this->config->getDirectories(),
+            $this->config->getArtifactDir(),
+            $maxCores
+        );
     }
 }

@@ -122,17 +122,13 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
-        $maxCores      = min($this->getCores(), (int)$this->input->getOption('threads'));
-        $artifactDir   = $this->config->getArtifactDir();
+        $maxCores      = min($this->getCores(), (int) $this->input->getOption('threads'));
+        $projectConfig = $this->createProjectConfiguration($maxCores);
+        $tempDirectory = $this->createTempDirectory();
         $fileSystem    = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir, $maxCores);
+        $installed     = $this->getInstalledRepository(true);
+        $outputPath    = $projectConfig->getArtifactOutputPath();
 
-        $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
-        $fileSystem->mkdir($tempDirectory);
-
-        $installed = $this->getInstalledRepository(true);
-
-        $outputPath = $projectConfig->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
