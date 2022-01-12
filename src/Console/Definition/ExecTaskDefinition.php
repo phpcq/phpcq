@@ -23,10 +23,10 @@ final class ExecTaskDefinition
         ksort($this->applications);
     }
 
-    /** @return array<string, ApplicationDefinition> */
+    /** @return list<ApplicationDefinition> */
     public function getApplications(): array
     {
-        return $this->applications;
+        return array_values($this->applications);
     }
 
     public function getApplication(string $name): ApplicationDefinition
