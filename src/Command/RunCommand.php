@@ -34,7 +34,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
@@ -208,21 +207,6 @@ final class RunCommand extends AbstractCommand
         $scheduler  = new TaskScheduler($taskList, $threads, $report, $output, $fastFinish);
 
         return $scheduler->run() ? 0 : 1;
-    }
-
-    /** @psalm-return array{string, list<string>} */
-    private function findPhpCli(): array
-    {
-        $finder     = new PhpExecutableFinder();
-        $executable = $finder->find();
-
-        if (!is_string($executable)) {
-            throw new RuntimeException('PHP executable not found');
-        }
-        /** @psalm-var list<string> $arguments */
-        $arguments = $finder->findArguments();
-
-        return [$executable, $arguments];
     }
 
     private function handleTask(

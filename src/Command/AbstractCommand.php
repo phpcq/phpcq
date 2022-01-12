@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Terminal;
 
+use Symfony\Component\Process\PhpExecutableFinder;
 use function file_exists;
 use function getcwd;
 use function is_dir;
@@ -190,5 +191,20 @@ abstract class AbstractCommand extends Command
     protected function getPluginPath(): string
     {
         return $this->phpcqPath . '/plugins';
+    }
+
+    /** @psalm-return array{string, list<string>} */
+    protected function findPhpCli(): array
+    {
+        $finder     = new PhpExecutableFinder();
+        $executable = $finder->find();
+
+        if (!is_string($executable)) {
+            throw new RuntimeException('PHP executable not found');
+        }
+        /** @psalm-var list<string> $arguments */
+        $arguments = $finder->findArguments();
+
+        return [$executable, $arguments];
     }
 }
