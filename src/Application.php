@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner;
 
+use Phpcq\Runner\Command\HelpCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\CompleteCommand;
 use Symfony\Component\Console\Command\DumpCompletionCommand;
-use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Command\ListCommand;
 use Phpcq\Runner\Command\ExecCommand;
 use Phpcq\Runner\Command\InstallCommand;
