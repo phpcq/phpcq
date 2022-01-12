@@ -34,7 +34,7 @@
     "phpcq/plugin-api": "^1.0@dev",
     "phpcq/repository-definition": "^1.0@dev",
     "phpcq/schema": "^1.0@dev",
-    "symfony/console": "^5.4",
+    "symfony/console": "^5.4.2",
     "symfony/filesystem": "^5.0",
     "symfony/process": "^5.0.7",
     "symfony/yaml": "^5.0.7"
