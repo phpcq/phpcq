@@ -31,7 +31,7 @@
     "composer/xdebug-handler": "^1.4",
     "guzzlehttp/guzzle": "^6.5",
     "phpcq/gnupg": "^1.0@dev",
-    "phpcq/plugin-api": "dev-feature/exec-interface",
+    "phpcq/plugin-api": "^1.0@dev",
     "phpcq/repository-definition": "^1.0@dev",
     "phpcq/schema": "^1.0@dev",
     "symfony/console": "^5.4.2",
