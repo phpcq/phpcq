@@ -11,6 +11,9 @@ use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Phpcq\RepositoryDefinition\Exception\ToolNotFoundException;
+use Phpcq\Runner\Console\Definition\ApplicationDefinition;
+use Phpcq\Runner\Console\Definition\CommandDefinition;
+use Phpcq\Runner\Console\Definition\ExecTaskDefinitionBuilder;
 use Phpcq\Runner\Environment;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException as PluginApiRuntimeException;
 use Phpcq\Runner\Exception\RuntimeException;
@@ -18,9 +21,13 @@ use Phpcq\Runner\Output\BufferedOutput;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\Runner\Task\SingleProcessTaskFactory;
 use Phpcq\Runner\Task\TaskFactory;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
+
+use function array_map;
 
 final class ExecCommand extends AbstractCommand
 {
@@ -124,6 +131,49 @@ final class ExecCommand extends AbstractCommand
         $taskOutput->release();
 
         return $exitCode;
+    }
+
+    public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        $this->prepare($input);
+
+        $installed     = $this->getInstalledRepository(true);
+        $plugins       = PluginRegistry::buildFromInstalledRepository($installed);
+        $projectConfig = $this->createProjectConfiguration(1);
+
+        $definitionBuilder = new ExecTaskDefinitionBuilder(
+            $projectConfig,
+            $plugins,
+            $installed,
+            $this->findPhpCli(),
+            $this->createTempDirectory()
+        );
+        $definition = $definitionBuilder->build();
+
+        if ($input->mustSuggestArgumentValuesFor('application')) {
+            $applicationNames = array_map(
+                static function (ApplicationDefinition $application): string {
+                    return $application->getName();
+                },
+                $definition->getApplications()
+            );
+
+            $suggestions->suggestValues($applicationNames);
+
+            return;
+        }
+
+        if ($input->mustSuggestArgumentValuesFor('args') && $input->getArgument('args') === []) {
+            $application = $definition->getApplication((string) $input->getArgument('application'));
+            $commandNames = array_map(
+                static function (CommandDefinition $command): string {
+                    return $command->getName();
+                },
+                $application->getCommands()
+            );
+
+            $suggestions->suggestValues($commandNames);
+        }
     }
 
     /** @param list<string> $arguments */
