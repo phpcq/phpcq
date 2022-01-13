@@ -34,7 +34,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
@@ -123,17 +122,13 @@ final class RunCommand extends AbstractCommand
     protected function doExecute(): int
     {
         // Stage 1: preparation.
-        $maxCores      = min($this->getCores(), (int)$this->input->getOption('threads'));
-        $artifactDir   = $this->config->getArtifactDir();
+        $maxCores      = min($this->getCores(), (int) $this->input->getOption('threads'));
+        $projectConfig = $this->createProjectConfiguration($maxCores);
+        $tempDirectory = $this->createTempDirectory();
         $fileSystem    = new Filesystem();
-        $projectConfig = new ProjectConfiguration(getcwd(), $this->config->getDirectories(), $artifactDir, $maxCores);
+        $installed     = $this->getInstalledRepository(true);
+        $outputPath    = $projectConfig->getArtifactOutputPath();
 
-        $tempDirectory = sys_get_temp_dir() . '/' . uniqid('phpcq-');
-        $fileSystem->mkdir($tempDirectory);
-
-        $installed = $this->getInstalledRepository(true);
-
-        $outputPath = $projectConfig->getArtifactOutputPath();
         $fileSystem->remove($outputPath);
         $fileSystem->mkdir($outputPath);
 
@@ -208,21 +203,6 @@ final class RunCommand extends AbstractCommand
         $scheduler  = new TaskScheduler($taskList, $threads, $report, $output, $fastFinish);
 
         return $scheduler->run() ? 0 : 1;
-    }
-
-    /** @psalm-return array{string, list<string>} */
-    private function findPhpCli(): array
-    {
-        $finder     = new PhpExecutableFinder();
-        $executable = $finder->find();
-
-        if (!is_string($executable)) {
-            throw new RuntimeException('PHP executable not found');
-        }
-        /** @psalm-var list<string> $arguments */
-        $arguments = $finder->findArguments();
-
-        return [$executable, $arguments];
     }
 
     private function handleTask(

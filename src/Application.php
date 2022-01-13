@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner;
 
+use Phpcq\Runner\Command\HelpCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\CompleteCommand;
 use Symfony\Component\Console\Command\DumpCompletionCommand;
-use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Command\ListCommand;
 use Phpcq\Runner\Command\ExecCommand;
 use Phpcq\Runner\Command\InstallCommand;
@@ -43,9 +43,9 @@ class Application extends BaseApplication
         ];
     }
 
-    public function getHelp()
+    public function getHelp(): string
     {
-        return sprintf(
+        $help = sprintf(
             <<<EOF
             _____  _                                _            _
             |  __ \| |                              | |          | |
@@ -61,11 +61,17 @@ class Application extends BaseApplication
                 Christian Schiffler <c.schiffler@cyberspectrum.de>
                 David Molineus <david.molineus@netzmacht.de>
 
-            %s <info>%s</info> build date: <info>%s</info>
+            %s <info>%s</info>
             EOF,
             $this->getName(),
-            $this->getVersion(),
-            \DateTime::createFromFormat('Y-m-d-H-i-s-T', '@release-date@')->format('Y-m-d H:i:s T')
+            $this->getVersion()
         );
+
+        $buildDate = \DateTimeImmutable::createFromFormat('Y-m-d-H-i-s-T', '@release-date@');
+        if ($buildDate instanceof \DateTimeImmutable) {
+            $help .= sprintf('build date: <info>%s</info>', $buildDate->format('Y-m-d H:i:s T'));
+        }
+
+        return $help;
     }
 }
