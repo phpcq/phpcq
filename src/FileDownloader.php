@@ -102,7 +102,7 @@ class FileDownloader
                     throw new RuntimeException('Failed to download: ' . $url);
                 }
 
-                file_put_contents($cacheFile, $response->getBody());
+                file_put_contents($cacheFile, $response->getBody()->getContents());
             }
         }
 

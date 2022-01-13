@@ -33,5 +33,5 @@ trait OptionBuilderTestTrait
 
     abstract public function testValidatesValue(): void;
 
-    abstract protected function createInstance(array $validators = []): ConfigOptionBuilderInterface;
+    abstract protected function createInstance(): ConfigOptionBuilderInterface;
 }

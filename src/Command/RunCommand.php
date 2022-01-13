@@ -28,6 +28,8 @@ use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\Tasklist;
 use Phpcq\Runner\Task\TaskScheduler;
+use Symfony\Component\Console\Completion\CompletionInput;
+use Symfony\Component\Console\Completion\CompletionSuggestions;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -36,10 +38,12 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Throwable;
 
+use function array_keys;
 use function assert;
 use function getcwd;
 use function is_string;
 use function min;
+use function sort;
 
 final class RunCommand extends AbstractCommand
 {
@@ -135,7 +139,7 @@ final class RunCommand extends AbstractCommand
 
         $plugins = PluginRegistry::buildFromInstalledRepository($installed);
         $taskList = new Tasklist();
-        $taskName = $this->input->getArgument('task');
+        $taskName = $this->input->getArgument('task') ?: 'default';
         assert(is_string($taskName));
 
         $this->handleTask(
@@ -163,6 +167,38 @@ final class RunCommand extends AbstractCommand
         $fileSystem->remove($tempDirectory);
 
         return $exitCode;
+    }
+
+    protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
+    {
+        if ($input->mustSuggestArgumentValuesFor('task')) {
+            $tasks = array_keys($this->config->getTaskConfig());
+            sort($tasks);
+            $suggestions->suggestValues($tasks);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('output')) {
+            $suggestions->suggestValues(['github-action', 'default']);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('report')) {
+            $reports = array_keys(self::REPORT_FORMATS);
+            sort($reports);
+            $suggestions->suggestValues($reports);
+        }
+
+        if ($input->mustSuggestOptionValuesFor('threshold')) {
+            $suggestions->suggestValues(
+                [
+                    TaskReportInterface::SEVERITY_NONE,
+                    TaskReportInterface::SEVERITY_INFO,
+                    TaskReportInterface::SEVERITY_MINOR,
+                    TaskReportInterface::SEVERITY_MARGINAL,
+                    TaskReportInterface::SEVERITY_MAJOR,
+                    TaskReportInterface::SEVERITY_FATAL
+                ]
+            );
+        }
     }
 
     private function runTasks(Tasklist $taskList, Report $report, OutputInterface $output): int

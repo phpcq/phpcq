@@ -57,7 +57,7 @@ phpcq:
 
 tasks:
   fix:
-    - composer-normalize
+    - composer-normalize-fix
     - phpcbf
   verify:
     - composer-require-checker
@@ -138,3 +138,8 @@ tasks:
     config:
       <<: *phpcs-config
       fix: true
+
+  composer-normalize-fix:
+    plugin: composer-normalize
+    config:
+      dry_run: false
