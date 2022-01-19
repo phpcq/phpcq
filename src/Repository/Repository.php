@@ -141,7 +141,8 @@ class Repository implements RepositoryInterface
 
         foreach ($this->repository->getPlugin($name) as $versionHunk) {
             $version = $versionHunk->getVersion();
-            if (!$constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {
+            $normalized = $this->parser->normalize($version);
+            if (!$constraint->matches(new Constraint('=', $normalized))) {
                 continue;
             }
 
@@ -149,7 +150,7 @@ class Repository implements RepositoryInterface
                 continue;
             }
 
-            $results[$version] = $versionHunk;
+            $results[$normalized] = $versionHunk;
         }
 
         krsort($results);
@@ -169,7 +170,8 @@ class Repository implements RepositoryInterface
 
         foreach ($this->repository->getTool($name) as $versionHunk) {
             $version = $versionHunk->getVersion();
-            if (!$constraint->matches(new Constraint('=', $this->parser->normalize($version)))) {
+            $normalized = $this->parser->normalize($version);
+            if (!$constraint->matches(new Constraint('=', $normalized))) {
                 continue;
             }
 
@@ -177,7 +179,7 @@ class Repository implements RepositoryInterface
                 continue;
             }
 
-            $results[$version] = $versionHunk;
+            $results[$normalized] = $versionHunk;
         }
 
         krsort($results, SORT_NATURAL);
