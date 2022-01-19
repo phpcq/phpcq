@@ -6,5 +6,4 @@ namespace Phpcq\Runner\Exception;
 
 interface Exception
 {
-
 }
