@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Test\Runner\Repository;
 
 use ArrayIterator;
+use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
+use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginRequirements;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
@@ -116,5 +118,52 @@ class RepositoryTest extends TestCase
         $this->assertTrue($repository->hasPluginVersion('supertool', '^1.0.0'));
         $this->assertFalse($repository->hasPluginVersion('supertool', '2.0.1'));
         $this->assertFalse($repository->hasPluginVersion('supertool', '^2.0.1'));
+    }
+
+    public function testGetLatestPluginVersion(): void
+    {
+        $repository = new Repository();
+
+        $pluginRequirements = $this->createMock(PluginRequirements::class);
+        $pluginRequirements->method('getPhpRequirements')->willReturn($this->createMock(VersionRequirementList::class));
+
+        $version1 = $this->createMock(PluginVersionInterface::class);
+        $version1->method('getVersion')->willReturn('v1.0.0');
+        $version1->method('getName')->willReturn('supertool');
+        $version1->method('getRequirements')->willReturn($pluginRequirements);
+
+        $version2 = $this->createMock(PluginVersionInterface::class);
+        $version2->method('getVersion')->willReturn('1.0.1');
+        $version2->method('getName')->willReturn('supertool');
+        $version2->method('getRequirements')->willReturn($pluginRequirements);
+
+        $repository->addPluginVersion($version1);
+        $repository->addPluginVersion($version2);
+
+        $this->assertEquals($repository->getPluginVersion('supertool', '^1.0')->getVersion(), '1.0.1');
+    }
+
+
+    public function testGetLatestToolVersion(): void
+    {
+        $repository = new Repository();
+
+        $pluginRequirements = $this->createMock(ToolRequirements::class);
+        $pluginRequirements->method('getPhpRequirements')->willReturn($this->createMock(VersionRequirementList::class));
+
+        $version1 = $this->createMock(ToolVersionInterface::class);
+        $version1->method('getVersion')->willReturn('v1.0.0');
+        $version1->method('getName')->willReturn('supertool');
+        $version1->method('getRequirements')->willReturn($pluginRequirements);
+
+        $version2 = $this->createMock(ToolVersionInterface::class);
+        $version2->method('getVersion')->willReturn('1.0.1');
+        $version2->method('getName')->willReturn('supertool');
+        $version2->method('getRequirements')->willReturn($pluginRequirements);
+
+        $repository->addToolVersion($version1);
+        $repository->addToolVersion($version2);
+
+        $this->assertEquals($repository->getToolVersion('supertool', '^1.0')->getVersion(), '1.0.1');
     }
 }

@@ -347,10 +347,10 @@ final class UpdateExecutor
     private function deleteToolVersion(ToolVersionInterface $old): void
     {
         if ($url = $old->getPharUrl()) {
-            $this->deleteFile($this->installedPluginPath . '/' . $url);
+            $this->deleteFile($url);
         }
         if ($url = $old->getSignatureUrl()) {
-            $this->deleteFile($this->installedPluginPath . '/' . $url);
+            $this->deleteFile($url);
         }
     }
 
