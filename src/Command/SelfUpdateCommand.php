@@ -113,12 +113,6 @@ final class SelfUpdateCommand extends AbstractCommand
         $current          = $this->downloader->downloadFile($baseUri . '/current.txt', '', true);
         $availableRelease = Release::fromString($current, 'phpcq ');
 
-        if ($installedRelease->equals($availableRelease)) {
-            $this->output->writeln('Already version "' . $current . '" installed');
-
-            return 0;
-        }
-
         if (! $this->shouldUpdate($installedRelease, $availableRelease)) {
             return 0;
         }
@@ -198,6 +192,12 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         if ($this->input->getOption('force')) {
             return true;
+        }
+
+        if ($installedRelease->equals($availableRelease)) {
+            $this->output->writeln('Already version "' . $installedRelease->getVersion() . '" installed');
+
+            return false;
         }
 
         $versionParser    = new VersionParser();
