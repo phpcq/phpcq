@@ -124,7 +124,6 @@ final class SelfUpdateCommand extends AbstractCommand
 
         $this->verifySignature($baseUri, $downloadedPhar);
 
-        $this->output->writeln(Phar::running(false));
         $this->filesystem->copy($downloadedPhar, Phar::running(false));
         $this->cleanup($downloadedPhar);
 
