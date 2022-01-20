@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\Runner\Downloader\FileDownloader;
+use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\RepositoryDefinition\JsonFileLoaderInterface;
 
 use function dirname;
@@ -18,13 +18,13 @@ use function dirname;
  */
 final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
 {
-    /** @var FileDownloader */
+    /** @var DownloaderInterface */
     private $downloader;
 
     /** @var bool */
     private $force;
 
-    public function __construct(FileDownloader $downloader, bool $force = false)
+    public function __construct(DownloaderInterface $downloader, bool $force = false)
     {
         $this->downloader = $downloader;
         $this->force      = $force;

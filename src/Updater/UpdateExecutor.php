@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
+use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
@@ -42,7 +42,7 @@ use function sprintf;
 final class UpdateExecutor
 {
     /**
-     * @var FileDownloader
+     * @var DownloaderInterface
      */
     private $downloader;
 
@@ -67,7 +67,7 @@ final class UpdateExecutor
     private $filesystem;
 
     public function __construct(
-        FileDownloader $downloader,
+        DownloaderInterface $downloader,
         SignatureVerifier $verifier,
         string $pluginPath,
         OutputInterface $output
