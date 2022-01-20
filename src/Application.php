@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner;
 
+use Phar;
 use Phpcq\Runner\Command\HelpCommand;
+use Phpcq\Runner\Command\SelfUpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\CompleteCommand;
 use Symfony\Component\Console\Command\DumpCompletionCommand;
@@ -29,7 +31,7 @@ class Application extends BaseApplication
 
     protected function getDefaultCommands(): array
     {
-        return [
+        $commands = [
             new HelpCommand(),
             new ListCommand(),
             new CompleteCommand(),
@@ -39,8 +41,14 @@ class Application extends BaseApplication
             new InstallCommand(),
             new ValidateCommand(),
             new PlatformInformationCommand(),
-            new ExecCommand()
+            new ExecCommand(),
         ];
+
+        if (Phar::running() !== '') {
+            $commands[] = new SelfUpdateCommand();
+        }
+
+        return $commands;
     }
 
     public function getHelp(): string
@@ -67,7 +75,7 @@ class Application extends BaseApplication
             $this->getVersion()
         );
 
-        $buildDate = \DateTimeImmutable::createFromFormat('Y-m-d-H-i-s-T', '@release-date@');
+        $buildDate = \DateTimeImmutable::createFromFormat(Release::DATE_FORMAT, '@release-date@');
         if ($buildDate instanceof \DateTimeImmutable) {
             $help .= sprintf('build date: <info>%s</info>', $buildDate->format('Y-m-d H:i:s T'));
         }
