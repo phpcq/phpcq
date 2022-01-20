@@ -6,7 +6,7 @@ namespace Phpcq\Runner\Updater;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;

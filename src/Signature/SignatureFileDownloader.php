@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Signature;
 
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\FileDownloaderInterface;
 use Phpcq\GnuPG\Exception\DownloadFailureException;
 use Symfony\Component\Console\Output\OutputInterface;

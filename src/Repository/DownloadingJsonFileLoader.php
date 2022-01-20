@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\RepositoryDefinition\JsonFileLoaderInterface;
 
 use function dirname;

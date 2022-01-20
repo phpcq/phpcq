@@ -11,7 +11,7 @@ use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Release;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;

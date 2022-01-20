@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Test\Runner\Repository;
 
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 use Phpcq\Runner\Repository\DownloadingJsonFileLoader;
 use Phpcq\Runner\Repository\JsonRepositoryLoader;

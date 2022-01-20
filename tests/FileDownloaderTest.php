@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Test;
 
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \Phpcq\Runner\FileDownloader
+ * @covers \Phpcq\Runner\Downloader\FileDownloader
  */
 class FileDownloaderTest extends TestCase
 {
