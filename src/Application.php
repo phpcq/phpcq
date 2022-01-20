@@ -46,8 +46,9 @@ class Application extends BaseApplication
             new ExecCommand(),
         ];
 
-        if (Phar::running() !== '') {
-            $commands[] = new SelfUpdateCommand();
+        $pharFile = Phar::running(false);
+        if ($pharFile !== '') {
+            $commands[] = new SelfUpdateCommand($pharFile);
         }
 
         return $commands;
@@ -78,7 +79,7 @@ class Application extends BaseApplication
             $this->getVersion()
         );
 
-        $buildDate = \DateTimeImmutable::createFromFormat(Release::DATE_FORMAT, '@release-date@');
+        $buildDate = \DateTimeImmutable::createFromFormat('Y-m-d-H-i-s-T', '@release-date@');
         if ($buildDate instanceof \DateTimeImmutable) {
             $help .= sprintf('build date: <info>%s</info>', $buildDate->format('Y-m-d H:i:s T'));
         }

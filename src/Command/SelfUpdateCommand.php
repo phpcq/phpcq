@@ -4,21 +4,20 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
-use Composer\Semver\VersionParser;
-use Phar;
+use Composer\Semver\Comparator;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
+use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Downloader\FileDownloader;
-use Phpcq\Runner\Release;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function assert;
@@ -27,20 +26,22 @@ use function is_bool;
 use function is_dir;
 use function is_string;
 use function sprintf;
-use function strnatcmp;
 use function sys_get_temp_dir;
 use function tempnam;
 
 final class SelfUpdateCommand extends AbstractCommand
 {
+    /** @var string */
+    private $pharFile;
+
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var FileDownloader
+     * @var DownloaderInterface
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $downloader;
+    private $downloader;
 
     /**
      * Only valid when examined from within doExecute().
@@ -49,7 +50,21 @@ final class SelfUpdateCommand extends AbstractCommand
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $filesystem;
+    private $filesystem;
+
+    /**
+     * @param string $pharFile The location of the execed phar file.
+     */
+    public function __construct(string $pharFile, ?DownloaderInterface $downloader = null)
+    {
+        parent::__construct();
+
+        $this->pharFile = $pharFile;
+
+        if ($downloader !== null) {
+            $this->downloader = $downloader;
+        }
+    }
 
     protected function configure(): void
     {
@@ -103,17 +118,26 @@ final class SelfUpdateCommand extends AbstractCommand
         );
     }
 
+    protected function prepare(InputInterface $input): void
+    {
+        parent::prepare($input);
+
+        /** @psalm-suppress DocblockTypeContradiction */
+        if ($this->downloader === null) {
+            $cachePath        = $this->getCachePath();
+            $this->downloader = new FileDownloader($cachePath, $this->config->getAuth());
+        }
+
+        $this->filesystem = new Filesystem();
+    }
+
     protected function doExecute(): int
     {
-        $cachePath        = $this->getCachePath();
-        $this->downloader = new FileDownloader($cachePath, $this->config->getAuth());
-        $this->filesystem = new Filesystem();
         $baseUri          = $this->getBaseUri();
-        $installedRelease = $this->getInstalledRelease();
-        $current          = $this->downloader->downloadFile($baseUri . '/current.txt', '', true);
-        $availableRelease = Release::fromString($current, 'phpcq ');
+        $installedVersion = $this->getInstalledVersion();
+        $availableVersion = substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6);
 
-        if (! $this->shouldUpdate($installedRelease, $availableRelease)) {
+        if (! $this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
         }
 
@@ -124,33 +148,10 @@ final class SelfUpdateCommand extends AbstractCommand
 
         $this->verifySignature($baseUri, $downloadedPhar);
 
-        $this->filesystem->copy($downloadedPhar, Phar::running(false));
+        $this->filesystem->copy($downloadedPhar, $this->pharFile);
         $this->cleanup($downloadedPhar);
 
         return 0;
-    }
-
-    private function createSignatureVerifier(FileDownloader $downloader): SignatureVerifier
-    {
-        $gnupgPath = $this->phpcqPath . '/gnupg';
-        if (! is_dir($gnupgPath)) {
-            mkdir($gnupgPath, 0777, true);
-        }
-        $questionHelper = $this->getHelper('question');
-        assert($questionHelper instanceof QuestionHelper);
-
-        $untrustedKeyStrategy = new InteractiveQuestionKeyTrustStrategy(
-            new TrustedKeysStrategy($this->config->getTrustedKeys()),
-            $this->input,
-            $this->output,
-            $questionHelper
-        );
-
-        return new SignatureVerifier(
-            (new GnuPGFactory(sys_get_temp_dir()))->create($gnupgPath),
-            new KeyDownloader(new SignatureFileDownloader($downloader, $this->output)),
-            $untrustedKeyStrategy
-        );
     }
 
     private function getCachePath(): string
@@ -177,81 +178,50 @@ final class SelfUpdateCommand extends AbstractCommand
         return $baseUri . '/' . $trunk;
     }
 
-    private function getInstalledRelease(): Release
+    private function getInstalledVersion(): string
     {
         $application = $this->getApplication();
         if (null === $application) {
             throw new RuntimeException('Application is not available');
         }
 
-        return Release::fromString($application->getVersion());
+        return $application->getVersion();
     }
 
-    private function shouldUpdate(Release $installedRelease, Release $availableRelease): bool
+    private function shouldUpdate(string $installedVersion, string $availableVersion): bool
     {
-        if ($this->input->getOption('force')) {
-            return true;
+        $dryRun = $this->input->getOption('dry-run');
+        assert(is_bool($dryRun));
+        $forced = $this->input->getOption('force');
+        assert(is_bool($forced));
+
+        if ($installedVersion === $availableVersion) {
+            $this->output->writeln('Version <info>"' . $installedVersion . '"</info> already installed.');
+
+            return !$dryRun && $forced;
         }
 
-        if ($installedRelease->equals($availableRelease)) {
-            $this->output->writeln('Already version "' . $installedRelease->getVersion() . '" installed');
-
-            return false;
-        }
-
-        $versionParser    = new VersionParser();
-        $installedVersion = $versionParser->normalize($installedRelease->getVersion());
-        $availableVersion = $versionParser->normalize($availableRelease->getVersion());
-
-        if (
-            strnatcmp($installedVersion, $availableVersion) !== 0
-            || $installedRelease->getBuildDate() <= $availableRelease->getBuildDate()
-        ) {
-            return false;
-        }
-
-        if ($this->input->getOption('no-interaction')) {
-            $this->output->writeln(
-                'Installed version is older than available version. Use <info>--force</info> option or use interaction.'
-            );
-            return false;
-        }
-
-        $helper = $this->getHelper('question');
-        assert($helper instanceof QuestionHelper);
-
-        $answer = $helper->ask(
-            $this->input,
-            $this->output,
-            new ConfirmationQuestion(
-                sprintf(
-                    'Installed version has newer build date <info>%s</info> than available <info>%s</info>.'
-                    . ' Really update <info>(y/n)</info>? ',
-                    $installedRelease->getBuildDate()->format('Y-m-d H:i:s T'),
-                    $availableRelease->getBuildDate()->format('Y-m-d H:i:s T')
-                ),
-                false
-            )
-        );
-        assert(is_bool($answer));
-
-        if (! $answer) {
-            return false;
-        }
-
-        if ($this->input->getOption('dry-run')) {
+        if (Comparator::greaterThanOrEqualTo($installedVersion, $availableVersion)) {
             $this->output->writeln(
                 sprintf(
-                    'Version <info>"%s"</info> installed. Found latest <info>"%s"</info>.',
-                    $installedRelease->getVersion(),
-                    $availableRelease->getVersion()
+                    'Installed version <info>"%s"</info> is newer than available version <info>"%s"</info>.',
+                    $installedVersion,
+                    $availableVersion
                 )
             );
 
-            return false;
+            return !$dryRun && $forced;
         }
 
-        return true;
+        $this->output->writeln(
+            sprintf(
+                'Version <info>"%s"</info> installed. New version <info>"%s"</info> available.',
+                $installedVersion,
+                $availableVersion
+            )
+        );
+
+        return !$dryRun;
     }
 
     private function verifySignature(string $baseUri, string $downloadedPhar): void
@@ -267,7 +237,7 @@ final class SelfUpdateCommand extends AbstractCommand
             throw new RuntimeException('Unable to download signature file', 1, $exception);
         }
 
-        $signatureVerifier = $this->createSignatureVerifier($this->downloader);
+        $signatureVerifier = $this->createSignatureVerifier();
         $result            = $signatureVerifier->verify(file_get_contents($downloadedPhar), $signature);
 
         if (! $result->isValid()) {
@@ -275,6 +245,29 @@ final class SelfUpdateCommand extends AbstractCommand
 
             throw new RuntimeException('Signature verification failed.');
         }
+    }
+
+    private function createSignatureVerifier(): SignatureVerifier
+    {
+        $gnupgPath = $this->phpcqPath . '/gnupg';
+        if (! is_dir($gnupgPath)) {
+            $this->filesystem->mkdir($gnupgPath);
+        }
+        $questionHelper = $this->getHelper('question');
+        assert($questionHelper instanceof QuestionHelper);
+
+        $untrustedKeyStrategy = new InteractiveQuestionKeyTrustStrategy(
+            new TrustedKeysStrategy($this->config->getTrustedKeys()),
+            $this->input,
+            $this->output,
+            $questionHelper
+        );
+
+        return new SignatureVerifier(
+            (new GnuPGFactory(sys_get_temp_dir()))->create($gnupgPath),
+            new KeyDownloader(new SignatureFileDownloader($this->downloader, $this->output)),
+            $untrustedKeyStrategy
+        );
     }
 
     private function cleanup(string $downloadedPhar): void
