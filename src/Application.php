@@ -18,6 +18,8 @@ use Phpcq\Runner\Command\RunCommand;
 use Phpcq\Runner\Command\UpdateCommand;
 use Phpcq\Runner\Command\ValidateCommand;
 
+use function date;
+
 class Application extends BaseApplication
 {
     /**
@@ -65,12 +67,13 @@ class Application extends BaseApplication
                          |_|           |_|
             https://github.com/phpcq/phpcq/
 
-            Copyright (c) 2014-2020
+            Copyright (c) 2014-%s
                 Christian Schiffler <c.schiffler@cyberspectrum.de>
                 David Molineus <david.molineus@netzmacht.de>
 
             %s <info>%s</info>
             EOF,
+            date('Y'),
             $this->getName(),
             $this->getVersion()
         );
