@@ -81,10 +81,10 @@ final class SelfUpdateCommand extends AbstractCommand
         );
 
         $this->addOption(
-            'trunk',
+            'channel',
             null,
             InputOption::VALUE_REQUIRED,
-            'The trunk of the release. Right now only unstable is available',
+            'The channel of the release. Right now only unstable is available',
             'unstable'
         );
 
@@ -172,10 +172,10 @@ final class SelfUpdateCommand extends AbstractCommand
         $baseUri = $this->input->getOption('base-uri');
         assert(is_string($baseUri));
 
-        $trunk = $this->input->getOption('trunk');
-        assert(is_string($trunk));
+        $channel = $this->input->getOption('channel');
+        assert(is_string($channel));
 
-        return $baseUri . '/' . $trunk;
+        return $baseUri . '/' . $channel;
     }
 
     private function getInstalledVersion(): string
