@@ -85,14 +85,14 @@ final class SelfUpdateCommand extends AbstractCommand
             'unsigned',
             null,
             InputOption::VALUE_NONE,
-            'If set there is no signature checking'
+            'Disable signature checking'
         );
 
         $this->addOption(
             'dry-run',
             null,
             InputOption::VALUE_NONE,
-            'If set the update is not performed but only checked for a new release'
+            'Do not perform update, only check for a new release'
         );
 
         $this->addOption(
@@ -225,7 +225,7 @@ final class SelfUpdateCommand extends AbstractCommand
             $this->output,
             new ConfirmationQuestion(
                 sprintf(
-                    'Installed version has newer built date <info>%s</info> than available <info>%s</info>.'
+                    'Installed version has newer build date <info>%s</info> than available <info>%s</info>.'
                     . ' Really update <info>(y/n)</info>? ',
                     $installedRelease->getBuildDate()->format('Y-m-d H:i:s T'),
                     $availableRelease->getBuildDate()->format('Y-m-d H:i:s T')
