@@ -185,10 +185,10 @@ final class SelfUpdateCommandTest extends TestCase
         $options = array_merge(
             [
                 'home-dir' => sys_get_temp_dir() . '/' . uniqid('phpcq-'),
-                'cache'  => (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq',
-                'config' => realpath(__DIR__ . '/../fixtures/phpcq-demo.yaml'),
+                'cache'    => (getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq',
+                'config'   => realpath(__DIR__ . '/../fixtures/phpcq-demo.yaml'),
                 'base-uri' => 'https://phpcq.github.io/distrib/phpcq',
-                'trunk' => 'unstable'
+                'channel'  => 'unstable'
             ],
             $options
         );

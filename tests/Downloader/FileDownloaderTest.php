@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Runner\Test;
+namespace Phpcq\Runner\Test\Downloader;
 
 use Phpcq\Runner\Downloader\FileDownloader;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
