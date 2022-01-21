@@ -16,7 +16,7 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  *   directories?: list<string>,
  *   plugin?: string,
  *   config: array<string, mixed>,
- *   enrichers?: array<string, array<string,mixed>>
+ *   uses?: array<string, array<string,mixed>>
  * }
  * @psalm-type TRepository = array{
  *   type: string,

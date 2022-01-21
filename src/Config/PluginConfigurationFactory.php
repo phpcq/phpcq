@@ -50,23 +50,23 @@ final class PluginConfigurationFactory
         }
 
         $pluginConfig = $taskConfig['config'] ?? [];
-        $enrichers    = $taskConfig['enrichers'] ?? [];
+        $uses         = $taskConfig['uses'] ?? [];
 
         $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
         $plugin->describeConfiguration($configOptionsBuilder);
 
-        return $this->createConfiguration($plugin, $environment, $pluginConfig, $enrichers);
+        return $this->createConfiguration($plugin, $environment, $pluginConfig, $uses);
     }
 
     /**
      * @psalm-param array<string, mixed> $pluginConfig
-     * @psalm-param array<string, array<string,mixed>> $enrichers
+     * @psalm-param array<string, array<string,mixed>> $uses
      */
     private function createConfiguration(
         ConfigurationPluginInterface $plugin,
         Environment $environment,
         array $pluginConfig,
-        array $enrichers = []
+        array $uses = []
     ): PluginConfiguration {
         $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
         $plugin->describeConfiguration($configOptionsBuilder);
@@ -77,7 +77,7 @@ final class PluginConfigurationFactory
             ];
         }
 
-        foreach ($enrichers as $enricherName => $enricherConfig) {
+        foreach ($uses as $enricherName => $enricherConfig) {
             $enricher = $this->plugins->getPluginByName($enricherName);
             if (! $enricher instanceof EnricherPluginInterface) {
                 throw new RuntimeException('Bad configuration. Plugin "' . $enricherName . '" is not an enricher');
