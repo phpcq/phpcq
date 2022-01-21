@@ -60,7 +60,7 @@ final class PluginConfigurationFactory
 
     /**
      * @psalm-param array<string, mixed> $pluginConfig
-     * @psalm-param array<string, array<string,mixed>> $uses
+     * @psalm-param array<string, array<string,mixed>|null> $uses
      */
     private function createConfiguration(
         ConfigurationPluginInterface $plugin,
@@ -83,13 +83,15 @@ final class PluginConfigurationFactory
                 throw new RuntimeException('Bad configuration. Plugin "' . $enricherName . '" is not an enricher');
             }
 
+            $installedVersion    = $this->installedRepository->getPlugin($enricherName)->getPluginVersion();
             $enricherEnvironment = $environment->withInstalledDir(
-                dirname($this->installedRepository->getPlugin($enricherName)->getPluginVersion()->getFilePath())
+                dirname($installedVersion->getFilePath())
             );
 
-            $enricherConfig = $this->createConfiguration($enricher, $environment, $enricherConfig);
+            $enricherConfig = $this->createConfiguration($enricher, $environment, $enricherConfig ?? []);
             $pluginConfig   = $enricher->enrich(
                 $plugin->getName(),
+                $installedVersion->getVersion(),
                 $pluginConfig,
                 $enricherConfig,
                 $enricherEnvironment

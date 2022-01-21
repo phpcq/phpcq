@@ -16,6 +16,8 @@ use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Task\SingleProcessTaskFactory;
 use Phpcq\Runner\Task\TaskFactory;
 
+use function dirname;
+
 final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterface
 {
     /** @var ProjectConfiguration */
@@ -99,6 +101,8 @@ final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterf
 
     private function createEnvironment(ExecPluginInterface $plugin): Environment
     {
+        $installed = $this->installed->getPlugin($plugin->getName());
+
         return new Environment(
             $this->projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
@@ -107,7 +111,8 @@ final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterf
                 ...$this->phpCli
             )),
             $this->tempDirectory,
-            1
+            1,
+            dirname($installed->getPluginVersion()->getFilePath())
         );
     }
 }

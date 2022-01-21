@@ -95,17 +95,19 @@ final class ExecCommand extends AbstractCommand
         assert(is_string($pluginName));
 
         $instance = $plugins->getPluginByName($pluginName);
+        $installedPlugin = $installed->getPlugin($instance->getName());
         /** @psalm-var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
         $environment = new Environment(
             $projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
                 $pluginName,
-                $installed->getPlugin($instance->getName()),
+                $installedPlugin,
                 ...$this->findPhpCli()
             )),
             $tempDirectory,
-            1
+            1,
+            dirname($installedPlugin->getPluginVersion()->getFilePath())
         );
 
         $task = $this->createTask($instance, $applicationName, $toolArguments, $environment);
