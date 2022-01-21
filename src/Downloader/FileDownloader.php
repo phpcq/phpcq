@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Runner;
+namespace Phpcq\Runner\Downloader;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -24,7 +24,7 @@ use function strpos;
  *   type: string,
  *   value: string,
  * } */
-class FileDownloader
+class FileDownloader implements DownloaderInterface
 {
     /**
      * @var array

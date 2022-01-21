@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Signature;
 
+use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\FileDownloader;
 use Phpcq\GnuPG\Downloader\FileDownloaderInterface;
 use Phpcq\GnuPG\Exception\DownloadFailureException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class SignatureFileDownloader implements FileDownloaderInterface
 {
-    /** @var FileDownloader */
+    /** @var DownloaderInterface */
     private $fileDownloader;
 
     /** @var OutputInterface */
     private $output;
 
-    public function __construct(FileDownloader $fileDownloader, OutputInterface $output)
+    public function __construct(DownloaderInterface $fileDownloader, OutputInterface $output)
     {
         $this->fileDownloader = $fileDownloader;
         $this->output         = $output;

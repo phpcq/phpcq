@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\DownloaderInterface;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\AlwaysStrategy;
@@ -23,7 +24,6 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputOption;
 
 use function array_filter;
-use function dirname;
 use function file_exists;
 use function is_dir;
 use function mkdir;
@@ -61,7 +61,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var FileDownloader
+     * @var DownloaderInterface
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */

@@ -6,7 +6,7 @@ namespace Phpcq\Runner\Test\Signature;
 
 use Phpcq\GnuPG\Exception\DownloadFailureException;
 use Phpcq\Runner\Exception\RuntimeException;
-use Phpcq\Runner\FileDownloader;
+use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner;
 
+use Phar;
 use Phpcq\Runner\Command\HelpCommand;
+use Phpcq\Runner\Command\SelfUpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\CompleteCommand;
 use Symfony\Component\Console\Command\DumpCompletionCommand;
@@ -15,6 +17,8 @@ use Phpcq\Runner\Command\PlatformInformationCommand;
 use Phpcq\Runner\Command\RunCommand;
 use Phpcq\Runner\Command\UpdateCommand;
 use Phpcq\Runner\Command\ValidateCommand;
+
+use function date;
 
 class Application extends BaseApplication
 {
@@ -29,7 +33,7 @@ class Application extends BaseApplication
 
     protected function getDefaultCommands(): array
     {
-        return [
+        $commands = [
             new HelpCommand(),
             new ListCommand(),
             new CompleteCommand(),
@@ -39,8 +43,15 @@ class Application extends BaseApplication
             new InstallCommand(),
             new ValidateCommand(),
             new PlatformInformationCommand(),
-            new ExecCommand()
+            new ExecCommand(),
         ];
+
+        $pharFile = Phar::running(false);
+        if ($pharFile !== '') {
+            $commands[] = new SelfUpdateCommand($pharFile);
+        }
+
+        return $commands;
     }
 
     public function getHelp(): string
@@ -57,12 +68,13 @@ class Application extends BaseApplication
                          |_|           |_|
             https://github.com/phpcq/phpcq/
 
-            Copyright (c) 2014-2020
+            Copyright (c) 2014-%s
                 Christian Schiffler <c.schiffler@cyberspectrum.de>
                 David Molineus <david.molineus@netzmacht.de>
 
             %s <info>%s</info>
             EOF,
+            date('Y'),
             $this->getName(),
             $this->getVersion()
         );
