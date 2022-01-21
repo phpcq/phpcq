@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Config;
 
+use Phpcq\PluginApi\Version10\Configuration\OptionsInterface;
 use Phpcq\Runner\Exception\InvalidArgumentException;
 
 /**
@@ -34,10 +35,10 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  */
 final class PhpcqConfiguration
 {
-    /** @var Options */
+    /** @var OptionsInterface */
     private $options;
 
-    public function __construct(Options $options)
+    public function __construct(OptionsInterface $options)
     {
         $this->options = $options;
     }
