@@ -122,8 +122,8 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         parent::prepare($input);
 
-        /** @psalm-suppress DocblockTypeContradiction */
-        if ($this->downloader === null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->downloader)) {
             $cachePath        = $this->getCachePath();
             $this->downloader = new FileDownloader($cachePath, $this->config->getAuth());
         }
