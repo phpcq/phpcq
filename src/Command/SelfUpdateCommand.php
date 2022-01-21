@@ -135,7 +135,7 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
-        $availableVersion = substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6);
+        $availableVersion = trim(substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6));
 
         if (! $this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
