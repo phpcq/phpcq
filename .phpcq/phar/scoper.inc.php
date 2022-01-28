@@ -33,4 +33,13 @@ return [
         '\Symfony\Polyfill\*',
     ],
     'files-whitelist' => $symfonyPolyfill,
+    'patchers' => [
+        static function (string $filePath, string $prefix, string $content): string {
+            if ($filePath === 'vendor/phpcq/gnupg/src/GnuPGFactory.php') {
+                return str_replace('use ' . $prefix . '\Gnupg;', 'use Gnupg;', $content);
+            }
+
+            return $content;
+        }
+    ]
 ];
