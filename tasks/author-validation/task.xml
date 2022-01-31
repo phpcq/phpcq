@@ -10,12 +10,19 @@
     </target>
     <target name="author-validation" depends="-check-author-validation.is-available" if="phpcq.task.author-validation.bin">
         <script language="javascript"><![CDATA[
+            var excluded = ' ' + project.getProperty('author-validation.excluded')
+                    .split(' ')
+                    .filter(function(s) { return s.trim().length>0; })
+                    .map(function(s) { return '--exclude=' + s.trim(); })
+                    .join(' ');
+
             project.setProperty(
                 'author-validation.arguments',
                 ((project.getProperty('author-validation.php-files') == 'true') ? ' --php-files' : '') +
                 ((project.getProperty('author-validation.composer')  == 'true') ? ' --composer'  : '') +
                 ((project.getProperty('author-validation.bower')     == 'true') ? ' --bower'     : '') +
-                ((project.getProperty('author-validation.packages')  == 'true') ? ' --packages'  : '')
+                ((project.getProperty('author-validation.packages')  == 'true') ? ' --packages'  : '') +
+                ((excluded.length>0                                  == true)   ? excluded       : '')
             );
         ]]></script>
         <exec dir="${basedir}" executable="${phpcq.php-cli.bin}" failonerror="true" taskname="author-validation">
