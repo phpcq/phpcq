@@ -24,6 +24,7 @@ final class TaskFactoryTest extends TestCase
         $tool->method('getName')->willReturn('task-name');
 
         $factory = new TaskFactory(
+            'test',
             new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
@@ -41,6 +42,7 @@ final class TaskFactoryTest extends TestCase
         $tool->method('getName')->willReturn('phar-name');
 
         $factory = new TaskFactory(
+            'test',
             new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
@@ -62,6 +64,7 @@ final class TaskFactoryTest extends TestCase
         $tool->method('getName')->willReturn('task-name');
 
         $factory = new TaskFactory(
+            'task-name',
             new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']

@@ -221,6 +221,7 @@ final class RunCommand extends AbstractCommand
         $environment = new Environment(
             $projectConfig,
             new TaskFactory(
+                $taskName,
                 $installed->getPlugin($plugin->getName()),
                 ...$this->findPhpCli()
             ),
