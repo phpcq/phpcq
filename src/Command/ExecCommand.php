@@ -100,6 +100,7 @@ final class ExecCommand extends AbstractCommand
         $environment = new Environment(
             $projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
+                $pluginName,
                 $installed->getPlugin($instance->getName()),
                 ...$this->findPhpCli()
             )),

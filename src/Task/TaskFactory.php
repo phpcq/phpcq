@@ -13,11 +13,14 @@ use Phpcq\Runner\Repository\InstalledPlugin;
 class TaskFactory implements TaskFactoryInterface
 {
     /**
-     * The installed repository.
+     * The installed plugin.
      *
      * @var InstalledPlugin
      */
     private $installed;
+
+    /** @var string */
+    private $taskName;
 
     /** @var string */
     private $phpCliBinary;
@@ -33,10 +36,12 @@ class TaskFactory implements TaskFactoryInterface
      * @param list<string>    $phpArguments
      */
     public function __construct(
+        string $taskName,
         InstalledPlugin $installed,
         string $phpCliBinary,
         array $phpArguments
     ) {
+        $this->taskName     = $taskName;
         $this->installed    = $installed;
         $this->phpCliBinary = $phpCliBinary;
         $this->phpArguments = $phpArguments;
@@ -49,7 +54,7 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($toolName, array_values($command), $this->getMetadata($toolName));
+        return new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
     }
 
     /**
@@ -77,7 +82,7 @@ class TaskFactory implements TaskFactoryInterface
     public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         return new TaskBuilderPhp(
-            $toolName,
+            $this->taskName,
             $this->phpCliBinary,
             $this->phpArguments,
             array_values($arguments),

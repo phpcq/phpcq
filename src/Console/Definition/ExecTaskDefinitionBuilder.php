@@ -102,6 +102,7 @@ final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterf
         return new Environment(
             $this->projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
+                $plugin->getName(),
                 $this->installed->getPlugin($plugin->getName()),
                 ...$this->phpCli
             )),
