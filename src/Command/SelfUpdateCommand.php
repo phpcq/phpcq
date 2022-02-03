@@ -9,12 +9,12 @@ use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
-use Phpcq\Runner\Updater\Composer\ComposerInstaller;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -284,17 +284,18 @@ final class SelfUpdateCommand extends AbstractCommand
             return;
         }
 
-        $installer = new ComposerInstaller(
+        $composer = new Composer(
             $this->downloader,
-            $this->output,
+            new Filesystem(),
+            $this->getWrappedOutput(),
             $this->phpcqPath,
             $this->config->getComposer(),
             $this->findPhpCli()
         );
 
-        if ($installer->isUpdatePossible()) {
+        if (! $composer->isBinaryAutoDiscovered()) {
             $this->output->writeln('Updating used composer.phar');
-            $installer->update();
+            $composer->updateBinary();
         }
     }
 }

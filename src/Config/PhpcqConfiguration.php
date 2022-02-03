@@ -117,6 +117,7 @@ final class PhpcqConfiguration
      * Get the composer configuration
      *
      * @return array<string,mixed>
+     * @psalm-return TComposerConfig
      */
     public function getComposer(): array
     {

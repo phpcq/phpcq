@@ -20,7 +20,12 @@ final class ComposerInstallTask extends AbstractComposerTask
 
     public function execute(UpdateContext $context): void
     {
-        $context->composer->update($this->pluginVersion);
+        if ($this->clearIfComposerNotRequired($context)) {
+            return;
+        }
+
+        $this->dumpComposerJson($context);
+        $context->composer->installDependencies($this->getTargetDirectory($context));
         $this->updateComposerLock($context);
     }
 }

@@ -13,6 +13,16 @@ use function sprintf;
 
 final class KeepPluginTask extends AbstractPluginTask
 {
+    /** @var PluginVersionInterface */
+    private $installedVersion;
+
+    public function __construct(PluginVersionInterface $pluginVersion, PluginVersionInterface $installedVersion)
+    {
+        parent::__construct($pluginVersion);
+
+        $this->installedVersion = $installedVersion;
+    }
+
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -33,9 +43,9 @@ final class KeepPluginTask extends AbstractPluginTask
 
     public function execute(UpdateContext $context): void
     {
-        $version = $this->pluginVersion;
+        $version = $this->installedVersion;
         assert($version instanceof PhpFilePluginVersion);
 
-        $this->addPlugin($context, $version, $version->getFilePath(), $version->getSignaturePath());
+        $this->addPlugin($context, $this->pluginVersion, $version->getFilePath(), $version->getSignaturePath());
     }
 }

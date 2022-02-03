@@ -10,7 +10,7 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
-use Phpcq\Runner\Updater\Composer\ComposerRunner;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
@@ -19,6 +19,7 @@ use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Runner\Resolver\ResolverInterface;
 use Phpcq\Runner\Updater\Task\Composer\ComposerInstallTask;
 use Phpcq\Runner\Updater\Task\Composer\ComposerUpdateTask;
+use Phpcq\Runner\Updater\Task\Composer\RemoveComposerDependenciesTask;
 use Phpcq\Runner\Updater\Task\Plugin\InstallPluginTask;
 use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
 use Phpcq\Runner\Updater\Task\Plugin\RemovePluginTask;
@@ -30,11 +31,14 @@ use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
 use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
 
 use function count;
+use function file_exists;
+use function is_dir;
 
 /**
  * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
  * @psalm-import-type TOutputVerbosity from \Phpcq\PluginApi\Version10\Output\OutputInterface
  *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 final class UpdateCalculator
 {
@@ -54,7 +58,7 @@ final class UpdateCalculator
     private $output;
 
     /**
-     * @var ComposerRunner
+     * @var Composer
      */
     private $composer;
 
@@ -68,7 +72,7 @@ final class UpdateCalculator
     public function __construct(
         InstalledRepository $installed,
         ResolverInterface $resolver,
-        ComposerRunner $composer,
+        Composer $composer,
         OutputInterface $output,
         int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
@@ -153,7 +157,14 @@ final class UpdateCalculator
                 continue;
             }
 
-            foreach ($this->calculateKeepTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
+            foreach (
+                $this->calculateKeepTasks(
+                    $pluginVersion,
+                    $installed->getPluginVersion(),
+                    $plugins,
+                    $forceReinstall
+                ) as $task
+            ) {
                 $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
                 $tasks[] = $task;
             }
@@ -287,8 +298,8 @@ final class UpdateCalculator
             yield $task;
         }
 
-        if (count($pluginVersion->getRequirements()->getComposerRequirements()) > 0) {
-            yield new ComposerInstallTask($pluginVersion);
+        foreach ($this->calculateComposerTasks($pluginVersion) as $task) {
+            yield $task;
         }
     }
 
@@ -313,8 +324,8 @@ final class UpdateCalculator
             yield $task;
         }
 
-        if ($this->composer->isUpdateRequired($pluginVersion)) {
-            yield new ComposerUpdateTask($pluginVersion);
+        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+            yield $task;
         }
     }
 
@@ -325,18 +336,19 @@ final class UpdateCalculator
      */
     private function calculateKeepTasks(
         PluginVersionInterface $pluginVersion,
+        PluginVersionInterface $installedVersion,
         array $plugins,
         bool $forceReinstall
     ): Generator {
         // Keep the tool otherwise.
-        yield new KeepPluginTask($pluginVersion);
+        yield new KeepPluginTask($pluginVersion, $installedVersion);
 
         foreach ($this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
             yield $task;
         }
 
-        if ($this->composer->isUpdateRequired($pluginVersion)) {
-            yield new ComposerUpdateTask($pluginVersion);
+        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+            yield $task;
         }
     }
 
@@ -355,5 +367,50 @@ final class UpdateCalculator
                 yield new RemovePluginTask($installedPlugin->getPluginVersion());
             }
         }
+    }
+
+    /**
+     * @psalm-return Generator<UpdateTaskInterface>
+     */
+    private function calculateComposerTasks(
+        PluginVersionInterface $pluginVersion,
+        ?PluginVersionInterface $installedVersion = null
+    ): Generator {
+        $hasRequirements = count($pluginVersion->getRequirements()->getComposerRequirements()) > 0;
+        $isInstalled     = $installedVersion && $this->areComposerDependenciesInstalled(
+            dirname($installedVersion->getFilePath())
+        );
+
+        if (!$isInstalled) {
+            if ($hasRequirements) {
+                yield new ComposerInstallTask($pluginVersion);
+            }
+
+            return;
+        }
+
+        if ($hasRequirements) {
+            $targetDirectory = dirname($installedVersion->getFilePath());
+
+            if ($this->composer->isUpdateRequired($targetDirectory)) {
+                yield new ComposerUpdateTask($pluginVersion);
+            }
+
+            return;
+        }
+
+        yield new RemoveComposerDependenciesTask($pluginVersion);
+    }
+
+    private function areComposerDependenciesInstalled(string $targetDirectory): bool
+    {
+        if (file_exists($targetDirectory . '/composer.json')) {
+            return true;
+        }
+        if (file_exists($targetDirectory . '/composer.lock')) {
+            return true;
+        }
+
+        return is_dir($targetDirectory . '/vendor');
     }
 }

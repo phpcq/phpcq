@@ -17,7 +17,9 @@ final class KeepPluginTaskTest extends TestCase
         $pluginVersion->expects($this->once())->method('getName')->willReturn('foo');
         $pluginVersion->expects($this->once())->method('getVersion')->willReturn('1.0.1');
 
-        $instance = new KeepPluginTask($pluginVersion);
+        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+
+        $instance = new KeepPluginTask($pluginVersion, $installedVersion);
 
         self::assertSame(
             'Will keep plugin foo in version 1.0.1',

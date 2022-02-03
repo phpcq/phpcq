@@ -7,7 +7,7 @@ namespace Phpcq\Runner\Updater;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
-use Phpcq\Runner\Updater\Composer\ComposerRunner;
+use Phpcq\Runner\Composer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /** @psalm-immutable  */
@@ -16,7 +16,7 @@ final class UpdateContext
     /** @var Filesystem */
     public $filesystem;
 
-    /** @var ComposerRunner */
+    /** @var Composer */
     public $composer;
 
     /** @var InstalledRepository */
@@ -36,7 +36,7 @@ final class UpdateContext
 
     public function __construct(
         Filesystem $filesystem,
-        ComposerRunner $composer,
+        Composer $composer,
         InstalledRepository $installedRepository,
         InstalledRepository $lockRepository,
         SignatureVerifier $signatureVerifier,

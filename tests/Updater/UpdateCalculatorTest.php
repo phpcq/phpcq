@@ -12,7 +12,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolHash;
 use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
-use Phpcq\Runner\Updater\Composer\ComposerRunner;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
@@ -81,7 +81,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('plugin', 'tool', '^2.0.0')
             ->willReturn($desiredToolVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -90,7 +90,7 @@ final class UpdateCalculatorTest extends TestCase
 
         self::assertEquals(
             [
-                new KeepPluginTask($pluginVersion),
+                new KeepPluginTask($pluginVersion, $installedPlugin->getPluginVersion()),
                 new KeepToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion)
             ],
             $tasks
@@ -156,7 +156,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -164,7 +164,7 @@ final class UpdateCalculatorTest extends TestCase
         ]);
 
         if ($keep) {
-            self::assertEquals([new KeepPluginTask($desiredVersion)], $tasks);
+            self::assertEquals([new KeepPluginTask($desiredVersion, $installedPlugin->getPluginVersion())], $tasks);
         } else {
             self::assertEquals([new UpgradePluginTask($desiredVersion, $installedVersion, true)], $tasks);
         }
@@ -257,7 +257,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', 'bar', '^2.0.0')
             ->willReturn($desiredToolVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -267,7 +267,7 @@ final class UpdateCalculatorTest extends TestCase
         if ($keep) {
             self::assertEquals(
                 [
-                    new KeepPluginTask($pluginVersion),
+                    new KeepPluginTask($pluginVersion, $installedPlugin->getPluginVersion()),
                     new KeepToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion)
                 ],
                 $tasks
@@ -275,7 +275,7 @@ final class UpdateCalculatorTest extends TestCase
         } else {
             self::assertEquals(
                 [
-                    new KeepPluginTask($pluginVersion),
+                    new KeepPluginTask($pluginVersion, $installedPlugin->getPluginVersion()),
                     new UpgradeToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion, true)
                 ],
                 $tasks
@@ -309,7 +309,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredPluginVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -357,7 +357,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -406,7 +406,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
@@ -443,7 +443,7 @@ final class UpdateCalculatorTest extends TestCase
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([]);
@@ -490,7 +490,7 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate(
@@ -525,7 +525,7 @@ final class UpdateCalculatorTest extends TestCase
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
 
-        $composer = $this->createMock(ComposerRunner::class);
+        $composer = $this->createMock(Composer::class);
         $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([]);

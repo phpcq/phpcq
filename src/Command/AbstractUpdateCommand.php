@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Downloader\OutputLoggingDownloader;
-use Phpcq\Runner\Updater\Composer\ComposerInstaller;
-use Phpcq\Runner\Updater\Composer\ComposerRunner;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
@@ -29,16 +28,13 @@ use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function array_filter;
 use function file_exists;
-use function get_class;
 use function getcwd;
 use function is_dir;
 use function mkdir;
-use function var_dump;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
@@ -80,7 +76,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var ComposerRunner
+     * @var Composer
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */
@@ -135,18 +131,13 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
         }
 
-        $installer = new ComposerInstaller(
+        $this->composer = new Composer(
             $this->downloader,
-            $this->output,
+            new Filesystem(),
+            $this->getWrappedOutput(),
             $this->phpcqPath,
             $this->config->getComposer(),
             $this->findPhpCli()
-        );
-        $this->composer = new ComposerRunner(
-            $this->getWrappedOutput(),
-            new Filesystem(),
-            $this->getPluginPath(),
-            $installer->install()
         );
     }
 

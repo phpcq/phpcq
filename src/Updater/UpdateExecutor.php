@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Updater;
 
-use Phpcq\Runner\Updater\Composer\ComposerRunner;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
@@ -44,7 +44,7 @@ final class UpdateExecutor
     private $filesystem;
 
     /**
-     * @var ComposerRunner
+     * @var Composer
      */
     private $composer;
 
@@ -53,7 +53,7 @@ final class UpdateExecutor
         SignatureVerifier $verifier,
         string $pluginPath,
         OutputInterface $output,
-        ComposerRunner $composer
+        Composer $composer
     ) {
         $this->downloader          = $downloader;
         $this->verifier            = $verifier;
