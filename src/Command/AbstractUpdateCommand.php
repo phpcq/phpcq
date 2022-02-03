@@ -177,11 +177,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             return 0;
         }
 
-        if($this->input->getOption('dry-run')) {
-            if ($this->output->getVerbosity() !== OutputInterface::VERBOSITY_NORMAL) {
-                return 0;
-            }
-
+        if ($this->input->getOption('dry-run')) {
             $plugins = [];
             foreach ($tasks as $task) {
                 if ($task instanceof KeepPluginTask || $task instanceof KeepToolTask) {

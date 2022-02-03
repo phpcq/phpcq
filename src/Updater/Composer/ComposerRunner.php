@@ -18,7 +18,6 @@ use function file_put_contents;
 use function json_encode;
 use function strpos;
 
-use function var_dump;
 use const JSON_FORCE_OBJECT;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
