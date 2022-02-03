@@ -29,13 +29,16 @@ use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function array_filter;
 use function file_exists;
+use function get_class;
 use function getcwd;
 use function is_dir;
 use function mkdir;
+use function var_dump;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
@@ -171,6 +174,25 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         );
         if (count($changes) === 0) {
             $this->output->writeln('Nothing to install.');
+            return 0;
+        }
+
+        if($this->input->getOption('dry-run')) {
+            if ($this->output->getVerbosity() !== OutputInterface::VERBOSITY_NORMAL) {
+                return 0;
+            }
+
+            $plugins = [];
+            foreach ($tasks as $task) {
+                if ($task instanceof KeepPluginTask || $task instanceof KeepToolTask) {
+                    continue;
+                }
+
+                $plugins[$task->getPluginName()] = null;
+            }
+
+            $this->output->writeln('Updates available for plugins: ' . implode(', ', array_keys($plugins)));
+
             return 0;
         }
 
