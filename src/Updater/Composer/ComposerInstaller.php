@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Runner\Composer;
+namespace Phpcq\Runner\Updater\Composer;
 
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;

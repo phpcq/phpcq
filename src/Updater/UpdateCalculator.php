@@ -5,92 +5,37 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater;
 
 use Composer\Semver\Semver;
+use Generator;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
+use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
-use Phpcq\RepositoryDefinition\VersionRequirement;
-use Phpcq\Runner\Composer\ComposerRunner;
+use Phpcq\Runner\Updater\Composer\ComposerRunner;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\Repository;
 use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Runner\Resolver\ResolverInterface;
+use Phpcq\Runner\Updater\Task\Composer\ComposerInstallTask;
+use Phpcq\Runner\Updater\Task\Composer\ComposerUpdateTask;
+use Phpcq\Runner\Updater\Task\Plugin\InstallPluginTask;
+use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
+use Phpcq\Runner\Updater\Task\Plugin\RemovePluginTask;
+use Phpcq\Runner\Updater\Task\Plugin\UpgradePluginTask;
+use Phpcq\Runner\Updater\Task\Tool\InstallToolTask;
+use Phpcq\Runner\Updater\Task\Tool\KeepToolTask;
+use Phpcq\Runner\Updater\Task\Tool\RemoveToolTask;
+use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
+use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
 
-use function sprintf;
-use function version_compare;
+use function count;
 
 /**
  * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
+ * @psalm-import-type TOutputVerbosity from \Phpcq\PluginApi\Version10\Output\OutputInterface
  *
- * @psalm-type TInstallToolTask = array{
- *    type: 'install',
- *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    message: string,
- *    old: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    signed: bool,
- * }
- *
- * @psalm-type TUpgradeToolTask = array{
- *    type: 'upgrade',
- *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    message: string,
- *    old: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    signed: bool,
- * }
- *
- * @psalm-type TKeepToolTask = array{
- *    type: 'keep',
- *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    installed: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    message: string,
- * }
- *
- * @psalm-type TRemoveToolTask = array{
- *    type: 'remove',
- *    tool: \Phpcq\RepositoryDefinition\Tool\ToolVersionInterface,
- *    message: string,
- * }
- *
- * @psalm-type TToolTask = TInstallToolTask|TUpgradeToolTask|TKeepToolTask|TRemoveToolTask
- *
- * @psalm-type TInstallPluginTask = array{
- *    type: 'install',
- *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
- *    message: string,
- *    signed: boolean,
- *    tasks: list<TToolTask>,
- *    composer: bool,
- * }
- *
- * @psalm-type TUpgradePluginTask = array{
- *    type: 'upgrade',
- *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
- *    old: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
- *    message: string,
- *    signed: boolean,
- *    tasks: list<TToolTask>,
- *    composer: bool,
- * }
- *
- * @psalm-type TKeepPluginTask = array{
- *    type: 'keep',
- *    plugin: \Phpcq\Runner\Repository\InstalledPlugin,
- *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
- *    message: string,
- *    tasks: list<TToolTask>,
- *    composer: bool,
- * }
- *
- * @psalm-type TRemovePluginTask = array{
- *    type: 'remove',
- *    version: \Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface,
- *    plugin: \Phpcq\Runner\Repository\InstalledPlugin,
- *    message: string,
- * }
- *
- * @psalm-type TPluginTask = TInstallPluginTask|TUpgradePluginTask|TKeepPluginTask|TRemovePluginTask
  */
 final class UpdateCalculator
 {
@@ -114,23 +59,32 @@ final class UpdateCalculator
      */
     private $composer;
 
+    /**
+     * @var int
+     * @psalm-var TOutputVerbosity
+     */
+    private $verbosity;
+
+    /**  @psalm-param TOutputVerbosity $verbosity */
     public function __construct(
         InstalledRepository $installed,
         ResolverInterface $resolver,
         ComposerRunner $composer,
-        OutputInterface $output
+        OutputInterface $output,
+        int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
         $this->installed = $installed;
         $this->composer  = $composer;
         $this->output    = $output;
         $this->resolver  = $resolver;
+        $this->verbosity = $verbosity;
     }
 
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
      *
      * @psalm-param array<string,TPlugin> $plugins
-     * @psalm-return list<TPluginTask>
+     * @psalm-return list<UpdateTaskInterface>
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
@@ -161,7 +115,7 @@ final class UpdateCalculator
      * @psalm-param array<string,TPlugin> $plugins
      *
      * @return array[]
-     * @psalm-return list<TPluginTask>
+     * @psalm-return list<UpdateTaskInterface>
      */
     protected function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -175,85 +129,43 @@ final class UpdateCalculator
 
             // Not installed yet => install.
             if (!$this->installed->hasPlugin($name)) {
-                $message = 'Will install plugin ' . $name . ' in version ' . $pluginVersion->getVersion();
-                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                $tasks[] = [
-                    'type'     => 'install',
-                    'version'  => $pluginVersion,
-                    'message'  => $message,
-                    'signed'   => $plugins[$pluginVersion->getName()]['signed'] ?? true,
-                    'tasks'    => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall),
-                    'composer' => count($pluginVersion->getRequirements()->getComposerRequirements()) > 0
-                ];
+                foreach ($this->calculateInstallTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
+                    $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
+                    $tasks[] = $task;
+                }
                 continue;
             }
+
             // Installed in another version => upgrade.
             $installed = $this->installed->getPlugin($name);
             if ($forceReinstall || $this->isPluginUpgradeRequired($pluginVersion)) {
-                $message   = $this->getPluginTaskMessage($installed->getPluginVersion(), $pluginVersion);
-                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                $tasks[] = [
-                    'type'     => 'upgrade',
-                    'version'  => $pluginVersion,
-                    'old'      => $installed->getPluginVersion(),
-                    'message'  => $message,
-                    'signed'   => $plugins[$pluginVersion->getName()]['signed'] ?? true,
-                    'tasks'    => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall),
-                    'composer' => $this->composer->isUpdateRequired($pluginVersion)
-                ];
-                continue;
-            }
-            // Keep the tool otherwise.
-            $tasks[] = [
-                'type'     => 'keep',
-                'plugin'   => $installed,
-                'version'  => $pluginVersion,
-                'message'  => 'Will keep plugin ' . $name . ' in version ' . $pluginVersion->getVersion(),
-                'tasks'    => $this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall),
-                'composer' => $this->composer->isUpdateRequired($pluginVersion)
-            ];
-        }
-        // Determine uninstalls now.
-        foreach ($this->installed->iteratePlugins() as $installedPlugin) {
-            if ($installedPlugin instanceof BuiltInPlugin) {
+                foreach (
+                    $this->calculateUpgradeTasks(
+                        $pluginVersion,
+                        $installed->getPluginVersion(),
+                        $plugins,
+                        $forceReinstall
+                    ) as $task
+                ) {
+                    $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
+                    $tasks[] = $task;
+                }
+
                 continue;
             }
 
-            $name = $installedPlugin->getName();
-            if (!$desired->hasPluginVersion($name, '*')) {
-                $message = 'Will remove plugin ' . $name . ' version '
-                    . $installedPlugin->getPluginVersion()->getVersion();
-                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                $tasks[] = [
-                    'type'    => 'remove',
-                    'plugin'  => $installedPlugin,
-                    'version' => $installedPlugin->getPluginVersion(),
-                    'message' => $message,
-                ];
+            foreach ($this->calculateKeepTasks($installed, $pluginVersion, $plugins, $forceReinstall) as $task) {
+                $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
+                $tasks[] = $task;
             }
+        }
+        // Determine uninstalls now.
+        foreach ($this->calculateDeleteTasks($desired) as $task) {
+            $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
+            $tasks[] = $task;
         }
 
         return $tasks;
-    }
-
-    private function getPluginTaskMessage(
-        PluginVersionInterface $oldVersion,
-        PluginVersionInterface $plugin
-    ): string {
-        /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
-        switch (version_compare($oldVersion->getVersion(), $plugin->getVersion())) {
-            case 1:
-                return 'Will downgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
-                    . ' to version ' . $plugin->getVersion();
-
-            case -1:
-                return 'Will upgrade plugin ' . $plugin->getName() . ' from version ' . $oldVersion->getVersion()
-                    . ' to version ' . $plugin->getVersion();
-
-            case 0:
-            default:
-        }
-        return 'Will reinstall plugin ' . $plugin->getName() . ' in version ' . $plugin->getVersion();
     }
 
     private function isPluginUpgradeRequired(PluginVersionInterface $desired): bool
@@ -293,14 +205,16 @@ final class UpdateCalculator
      *
      * @psalm-param array<string,TPlugin> $plugins
      *
-     * @psalm-return list<TToolTask>
+     * @psalm-return Generator<UpdateTaskInterface>
      */
-    private function calculateToolTasks(PluginVersionInterface $desired, array $plugins, bool $forceReinstall): array
-    {
+    private function calculateToolTasks(
+        PluginVersionInterface $desired,
+        array $plugins,
+        bool $forceReinstall
+    ): Generator {
         $config     = $plugins[$desired->getName()] ?? [];
         $pluginName = $desired->getName();
         $plugin     = $this->installed->hasPlugin($pluginName) ? $this->installed->getPlugin($pluginName) : null;
-        $tasks      = [];
 
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             // FIXME: Check if configured requirement is within the tool requirement
@@ -311,56 +225,36 @@ final class UpdateCalculator
             $toolName   = $tool->getName();
 
             if (!$plugin || !$plugin->hasTool($requirementName)) {
-                $message = sprintf('Will install tool %s in version %s', $toolName, $tool->getVersion());
-                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
+                yield new InstallToolTask(
+                    $desired,
+                    $tool,
+                    $config['requirements'][$toolName]['signed'] ?? true
+                );
 
-                $tasks[] = [
-                    'type'    => 'install',
-                    'tool'    => $tool,
-                    'message' => $message,
-                    'signed'  => $config['requirements'][$toolName]['signed'] ?? true,
-                ];
                 continue;
             }
             // Installed in another version => upgrade.
             $installed = $plugin->getTool($toolName);
             if ($forceReinstall || $this->isToolUpgradeRequired($plugin, $tool)) {
-                $message   = $this->getToolTaskMessage($installed, $tool);
-                $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
-
-                $tasks[] = [
-                    'type'    => 'upgrade',
-                    'tool'    => $tool,
-                    'message' => $message,
-                    'old'     => $installed,
-                    'signed'  => $config['requirements'][$toolName]['signed'] ?? true,
-                ];
+                yield new UpgradeToolTask(
+                    $desired,
+                    $tool,
+                    $installed,
+                    $config['requirements'][$toolName]['signed'] ?? true
+                );
                 continue;
             }
             // Keep the tool otherwise.
-            $tasks[] = [
-                'type'      => 'keep',
-                'tool'      => $tool,
-                'installed' => $installed,
-                'message'   => 'Will keep tool ' . $installed->getName() . ' in version ' . $installed->getVersion(),
-            ];
+            yield new KeepToolTask($desired, $tool, $installed);
         }
 
         if ($plugin) {
             foreach ($plugin->iterateTools() as $tool) {
                 if (! $desired->getRequirements()->getToolRequirements()->has($tool->getName())) {
-                    $message = 'Will remove tool ' . $tool->getName() . ' version ' . $tool->getVersion();
-                    $this->output->writeln($message, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                    $tasks[] = [
-                        'type'    => 'remove',
-                        'tool'    => $tool,
-                        'message' => $message,
-                    ];
+                    yield new RemoveToolTask($desired, $tool);
                 }
             }
         }
-
-        return $tasks;
     }
 
     private function isToolUpgradeRequired(InstalledPlugin $plugin, ToolVersionInterface $desired): bool
@@ -375,21 +269,93 @@ final class UpdateCalculator
         return true;
     }
 
-    private function getToolTaskMessage(
-        ToolVersionInterface $oldVersion,
-        ToolVersionInterface $tool
-    ): string {
-        /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
-        switch (version_compare($oldVersion->getVersion(), $tool->getVersion())) {
-            case 1:
-                return 'Will downgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
-                    . ' to version ' . $tool->getVersion();
-            case -1:
-                return 'Will upgrade tool ' . $tool->getName() . ' from version ' . $oldVersion->getVersion()
-                    . ' to version ' . $tool->getVersion();
-            case 0:
-            default:
+    /**
+     * @psalm-param array<string,TPlugin> $plugins
+     *
+     * @return Generator<UpdateTaskInterface>
+     */
+    private function calculateInstallTasks(
+        PluginVersionInterface $pluginVersion,
+        array $plugins,
+        bool $forceReinstall
+    ): Generator {
+        yield new InstallPluginTask(
+            $pluginVersion,
+            $plugins[$pluginVersion->getName()]['signed'] ?? true
+        );
+
+        foreach ($this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
+            yield $task;
         }
-        return 'Will reinstall tool ' . $tool->getName() . ' in version ' . $tool->getVersion();
+
+        if (count($pluginVersion->getRequirements()->getComposerRequirements()) > 0) {
+            yield new ComposerInstallTask($pluginVersion);
+        }
+    }
+
+    /**
+     * @psalm-param array<string,TPlugin> $plugins
+     *
+     * @return Generator<UpdateTaskInterface>
+     */
+    private function calculateUpgradeTasks(
+        PluginVersionInterface $pluginVersion,
+        PluginVersionInterface $installedVersion,
+        array $plugins,
+        bool $forceReinstall
+    ): Generator {
+        yield new UpgradePluginTask(
+            $pluginVersion,
+            $installedVersion,
+            $plugins[$pluginVersion->getName()]['signed'] ?? true
+        );
+
+        foreach ($this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
+            yield $task;
+        }
+
+        if ($this->composer->isUpdateRequired($pluginVersion)) {
+            yield new ComposerUpdateTask($pluginVersion);
+        }
+    }
+
+    /**
+     * @psalm-param array<string,TPlugin> $plugins
+     *
+     * @return Generator<UpdateTaskInterface>
+     */
+    private function calculateKeepTasks(
+        InstalledPlugin $installed,
+        PluginVersionInterface $pluginVersion,
+        array $plugins,
+        bool $forceReinstall
+    ): Generator {
+        // Keep the tool otherwise.
+        yield new KeepPluginTask($installed);
+
+        foreach ($this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
+            yield $task;
+        }
+
+        if ($this->composer->isUpdateRequired($pluginVersion)) {
+            yield new ComposerUpdateTask($pluginVersion);
+        }
+    }
+
+    /**
+     * @return Generator<UpdateTaskInterface>
+     */
+    private function calculateDeleteTasks(RepositoryInterface $desired): Generator
+    {
+        foreach ($this->installed->iteratePlugins() as $installedPlugin) {
+            if ($installedPlugin instanceof BuiltInPlugin) {
+                continue;
+            }
+
+            $name = $installedPlugin->getName();
+            if (!$desired->hasPluginVersion($name, '*')) {
+                yield new RemovePluginTask($installedPlugin->getPluginVersion());
+            }
+        }
     }
 }

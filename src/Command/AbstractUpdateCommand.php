@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
-use Phpcq\Runner\Composer\ComposerInstaller;
-use Phpcq\Runner\Composer\ComposerRunner;
+use Phpcq\Runner\Downloader\OutputLoggingDownloader;
+use Phpcq\Runner\Updater\Composer\ComposerInstaller;
+use Phpcq\Runner\Updater\Composer\ComposerRunner;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
@@ -21,10 +22,14 @@ use Phpcq\Runner\Repository\InstalledRepositoryLoader;
 use Phpcq\Runner\Repository\JsonRepositoryLoader;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
+use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
+use Phpcq\Runner\Updater\Task\Tool\KeepToolTask;
+use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
 use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Filesystem\Filesystem;
 
 use function array_filter;
 use function file_exists;
@@ -34,8 +39,6 @@ use function mkdir;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
- *
- * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 abstract class AbstractUpdateCommand extends AbstractCommand
 {
@@ -104,7 +107,14 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     {
         parent::prepare($input);
 
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->output)) {
+            // In auto completion output does not exist.
+            return;
+        }
+
         $cachePath = $this->input->getOption('cache');
+        /** @psalm-suppress RedundantConditionGivenDocblockType - Psalm got confused by isset($this->output) */
         assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 
@@ -113,7 +123,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         }
 
         $authConfig       = $this->config->getAuth();
-        $this->downloader = new FileDownloader($cachePath, $authConfig);
+        $this->downloader = new OutputLoggingDownloader(
+            new FileDownloader($cachePath, $authConfig),
+            $this->getWrappedOutput()
+        );
         $lockFile         = $this->getLockFileName();
         if (file_exists($lockFile)) {
             $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
@@ -127,10 +140,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->findPhpCli()
         );
         $this->composer = new ComposerRunner(
-            $this->output,
+            $this->getWrappedOutput(),
+            new Filesystem(),
             $this->getPluginPath(),
-            $installer->install(),
-            $this->lockFileRepository
+            $installer->install()
         );
     }
 
@@ -148,24 +161,12 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         $tasks   = $this->calculateTasks();
         $changes = array_filter(
             $tasks,
-            static function ($task) {
-                if ($task['type'] !== 'keep') {
-                    return true;
+            static function (UpdateTaskInterface $task) {
+                if ($task instanceof KeepToolTask || $task instanceof KeepPluginTask) {
+                    return false;
                 }
 
-                if (isset($task['composer']) && $task['composer']) {
-                    return true;
-                }
-
-                if (isset($task['tasks'])) {
-                    foreach ($task['tasks'] as $subTask) {
-                        if ($subTask['type'] !== 'keep') {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
+                return true;
             }
         );
         if (count($changes) === 0) {
@@ -178,10 +179,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<TPluginTask> */
+    /** @psalm-return list<UpdateTaskInterface> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<TPluginTask> $tasks */
+    /** @psalm-param list<UpdateTaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
@@ -201,6 +202,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->getWrappedOutput(),
             $this->composer
         );
+
         $executor->execute($tasks);
     }
 

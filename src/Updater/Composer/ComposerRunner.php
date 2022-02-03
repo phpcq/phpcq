@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Phpcq\Runner\Composer;
+namespace Phpcq\Runner\Updater\Composer;
 
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
-use Phpcq\Runner\Repository\InstalledPlugin;
-use Phpcq\Runner\Repository\InstalledRepository;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -31,14 +29,11 @@ class ComposerRunner
     /** @var OutputInterface */
     private $output;
 
-    /** @var list<string> */
-    private $command;
-
     /** @var Filesystem */
     private $filesystem;
 
-    /** @var InstalledRepository|null */
-    private $lockFileRepository;
+    /** @var list<string> */
+    private $command;
 
     /** @var string */
     private $installedPluginPath;
@@ -48,25 +43,24 @@ class ComposerRunner
      */
     public function __construct(
         OutputInterface $output,
+        Filesystem $filesystem,
         string $installedPluginPath,
-        array $command,
-        ?InstalledRepository $lockFileRepository
+        array $command
     ) {
         $this->output              = $output;
+        $this->filesystem          = $filesystem;
         $this->command             = $command;
         $this->installedPluginPath = $installedPluginPath;
-        $this->lockFileRepository  = $lockFileRepository;
-        $this->filesystem          = new Filesystem();
     }
 
-    public function install(InstalledPlugin $plugin): void
+    public function install(PluginVersionInterface $pluginVersion): void
     {
-        $this->executeUpdateTask('install', $plugin);
+        $this->executeUpdateTask('install', $pluginVersion);
     }
 
-    public function update(InstalledPlugin $plugin): void
+    public function update(PluginVersionInterface $pluginVersion): void
     {
-        $this->executeUpdateTask('update', $plugin);
+        $this->executeUpdateTask('update', $pluginVersion);
     }
 
     public function isUpdateRequired(PluginVersionInterface $pluginVersion): bool
@@ -92,33 +86,25 @@ class ComposerRunner
         return strpos($output, 'Nothing to install, update or remove') === false;
     }
 
-    private function executeUpdateTask(string $command, InstalledPlugin $plugin): void
+    private function executeUpdateTask(string $command, PluginVersionInterface $pluginVersion): void
     {
-        $targetDirectory = $this->getTargetDirectory($plugin->getPluginVersion());
-        if ($this->clearIfComposerNotRequired($targetDirectory, $plugin)) {
+        $targetDirectory = $this->getTargetDirectory($pluginVersion);
+        if ($this->clearIfComposerNotRequired($targetDirectory, $pluginVersion)) {
             return;
         }
 
         $lockFile = $targetDirectory . '/composer.lock';
-        if ($this->lockFileRepository && $this->lockFileRepository->hasPlugin($plugin->getName())) {
-            $this->dumpComposerLock(
-                $lockFile,
-                $this->lockFileRepository->getPlugin($plugin->getName())->getComposerLock()
-            );
-        }
-
-        $this->dumpComposerJson($targetDirectory . '/composer.json', $plugin->getPluginVersion());
+        $this->dumpComposerJson($targetDirectory . '/composer.json', $pluginVersion);
         $this->execute([$command, '--optimize-autoloader', '--no-progress'], $targetDirectory);
-        $this->updateComposerLock($lockFile, $plugin);
+        $this->updateComposerLock($lockFile);
     }
 
-    private function clearIfComposerNotRequired(string $targetDirectory, InstalledPlugin $plugin): bool
+    private function clearIfComposerNotRequired(string $targetDirectory, PluginVersionInterface $pluginVersion): bool
     {
-        if (count($plugin->getPluginVersion()->getRequirements()->getComposerRequirements()) > 0) {
+        if (count($pluginVersion->getRequirements()->getComposerRequirements()) > 0) {
             return false;
         }
 
-        $plugin->updateComposerLock(null);
         $this->filesystem->remove(
             [$targetDirectory . '/vendor', $targetDirectory . '/composer.json', $targetDirectory . '/composer.lock']
         );
@@ -154,14 +140,11 @@ class ComposerRunner
         }
     }
 
-    private function updateComposerLock(string $lockFile, InstalledPlugin $plugin): void
+    private function updateComposerLock(string $lockFile): void
     {
         if ($this->filesystem->exists($lockFile)) {
             $lockData = file_get_contents($lockFile);
             $this->dumpComposerLock($lockFile, $lockData);
-            $plugin->updateComposerLock($lockData);
-        } else {
-            $plugin->updateComposerLock(null);
         }
     }
 
@@ -171,18 +154,17 @@ class ComposerRunner
             $process = $this->createProcess($command, $targetDirectory);
             $process->mustRun();
 
-            $output = $process->getOutput();
-            if ($output) {
-                $this->output->write($output, false, OutputInterface::VERBOSITY_VERBOSE);
-            }
+            $this->output->write($process->getOutput(), OutputInterface::VERBOSITY_VERBOSE);
         } catch (ProcessFailedException $exception) {
             /** @psalm-suppress MixedAssignment */
             $process = $exception->getProcess();
             assert($process instanceof Process);
-            $output = $process->getOutput();
-            if ($output) {
-                $this->output->write($output, false, OutputInterface::VERBOSITY_VERBOSE);
-            }
+
+            $this->output->write(
+                $process->getOutput(),
+                OutputInterface::VERBOSITY_VERBOSE,
+                OutputInterface::CHANNEL_STDERR
+            );
 
             throw $exception;
         }
@@ -196,5 +178,17 @@ class ComposerRunner
     private function getTargetDirectory(PluginVersionInterface $pluginVersion): string
     {
         return $this->installedPluginPath . '/' . $pluginVersion->getName();
+    }
+
+    public function getComposerLock(PluginVersionInterface $pluginVersion): ?string
+    {
+        $targetDirectory = $this->getTargetDirectory($pluginVersion);
+        $lockFile        = $targetDirectory . '/composer.lock';
+
+        if ($this->filesystem->exists($lockFile)) {
+            return file_get_contents($lockFile);
+        }
+
+        return null;
     }
 }

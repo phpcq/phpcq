@@ -6,12 +6,11 @@ namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
 use Phpcq\Runner\Resolver\RepositoryPoolResolver;
+use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
- */
 final class UpdateCommand extends AbstractUpdateCommand
 {
     protected function configure(): void
@@ -33,9 +32,13 @@ final class UpdateCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<TPluginTask> */
+    /** @psalm-return list<UpdateTaskInterface> */
     protected function calculateTasks(): array
     {
+        $verbosity  = $this->input->getOption('dry-run')
+            ? OutputInterface::VERBOSITY_VERBOSE
+            : OutputInterface::VERBOSITY_VERY_VERBOSE;
+
         $factory    = new RepositoryFactory($this->repositoryLoader);
         $pool       = $factory->buildPool($this->config->getRepositories());
         $force      = $this->lockFileRepository === null || $this->input->getOption('force-reinstall');
@@ -43,22 +46,17 @@ final class UpdateCommand extends AbstractUpdateCommand
             $this->getInstalledRepository(false),
             new RepositoryPoolResolver($pool),
             $this->composer,
-            $this->getWrappedOutput()
+            $this->getWrappedOutput(),
+            $verbosity
         );
 
         return $calculator->calculate($this->config->getPlugins(), $force);
     }
 
-    /** @psalm-param list<TPluginTask> $tasks */
+    /** @psalm-param list<UpdateTaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         if ($this->input->getOption('dry-run')) {
-            foreach ($tasks as $task) {
-                $this->output->writeln($task['message']);
-                if (isset($task['composer']) && $task['composer']) {
-                    $this->output->writeln('Will update composer dependencies of ' . $task['version']->getName());
-                }
-            }
             return;
         }
 

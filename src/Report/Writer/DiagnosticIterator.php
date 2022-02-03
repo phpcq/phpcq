@@ -281,7 +281,7 @@ final class DiagnosticIterator implements IteratorAggregate
                 continue;
             }
             $partition[] = $entry1;
-            // Partition boundary reached - sort elements, emit them and start over.
+            // Partition boundary reached - sort elements, emit them and execute over.
             /** @psalm-suppress PossiblyNullArgument - iterateSorted is only called then sortCallback exists */
             usort($partition, $this->sortCallback);
             foreach ($partition as $item) {
