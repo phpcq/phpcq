@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater;
 
 use Phpcq\GnuPG\Signature\SignatureVerifier;
-use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Updater\Composer\ComposerRunner;

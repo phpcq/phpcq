@@ -14,6 +14,7 @@ use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
+use Phpcq\Runner\Updater\Composer\ComposerInstaller;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -136,6 +137,8 @@ final class SelfUpdateCommand extends AbstractCommand
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
         $availableVersion = trim(substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6));
+
+        $this->updateComposer();
 
         if (! $this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
@@ -273,5 +276,25 @@ final class SelfUpdateCommand extends AbstractCommand
     private function cleanup(string $downloadedPhar): void
     {
         $this->filesystem->remove($downloadedPhar);
+    }
+
+    private function updateComposer(): void
+    {
+        if ($this->input->getOption('dry-run')) {
+            return;
+        }
+
+        $installer = new ComposerInstaller(
+            $this->downloader,
+            $this->output,
+            $this->phpcqPath,
+            $this->config->getComposer(),
+            $this->findPhpCli()
+        );
+
+        if ($installer->isUpdatePossible()) {
+            $this->output->writeln('Updating used composer.phar');
+            $installer->update();
+        }
     }
 }

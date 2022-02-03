@@ -88,11 +88,22 @@ final class ComposerInstaller
             $process->mustRun();
 
             $this->output->writeln($process->getOutput(), OutputInterface::VERBOSITY_VERBOSE);
+            $this->output->writeln($process->getErrorOutput(), OutputInterface::VERBOSITY_VERBOSE);
 
             return;
         }
 
         $this->downloadComposer();
+    }
+
+    /**
+     *  Do not update if using auto discovered composer.
+     *
+     * @return bool
+     */
+    public function isUpdatePossible(): bool
+    {
+        return !$this->composerConfig['autodiscover'];
     }
 
     private function autoDiscoverComposer(): string
