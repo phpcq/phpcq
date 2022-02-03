@@ -44,7 +44,7 @@ final class FileReportWriter extends AbstractReportWriter
             $tool = $this->xml->createElement('tool', $abstractNode);
             $tool->setAttribute('name', $taskReport->getTaskName());
             $tool->setAttribute('status', $taskReport->getStatus());
-            $tool->setAttribute('version', $taskReport->getMetadata()['version'] ?? 'unknown');
+            $tool->setAttribute('version', $taskReport->getMetadata()['tool_version'] ?? 'unknown');
 
             $this->appendAttachments($tool, $taskReport);
             $this->appendDiffs($tool, $taskReport);
