@@ -7,7 +7,6 @@ namespace Phpcq\Runner\Updater;
 use Composer\Semver\Semver;
 use Generator;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
@@ -154,7 +153,7 @@ final class UpdateCalculator
                 continue;
             }
 
-            foreach ($this->calculateKeepTasks($installed, $pluginVersion, $plugins, $forceReinstall) as $task) {
+            foreach ($this->calculateKeepTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
                 $this->output->writeln($task->getPurposeDescription(), $this->verbosity);
                 $tasks[] = $task;
             }
@@ -325,13 +324,12 @@ final class UpdateCalculator
      * @return Generator<UpdateTaskInterface>
      */
     private function calculateKeepTasks(
-        InstalledPlugin $installed,
         PluginVersionInterface $pluginVersion,
         array $plugins,
         bool $forceReinstall
     ): Generator {
         // Keep the tool otherwise.
-        yield new KeepPluginTask($installed);
+        yield new KeepPluginTask($pluginVersion);
 
         foreach ($this->calculateToolTasks($pluginVersion, $plugins, $forceReinstall) as $task) {
             yield $task;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater\Task\Plugin;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersion;
-use Phpcq\Runner\Repository\InstalledPlugin;
+use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
 use function assert;
@@ -13,11 +13,6 @@ use function sprintf;
 
 final class KeepPluginTask extends AbstractPluginTask
 {
-    public function __construct(InstalledPlugin $plugin)
-    {
-        parent::__construct($plugin->getPluginVersion());
-    }
-
     public function getPurposeDescription(): string
     {
         return sprintf(

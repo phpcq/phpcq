@@ -90,7 +90,7 @@ final class UpdateCalculatorTest extends TestCase
 
         self::assertEquals(
             [
-                new KeepPluginTask($installedPlugin),
+                new KeepPluginTask($pluginVersion),
                 new KeepToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion)
             ],
             $tasks
@@ -164,7 +164,7 @@ final class UpdateCalculatorTest extends TestCase
         ]);
 
         if ($keep) {
-            self::assertEquals([new KeepPluginTask($installedPlugin)], $tasks);
+            self::assertEquals([new KeepPluginTask($desiredVersion)], $tasks);
         } else {
             self::assertEquals([new UpgradePluginTask($desiredVersion, $installedVersion, true)], $tasks);
         }
@@ -267,7 +267,7 @@ final class UpdateCalculatorTest extends TestCase
         if ($keep) {
             self::assertEquals(
                 [
-                    new KeepPluginTask($installedPlugin),
+                    new KeepPluginTask($pluginVersion),
                     new KeepToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion)
                 ],
                 $tasks
@@ -275,7 +275,7 @@ final class UpdateCalculatorTest extends TestCase
         } else {
             self::assertEquals(
                 [
-                    new KeepPluginTask($installedPlugin),
+                    new KeepPluginTask($pluginVersion),
                     new UpgradeToolTask($pluginVersion, $desiredToolVersion, $installedToolVersion, true)
                 ],
                 $tasks
