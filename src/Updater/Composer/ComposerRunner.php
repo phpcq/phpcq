@@ -18,6 +18,7 @@ use function file_put_contents;
 use function json_encode;
 use function strpos;
 
+use function var_dump;
 use const JSON_FORCE_OBJECT;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
@@ -79,9 +80,13 @@ class ComposerRunner
         }
 
         // Try composer update dry-run
-        $process = $this->createProcess(['update', '--dry-run', '--no-progress'], $targetDirectory);
-        $process->mustRun();
-        $output  = $process->getOutput() ?: $process->getErrorOutput();
+        try {
+            $process = $this->createProcess(['update', '--dry-run', '--no-progress'], $targetDirectory);
+            $process->mustRun();
+            $output  = $process->getOutput() ?: $process->getErrorOutput();
+        } catch (ProcessFailedException $exception) {
+            return true;
+        }
 
         return strpos($output, 'Nothing to install, update or remove') === false;
     }
@@ -159,6 +164,12 @@ class ComposerRunner
             /** @psalm-suppress MixedAssignment */
             $process = $exception->getProcess();
             assert($process instanceof Process);
+
+            $this->output->write(
+                $process->getErrorOutput(),
+                OutputInterface::VERBOSITY_VERBOSE,
+                OutputInterface::CHANNEL_STDERR
+            );
 
             $this->output->write(
                 $process->getOutput(),
