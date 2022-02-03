@@ -22,13 +22,20 @@ class InstalledPlugin
     private $tools = [];
 
     /**
+     * @var string|null
+     */
+    private $composerLock;
+
+    /**
      * @param array|ToolVersionInterface[] $tools
      *
      * @psalm-param list<ToolVersionInterface> $tools
      */
-    public function __construct(PluginVersionInterface $version, array $tools = [])
+    public function __construct(PluginVersionInterface $version, array $tools = [], ?string $composerLock = null)
     {
         $this->version = $version;
+        $this->composerLock = $composerLock;
+
         foreach ($tools as $tool) {
             $this->tools[$tool->getName()] = $tool;
         }
@@ -75,5 +82,15 @@ class InstalledPlugin
     public function hasTool(string $name): bool
     {
         return isset($this->tools[$name]);
+    }
+
+    public function getComposerLock(): ?string
+    {
+        return $this->composerLock;
+    }
+
+    public function updateComposerLock(?string $composerLock): void
+    {
+        $this->composerLock = $composerLock;
     }
 }

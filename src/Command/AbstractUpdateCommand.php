@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
+use Phpcq\Runner\Composer\ComposerInstaller;
+use Phpcq\Runner\Composer\ComposerRunner;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
@@ -21,10 +23,12 @@ use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
 use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 use function array_filter;
 use function file_exists;
+use function getcwd;
 use function is_dir;
 use function mkdir;
 
@@ -67,6 +71,15 @@ abstract class AbstractUpdateCommand extends AbstractCommand
      */
     protected $downloader;
 
+    /**
+     * Only valid when examined from within performUpdate().
+     *
+     * @var ComposerRunner
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    protected $composer;
+
     protected function configure(): void
     {
         $this->addOption(
@@ -87,8 +100,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         parent::configure();
     }
 
-    protected function doExecute(): int
+    protected function prepare(InputInterface $input): void
     {
+        parent::prepare($input);
+
         $cachePath = $this->input->getOption('cache');
         assert(is_string($cachePath));
         $this->createDirectory($cachePath);
@@ -97,32 +112,56 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->output->writeln('Using CACHE: ' . $cachePath);
         }
 
+        $authConfig       = $this->config->getAuth();
+        $this->downloader = new FileDownloader($cachePath, $authConfig);
+        $lockFile         = $this->getLockFileName();
+        if (file_exists($lockFile)) {
+            $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
+        }
+
+        $installer = new ComposerInstaller(
+            $this->downloader,
+            $this->output,
+            $this->phpcqPath,
+            $this->config->getComposer(),
+            $this->findPhpCli()
+        );
+        $this->composer = new ComposerRunner(
+            $this->output,
+            $this->getPluginPath(),
+            $installer->install(),
+            $this->lockFileRepository
+        );
+    }
+
+    protected function doExecute(): int
+    {
         $requirementChecker = !$this->input->getOption('ignore-platform-reqs')
             ? PlatformRequirementChecker::create()
             : PlatformRequirementChecker::createAlwaysFulfilling();
 
-        $authConfig             = $this->config->getAuth();
-        $this->downloader       = new FileDownloader($cachePath, $authConfig);
         $this->repositoryLoader = new JsonRepositoryLoader(
             $requirementChecker,
             new DownloadingJsonFileLoader($this->downloader, true)
         );
 
-        $lockFile = $this->getLockFileName();
-        if (file_exists($lockFile)) {
-            $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
-        }
-
         $tasks   = $this->calculateTasks();
         $changes = array_filter(
             $tasks,
             static function ($task) {
-                if ($task['type'] !== 'keep' || !isset($task['tasks'])) {
+                if ($task['type'] !== 'keep') {
                     return true;
                 }
-                foreach ($task['tasks'] as $subTask) {
-                    if ($subTask['type'] !== 'keep') {
-                        return true;
+
+                if (isset($task['composer']) && $task['composer']) {
+                    return true;
+                }
+
+                if (isset($task['tasks'])) {
+                    foreach ($task['tasks'] as $subTask) {
+                        if ($subTask['type'] !== 'keep') {
+                            return true;
+                        }
                     }
                 }
 
@@ -159,7 +198,8 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->downloader,
             $signatureVerifier,
             $this->getPluginPath(),
-            $this->getWrappedOutput()
+            $this->getWrappedOutput(),
+            $this->composer
         );
         $executor->execute($tasks);
     }

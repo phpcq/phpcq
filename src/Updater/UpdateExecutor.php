@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater;
 
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
+use Phpcq\Runner\Composer\ComposerRunner;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
@@ -66,17 +67,24 @@ final class UpdateExecutor
      */
     private $filesystem;
 
+    /**
+     * @var ComposerRunner
+     */
+    private $composer;
+
     public function __construct(
         DownloaderInterface $downloader,
         SignatureVerifier $verifier,
         string $pluginPath,
-        OutputInterface $output
+        OutputInterface $output,
+        ComposerRunner $composer
     ) {
         $this->downloader          = $downloader;
         $this->verifier            = $verifier;
         $this->installedPluginPath = $pluginPath;
         $this->output              = $output;
         $this->filesystem          = new Filesystem();
+        $this->composer            = $composer;
     }
 
     /** @psalm-param list<TPluginTask> $tasks */
@@ -109,12 +117,16 @@ final class UpdateExecutor
                     break;
             }
 
+            $tools = [];
             if (isset($task['tasks'])) {
                 $tools = $this->executePluginTasks($task['tasks'], $installed->getPlugin($desired->getName()));
-                $lockRepository->addPlugin(
-                    new InstalledPlugin($desired, $tools)
-                );
             }
+
+            if (isset($task['composer']) && $task['composer']) {
+                $this->composer->update($installed->getPlugin($desired->getName()));
+            }
+
+            $lockRepository->addPlugin(new InstalledPlugin($desired, $tools));
         }
 
         // Save installed repository.

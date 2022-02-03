@@ -12,6 +12,7 @@ use Phpcq\RepositoryDefinition\Tool\ToolHash;
 use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\Runner\Composer\ComposerRunner;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
@@ -74,7 +75,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('plugin', 'tool', '^2.0.0')
             ->willReturn($desiredToolVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'plugin' => ['version' => '^1.0.0', 'signed' => true]
@@ -94,6 +96,7 @@ final class UpdateCalculatorTest extends TestCase
                         'message'   => 'Will keep tool tool in version 2.0.0',
                     ],
                 ],
+                'composer' => false
             ]
         ], $tasks);
     }
@@ -157,7 +160,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'foo' => ['version' => '^1.0.0', 'signed' => true]
@@ -167,11 +171,12 @@ final class UpdateCalculatorTest extends TestCase
             $this->assertSame(
                 [
                     [
-                        'type'            => 'keep',
-                        'plugin'          => $installedPlugin,
-                        'version'         => $desiredVersion,
-                        'message'         => $message,
-                        'tasks'           => []
+                        'type'    => 'keep',
+                        'plugin'  => $installedPlugin,
+                        'version' => $desiredVersion,
+                        'message' => $message,
+                        'tasks'   => [],
+                        'composer' => false,
                     ],
                 ],
                 $tasks
@@ -180,12 +185,13 @@ final class UpdateCalculatorTest extends TestCase
             $this->assertSame(
                 [
                     [
-                        'type'            => 'upgrade',
-                        'version'         => $desiredVersion,
-                        'old'             => $installedVersion,
-                        'message'         => $message,
-                        'signed'          => true,
-                        'tasks'           => []
+                        'type'     => 'upgrade',
+                        'version'  => $desiredVersion,
+                        'old'      => $installedVersion,
+                        'message'  => $message,
+                        'signed'   => true,
+                        'tasks'    => [],
+                        'composer' => false,
                     ],
                 ],
                 $tasks
@@ -279,7 +285,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', 'bar', '^2.0.0')
             ->willReturn($desiredToolVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'foo' => ['version' => '^1.0.0', 'signed' => true]
@@ -289,18 +296,19 @@ final class UpdateCalculatorTest extends TestCase
             $this->assertSame(
                 [
                     [
-                        'type'            => 'keep',
-                        'plugin'          => $installedPlugin,
-                        'version'         => $pluginVersion,
-                        'message'         => 'Will keep plugin foo in version 1.0.0',
-                        'tasks'           => [
+                        'type'     => 'keep',
+                        'plugin'   => $installedPlugin,
+                        'version'  => $pluginVersion,
+                        'message'  => 'Will keep plugin foo in version 1.0.0',
+                        'tasks'    => [
                             [
                                 'type'      => 'keep',
                                 'tool'      => $desiredToolVersion,
                                 'installed' => $installedToolVersion,
                                 'message'   => $message,
                             ],
-                        ]
+                        ],
+                        'composer' => false,
                     ],
                 ],
                 $tasks
@@ -309,11 +317,11 @@ final class UpdateCalculatorTest extends TestCase
             $this->assertSame(
                 [
                     [
-                        'type'            => 'keep',
-                        'plugin'          => $installedPlugin,
-                        'version'         => $pluginVersion,
-                        'message'         => 'Will keep plugin foo in version 1.0.0',
-                        'tasks'           => [
+                        'type'     => 'keep',
+                        'plugin'   => $installedPlugin,
+                        'version'  => $pluginVersion,
+                        'message'  => 'Will keep plugin foo in version 1.0.0',
+                        'tasks'    => [
                             [
                                 'type'    => 'upgrade',
                                 'tool'    => $desiredToolVersion,
@@ -321,7 +329,8 @@ final class UpdateCalculatorTest extends TestCase
                                 'old'     => $installedToolVersion,
                                 'signed'  => true,
                             ],
-                        ]
+                        ],
+                        'composer' => false,
                     ],
                 ],
                 $tasks
@@ -355,7 +364,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredPluginVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'foo' => ['version' => '^1.0.0', 'signed' => true]
@@ -363,11 +373,12 @@ final class UpdateCalculatorTest extends TestCase
 
         $this->assertSame([
             [
-                'type'    => 'install',
-                'version' => $desiredPluginVersion,
-                'message' => 'Will install plugin foo in version 1.0.0',
-                'signed'  => true,
-                'tasks'   => [],
+                'type'     => 'install',
+                'version'  => $desiredPluginVersion,
+                'message'  => 'Will install plugin foo in version 1.0.0',
+                'signed'   => true,
+                'tasks'    => [],
+                'composer' => false,
             ]
         ], $tasks);
     }
@@ -406,7 +417,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'foo' => ['version' => '^1.0.0', 'signed' => true]
@@ -414,12 +426,13 @@ final class UpdateCalculatorTest extends TestCase
 
         $this->assertSame([
             [
-                'type'    => 'upgrade',
-                'version' => $desiredVersion,
-                'old'     => $installedVersion,
-                'message' => 'Will upgrade plugin foo from version 1.0.0 to version 1.0.1',
-                'signed'  => true,
-                'tasks'   => [],
+                'type'     => 'upgrade',
+                'version'  => $desiredVersion,
+                'old'      => $installedVersion,
+                'message'  => 'Will upgrade plugin foo from version 1.0.0 to version 1.0.1',
+                'signed'   => true,
+                'tasks'    => [],
+                'composer' => false,
             ]
         ], $tasks);
     }
@@ -458,7 +471,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([
             'foo' => ['version' => '^1.0.0', 'signed' => true]
@@ -466,12 +480,13 @@ final class UpdateCalculatorTest extends TestCase
 
         $this->assertSame([
             [
-                'type'    => 'upgrade',
-                'version' => $desiredVersion,
-                'old'     => $installedVersion,
-                'message' => 'Will downgrade plugin foo from version 2.0.0 to version 1.0.1',
-                'signed'  => true,
-                'tasks'   => [],
+                'type'     => 'upgrade',
+                'version'  => $desiredVersion,
+                'old'      => $installedVersion,
+                'message'  => 'Will downgrade plugin foo from version 2.0.0 to version 1.0.1',
+                'signed'   => true,
+                'tasks'    => [],
+                'composer' => false,
             ]
         ], $tasks);
     }
@@ -498,7 +513,8 @@ final class UpdateCalculatorTest extends TestCase
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([]);
 
@@ -546,7 +562,8 @@ final class UpdateCalculatorTest extends TestCase
             ->with('foo', '^1.0.0')
             ->willReturn($desiredVersion);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate(
             [
@@ -557,12 +574,13 @@ final class UpdateCalculatorTest extends TestCase
 
         $this->assertSame([
             [
-                'type'    => 'upgrade',
-                'version' => $desiredVersion,
-                'old'     => $installedVersion,
-                'message' => 'Will reinstall plugin foo in version 1.0.0',
-                'signed'  => true,
-                'tasks'   => [],
+                'type'     => 'upgrade',
+                'version'  => $desiredVersion,
+                'old'      => $installedVersion,
+                'message'  => 'Will reinstall plugin foo in version 1.0.0',
+                'signed'   => true,
+                'tasks'    => [],
+                'composer' => false,
             ]
         ], $tasks);
     }
@@ -586,7 +604,8 @@ final class UpdateCalculatorTest extends TestCase
 
         $resolver = $this->getMockForAbstractClass(ResolverInterface::class);
 
-        $calculator = new UpdateCalculator($installed, $resolver, $output);
+        $composer = $this->createMock(ComposerRunner::class);
+        $calculator = new UpdateCalculator($installed, $resolver, $composer, $output);
 
         $tasks = $calculator->calculate([]);
         $this->assertSame([], $tasks);

@@ -5,6 +5,8 @@ phpcq:
     - src
     - tests
   artifact: .phpcq/build
+  composer:
+    autodiscover: false
 
   plugins:
     box:
@@ -60,9 +62,11 @@ tasks:
   fix:
     - composer-normalize-fix
     - phpcbf
+
   verify:
     - composer-require-checker
     - composer-normalize
+
   analyze:
     - phploc
     - phpcpd
@@ -70,17 +74,14 @@ tasks:
     - phpcs
     - psalm
     - phpunit
+
   build:
     - box
+
   default:
-    - composer-require-checker
-    - composer-normalize
-    - phploc
-    - phpcpd
-    - phpmd
-    - phpcs
-    - psalm
-    - phpunit
+    - verify
+    - analyze
+
   box:
     config:
       algorithm: "SHA512"

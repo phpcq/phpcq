@@ -42,6 +42,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         $calculator = new UpdateCalculator(
             $this->getInstalledRepository(false),
             new RepositoryPoolResolver($pool),
+            $this->composer,
             $this->getWrappedOutput()
         );
 
@@ -54,6 +55,9 @@ final class UpdateCommand extends AbstractUpdateCommand
         if ($this->input->getOption('dry-run')) {
             foreach ($tasks as $task) {
                 $this->output->writeln($task['message']);
+                if (isset($task['composer']) && $task['composer']) {
+                    $this->output->writeln('Will update composer dependencies of ' . $task['version']->getName());
+                }
             }
             return;
         }
