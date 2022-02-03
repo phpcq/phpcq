@@ -76,7 +76,7 @@ final class TaskReportWriter extends AbstractReportWriter
         $task = $this->xml->createElement('task', $node);
         $task->setAttribute('name', $report->getTaskName());
         $task->setAttribute('status', $report->getStatus());
-        $task->setAttribute('version', $report->getMetadata()['version'] ?? 'unknown');
+        $task->setAttribute('version', $report->getMetadata()['tool_version'] ?? 'unknown');
         $diagnosticsElement = $this->xml->createElement('diagnostics', $task);
         do {
             $this->createDiagnosticElement($diagnosticsElement, $entry);
