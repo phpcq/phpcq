@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Task;
 
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
+use Traversable;
 
 /**
  * Default task list implementation.
@@ -26,7 +27,7 @@ class Tasklist implements TasklistInterface
      *
      * @psalm-return \Generator<array-key, TaskInterface, mixed, void>
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         yield from $this->tasks;
     }
