@@ -8,6 +8,7 @@ use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\PluginInterface;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
+use Traversable;
 
 use function assert;
 use function get_class;
@@ -63,7 +64,7 @@ final class PluginRegistry implements IteratorAggregate
      *
      * @psalm-return Generator<string, PluginInterface, mixed, void>
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         yield from $this->plugins;
     }

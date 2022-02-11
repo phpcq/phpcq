@@ -9,6 +9,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    name: PHP ${{ matrix.php }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: 7.4
+            phpcq_install: 'install'
+          - php: 8.0
+            phpcq_install: 'update'
+          - php: 8.1
+            phpcq_install: 'update'
+          - php: 8.2
+            phpcq_install: 'update'
+
     steps:
       - name: Pull source
         uses: actions/checkout@v2
@@ -16,13 +31,13 @@ jobs:
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: ${{ matrix.php }}
           coverage: xdebug2
 
       - name: Cache composer cache directory
         uses: actions/cache@v1
         env:
-          cache-name: composer-cache-dir
+          cache-name: composer-cache-dir-${{ matrix.php }}
         with:
           path: ~/.cache/composer
           key: ${{ runner.os }}-build-${{ env.cache-name }}
@@ -33,7 +48,7 @@ jobs:
       - name: Cache vendor directory of phpcq tool runner
         uses: actions/cache@v1
         env:
-          cache-name: phpcq-vendor
+          cache-name: vendor-${{ matrix.php }}
         with:
           path: $GITHUB_WORKSPACE/vendor
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
@@ -41,7 +56,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
 
       - name: Install phpcq toolchain
-        run: $GITHUB_WORKSPACE/phpcq install -v
+        run: $GITHUB_WORKSPACE/phpcq ${{ matrix.phpcq_install }} -v
 
       - name: Run tests
         run: $GITHUB_WORKSPACE/phpcq run -o github-action -o default
@@ -56,5 +71,5 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{ success() }} || ${{ failure() }}
         with:
-          name: phpcq-builds
+          name: phpcq-builds-php-${{ matrix.php }}
           path: .phpcq/build/

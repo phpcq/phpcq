@@ -22,5 +22,5 @@ interface TasklistInterface extends IteratorAggregate
      *
      * @psalm-return Traversable<int, TaskInterface>
      */
-    public function getIterator(): iterable;
+    public function getIterator(): Traversable;
 }
