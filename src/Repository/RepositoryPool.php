@@ -9,6 +9,7 @@ use Phpcq\Runner\Exception\PluginVersionNotFoundException;
 use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Traversable;
 
 final class RepositoryPool implements IteratorAggregate
 {
@@ -61,7 +62,7 @@ final class RepositoryPool implements IteratorAggregate
      *
      * @psalm-return \Generator<array-key, RepositoryInterface, mixed, void>
      */
-    public function getIterator(): iterable
+    public function getIterator(): Traversable
     {
         yield from $this->repositories;
     }
