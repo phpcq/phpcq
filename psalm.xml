@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-    totallyTyped="true"
     errorLevel="1"
     resolveFromConfigFile="true"
     hideExternalErrors="true"
