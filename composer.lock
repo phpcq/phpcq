@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fcd2b5bf0d6ab1d689c403e1c4195651",
+    "content-hash": "3cc05ac6bc0206ae3a150097a38ad9e2",
     "packages": [
         {
             "name": "composer/semver",
@@ -505,16 +505,16 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "dev-feature/enricher",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "c3f7829d0598148f2d8ffc4026f7f14f7cdfd034"
+                "reference": "891b29c1415436492548771c2c6f61aedb0b0655"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/c3f7829d0598148f2d8ffc4026f7f14f7cdfd034",
-                "reference": "c3f7829d0598148f2d8ffc4026f7f14f7cdfd034",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/891b29c1415436492548771c2c6f61aedb0b0655",
+                "reference": "891b29c1415436492548771c2c6f61aedb0b0655",
                 "shasum": ""
             },
             "require": {
@@ -524,6 +524,7 @@
             "require-dev": {
                 "phpcq/runner-bootstrap": "^1.0@dev"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -556,7 +557,7 @@
             "description": "PHP code quality project plugin API interfaces.",
             "support": {
                 "issues": "https://github.com/phpcq/plugin-api/issues",
-                "source": "https://github.com/phpcq/plugin-api/tree/feature/enricher"
+                "source": "https://github.com/phpcq/plugin-api/tree/master"
             },
             "funding": [
                 {
@@ -568,7 +569,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-03-01T09:05:42+00:00"
+            "time": "2022-03-01T09:07:09+00:00"
         },
         {
             "name": "phpcq/repository-definition",
