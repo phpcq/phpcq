@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Config;
 
+use Phpcq\PluginApi\Version10\Configuration\OptionsInterface;
 use Phpcq\Runner\Exception\InvalidArgumentException;
 
 /**
@@ -15,7 +16,8 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  * @psalm-type TTaskConfig = array{
  *   directories?: list<string>,
  *   plugin?: string,
- *   config: array<string, mixed>
+ *   config: array<string, mixed>,
+ *   uses?: array<string, array<string,mixed>>
  * }
  * @psalm-type TRepository = array{
  *   type: string,
@@ -33,10 +35,10 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  */
 final class PhpcqConfiguration
 {
-    /** @var Options */
+    /** @var OptionsInterface */
     private $options;
 
-    public function __construct(Options $options)
+    public function __construct(OptionsInterface $options)
     {
         $this->options = $options;
     }

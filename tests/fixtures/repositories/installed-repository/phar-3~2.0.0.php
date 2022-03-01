@@ -1,10 +1,16 @@
 <?php
 
-use Phpcq\PluginApi\Version10\PluginInterface;
+use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
+use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 
-return new class implements PluginInterface {
+return new class implements ConfigurationPluginInterface {
     public function getName(): string
     {
         return 'phar-3';
+    }
+
+    public function describeConfiguration(PluginConfigurationBuilderInterface $configOptionsBuilder): void
+    {
+        $configOptionsBuilder->describeStringListOption('rulesets', 'Plugin rulesets');
     }
 };

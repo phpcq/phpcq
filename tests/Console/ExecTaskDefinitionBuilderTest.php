@@ -26,7 +26,9 @@ final class ExecTaskDefinitionBuilderTest extends TestCase
 
         $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
         $version->expects($this->once())->method('getName')->willReturn('phar-2');
-        $version->expects($this->once())->method('getFilePath')->willReturn($this->getBootstrap('phar-2~1.1.0.php'));
+        $version->expects($this->exactly(2))
+            ->method('getFilePath')
+            ->willReturn($this->getBootstrap('phar-2~1.1.0.php'));
         $plugin = new InstalledPlugin($version, []);
 
         $installed = new InstalledRepository();

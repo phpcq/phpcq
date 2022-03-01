@@ -16,16 +16,18 @@ final class EnvironmentTest extends TestCase
 {
     public function testCreate(): void
     {
-        $configuration = new Environment(
+        $environment = new Environment(
             $projectConfig = $this->getMockForAbstractClass(ProjectConfigInterface::class),
             $taskFactory = $this->getMockForAbstractClass(TaskFactoryInterface::class),
             '/temp/dir',
-            10
+            10,
+            '/installed-dir'
         );
 
-        self::assertSame($projectConfig, $configuration->getProjectConfiguration());
-        self::assertSame($taskFactory, $configuration->getTaskFactory());
-        self::assertSame('/temp/dir', $configuration->getBuildTempDir());
-        self::assertSame(10, $configuration->getAvailableThreads());
+        self::assertSame($projectConfig, $environment->getProjectConfiguration());
+        self::assertSame($taskFactory, $environment->getTaskFactory());
+        self::assertSame('/temp/dir', $environment->getBuildTempDir());
+        self::assertSame(10, $environment->getAvailableThreads());
+        self::assertSame('/installed-dir', $environment->getInstalledDir());
     }
 }
