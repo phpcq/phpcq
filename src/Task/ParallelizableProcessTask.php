@@ -153,6 +153,8 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         assert(is_int($this->errorOffset));
         $all                = $this->process->getErrorOutput();
         $latest             = substr($all, $this->errorOffset);
+
+        /** @psalm-suppress DocblockTypeContradiction - We still support PHP < 8.0 */
         if (false === $latest) {
             return '';
         }
