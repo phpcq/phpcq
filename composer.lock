@@ -509,12 +509,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "d86d34d8ed583d9683787ad6f2d25abfeec1c8ed"
+                "reference": "c3f7829d0598148f2d8ffc4026f7f14f7cdfd034"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/d86d34d8ed583d9683787ad6f2d25abfeec1c8ed",
-                "reference": "d86d34d8ed583d9683787ad6f2d25abfeec1c8ed",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/c3f7829d0598148f2d8ffc4026f7f14f7cdfd034",
+                "reference": "c3f7829d0598148f2d8ffc4026f7f14f7cdfd034",
                 "shasum": ""
             },
             "require": {
@@ -568,7 +568,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-01-21T13:17:05+00:00"
+            "time": "2022-03-01T09:05:42+00:00"
         },
         {
             "name": "phpcq/repository-definition",
@@ -576,12 +576,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "30b7d06522b2b1d7b3f472f6ce2cbdfa0a193277"
+                "reference": "843402277563da53c5280c8799428bfefd0ec0f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/30b7d06522b2b1d7b3f472f6ce2cbdfa0a193277",
-                "reference": "30b7d06522b2b1d7b3f472f6ce2cbdfa0a193277",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/843402277563da53c5280c8799428bfefd0ec0f2",
+                "reference": "843402277563da53c5280c8799428bfefd0ec0f2",
                 "shasum": ""
             },
             "require": {
@@ -638,7 +638,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-02-10T09:21:13+00:00"
+            "time": "2022-03-01T09:14:59+00:00"
         },
         {
             "name": "phpcq/schema",
