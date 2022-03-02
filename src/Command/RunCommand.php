@@ -86,6 +86,13 @@ final class RunCommand extends AbstractCommand
         );
 
         $this->addOption(
+            'exit-0',
+            '0',
+            InputOption::VALUE_NONE,
+            'Forces the exit code to 0 - this is useful to "ignore" failures in CI as "allow-failure" mode',
+        );
+
+        $this->addOption(
             'report',
             'r',
             InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
@@ -175,7 +182,11 @@ final class RunCommand extends AbstractCommand
         $consoleOutput->writeln('Finished.', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $fileSystem->remove($tempDirectory);
 
-        return $exitCode;
+        if ($this->input->getOption('exit-0')) {
+            return 0;
+        }
+
+        return  $exitCode;
     }
 
     protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
