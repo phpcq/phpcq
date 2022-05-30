@@ -20,7 +20,7 @@ abstract class AbstractInstallingPluginTask extends AbstractPluginTask
     ): ?string {
         $signature = $pluginVersion->getSignaturePath();
         if (null === $signature) {
-            if (! $requireSigned) {
+            if (!$requireSigned) {
                 return null;
             }
 
@@ -40,7 +40,7 @@ abstract class AbstractInstallingPluginTask extends AbstractPluginTask
         file_put_contents($signaturePath, $signature);
         $result = $context->signatureVerifier->verify(file_get_contents($pharPath), $signature);
 
-        if ($requireSigned && ! $result->isValid()) {
+        if ($requireSigned && !$result->isValid()) {
             $context->filesystem->remove($pharPath);
             $context->filesystem->remove($context->installedPluginPath . '/' . $signatureName);
 

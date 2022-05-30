@@ -180,7 +180,7 @@ final class UpdateCalculator
 
     private function isPluginUpgradeRequired(PluginVersionInterface $desired): bool
     {
-        if (! $this->installed->hasPlugin($desired->getName())) {
+        if (!$this->installed->hasPlugin($desired->getName())) {
             return true;
         }
 
@@ -260,7 +260,7 @@ final class UpdateCalculator
 
         if ($plugin) {
             foreach ($plugin->iterateTools() as $tool) {
-                if (! $desired->getRequirements()->getToolRequirements()->has($tool->getName())) {
+                if (!$desired->getRequirements()->getToolRequirements()->has($tool->getName())) {
                     yield new RemoveToolTask($desired, $tool);
                 }
             }

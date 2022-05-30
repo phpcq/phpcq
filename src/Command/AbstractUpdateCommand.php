@@ -195,7 +195,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
-        if (! is_dir($gnupgPath)) {
+        if (!is_dir($gnupgPath)) {
             mkdir($gnupgPath, 0777, true);
         }
         $signatureVerifier = new SignatureVerifier(

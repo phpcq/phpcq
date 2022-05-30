@@ -65,7 +65,7 @@ class Repository implements RepositoryInterface
 
     public function addPluginVersion(PluginVersionInterface $pluginVersion): void
     {
-        if (! $this->repository->hasPlugin($pluginVersion->getName())) {
+        if (!$this->repository->hasPlugin($pluginVersion->getName())) {
             $this->repository->addPlugin(new Plugin($pluginVersion->getName()));
         }
 
@@ -95,7 +95,7 @@ class Repository implements RepositoryInterface
 
     public function addToolVersion(ToolVersionInterface $toolVersion): void
     {
-        if (! $this->repository->hasTool($toolVersion->getName())) {
+        if (!$this->repository->hasTool($toolVersion->getName())) {
             $this->repository->addTool(new Tool($toolVersion->getName()));
         }
 

@@ -24,7 +24,7 @@ final class LockFileRepositoryResolver implements ResolverInterface
     public function resolvePluginVersion(string $pluginName, string $versionConstraint): PluginVersionInterface
     {
         $version = $this->repository->getPlugin($pluginName)->getPluginVersion();
-        if (! Semver::satisfies($version->getVersion(), $versionConstraint)) {
+        if (!Semver::satisfies($version->getVersion(), $versionConstraint)) {
             throw new PluginVersionNotFoundException($pluginName, $versionConstraint);
         }
 
@@ -38,7 +38,7 @@ final class LockFileRepositoryResolver implements ResolverInterface
     ): ToolVersionInterface {
         $plugin  = $this->repository->getPlugin($pluginName);
         $version = $plugin->getTool($toolName);
-        if (! Semver::satisfies($version->getVersion(), $versionConstraint)) {
+        if (!Semver::satisfies($version->getVersion(), $versionConstraint)) {
             throw new ToolVersionNotFoundException($toolName, $versionConstraint);
         }
 

@@ -54,7 +54,7 @@ abstract class AbstractInstallingToolTask extends AbstractToolTask
     {
         $signatureUrl = $this->toolVersion->getSignatureUrl();
         if (null === $signatureUrl) {
-            if (! $this->signed) {
+            if (!$this->signed) {
                 return null;
             }
 
@@ -83,7 +83,7 @@ abstract class AbstractInstallingToolTask extends AbstractToolTask
             file_get_contents($signaturePath)
         );
 
-        if ($this->signed && ! $result->isValid()) {
+        if ($this->signed && !$result->isValid()) {
             $context->filesystem->remove($pharPath);
             $context->filesystem->remove($context->installedPluginPath . '/' . $signatureName);
 

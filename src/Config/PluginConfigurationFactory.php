@@ -43,7 +43,7 @@ final class PluginConfigurationFactory
         $pluginName = $taskConfig['plugin'] ?? $taskName;
         $plugin     = $this->plugins->getPluginByName($pluginName);
 
-        if (! $plugin instanceof ConfigurationPluginInterface) {
+        if (!$plugin instanceof ConfigurationPluginInterface) {
             throw new RuntimeException(
                 'Plugin "' . $pluginName . '" is not an instance of ConfigurationPluginInterface'
             );
@@ -79,7 +79,7 @@ final class PluginConfigurationFactory
 
         foreach ($uses as $enricherName => $enricherConfig) {
             $enricher = $this->plugins->getPluginByName($enricherName);
-            if (! $enricher instanceof EnricherPluginInterface) {
+            if (!$enricher instanceof EnricherPluginInterface) {
                 throw new RuntimeException('Bad configuration. Plugin "' . $enricherName . '" is not an enricher');
             }
 

@@ -63,7 +63,7 @@ final class ValidateCommand extends AbstractCommand
         $configValues = $this->config->getConfigForTask($taskName);
         $plugin = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
 
-        if (! $plugin instanceof ConfigurationPluginInterface) {
+        if (!$plugin instanceof ConfigurationPluginInterface) {
             return true;
         }
 

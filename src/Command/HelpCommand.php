@@ -104,7 +104,7 @@ class HelpCommand extends AbstractCommand
             $exitCode = $this->help->run($inputClone, $output);
         }
 
-        if (! $this->shouldExtendHelp($input)) {
+        if (!$this->shouldExtendHelp($input)) {
             return $exitCode;
         }
 

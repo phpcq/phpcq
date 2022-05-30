@@ -140,7 +140,7 @@ final class SelfUpdateCommand extends AbstractCommand
 
         $this->updateComposer();
 
-        if (! $this->shouldUpdate($installedVersion, $availableVersion)) {
+        if (!$this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
         }
 
@@ -243,7 +243,7 @@ final class SelfUpdateCommand extends AbstractCommand
         $signatureVerifier = $this->createSignatureVerifier();
         $result            = $signatureVerifier->verify(file_get_contents($downloadedPhar), $signature);
 
-        if (! $result->isValid()) {
+        if (!$result->isValid()) {
             $this->cleanup($downloadedPhar);
 
             throw new RuntimeException('Signature verification failed.');
@@ -253,7 +253,7 @@ final class SelfUpdateCommand extends AbstractCommand
     private function createSignatureVerifier(): SignatureVerifier
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
-        if (! is_dir($gnupgPath)) {
+        if (!is_dir($gnupgPath)) {
             $this->filesystem->mkdir($gnupgPath);
         }
         $questionHelper = $this->getHelper('question');
@@ -293,7 +293,7 @@ final class SelfUpdateCommand extends AbstractCommand
             $this->findPhpCli()
         );
 
-        if (! $composer->isBinaryAutoDiscovered()) {
+        if (!$composer->isBinaryAutoDiscovered()) {
             $this->output->writeln('Updating used composer.phar');
             $composer->updateBinary();
         }
