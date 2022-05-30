@@ -111,7 +111,7 @@ final class ExecCommand extends AbstractCommand
         );
 
         $task = $this->createTask($instance, $applicationName, $toolArguments, $environment);
-        if (! $task instanceof OutputWritingTaskInterface) {
+        if (!$task instanceof OutputWritingTaskInterface) {
             throw new RuntimeException('Task has to be an instance of ' . OutputWritingTaskInterface::class);
         }
 

@@ -62,6 +62,7 @@ final class LockFileDumper extends AbstractDumper
             'requirements' => $this->encodePluginRequirements($version->getRequirements()),
             'checksum'     => $this->encodeHash($version->getHash()),
             'tools'        => $this->dumpTools($plugin),
+            'composerLock' => $plugin->getComposerLock()
         ];
     }
 

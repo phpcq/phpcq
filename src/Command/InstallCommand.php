@@ -7,12 +7,10 @@ namespace Phpcq\Runner\Command;
 use Phpcq\Runner\Repository\RepositoryFactory;
 use Phpcq\Runner\Resolver\LockFileRepositoryResolver;
 use Phpcq\Runner\Resolver\RepositoryPoolResolver;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
- */
 final class InstallCommand extends AbstractUpdateCommand
 {
     protected function configure(): void
@@ -23,7 +21,7 @@ final class InstallCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<TPluginTask> */
+    /** @psalm-return list<TaskInterface> */
     protected function calculateTasks(): array
     {
         $installedRepository = $this->getInstalledRepository(false);
@@ -42,7 +40,17 @@ final class InstallCommand extends AbstractUpdateCommand
             $force        = true;
         }
 
-        $calculator = new UpdateCalculator($installedRepository, $resolver, $this->getWrappedOutput());
+        $verbosity  = $this->input->getOption('dry-run')
+            ? OutputInterface::VERBOSITY_VERBOSE
+            : OutputInterface::VERBOSITY_VERY_VERBOSE;
+
+        $calculator = new UpdateCalculator(
+            $installedRepository,
+            $resolver,
+            $this->composer,
+            $this->getWrappedOutput(),
+            $verbosity
+        );
 
         return $calculator->calculate($this->config->getPlugins(), $force);
     }

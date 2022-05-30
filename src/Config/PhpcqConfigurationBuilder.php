@@ -43,6 +43,14 @@ final class PhpcqConfigurationBuilder
             ->describePrototypeOption('auth', 'Authentication configuration. Not defined yet.')
             ->withDefaultValue([])
             ->ofOptionsValue();
+
+        $this->describeComposer(
+            $this->builder->describeOptions(
+                'composer',
+                'Composer configuration. You may set a path to the composer binary or phar file as simplified '
+                . 'configuration'
+            )
+        );
     }
 
     /** @psalm-return array<string,mixed> */
@@ -119,5 +127,16 @@ final class PhpcqConfigurationBuilder
             ->describeBoolOption('signed', 'If set to false no signature verification happens')
             ->withDefaultValue(true)
             ->isRequired();
+    }
+
+    private function describeComposer(OptionsBuilderInterface $builder): void
+    {
+        $builder->withDefaultValue([]);
+
+        $builder->describeBoolOption('autodiscover', 'PHPCQ tries to autodiscover the composer binary')
+            ->isRequired()
+            ->withDefaultValue(true);
+
+        // TODO: Do we want to allow passing data to the generated composer.json files?
     }
 }

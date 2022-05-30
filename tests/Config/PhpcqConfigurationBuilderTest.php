@@ -51,6 +51,9 @@ final class PhpcqConfigurationBuilderTest extends TestCase
                 'artifact' => './phpcq/build',
                 'auth' => [],
                 'trusted-keys' => [],
+                'composer' => [
+                    'autodiscover' => true
+                ]
             ],
             $configuration
         );

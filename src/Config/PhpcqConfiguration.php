@@ -23,6 +23,9 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  *   type: string,
  *   url?: string
  * }
+ * @psalm-type TComposerConfig = array{
+ *   autodiscover: bool
+ * }
  * @psalm-type TConfig = array{
  *   repositories: list<string>,
  *   directories: list<string>,
@@ -30,7 +33,8 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  *   plugins: array<string,TPlugin>,
  *   trusted-keys: list<string>,
  *   tasks: array<string,TTaskConfig>,
- *   auth: array
+ *   auth: array,
+ *   composer: TComposerConfig
  * }
  */
 final class PhpcqConfiguration
@@ -107,6 +111,17 @@ final class PhpcqConfiguration
     public function getAuth(): array
     {
         return $this->options->getOptions('auth');
+    }
+
+    /**
+     * Get the composer configuration
+     *
+     * @return array<string,mixed>
+     * @psalm-return TComposerConfig
+     */
+    public function getComposer(): array
+    {
+        return $this->options->getOptions('composer');
     }
 
     /**

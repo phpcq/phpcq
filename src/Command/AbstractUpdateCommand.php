@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Command;
 
+use Phpcq\Runner\Downloader\OutputLoggingDownloader;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
@@ -19,19 +21,23 @@ use Phpcq\Runner\Repository\InstalledRepositoryLoader;
 use Phpcq\Runner\Repository\JsonRepositoryLoader;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
+use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
+use Phpcq\Runner\Updater\Task\Tool\KeepToolTask;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Filesystem\Filesystem;
 
 use function array_filter;
 use function file_exists;
+use function getcwd;
 use function is_dir;
 use function mkdir;
 
 /**
  * Class AbstractUpdateCommand contains common logic used in the update and install command
- *
- * @psalm-import-type TPluginTask from \Phpcq\Runner\Updater\UpdateCalculator
  */
 abstract class AbstractUpdateCommand extends AbstractCommand
 {
@@ -67,6 +73,15 @@ abstract class AbstractUpdateCommand extends AbstractCommand
      */
     protected $downloader;
 
+    /**
+     * Only valid when examined from within performUpdate().
+     *
+     * @var Composer
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    protected $composer;
+
     protected function configure(): void
     {
         $this->addOption(
@@ -87,9 +102,18 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         parent::configure();
     }
 
-    protected function doExecute(): int
+    protected function prepare(InputInterface $input): void
     {
+        parent::prepare($input);
+
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->output)) {
+            // In auto completion output does not exist.
+            return;
+        }
+
         $cachePath = $this->input->getOption('cache');
+        /** @psalm-suppress RedundantConditionGivenDocblockType - Psalm got confused by isset($this->output) */
         assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 
@@ -97,40 +121,65 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->output->writeln('Using CACHE: ' . $cachePath);
         }
 
+        $authConfig       = $this->config->getAuth();
+        $this->downloader = new OutputLoggingDownloader(
+            new FileDownloader($cachePath, $authConfig),
+            $this->getWrappedOutput()
+        );
+        $lockFile         = $this->getLockFileName();
+        if (file_exists($lockFile)) {
+            $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
+        }
+
+        $this->composer = new Composer(
+            $this->downloader,
+            new Filesystem(),
+            $this->getWrappedOutput(),
+            $this->phpcqPath,
+            $this->config->getComposer(),
+            $this->findPhpCli()
+        );
+    }
+
+    protected function doExecute(): int
+    {
         $requirementChecker = !$this->input->getOption('ignore-platform-reqs')
             ? PlatformRequirementChecker::create()
             : PlatformRequirementChecker::createAlwaysFulfilling();
 
-        $authConfig             = $this->config->getAuth();
-        $this->downloader       = new FileDownloader($cachePath, $authConfig);
         $this->repositoryLoader = new JsonRepositoryLoader(
             $requirementChecker,
             new DownloadingJsonFileLoader($this->downloader, true)
         );
 
-        $lockFile = $this->getLockFileName();
-        if (file_exists($lockFile)) {
-            $this->lockFileRepository = (new InstalledRepositoryLoader())->loadFile($lockFile);
-        }
-
         $tasks   = $this->calculateTasks();
         $changes = array_filter(
             $tasks,
-            static function ($task) {
-                if ($task['type'] !== 'keep' || !isset($task['tasks'])) {
-                    return true;
-                }
-                foreach ($task['tasks'] as $subTask) {
-                    if ($subTask['type'] !== 'keep') {
-                        return true;
-                    }
+            static function (TaskInterface $task) {
+                if ($task instanceof KeepToolTask || $task instanceof KeepPluginTask) {
+                    return false;
                 }
 
-                return false;
+                return true;
             }
         );
         if (count($changes) === 0) {
             $this->output->writeln('Nothing to install.');
+            return 0;
+        }
+
+        if ($this->input->getOption('dry-run')) {
+            $plugins = [];
+            foreach ($tasks as $task) {
+                if ($task instanceof KeepPluginTask || $task instanceof KeepToolTask) {
+                    continue;
+                }
+
+                $plugins[$task->getPluginName()] = null;
+            }
+
+            $this->output->writeln('Updates available for plugins: ' . implode(', ', array_keys($plugins)));
+
             return 0;
         }
 
@@ -139,14 +188,14 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<TPluginTask> */
+    /** @psalm-return list<TaskInterface> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<TPluginTask> $tasks */
+    /** @psalm-param list<TaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
-        if (! is_dir($gnupgPath)) {
+        if (!is_dir($gnupgPath)) {
             mkdir($gnupgPath, 0777, true);
         }
         $signatureVerifier = new SignatureVerifier(
@@ -159,8 +208,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->downloader,
             $signatureVerifier,
             $this->getPluginPath(),
-            $this->getWrappedOutput()
+            $this->getWrappedOutput(),
+            $this->composer
         );
+
         $executor->execute($tasks);
     }
 

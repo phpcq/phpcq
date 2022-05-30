@@ -9,6 +9,7 @@ use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
+use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Downloader\FileDownloader;
@@ -137,7 +138,9 @@ final class SelfUpdateCommand extends AbstractCommand
         $installedVersion = $this->getInstalledVersion();
         $availableVersion = trim(substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6));
 
-        if (! $this->shouldUpdate($installedVersion, $availableVersion)) {
+        $this->updateComposer();
+
+        if (!$this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
         }
 
@@ -240,7 +243,7 @@ final class SelfUpdateCommand extends AbstractCommand
         $signatureVerifier = $this->createSignatureVerifier();
         $result            = $signatureVerifier->verify(file_get_contents($downloadedPhar), $signature);
 
-        if (! $result->isValid()) {
+        if (!$result->isValid()) {
             $this->cleanup($downloadedPhar);
 
             throw new RuntimeException('Signature verification failed.');
@@ -250,7 +253,7 @@ final class SelfUpdateCommand extends AbstractCommand
     private function createSignatureVerifier(): SignatureVerifier
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
-        if (! is_dir($gnupgPath)) {
+        if (!is_dir($gnupgPath)) {
             $this->filesystem->mkdir($gnupgPath);
         }
         $questionHelper = $this->getHelper('question');
@@ -273,5 +276,26 @@ final class SelfUpdateCommand extends AbstractCommand
     private function cleanup(string $downloadedPhar): void
     {
         $this->filesystem->remove($downloadedPhar);
+    }
+
+    private function updateComposer(): void
+    {
+        if ($this->input->getOption('dry-run')) {
+            return;
+        }
+
+        $composer = new Composer(
+            $this->downloader,
+            new Filesystem(),
+            $this->getWrappedOutput(),
+            $this->phpcqPath,
+            $this->config->getComposer(),
+            $this->findPhpCli()
+        );
+
+        if (!$composer->isBinaryAutoDiscovered()) {
+            $this->output->writeln('Updating used composer.phar');
+            $composer->updateBinary();
+        }
     }
 }
