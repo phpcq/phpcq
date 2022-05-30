@@ -621,12 +621,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "843402277563da53c5280c8799428bfefd0ec0f2"
+                "reference": "a4d39522da1c44d50d41d428977a1575dde1a67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/843402277563da53c5280c8799428bfefd0ec0f2",
-                "reference": "843402277563da53c5280c8799428bfefd0ec0f2",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/a4d39522da1c44d50d41d428977a1575dde1a67c",
+                "reference": "a4d39522da1c44d50d41d428977a1575dde1a67c",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-03-01T09:14:59+00:00"
+            "time": "2022-05-30T09:04:08+00:00"
         },
         {
             "name": "phpcq/schema",
