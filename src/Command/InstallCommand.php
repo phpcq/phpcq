@@ -40,16 +40,12 @@ final class InstallCommand extends AbstractUpdateCommand
             $force        = true;
         }
 
-        $verbosity  = $this->input->getOption('dry-run')
-            ? OutputInterface::VERBOSITY_VERBOSE
-            : OutputInterface::VERBOSITY_VERY_VERBOSE;
-
         $calculator = new UpdateCalculator(
             $installedRepository,
             $resolver,
             $this->composer,
             $this->getWrappedOutput(),
-            $verbosity
+            OutputInterface::VERBOSITY_VERBOSE
         );
 
         return $calculator->calculate($this->config->getPlugins(), $force);
