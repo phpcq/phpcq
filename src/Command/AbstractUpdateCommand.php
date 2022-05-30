@@ -85,6 +85,13 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     protected function configure(): void
     {
         $this->addOption(
+            'dry-run',
+            'd',
+            InputOption::VALUE_NONE,
+            'Dry run'
+        );
+
+        $this->addOption(
             'cache',
             'x',
             InputOption::VALUE_REQUIRED,

@@ -17,12 +17,6 @@ final class UpdateCommand extends AbstractUpdateCommand
     {
         $this->setName('update')->setDescription('Update the phpcq installation');
         $this->addOption(
-            'dry-run',
-            'd',
-            InputOption::VALUE_NONE,
-            'Dry run'
-        );
-        $this->addOption(
             'force-reinstall',
             'f',
             InputOption::VALUE_NONE,
