@@ -6,7 +6,7 @@ namespace Phpcq\Runner\Updater\Task;
 
 use Phpcq\Runner\Updater\UpdateContext;
 
-interface UpdateTaskInterface
+interface TaskInterface
 {
     public function getPluginName(): string;
 

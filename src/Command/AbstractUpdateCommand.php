@@ -23,7 +23,7 @@ use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
 use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
 use Phpcq\Runner\Updater\Task\Tool\KeepToolTask;
-use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateExecutor;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -155,7 +155,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         $tasks   = $this->calculateTasks();
         $changes = array_filter(
             $tasks,
-            static function (UpdateTaskInterface $task) {
+            static function (TaskInterface $task) {
                 if ($task instanceof KeepToolTask || $task instanceof KeepPluginTask) {
                     return false;
                 }
@@ -188,10 +188,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<UpdateTaskInterface> */
+    /** @psalm-return list<TaskInterface> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<UpdateTaskInterface> $tasks */
+    /** @psalm-param list<TaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';

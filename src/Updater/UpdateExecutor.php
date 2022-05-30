@@ -11,7 +11,7 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\InstalledRepositoryDumper;
 use Phpcq\Runner\Repository\LockFileDumper;
-use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function getcwd;
@@ -63,7 +63,7 @@ final class UpdateExecutor
         $this->composer            = $composer;
     }
 
-    /** @psalm-param list<UpdateTaskInterface> $tasks */
+    /** @psalm-param list<TaskInterface> $tasks */
     public function execute(array $tasks): void
     {
         $context = new UpdateContext(

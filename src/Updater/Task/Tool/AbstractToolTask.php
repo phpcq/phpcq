@@ -8,10 +8,10 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolHash;
 use Phpcq\RepositoryDefinition\Tool\ToolVersion;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
-use Phpcq\Runner\Updater\Task\AbstractTask;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
-abstract class AbstractToolTask extends AbstractTask
+abstract class AbstractToolTask implements TaskInterface
 {
     /** @var ToolVersionInterface */
     protected $toolVersion;

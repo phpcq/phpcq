@@ -6,7 +6,7 @@ namespace Phpcq\Runner\Command;
 
 use Phpcq\Runner\Repository\RepositoryFactory;
 use Phpcq\Runner\Resolver\RepositoryPoolResolver;
-use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateCalculator;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<UpdateTaskInterface> */
+    /** @psalm-return list<TaskInterface> */
     protected function calculateTasks(): array
     {
         $verbosity  = $this->input->getOption('dry-run')
@@ -53,7 +53,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         return $calculator->calculate($this->config->getPlugins(), $force);
     }
 
-    /** @psalm-param list<UpdateTaskInterface> $tasks */
+    /** @psalm-param list<TaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         if ($this->input->getOption('dry-run')) {

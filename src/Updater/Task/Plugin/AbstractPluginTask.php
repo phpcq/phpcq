@@ -7,10 +7,10 @@ namespace Phpcq\Runner\Updater\Task\Plugin;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersion;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
-use Phpcq\Runner\Updater\Task\AbstractTask;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
-abstract class AbstractPluginTask extends AbstractTask
+abstract class AbstractPluginTask implements TaskInterface
 {
     /** @var PluginVersionInterface */
     protected $pluginVersion;

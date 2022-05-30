@@ -28,7 +28,7 @@ use Phpcq\Runner\Updater\Task\Tool\InstallToolTask;
 use Phpcq\Runner\Updater\Task\Tool\KeepToolTask;
 use Phpcq\Runner\Updater\Task\Tool\RemoveToolTask;
 use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
-use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 
 use function count;
 use function file_exists;
@@ -87,7 +87,7 @@ final class UpdateCalculator
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
      *
      * @psalm-param array<string,TPlugin> $plugins
-     * @psalm-return list<UpdateTaskInterface>
+     * @psalm-return list<TaskInterface>
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
@@ -118,7 +118,7 @@ final class UpdateCalculator
      * @psalm-param array<string,TPlugin> $plugins
      *
      * @return array[]
-     * @psalm-return list<UpdateTaskInterface>
+     * @psalm-return list<TaskInterface>
      */
     protected function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -215,7 +215,7 @@ final class UpdateCalculator
      *
      * @psalm-param array<string,TPlugin> $plugins
      *
-     * @psalm-return Generator<UpdateTaskInterface>
+     * @psalm-return Generator<TaskInterface>
      */
     private function calculateToolTasks(
         PluginVersionInterface $desired,
@@ -282,7 +282,7 @@ final class UpdateCalculator
     /**
      * @psalm-param array<string,TPlugin> $plugins
      *
-     * @return Generator<UpdateTaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateInstallTasks(
         PluginVersionInterface $pluginVersion,
@@ -306,7 +306,7 @@ final class UpdateCalculator
     /**
      * @psalm-param array<string,TPlugin> $plugins
      *
-     * @return Generator<UpdateTaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateUpgradeTasks(
         PluginVersionInterface $pluginVersion,
@@ -332,7 +332,7 @@ final class UpdateCalculator
     /**
      * @psalm-param array<string,TPlugin> $plugins
      *
-     * @return Generator<UpdateTaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateKeepTasks(
         PluginVersionInterface $pluginVersion,
@@ -353,7 +353,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @return Generator<UpdateTaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateDeleteTasks(RepositoryInterface $desired): Generator
     {
@@ -370,7 +370,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-return Generator<UpdateTaskInterface>
+     * @psalm-return Generator<TaskInterface>
      */
     private function calculateComposerTasks(
         PluginVersionInterface $pluginVersion,

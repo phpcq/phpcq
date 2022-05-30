@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater\Task\Composer;
 
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
-use Phpcq\Runner\Updater\Task\UpdateTaskInterface;
+use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
 use function json_encode;
@@ -14,7 +14,7 @@ use const JSON_FORCE_OBJECT;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 
-abstract class AbstractComposerTask implements UpdateTaskInterface
+abstract class AbstractComposerTask implements TaskInterface
 {
     protected const JSON_ENCODE_OPTIONS = JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT;
 
