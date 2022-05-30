@@ -133,7 +133,7 @@ final class PhpcqConfigurationBuilder
     {
         $builder->withDefaultValue([]);
 
-        $builder->describeBoolOption('autodiscover', 'PHPCQ trys to autodiscover the composer binary')
+        $builder->describeBoolOption('autodiscover', 'PHPCQ tries to autodiscover the composer binary')
             ->isRequired()
             ->withDefaultValue(true);
 
