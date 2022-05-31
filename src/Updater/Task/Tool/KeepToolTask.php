@@ -37,7 +37,7 @@ final class KeepToolTask extends AbstractToolTask
         $this->addTool(
             $context,
             $this->pluginVersion,
-            $this->installedToolVersion,
+            $this->toolVersion,
             $this->installedToolVersion->getPharUrl(),
             $this->installedToolVersion->getSignatureUrl(),
             $this->installedToolVersion->getHash()
