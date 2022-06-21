@@ -3,7 +3,12 @@ name: Code Quality Diagnostics
 env:
   PHPCQ_DIRECTORY: ./phpcq-runner
 
-on: [pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - 'release/**'
 
 jobs:
   build:
