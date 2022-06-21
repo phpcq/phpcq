@@ -8,8 +8,7 @@ env:
 on:
   push:
     branches:
-#      - 'master'
-      - 'dev-2.0'
+      - 'dev/**'
 
 jobs:
   compile:
