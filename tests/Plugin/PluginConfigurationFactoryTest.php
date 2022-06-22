@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Test\Plugin;
 
 use Phpcq\PluginApi\Version10\ProjectConfigInterface;
 use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\Runner\Config\Options;
 use Phpcq\Runner\Config\PhpcqConfiguration;
@@ -109,7 +110,7 @@ final class PluginConfigurationFactoryTest extends TestCase
 
     private function mockPlugin(string $name, string $bootstrap): InstalledPlugin
     {
-        $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $version = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
         $version->expects($this->atLeastOnce())->method('getName')->willReturn($name);
         $version->expects($this->atLeastOnce())->method('getFilePath')->willReturn($this->getBootstrap($bootstrap));
 

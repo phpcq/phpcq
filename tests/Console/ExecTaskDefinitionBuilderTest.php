@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Test\Console;
 
-use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
+use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersionInterface;
 use Phpcq\Runner\Config\ProjectConfiguration;
 use Phpcq\Runner\Console\Definition\ExecTaskDefinitionBuilder;
 use Phpcq\Runner\Plugin\PluginRegistry;
@@ -24,7 +24,7 @@ final class ExecTaskDefinitionBuilderTest extends TestCase
             false
         );
 
-        $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $version = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
         $version->expects($this->once())->method('getName')->willReturn('phar-2');
         $version->expects($this->exactly(2))
             ->method('getFilePath')
