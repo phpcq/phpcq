@@ -83,3 +83,10 @@ jobs:
         with:
           name: phpcq-builds-php-${{ matrix.php }}
           path: .phpcq/build/
+
+      - name: Upload compiled phar to artifact
+        uses: actions/upload-artifact@v2
+        if: ${{ success() }}
+        with:
+          name: phpcq-phar-php-${{ matrix.php }}
+          path: phpcq.phar
