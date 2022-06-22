@@ -158,6 +158,7 @@ final class SelfUpdateCommandTest extends TestCase
             [
                 'dry-run' => true,
                 'verbose' => null,
+                'force'   => false,
             ]
         );
 
