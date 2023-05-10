@@ -1,50 +1,57 @@
 {
-  "phars": {
-    "phar-1": [
-      {
-        "version": "1.0.0",
-        "phar-url": "phar-1~1.0.0.phar",
-        "bootstrap": {
-          "plugin-version": "1.0.0",
-          "type": "file",
-          "url": "phar-1~1.0.0.php"
-        },
-        "requirements": {
+  "plugins": {
+    "phar-1": {
+      "version": "1.0.0",
+      "api-version": "1.0.0",
+      "type": "php-file",
+      "url": "phar-1~1.0.0.php",
+      "requirements": {
+        "php": {
           "php": "^7.3",
           "ext-dom": "*"
         }
-      }
-    ],
-    "phar-2": [
-      {
-        "version": "1.1.0",
-        "phar-url": "phar-2~1.1.0.phar",
-        "bootstrap": {
-          "plugin-version": "1.0.0",
-          "type": "file",
-          "url": "phar-2~1.1.0.php"
-        },
-        "requirements": {
+      },
+      "checksum": {
+        "type": "sha-512",
+        "value": "f72444aede688a1c8d78fd622f5cd7fb941141f930976bec79b5a996aebfe85f08d12d8602a39b7cca241b14dd9490cfcb21d2daae7dca4971df6442dcfef119"
+      },
+      "tools": {}
+    },
+    "phar-2": {
+      "version": "1.1.0",
+      "api-version": "1.0.0",
+      "type": "php-file",
+      "url": "phar-2~1.1.0.php",
+      "requirements": {
+        "php": {
           "php": "^7.3",
           "ext-dom": "*",
           "ext-json": "*"
         }
-      }
-    ],
-    "phar-3": [
-      {
-        "version": "2.0.0",
-        "phar-url": "phar-3~2.0.0.phar",
-        "bootstrap": {
-          "plugin-version": "1.0.0",
-          "type": "file",
-          "url": "phar-3~2.0.0.php"
-        },
-        "requirements": {
+      },
+      "checksum": {
+        "type": "sha-512",
+        "value": "b3ec7975ba6d4cb651cbd24fcbdebd984b0e782027b5f5da1d14d1b65145e376a239e6f62b6094cb226e43134da812d24689ac22d0f162a6e01920e50a85414d"
+      },
+      "tools": {}
+    },
+    "phar-3": {
+      "version": "2.0.0",
+      "api-version": "1.0.0",
+      "type": "php-file",
+      "url": "phar-3~2.0.0.php",
+      "requirements": {
+        "php": {
           "php": ">=5.3.9",
           "ext-xml": "*"
         }
-      }
-    ]
-  }
+      },
+      "checksum": {
+        "type": "sha-512",
+        "value": "c515178bb1f854f2226dacdaa1fc2935a5a17f763efc0211bd28db6d8592da167b092ed0ef692b99e0e11a4792835191d41d765315fbc5fd843cd7495c314191"
+      },
+      "tools": {}
+    }
+  },
+  "tools": {}
 }
