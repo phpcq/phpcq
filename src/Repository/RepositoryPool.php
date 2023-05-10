@@ -11,6 +11,7 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Traversable;
 
+/** @implements IteratorAggregate<array-key, RepositoryInterface> */
 final class RepositoryPool implements IteratorAggregate
 {
     /**

@@ -18,10 +18,13 @@ use function assert;
 
 use const DATE_ATOM;
 
-abstract class AbstractReportWriter
+abstract class AbstractReportWriter implements ReportWriterInterface
 {
+    /** @var string */
     public const XML_NAMESPACE = '';
+    /** @var string */
     public const ROOT_NODE_NAME = '';
+    /** @var string */
     public const REPORT_FILE = '';
 
     /** @var ReportBuffer */

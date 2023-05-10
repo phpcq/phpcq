@@ -15,7 +15,8 @@ use function array_keys;
 /**
  * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
  * @psalm-type TTaskConfig = null|list<string>|array{
- *   directories?: array<string, array|null|bool>
+ *   directories?: array<string, array|null|bool>,
+ *   ...
  * }
  * @psalm-type TConfig = array{
  *   repositories: list<string>,
@@ -62,11 +63,12 @@ final class ConfigLoader
         /** @psalm-suppress MixedArgument */
         $processed = $configBuilder->processConfig($config['phpcq']);
         unset($config['phpcq']);
-        /** @psalm-var TConfig $processed */
         $processed = array_merge($processed, $config);
+        /** @psalm-var TConfig $processed */
 
         // Support simplified chain plugin configuration
         foreach ($processed['tasks'] ?? [] as $task => $taskConfig) {
+            /** @psalm-suppress DocblockTypeContradiction */
             if (is_array($taskConfig) && $taskConfig === array_values($taskConfig)) {
                 $processed['tasks'][$task] = [
                     'plugin' => 'chain',

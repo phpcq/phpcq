@@ -8,6 +8,7 @@ use IteratorAggregate;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;
 
+/** @extends IteratorAggregate<int, TaskInterface> */
 interface TasklistInterface extends IteratorAggregate
 {
     /**

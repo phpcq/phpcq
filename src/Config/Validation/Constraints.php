@@ -74,7 +74,7 @@ final class Constraints
 
         foreach (array_keys($value) as $index) {
             if ($index !== $expected) {
-                throw  new InvalidConfigurationException(
+                throw new InvalidConfigurationException(
                     sprintf('List item key "%s" expected, got "%s"', $expected, $index)
                 );
             }
@@ -85,6 +85,7 @@ final class Constraints
             $expected++;
         }
 
+        /** @psalm-var list<mixed> $value */
         return $value;
     }
 

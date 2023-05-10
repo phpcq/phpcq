@@ -12,6 +12,7 @@ use LogicException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
+/** @implements IteratorAggregate<int, DiagnosticIteratorEntry>  */
 final class DiagnosticIterator implements IteratorAggregate
 {
     /**
@@ -134,7 +135,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-return callable(DiagnosticIteratorEntry): bool
+     * @psalm-return callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool
      */
     private static function minimumSeverityFilter(string $minimumSeverity): callable
     {
@@ -154,7 +155,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry): bool $callback
+     * @psalm-param callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool $callback
      */
     private static function createFiltered(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
@@ -244,7 +245,7 @@ final class DiagnosticIterator implements IteratorAggregate
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @psalm-return Generator<int, DiagnosticIteratorEntry, mixed, void>
+     * @psalm-return Generator<int, DiagnosticIteratorEntry, mixed, null>
      */
     private function iterateSorted(): Generator
     {

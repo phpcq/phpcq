@@ -15,6 +15,7 @@ use function get_class;
 
 /**
  * @psalm-import-type TInstalledRepository from \Phpcq\Runner\Repository\InstalledRepositoryLoader
+ * @implements IteratorAggregate<string, PluginInterface>
  */
 final class PluginRegistry implements IteratorAggregate
 {

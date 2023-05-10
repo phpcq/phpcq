@@ -38,8 +38,8 @@ use function count;
  * }
  * @psalm-type TCodeClimateLocation=TCodeClimateLocationTypeA|TCodeClimateLocationTypeB
  * @psalm-type TCodeClimateLocationList=list<TCodeClimateLocation>
- * @psalm-type TCodeClimateIssueCategory='Bug Risk'|'Clarity'|'Compatibility'|'Complexity'|'Duplication'|'Performance'
- *                                       |'Security'|'Style'
+ * @psalm-type TCodeClimateIssueCategory='Bug Risk'|'Clarity'|'Compatibility'|'Complexity'|'Duplication'|'Performance'|
+ *                                       'Security'|'Style'
  * @psalm-type TCodeClimateIssueSeverity='info'|'minor'|'major'|'critical'|'blocker'
  * @psalm-type TCodeClimateIssue=array{
  *   type: 'issue',
@@ -47,7 +47,7 @@ use function count;
  *   description: string,
  *   content?: string,
  *   categories: list<TCodeClimateIssueCategory>,
- *   location: TCodeClimateLocation,
+ *   location: TCodeClimateLocation|null,
  *   other_locations?: TCodeClimateLocationList,
  *   remediation_points?: int,
  *   severity?: TCodeClimateIssueSeverity,
@@ -55,7 +55,7 @@ use function count;
  * }
  *
  */
-final class CodeClimateReportWriter
+final class CodeClimateReportWriter implements ReportWriterInterface
 {
     public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void
     {
@@ -258,6 +258,7 @@ final class CodeClimateReportWriter
         return 'Bug Risk';
     }
 
+    /** @return TCodeClimateIssueSeverity */
     private static function mapSeverity(string $severity): string
     {
         switch ($severity) {

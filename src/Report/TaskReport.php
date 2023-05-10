@@ -15,12 +15,12 @@ use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE
- * |TaskReportInterface::SEVERITY_INFO
- * |TaskReportInterface::SEVERITY_MARGINAL
- * |TaskReportInterface::SEVERITY_MINOR
- * |TaskReportInterface::SEVERITY_MAJOR
- * |TaskReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE|
+ *  TaskReportInterface::SEVERITY_INFO|
+ *  TaskReportInterface::SEVERITY_MARGINAL|
+ *  TaskReportInterface::SEVERITY_MINOR|
+ *  TaskReportInterface::SEVERITY_MAJOR|
+ *  TaskReportInterface::SEVERITY_FATAL
  */
 class TaskReport implements TaskReportInterface
 {

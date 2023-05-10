@@ -11,12 +11,12 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 
 /**
- * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_NONE
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_INFO
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MARGINAL
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MINOR
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MAJOR
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_NONE|
+ * \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_INFO|
+ * \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MARGINAL|
+ * \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MINOR|
+ * \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MAJOR|
+ * \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_FATAL
  */
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {

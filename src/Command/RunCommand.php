@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
-use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
-use Phpcq\Runner\Config\PhpcqConfiguration;
 use Phpcq\Runner\Config\PluginConfiguration;
 use Phpcq\Runner\Config\PluginConfigurationFactory;
 use Phpcq\Runner\Config\ProjectConfiguration;
@@ -25,6 +23,7 @@ use Phpcq\Runner\Report\Writer\CodeClimateReportWriter;
 use Phpcq\Runner\Report\Writer\ConsoleWriter;
 use Phpcq\Runner\Report\Writer\FileReportWriter;
 use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
+use Phpcq\Runner\Report\Writer\ReportWriterInterface;
 use Phpcq\Runner\Report\Writer\TaskReportWriter;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Task\TaskFactory;
@@ -51,7 +50,7 @@ final class RunCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
 
-    /** @var array<string, class-string<\Phpcq\Runner\Report\Writer\AbstractReportWriter>> */
+    /** @var array<string, class-string<ReportWriterInterface>> */
     private const REPORT_FORMATS = [
         'task-report'  => TaskReportWriter::class,
         'file-report'  => FileReportWriter::class,
