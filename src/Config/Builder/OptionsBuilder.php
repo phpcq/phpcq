@@ -9,6 +9,7 @@ use Throwable;
 
 use function sprintf;
 
+/** @extends AbstractOptionsBuilder<array<string,mixed>> */
 final class OptionsBuilder extends AbstractOptionsBuilder
 {
     /** @var bool */

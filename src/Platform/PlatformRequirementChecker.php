@@ -11,7 +11,7 @@ use Composer\Semver\VersionParser;
 class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
 {
     /**
-     * @var callable(string, string) : bool
+     * @var callable(string, string): bool
      */
     private $callback;
 
@@ -40,7 +40,8 @@ class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
         });
     }
 
-    private function __construct(Closure $callback)
+    /** @param callable(string, string):bool $callback */
+    private function __construct(callable $callback)
     {
         $this->callback = $callback;
     }

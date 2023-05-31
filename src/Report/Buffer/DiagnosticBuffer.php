@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Report\Buffer;
 
 use Generator;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 
 /**
- * @psalm-type TDiagnosticSeverity = \Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_NONE
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_INFO
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MARGINAL
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MINOR
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_MAJOR
- * |\Phpcq\PluginApi\Version10\Report\TaskReportInterface::SEVERITY_FATAL
+ * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE|TaskReportInterface::SEVERITY_INFO|
+ *  TaskReportInterface::SEVERITY_MARGINAL|TaskReportInterface::SEVERITY_MINOR|TaskReportInterface::SEVERITY_MAJOR|
+ *  TaskReportInterface::SEVERITY_FATAL
  */
 final class DiagnosticBuffer
 {

@@ -10,7 +10,6 @@ use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface as Transf
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\PluginApi\Version10\Task\OutputWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
-use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Symfony\Component\Process\Process;
 use Throwable;
 use Traversable;

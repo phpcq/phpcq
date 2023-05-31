@@ -8,6 +8,7 @@ use Phpcq\PluginApi\Version10\Definition\Builder\ConsoleOptionBuilderInterface;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\Runner\Console\Definition\OptionDefinition;
 
+/** @SuppressWarnings(PHPMD.LongVariable) */
 trait OptionsBuilderTrait
 {
     /** @var array<string,ConsoleOptionBuilder> */
@@ -23,8 +24,6 @@ trait OptionsBuilderTrait
     }
 
     /**
-     * @SuppressWarnings(PHPMD.LongVariable)
-     *
      * @return list<OptionDefinition>
      */
     protected function buildOptions(string $defaultValueSeparator): array

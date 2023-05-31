@@ -12,7 +12,7 @@ use Phpcq\Runner\Report\Buffer\ReportBuffer;
 /**
  * Write reports to a file in checkstyle format.
  */
-final class CheckstyleReportWriter
+final class CheckstyleReportWriter implements ReportWriterInterface
 {
     public const ROOT_NODE_NAME = 'checkstyle';
 

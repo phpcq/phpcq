@@ -7,6 +7,7 @@ namespace Phpcq\Runner\Config\Builder;
 use Phpcq\Runner\Exception\InvalidArgumentException;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 
+/** @extends AbstractOptionsBuilder<array<string,mixed>> */
 class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface
 {
     /** @var bool */

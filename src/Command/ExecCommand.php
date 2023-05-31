@@ -122,6 +122,7 @@ final class ExecCommand extends AbstractCommand
         try {
             $task->runForOutput($taskOutput);
         } catch (PluginApiRuntimeException $throwable) {
+            /** @psalm-suppress RedundantCast */
             $exitCode = (int) $throwable->getCode();
             $exitCode = $exitCode === 0 ? 1 : $exitCode;
             $taskOutput->writeln(

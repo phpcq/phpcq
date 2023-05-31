@@ -158,6 +158,7 @@ final class SelfUpdateCommandTest extends TestCase
             [
                 'dry-run' => true,
                 'verbose' => null,
+                'force'   => false,
             ]
         );
 
@@ -209,6 +210,7 @@ final class SelfUpdateCommandTest extends TestCase
     {
         $helperSet   = $this->createMock(HelperSet::class);
         $application = $this->createPartialMock(Application::class, ['getHelperSet', 'getVersion']);
+        $application->setDefaultCommand('run');
         $application
             ->expects($this->once())
             ->method('getHelperSet')

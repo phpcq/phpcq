@@ -11,13 +11,13 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  * @psalm-type TPlugin = array{
  *    version: string,
  *    signed: bool,
- *    requirements?: array<string,array{version?: string, signed?: bool}
+ *    requirements?: array<string,array{version?: string, signed?: bool}>
  * }
  * @psalm-type TTaskConfig = array{
  *   directories?: list<string>,
  *   plugin?: string,
  *   config: array<string, mixed>,
- *   uses?: array<string, array<string,mixed>>
+ *   uses?: array<string, array<string,mixed>|null>
  * }
  * @psalm-type TRepository = array{
  *   type: string,

@@ -95,7 +95,7 @@ class FileDownloader implements DownloaderInterface
                 try {
                     $response = $client->request('GET', $url);
                 } catch (RequestException $exception) {
-                    throw new RuntimeException('Failed to download: ' . $url, (int) $exception->getCode(), $exception);
+                    throw new RuntimeException('Failed to download: ' . $url, $exception->getCode(), $exception);
                 }
 
                 if (200 !== $response->getStatusCode()) {

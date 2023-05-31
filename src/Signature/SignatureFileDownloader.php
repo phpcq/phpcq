@@ -33,6 +33,7 @@ final class SignatureFileDownloader implements FileDownloaderInterface
             return $buffer;
         } catch (RuntimeException $exception) {
             $this->output->writeln('Downloading key from ' . $url . ' failed', OutputInterface::VERBOSITY_VERBOSE);
+            /** @psalm-suppress RedundantCast */
             throw new DownloadFailureException($exception->getMessage(), (int) $exception->getCode(), $exception);
         }
     }

@@ -14,6 +14,9 @@ use Phpcq\Runner\Repository\InstalledRepository;
 
 use function dirname;
 
+/**
+ * @psalm-import-type TTaskConfig from PhpcqConfiguration
+ */
 final class PluginConfigurationFactory
 {
     /** @var PhpcqConfiguration */
@@ -49,35 +52,32 @@ final class PluginConfigurationFactory
             );
         }
 
-        $pluginConfig = $taskConfig['config'] ?? [];
-        $uses         = $taskConfig['uses'] ?? [];
-
         $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
         $plugin->describeConfiguration($configOptionsBuilder);
 
-        return $this->createConfiguration($plugin, $environment, $pluginConfig, $uses);
+        return $this->createConfiguration($plugin, $environment, $taskConfig);
     }
 
     /**
-     * @psalm-param array<string, mixed> $pluginConfig
-     * @psalm-param array<string, array<string,mixed>|null> $uses
+     * @psalm-param TTaskConfig $taskConfig
      */
     private function createConfiguration(
         ConfigurationPluginInterface $plugin,
         Environment $environment,
-        array $pluginConfig,
-        array $uses = []
+        array $taskConfig
     ): PluginConfiguration {
         $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
         $plugin->describeConfiguration($configOptionsBuilder);
 
+        $pluginConfig = $taskConfig['config'] ?? [];
+
         if ($configOptionsBuilder->hasDirectoriesSupport()) {
             $pluginConfig += [
-                'directories' => $pluginConfig['directories'] ?? $this->phpcqConfiguration->getDirectories()
+                'directories' => $taskConfig['directories'] ?? $this->phpcqConfiguration->getDirectories()
             ];
         }
 
-        foreach ($uses as $enricherName => $enricherConfig) {
+        foreach ($taskConfig['uses'] ?? [] as $enricherName => $enricherConfig) {
             $enricher = $this->plugins->getPluginByName($enricherName);
             if (!$enricher instanceof EnricherPluginInterface) {
                 throw new RuntimeException('Bad configuration. Plugin "' . $enricherName . '" is not an enricher');
@@ -88,7 +88,7 @@ final class PluginConfigurationFactory
                 dirname($installedVersion->getFilePath())
             );
 
-            $enricherConfig = $this->createConfiguration($enricher, $environment, $enricherConfig ?? []);
+            $enricherConfig = $this->createConfiguration($enricher, $environment, ['config' => $enricherConfig ?? []]);
             $pluginConfig   = $enricher->enrich(
                 $plugin->getName(),
                 $installedVersion->getVersion(),

@@ -27,7 +27,7 @@ class Application extends BaseApplication
      */
     public function __construct()
     {
-        parent::__construct('phpcq', '0.0.0.1-dev-@release-date@-@git-version@');
+        parent::__construct('phpcq', '@git-version@-@release-date@');
         $this->setDefaultCommand('run');
     }
 
@@ -81,7 +81,7 @@ class Application extends BaseApplication
 
         $buildDate = \DateTimeImmutable::createFromFormat('Y-m-d-H-i-s-T', '@release-date@');
         if ($buildDate instanceof \DateTimeImmutable) {
-            $help .= sprintf('build date: <info>%s</info>', $buildDate->format('Y-m-d H:i:s T'));
+            $help .= sprintf(' build date: <info>%s</info>', $buildDate->format('Y-m-d H:i:s T'));
         }
 
         return $help;

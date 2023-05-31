@@ -19,7 +19,7 @@ final class ValidatorTest extends TestCase
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
-            $this->expectErrorMessage('Boolean expected, got ' . gettype($value));
+            $this->expectExceptionMessage('Boolean expected, got ' . gettype($value));
         }
 
         $validator = Validator::boolValidator();
@@ -32,7 +32,7 @@ final class ValidatorTest extends TestCase
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
-            $this->expectErrorMessage('Float expected, got ' . gettype($value));
+            $this->expectExceptionMessage('Float expected, got ' . gettype($value));
         }
 
         $validator = Validator::floatValidator();
@@ -45,7 +45,7 @@ final class ValidatorTest extends TestCase
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
-            $this->expectErrorMessage('Integer expected, got ' . gettype($value));
+            $this->expectExceptionMessage('Integer expected, got ' . gettype($value));
         }
 
         $validator = Validator::intValidator();
@@ -58,7 +58,7 @@ final class ValidatorTest extends TestCase
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
-            $this->expectErrorMessage('Array expected, got ' . gettype($value));
+            $this->expectExceptionMessage('Array expected, got ' . gettype($value));
         }
 
         $validator = Validator::arrayValidator();
@@ -71,7 +71,7 @@ final class ValidatorTest extends TestCase
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
-            $this->expectErrorMessage('String expected, got ' . gettype($value));
+            $this->expectExceptionMessage('String expected, got ' . gettype($value));
         }
 
         $validator = Validator::stringValidator();
