@@ -46,7 +46,7 @@ jobs:
           coverage: xdebug2
 
       - name: Cache composer cache directory
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         env:
           cache-name: composer-cache-dir-${{ matrix.php }}
         with:
@@ -57,7 +57,7 @@ jobs:
         run: composer install
 
       - name: Cache vendor directory of phpcq tool runner
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         env:
           cache-name: vendor-${{ matrix.php }}
         with:
