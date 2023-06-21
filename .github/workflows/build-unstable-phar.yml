@@ -19,6 +19,11 @@ jobs:
       - name: Pull source
         uses: actions/checkout@v2
 
+      # We need the tags for the @git-version@ placeholder used by box
+      # See https://github.com/actions/checkout/issues/701
+      - name: Fetch git tags
+        run: git fetch --tags origin
+
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
         with:
