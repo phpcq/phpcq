@@ -37,7 +37,7 @@
     "symfony/console": "^5.4.24",
     "symfony/filesystem": "^5.0 || ^6.1",
     "symfony/process": "^5.4.24",
-    "symfony/yaml": "^5.0.7 || ^6.1"
+    "symfony/yaml": "^5.4.30"
   },
   "replace": {
     "symfony/polyfill-php70": "*",
