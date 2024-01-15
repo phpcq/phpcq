@@ -22,7 +22,7 @@
     }
   ],
   "require": {
-    "php": "^7.3 || ^8.0",
+    "php": "^7.4 || ^8.0",
     "ext-dom": "*",
     "ext-hash": "*",
     "ext-json": "*",
@@ -34,10 +34,10 @@
     "phpcq/plugin-api": "^1.0",
     "phpcq/repository-definition": "^1.0",
     "phpcq/schema": "^1.0",
-    "symfony/console": "^5.4.34",
-    "symfony/filesystem": "^5.4.25",
-    "symfony/process": "^5.4.34",
-    "symfony/yaml": "^5.4.31"
+    "symfony/console": "^5.4.34 || ^6.0 || ^7.0",
+    "symfony/filesystem": "^5.4.25 || ^6.0 || ^7.0",
+    "symfony/process": "^5.4.34 || ^6.0 || ^7.0",
+    "symfony/yaml": "^5.4.31 || ^6.0 || ^7.0"
   },
   "replace": {
     "symfony/polyfill-php70": "*",
