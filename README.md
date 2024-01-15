@@ -10,9 +10,4 @@ The PHP code quality project helps you automate certain checks with continuous i
 PHPCQ build on well known projects like [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer),
 [PHPMD](https://github.com/phpmd/phpmd) or [Travis CI](https://travis-ci.org/).
 
-Work in progress
-----------------
-
-We are currently overhauling the entire concept of `phpcq`.
-
-This is the next major version 3.0, entirely based on PHP and phar files.
+[Read more at our manual.](https://phpcq.github.io/)
