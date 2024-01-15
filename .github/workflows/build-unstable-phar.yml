@@ -52,7 +52,7 @@ jobs:
         run: composer update
 
       - name: Install phpcq toolchain
-        run: $GITHUB_WORKSPACE/phpcq install -v
+        run: $GITHUB_WORKSPACE/phpcq update -v
 
       - name: Run tests
         run: $GITHUB_WORKSPACE/phpcq run -v
