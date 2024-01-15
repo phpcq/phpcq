@@ -54,7 +54,7 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Install composer dependencies
-        run: composer install
+        run: composer update
 
       - name: Cache vendor directory of phpcq tool runner
         uses: actions/cache@v3
