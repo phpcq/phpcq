@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use Isolated\Symfony\Component\Finder\Finder;
 
-// Symfony polyfills must live in global namespace.
-$symfonyPolyfill = (static function (): array {
+$excludedFiles = (static function (): array {
     $files = [];
+    // Symfony polyfills must live in global namespace.
     foreach (
         Finder::create()
             ->files()
@@ -24,6 +24,16 @@ $symfonyPolyfill = (static function (): array {
         $files[] = $bootstrap->getPathName();
     }
 
+    // Symfony deprecation contracts must live in global namespace.
+    foreach (
+        Finder::create()
+            ->files()
+            ->in(__DIR__ . '/../../vendor/symfony/deprecation-contracts')
+            ->name('*.php') as $file
+    ) {
+        $files[] = $file->getPathName();
+    }
+
     return $files;
 })();
 
@@ -32,7 +42,7 @@ return [
         'Phpcq\PluginApi',
         'Symfony\Polyfill',
     ],
-    'exclude-files' => $symfonyPolyfill,
+    'exclude-files' => $excludedFiles,
     'exclude-classes' => [
         'Gnupg'
     ],
