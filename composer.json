@@ -35,7 +35,7 @@
     "phpcq/repository-definition": "^1.0",
     "phpcq/schema": "^1.0",
     "symfony/console": "^5.4.34 || ^6.0 || ^7.0",
-    "symfony/filesystem": "^5.4.25 || ^6.0 || ^7.0",
+    "symfony/filesystem": "^7.0.3",
     "symfony/process": "^5.4.34 || ^6.0 || ^7.0",
     "symfony/yaml": "^5.4.31 || ^6.0 || ^7.0"
   },
