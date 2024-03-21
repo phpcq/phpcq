@@ -7,12 +7,17 @@ PHP code quality project
 
 Code quality is an important part for growing projects, to raise and hold the quality of your software.
 The PHP code quality project helps you automate certain checks with continuous integration.
-PHPCQ build on well known projects like [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer),
-[PHPMD](https://github.com/phpmd/phpmd) or [Travis CI](https://travis-ci.org/).
 
-Work in progress
-----------------
+PHPCQ is built on well known projects and unifies the reporting into one report:
 
-We are currently overhauling the entire concept of `phpcq`.
+ - [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker)
+ - [composer-normalize](https://github.com/ergebnis/composer-normalize)
+ - [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+ - [PHPMD](https://github.com/phpmd/phpmd)
+ - [Psalm](https://github.com/vimeo/psalm/)
+ - [PHPUnit](https://phpunit.de/index.html)
+ - [PHP Copy/Paste Detector](https://github.com/sebastianbergmann/phpcpd)
+ - [Box](https://github.com/box-project/box)
+ - [phploc](https://github.com/sebastianbergmann/phploc)
+ - [deptrac](https://github.com/qossmic/deptrac)
 
-This is the next major version 3.0, entirely based on PHP and phar files.
