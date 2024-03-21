@@ -38,8 +38,8 @@ use function count;
  * }
  * @psalm-type TCodeClimateLocation=TCodeClimateLocationTypeA|TCodeClimateLocationTypeB
  * @psalm-type TCodeClimateLocationList=list<TCodeClimateLocation>
- * @psalm-type TCodeClimateIssueCategory='Bug Risk'|'Clarity'|'Compatibility'|'Complexity'|'Duplication'|'Performance'|
- *                                       'Security'|'Style'
+ * phpcs:ignore Generic.Files.LineLength.TooLong
+ * @psalm-type TCodeClimateIssueCategory='Bug Risk'|'Clarity'|'Compatibility'|'Complexity'|'Duplication'|'Performance'|'Security'|'Style'
  * @psalm-type TCodeClimateIssueSeverity='info'|'minor'|'major'|'critical'|'blocker'
  * @psalm-type TCodeClimateIssue=array{
  *   type: 'issue',
