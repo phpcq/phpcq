@@ -9,7 +9,7 @@ updates:
     package-ecosystem: "composer"
     schedule:
       interval: "weekly"
-    versioning-strategy: "increase"
+    versioning-strategy: "widen"
 
   - commit-message:
       include: "scope"
