@@ -4,7 +4,12 @@
     "static", "self", "parent",
     "array", "string", "int", "float", "bool", "iterable", "callable", "void", "object",
     "Imagick",
-    "LIBXSLT_DOTTED_VERSION"
+    "GMP_VERSION",
+    "RD_KAFKA_VERSION",
+    "LIBXSLT_DOTTED_VERSION",
+    "MB_ONIGURUMA_VERSION",
+    "PGSQL_LIBPQ_VERSION",
+    "SODIUM_LIBRARY_VERSION"
   ],
   "php-core-extensions" : [
     "Core",
@@ -19,7 +24,9 @@
     "intl",
     "libxml",
     "openssl",
-    "iconv"
+    "iconv",
+    "zip",
+    "zlib"
   ],
   "scan-files" : []
 }
