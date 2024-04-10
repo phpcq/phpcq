@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class AbstractCommandTest extends TestCase
 {
-    public function testConfigureHonorsConfigArgument()
+    public function testConfigureHonorsConfigArgument(): void
     {
         $command    = $this->getMockForAbstractClass(AbstractCommand::class);
         $definition = $command->getDefinition();

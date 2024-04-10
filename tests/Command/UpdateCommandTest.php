@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class UpdateCommandTest extends TestCase
 {
-    public function testConfigureHonorsCacheOption()
+    public function testConfigureHonorsCacheOption(): void
     {
         $command    = new UpdateCommand();
         $definition = $command->getDefinition();
