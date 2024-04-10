@@ -17,7 +17,7 @@ use function substr;
  * @covers \Phpcq\Runner\Platform\PlatformInformation
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class PlatformInformationTest extends TestCase
+final class PlatformInformationTest extends TestCase
 {
     public function testCustomValues(): void
     {

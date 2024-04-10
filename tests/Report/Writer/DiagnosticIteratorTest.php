@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  * @covers \Phpcq\Runner\Report\Writer\DiagnosticIterator
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class DiagnosticIteratorTest extends TestCase
+final class DiagnosticIteratorTest extends TestCase
 {
     public function iterateEmptyProvider(): array
     {

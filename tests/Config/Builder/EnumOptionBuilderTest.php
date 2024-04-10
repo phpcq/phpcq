@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class EnumOptionBuilderTest extends TestCase
+final class EnumOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 

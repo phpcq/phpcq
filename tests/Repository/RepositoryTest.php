@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Repository\Repository
  */
-class RepositoryTest extends TestCase
+final class RepositoryTest extends TestCase
 {
     public function testAddsPluginVersionAndCanRetrieveVersion(): void
     {

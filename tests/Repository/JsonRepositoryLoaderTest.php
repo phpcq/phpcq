@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Repository\JsonRepositoryLoader
  */
-class JsonRepositoryLoaderTest extends TestCase
+final class JsonRepositoryLoaderTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

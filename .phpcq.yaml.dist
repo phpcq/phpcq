@@ -84,7 +84,7 @@ tasks:
     - phpcs
     - psalm
     - phpunit
-#    - rector
+    - rector
 
   build:
     - box

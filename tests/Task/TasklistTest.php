@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @covers \Phpcq\Runner\Task\Tasklist
  */
-class TasklistTest extends TestCase
+final class TasklistTest extends TestCase
 {
     public function testAddsAndIteratesCorrectly(): void
     {

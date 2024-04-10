@@ -21,7 +21,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @covers \Phpcq\Runner\Repository\InstalledRepositoryDumper
  */
-class InstalledRepositoryDumperTest extends TestCase
+final class InstalledRepositoryDumperTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

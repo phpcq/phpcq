@@ -10,7 +10,7 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Config\Builder\StringListOptionBuilder */
-class StringListOptionBuilderTest extends TestCase
+final class StringListOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 

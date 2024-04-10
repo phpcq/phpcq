@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 /** @covers \Phpcq\Runner\Report\DiffBuilder */
-class DiffBuilderTest extends TestCase
+final class DiffBuilderTest extends TestCase
 {
     public function testCallingEndThrowsWhenNoDataHasBeenAdded(): void
     {

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Platform\PlatformRequirementChecker
  */
-class PlatformRequirementCheckerTest extends TestCase
+final class PlatformRequirementCheckerTest extends TestCase
 {
     public function testChecksAgainstPlatformInformation(): void
     {

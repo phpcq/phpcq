@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 use Throwable;
 
 /** @covers \Phpcq\Runner\Task\TaskScheduler */
-class TaskSchedulerTest extends TestCase
+final class TaskSchedulerTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

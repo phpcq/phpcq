@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Repository\RepositoryHasToolVersionTrait
  */
-class RepositoryHasToolVersionTraitTest extends TestCase
+final class RepositoryHasToolVersionTraitTest extends TestCase
 {
     public function testCallsGetToolAndReturnsTrueOnMatch(): void
     {
