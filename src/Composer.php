@@ -219,6 +219,8 @@ class Composer
                 '<info>composer.phar</info> is already installed',
                 \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_VERY_VERBOSE
             );
+
+            return;
         }
 
         $this->output->writeln('Installing composer.phar', OutputInterface::VERBOSITY_VERBOSE);
