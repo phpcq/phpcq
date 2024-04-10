@@ -156,9 +156,7 @@ final class ExecCommand extends AbstractCommand
 
         if ($input->mustSuggestArgumentValuesFor('application')) {
             $applicationNames = array_map(
-                static function (ApplicationDefinition $application): string {
-                    return $application->getName();
-                },
+                static fn(ApplicationDefinition $application): string => $application->getName(),
                 $definition->getApplications()
             );
 
@@ -170,9 +168,7 @@ final class ExecCommand extends AbstractCommand
         if ($input->mustSuggestArgumentValuesFor('args') && $input->getArgument('args') === []) {
             $application = $definition->getApplication((string) $input->getArgument('application'));
             $commandNames = array_map(
-                static function (CommandDefinition $command): string {
-                    return $command->getName();
-                },
+                static fn(CommandDefinition $command): string => $command->getName(),
                 $application->getCommands()
             );
 

@@ -23,9 +23,7 @@ final class FloatOptionBuilderTest extends TestCase
     public function testNormalizesValue(): void
     {
         $builder = $this->createInstance();
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 3.0;
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 3.0));
         $this->assertEquals(3.0, $builder->normalizeValue(7));
     }
 

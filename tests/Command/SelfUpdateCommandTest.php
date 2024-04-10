@@ -226,9 +226,7 @@ final class SelfUpdateCommandTest extends TestCase
             ->expects($this->atLeastOnce())
             ->method('getOption')
             ->willReturnCallback(
-                function (string $name) use ($options) {
-                    return $options[$name] ?? null;
-                }
+                fn(string $name) => $options[$name] ?? null
             );
 
         return $input;

@@ -23,12 +23,8 @@ final class StringOptionBuilderTest extends TestCase
     public function testNormalizesValue(): void
     {
         $builder = $this->createInstance();
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 'BAR';
-        }));
-        $this->assertSame($builder, $builder->withNormalizer(function ($value) {
-            return $value . ' 2';
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 'BAR'));
+        $this->assertSame($builder, $builder->withNormalizer(fn($value) => $value . ' 2'));
 
         $this->assertEquals('BAR 2', $builder->normalizeValue('bar'));
     }

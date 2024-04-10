@@ -17,7 +17,7 @@ class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
 
     public static function create(?PlatformInformationInterface $platformInformation = null): self
     {
-        $platformInformation = $platformInformation ?? PlatformInformation::createFromCurrentPlatform();
+        $platformInformation ??= PlatformInformation::createFromCurrentPlatform();
 
         $parser = new VersionParser();
         return new self(function (string $name, string $constraint) use ($platformInformation, $parser): bool {
@@ -35,9 +35,7 @@ class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
 
     public static function createAlwaysFulfilling(): self
     {
-        return new self(function (): bool {
-            return true;
-        });
+        return new self(fn(): bool => true);
     }
 
     /** @param callable(string, string):bool $callback */
