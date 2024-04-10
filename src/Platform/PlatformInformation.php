@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Platform;
 
+use Composer\Pcre\Preg;
 use Composer\Semver\VersionParser;
 use Composer\XdebugHandler\XdebugHandler;
 use UnexpectedValueException;
@@ -19,6 +20,7 @@ use function phpversion;
 use function preg_match;
 use function preg_replace;
 use function preg_replace_callback;
+use function str_replace;
 use function strlen;
 use function strpos;
 use function strtolower;
@@ -71,7 +73,7 @@ class PlatformInformation implements PlatformInformationInterface
         return new self(
             self::normalizeVersion(phpversion()),
             self::detectExtensions(),
-            self::detectLibraries()
+            self::detectLibraries(),
         );
     }
 
@@ -135,8 +137,9 @@ class PlatformInformation implements PlatformInformationInterface
                 continue;
             }
 
-            $reflExt = new \ReflectionExtension($name);
-            $prettyVersion = $reflExt->getVersion();
+            $prettyVersion = self::getExtensionVersion($name);
+
+            // TODO: Do we need the mysqlnd special handling here? Composer has removed it
             // "ext-mysqlnd" has an obscure version string:
             // - since PHP 7.4.0: "mysqlnd 7.4.4"
             // - pre PHP 7.4.0: "mysqlnd 5.0.12-dev - 20150407 - $Id$"
@@ -150,12 +153,13 @@ class PlatformInformation implements PlatformInformationInterface
                 }
             }
 
-            $extensions['ext-' . strtolower($name)] = self::normalizeVersion($prettyVersion);
+            $extensionName              = 'ext-' . str_replace(' ', '-', strtolower($name));
+            $extensions[$extensionName] = self::normalizeVersion($prettyVersion);
         }
 
         // Check for Xdebug in a restarted process
         if (!in_array('xdebug', $loadedExtensions, true) && ($prettyVersion = XdebugHandler::getSkippedVersion())) {
-            $extensions['ext-xdebug'] = $prettyVersion;
+            $extensions['ext-xdebug'] = self::normalizeVersion($prettyVersion);
         }
 
         return $extensions;
@@ -244,7 +248,7 @@ class PlatformInformation implements PlatformInformationInterface
 
                             return $match[1] . '.' . $patchVersion;
                         },
-                        OPENSSL_VERSION_TEXT
+                        OPENSSL_VERSION_TEXT,
                     );
 
                     break;
@@ -281,12 +285,28 @@ class PlatformInformation implements PlatformInformationInterface
         return $libraries;
     }
 
+    private static function getExtensionVersion(string $extension): string
+    {
+        $version = phpversion($extension);
+        if ($version === false) {
+            $version = '0';
+        }
+
+        return $version;
+    }
+
     private static function normalizeVersion($prettyVersion): string
     {
         try {
-            return static::$versionParser->normalize($prettyVersion);
+            return self::$versionParser->normalize($prettyVersion);
         } catch (UnexpectedValueException $e) {
-            return static::$versionParser->normalize(preg_replace('#^([^~+-]+).*$#', '$1', $prettyVersion));
+            if (Preg::isMatchStrictGroups('{^(\d+\.\d+\.\d+(?:\.\d+)?)}', $prettyVersion, $match)) {
+                $prettyVersion = $match[1];
+            } else {
+                $prettyVersion = '0';
+            }
+
+            return self::$versionParser->normalize($prettyVersion);
         }
     }
 }
