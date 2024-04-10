@@ -15,6 +15,7 @@ use function substr;
 
 /**
  * @covers \Phpcq\Runner\Platform\PlatformInformation
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PlatformInformationTest extends TestCase
 {
@@ -62,13 +63,21 @@ class PlatformInformationTest extends TestCase
             $name = substr($name, 4);
 
             switch ($name) {
+                case 'amqp-librabbitmq':
+                case 'amgp-protocol':
+                    self::assertContains('amqp', $loadedExtensions);
+                    break;
+
                 case 'curl-zlib':
                 case 'curl-libssh2':
                 case 'curl-openssl':
+                case 'curl-openssl-fips':
+                case 'curl-securetransport':
                     self::assertContains('curl', $loadedExtensions);
                     break;
 
                 case 'date-timelib':
+                case 'date-timezonedb-zoneinfo':
                 case 'date-zoneinfo':
                     self::assertContains('date', $loadedExtensions);
 
@@ -79,11 +88,23 @@ class PlatformInformationTest extends TestCase
 
                     break;
 
+                case 'gd-libjpeg':
+                case 'gd-freetype':
+                case 'gd-libxpm':
+                    self::assertContains('gd', $loadedExtensions);
+
+                    break;
+
                 case 'icu':
                 case 'icu-zoneinfo':
                 case 'icu-cldr':
                 case 'icu-unicode':
                     self::assertContains('intl', $loadedExtensions);
+
+                    break;
+
+                case 'imagick-imagemagick':
+                    self::assertContains('imagick', $loadedExtensions);
 
                     break;
 
@@ -106,6 +127,21 @@ class PlatformInformationTest extends TestCase
                 case 'mbstring-oniguruma':
                 case 'mbstring-libmbfl':
                     self::assertContains('mbstring', $loadedExtensions);
+
+                    break;
+
+                case 'mysqlnd-mysqlnd':
+                    self::assertContains('mysqlnd', $loadedExtensions);
+
+                    break;
+
+                case 'mongodb-libmongoc':
+                    self::assertContains('mongodb', $loadedExtensions);
+
+                    break;
+
+                case 'pdo_mysql-mysqlnd':
+                    self::assertContains('pdo_mysql', $loadedExtensions);
 
                     break;
 
