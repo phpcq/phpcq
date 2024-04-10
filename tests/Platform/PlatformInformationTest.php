@@ -137,6 +137,7 @@ class PlatformInformationTest extends TestCase
                     break;
 
                 case 'mongodb-libmongoc':
+                case 'mongodb-libbson':
                     self::assertContains('mongodb', $loadedExtensions);
 
                     break;
