@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Composer\Semver\Comparator;
-use Phar;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
@@ -135,16 +134,11 @@ final class SelfUpdateCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
-        $this->updateComposer();
-
-        if (! $this->pharFile) {
-            $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
-            return 0;
-        }
-
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
         $availableVersion = trim(substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6));
+
+        $this->updateComposer();
 
         if (!$this->shouldUpdate($installedVersion, $availableVersion)) {
             return 0;
