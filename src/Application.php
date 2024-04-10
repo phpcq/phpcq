@@ -44,8 +44,12 @@ class Application extends BaseApplication
             new ValidateCommand(),
             new PlatformInformationCommand(),
             new ExecCommand(),
-            new SelfUpdateCommand(Phar::running(false)),
         ];
+
+        $pharFile = Phar::running(false);
+        if ($pharFile !== '') {
+            $commands[] = new SelfUpdateCommand($pharFile);
+        }
 
         return $commands;
     }
