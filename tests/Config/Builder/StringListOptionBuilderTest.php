@@ -26,9 +26,7 @@ final class StringListOptionBuilderTest extends TestCase
     {
         $builder = $this->createInstance();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 'BAR';
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 'BAR'));
         $this->assertEquals(['BAR'], $builder->normalizeValue(['bar']));
     }
 
