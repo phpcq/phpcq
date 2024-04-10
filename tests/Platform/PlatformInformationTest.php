@@ -64,7 +64,7 @@ class PlatformInformationTest extends TestCase
 
             switch ($name) {
                 case 'amqp-librabbitmq':
-                case 'amgp-protocol':
+                case 'amqp-protocol':
                     self::assertContains('amqp', $loadedExtensions);
                     break;
 
