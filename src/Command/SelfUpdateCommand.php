@@ -149,8 +149,7 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         $this->updateComposer();
 
-        $pharFile = Phar::running(false);
-        if ($pharFile === '') {
+        if (! $this->pharFile) {
             $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
             return 0;
         }
