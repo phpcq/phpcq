@@ -69,6 +69,7 @@ class PlatformInformationTest extends TestCase
                     break;
 
                 case 'curl-zlib':
+                case 'curl-libssh':
                 case 'curl-libssh2':
                 case 'curl-openssl':
                 case 'curl-openssl-fips':
