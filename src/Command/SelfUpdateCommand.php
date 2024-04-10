@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Composer\Semver\Comparator;
+use Phar;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
@@ -34,7 +35,6 @@ use function is_string;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
-use function var_dump;
 
 final class SelfUpdateCommand extends AbstractCommand
 {
@@ -58,8 +58,6 @@ final class SelfUpdateCommand extends AbstractCommand
      * @psalm-suppress PropertyNotSetInConstructor
      */
     private $filesystem;
-
-    private PlatformRequirementCheckerInterface $requirementChecker;
 
     /**
      * @param string $pharFile The location of the execed phar file.
@@ -149,6 +147,14 @@ final class SelfUpdateCommand extends AbstractCommand
 
     protected function doExecute(): int
     {
+        $this->updateComposer();
+
+        $pharFile = Phar::running(false);
+        if ($pharFile === '') {
+            $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
+            return 0;
+        }
+
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
         $repository       = (new VersionsRepositoryLoader($this->requirementChecker, $this->downloader))
