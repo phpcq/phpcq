@@ -43,6 +43,9 @@ phpcq:
     composer-normalize:
       version: ^1.0
       signed: false
+    rector:
+      version: ^1.0
+      signed: false
   trusted-keys:
     # composer-require-checker
     - 033E5F8D801A2F8D
@@ -67,6 +70,7 @@ phpcq:
 tasks:
   fix:
     - composer-normalize-fix
+    - rector-fix
     - phpcbf
 
   verify:
@@ -80,6 +84,7 @@ tasks:
     - phpcs
     - psalm
     - phpunit
+#    - rector
 
   build:
     - box
@@ -156,3 +161,8 @@ tasks:
     config:
       custom_flags:
         - '--use-baseline=psalm-baseline.xml'
+
+  rector-fix:
+    plugin: rector
+    config:
+      dry-run: false
