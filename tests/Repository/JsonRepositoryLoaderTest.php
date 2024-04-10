@@ -18,7 +18,7 @@ final class JsonRepositoryLoaderTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 
-    public function testLoadRepository()
+    public function testLoadRepository(): void
     {
         $downloader = new FileDownloader(self::$tempdir . '/phpcq-test');
         $requirementChecker = $this->createMock(PlatformRequirementCheckerInterface::class);

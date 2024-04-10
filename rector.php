@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\Privatization\Rector\Class_\FinalizeTestCaseClassRector;
+use Rector\TypeDeclaration\Rector\Class_\AddTestsVoidReturnTypeWhereNoReturnRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -12,6 +13,7 @@ return RectorConfig::configure()
     ])
     ->withRootFiles()
     ->withRules([
-        FinalizeTestCaseClassRector::class
+        FinalizeTestCaseClassRector::class,
+        AddTestsVoidReturnTypeWhereNoReturnRector::class,
     ])
     ;
