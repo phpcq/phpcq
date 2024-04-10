@@ -52,6 +52,8 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /** @var array<string,string> */
     private $metadata;
 
+    private bool $tty = false;
+
     /**
      * Create a new instance.
      *
@@ -133,6 +135,14 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
+    /** @return $this */
+    public function withTty(): self
+    {
+        $this->tty = true;
+
+        return $this;
+    }
+
     /** @return list<string> */
     abstract protected function buildCommand(): array;
 
@@ -166,6 +176,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
             $this->input,
             $this->timeout,
             $this->metadata,
+            $this->tty,
         );
     }
 }

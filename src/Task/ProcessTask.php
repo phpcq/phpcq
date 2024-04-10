@@ -57,6 +57,8 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
     /** @var array<string,string> */
     private $metadata;
 
+    private bool $tty;
+
     /**
      * @param string                           $taskName    The name of the tool the task belongs to
      * @param string[] $command                             The command to run and its arguments listed as separate
@@ -80,7 +82,8 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         array $env = null,
         $input = null,
         ?float $timeout = 60,
-        array $metadata = []
+        array $metadata = [],
+        bool $tty = false
     ) {
         $this->taskName    = $taskName;
         $this->command     = $command;
@@ -90,6 +93,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         $this->timeout     = $timeout;
         $this->transformer = $transformer;
         $this->metadata    = $metadata;
+        $this->tty         = $tty;
     }
 
     public function getToolName(): string
@@ -142,6 +146,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
     public function runForOutput(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
+        $process->setTty($this->tty);
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $output->writeln(
             'Executing: ' . $process->getCommandLine(),

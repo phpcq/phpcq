@@ -98,12 +98,15 @@ final class ExecCommand extends AbstractCommand
         $installedPlugin = $installed->getPlugin($instance->getName());
         /** @psalm-var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
+        $phpCli = $this->findPhpCli();
         $environment = new Environment(
             $projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
                 $pluginName,
                 $installedPlugin,
-                ...$this->findPhpCli()
+                $phpCli[0],
+                $phpCli[1],
+                true
             )),
             $tempDirectory,
             1,

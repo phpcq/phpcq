@@ -28,6 +28,8 @@ class TaskFactory implements TaskFactoryInterface
     /** @var list<string> */
     private $phpArguments;
 
+    private bool $tty;
+
     /**
      * Create a new instance.
      *
@@ -39,12 +41,14 @@ class TaskFactory implements TaskFactoryInterface
         string $taskName,
         InstalledPlugin $installed,
         string $phpCliBinary,
-        array $phpArguments
+        array $phpArguments,
+        bool $tty = false
     ) {
         $this->taskName     = $taskName;
         $this->installed    = $installed;
         $this->phpCliBinary = $phpCliBinary;
         $this->phpArguments = $phpArguments;
+        $this->tty          = $tty;
     }
 
     /**
@@ -54,7 +58,13 @@ class TaskFactory implements TaskFactoryInterface
      */
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
+        $builder = new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
+
+        if ($this->tty) {
+            return $builder->withTty();
+        }
+
+        return $builder;
     }
 
     /**
