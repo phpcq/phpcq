@@ -21,7 +21,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * @covers \Phpcq\Runner\Repository\LockFileDumper
  */
-class LockFileDumperTest extends TestCase
+final class LockFileDumperTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

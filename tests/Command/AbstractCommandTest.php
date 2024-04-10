@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Command\AbstractCommand
  */
-class AbstractCommandTest extends TestCase
+final class AbstractCommandTest extends TestCase
 {
     public function testConfigureHonorsConfigArgument()
     {

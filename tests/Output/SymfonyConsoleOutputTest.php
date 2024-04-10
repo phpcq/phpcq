@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @covers \Phpcq\Runner\Output\SymfonyConsoleOutput
  */
-class SymfonyConsoleOutputTest extends TestCase
+final class SymfonyConsoleOutputTest extends TestCase
 {
     public function testWrite(): void
     {

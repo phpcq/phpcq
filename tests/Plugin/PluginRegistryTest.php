@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Plugin\PluginRegistry
  */
-class PluginRegistryTest extends TestCase
+final class PluginRegistryTest extends TestCase
 {
     public function testLoadFromInstalledRepository(): void
     {

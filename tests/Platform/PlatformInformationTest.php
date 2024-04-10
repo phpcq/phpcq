@@ -12,7 +12,7 @@ use UnexpectedValueException;
 /**
  * @covers \Phpcq\Runner\Platform\PlatformInformation
  */
-class PlatformInformationTest extends TestCase
+final class PlatformInformationTest extends TestCase
 {
     public function testCustomValues(): void
     {
