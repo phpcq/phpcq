@@ -33,6 +33,9 @@ jobs:
           - php: '8.2'
             phpcq_install: 'update'
             phpcq_flags: ''
+          - php: '8.3'
+            phpcq_install: 'update'
+            phpcq_flags: ''
 
     steps:
       - name: Pull source
