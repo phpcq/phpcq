@@ -398,7 +398,6 @@ class PlatformInformation implements PlatformInformationInterface
                     // Truthy check is for testing only so we can make the condition fail
                     if (defined(INTL_ICU_VERSION)) {
                         $libraries->add('icu', INTL_ICU_VERSION);
-                        ;
                     } elseif (Preg::isMatch('/^ICU version => (?<version>.+)$/im', $info, $matches)) {
                         $libraries->add('icu', $matches['version']);
                     }
