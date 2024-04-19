@@ -229,7 +229,7 @@ final class UpdateCalculator
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             // FIXME: Check if configured requirement is within the tool requirement
             $requirementName = $toolRequirement->getName();
-            $constraint = $config['requirements'][$requirementName]['version']
+            $constraint = $config['requirements']['tools'][$requirementName]['version']
                 ?? $toolRequirement->getConstraint();
             $tool       = $this->resolver->resolveToolVersion($pluginName, $requirementName, $constraint);
             $toolName   = $tool->getName();
@@ -238,7 +238,7 @@ final class UpdateCalculator
                 yield new InstallToolTask(
                     $desired,
                     $tool,
-                    $config['requirements'][$toolName]['signed'] ?? true
+                    $config['requirements']['tools'][$toolName]['signed'] ?? true
                 );
 
                 continue;
@@ -250,7 +250,7 @@ final class UpdateCalculator
                     $desired,
                     $tool,
                     $installed,
-                    $config['requirements'][$toolName]['signed'] ?? true
+                    $config['requirements']['tools'][$toolName]['signed'] ?? true
                 );
                 continue;
             }
@@ -298,7 +298,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins) as $task) {
             yield $task;
         }
     }
@@ -324,7 +324,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins, $installedVersion) as $task) {
             yield $task;
         }
     }
@@ -347,7 +347,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins, $installedVersion) as $task) {
             yield $task;
         }
     }
@@ -370,12 +370,16 @@ final class UpdateCalculator
     }
 
     /**
+     * @psalm-param array<string,TPlugin> $plugins
+     *
      * @psalm-return Generator<TaskInterface>
      */
     private function calculateComposerTasks(
         PluginVersionInterface $pluginVersion,
+        array $plugins,
         ?PluginVersionInterface $installedVersion = null
     ): Generator {
+        $config          = $plugins[$pluginVersion->getName()] ?? [];
         $hasRequirements = count($pluginVersion->getRequirements()->getComposerRequirements()) > 0;
         $isInstalled     = $installedVersion && $this->areComposerDependenciesInstalled(
             dirname($installedVersion->getFilePath())
@@ -383,7 +387,7 @@ final class UpdateCalculator
 
         if (!$isInstalled) {
             if ($hasRequirements) {
-                yield new ComposerInstallTask($pluginVersion);
+                yield new ComposerInstallTask($pluginVersion, $config['requirements']['composer'] ?? []);
             }
 
             return;
@@ -393,7 +397,7 @@ final class UpdateCalculator
             $targetDirectory = dirname($installedVersion->getFilePath());
 
             if ($this->composer->isUpdateRequired($targetDirectory)) {
-                yield new ComposerUpdateTask($pluginVersion);
+                yield new ComposerUpdateTask($pluginVersion, $config['requirements']['composer'] ?? []);
             }
 
             return;

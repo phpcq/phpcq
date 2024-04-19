@@ -21,9 +21,14 @@ abstract class AbstractComposerTask implements TaskInterface
     /** @var PluginVersionInterface */
     protected $pluginVersion;
 
-    public function __construct(PluginVersionInterface $pluginVersion)
+    /** @var array<string, string> */
+    protected array $requirements;
+
+    /** @param array<string, string> $requirements */
+    public function __construct(PluginVersionInterface $pluginVersion, array $requirements = [])
     {
         $this->pluginVersion = $pluginVersion;
+        $this->requirements  = $requirements;
     }
 
     public function getPluginName(): string
@@ -53,7 +58,10 @@ abstract class AbstractComposerTask implements TaskInterface
         $composerFile = $this->locatePath($context, 'composer.json');
 
         foreach ($this->pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
-            $data['require'][$requirement->getName()] = $requirement->getConstraint();
+            $name                   = $requirement->getName();
+
+            // FIXME: Check if configured requirement is within the tool requirement
+            $data['require'][$name] = $this->requirements[$name] ?? $requirement->getConstraint();
         }
 
         file_put_contents($composerFile, json_encode($data, self::JSON_ENCODE_OPTIONS));
