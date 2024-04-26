@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Updater\Task\Composer;
 
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
+use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
@@ -18,14 +19,12 @@ abstract class AbstractComposerTask implements TaskInterface
 {
     protected const JSON_ENCODE_OPTIONS = JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT;
 
-    /** @var PluginVersionInterface */
-    protected $pluginVersion;
+    protected PluginVersionInterface $pluginVersion;
 
-    /** @var array<string, string> */
-    protected array $requirements;
+    protected ?VersionRequirementList $requirements;
 
-    /** @param array<string, string> $requirements */
-    public function __construct(PluginVersionInterface $pluginVersion, array $requirements = [])
+    /** @param ?VersionRequirementList $requirements */
+    public function __construct(PluginVersionInterface $pluginVersion, ?VersionRequirementList $requirements = null)
     {
         $this->pluginVersion = $pluginVersion;
         $this->requirements  = $requirements;
@@ -50,18 +49,18 @@ abstract class AbstractComposerTask implements TaskInterface
             'require' => [],
             'config'  => [
                 'allow-plugins' => true,
-            ]
+            ],
         ];
 
         // TODO: Handle auth configuration
 
         $composerFile = $this->locatePath($context, 'composer.json');
 
-        foreach ($this->pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
-            $name                   = $requirement->getName();
-
-            // FIXME: Check if configured requirement is within the tool requirement
-            $data['require'][$name] = $this->requirements[$name] ?? $requirement->getConstraint();
+        if ($this->requirements) {
+            foreach ($this->requirements as $requirement) {
+                $name                   = $requirement->getName();
+                $data['require'][$name] = $requirement->getConstraint();
+            }
         }
 
         file_put_contents($composerFile, json_encode($data, self::JSON_ENCODE_OPTIONS));
@@ -89,7 +88,7 @@ abstract class AbstractComposerTask implements TaskInterface
                 $this->locatePath($context, 'vendor'),
                 $this->locatePath($context, 'composer.json'),
                 $this->locatePath($context, 'composer.lock'),
-            ]
+            ],
         );
 
         return true;

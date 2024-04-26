@@ -10,13 +10,17 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Phpcq\Runner\Composer;
+use Phpcq\Runner\Exception\InvalidArgumentException;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\Repository;
 use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Runner\Resolver\ResolverInterface;
+use Phpcq\Runner\Semver\ConstraintUtil;
 use Phpcq\Runner\Updater\Task\Composer\ComposerInstallTask;
 use Phpcq\Runner\Updater\Task\Composer\ComposerUpdateTask;
 use Phpcq\Runner\Updater\Task\Composer\RemoveComposerDependenciesTask;
@@ -387,7 +391,9 @@ final class UpdateCalculator
 
         if (!$isInstalled) {
             if ($hasRequirements) {
-                yield new ComposerInstallTask($pluginVersion, $config['requirements']['composer'] ?? []);
+                $requirements = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
+
+                yield new ComposerInstallTask($pluginVersion, $requirements);
             }
 
             return;
@@ -395,9 +401,10 @@ final class UpdateCalculator
 
         if ($hasRequirements) {
             $targetDirectory = dirname($installedVersion->getFilePath());
+            $requirements    = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
 
             if ($this->composer->isUpdateRequired($targetDirectory)) {
-                yield new ComposerUpdateTask($pluginVersion, $config['requirements']['composer'] ?? []);
+                yield new ComposerUpdateTask($pluginVersion, $requirements);
             }
 
             return;
@@ -416,5 +423,35 @@ final class UpdateCalculator
         }
 
         return is_dir($targetDirectory . '/vendor');
+    }
+
+    /** @param array<string,string> $overrides */
+    private function determineRequirements(
+        PluginVersionInterface $pluginVersion,
+        array $overrides
+    ): VersionRequirementList {
+        $requirements = new VersionRequirementList();
+
+        foreach ($pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
+            if (! isset($overrides[$requirement->getName()])) {
+                $requirements->add($requirement);
+
+                continue;
+            }
+
+            if (! ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Configured version constraint "%s" is not compatible with supported versions "%s"',
+                        $overrides[$requirement->getName()],
+                        $requirement->getConstraint(),
+                    )
+                );
+            }
+
+            $requirements->add(new VersionRequirement($requirement->getName(), $overrides[$requirement->getName()]));
+        }
+
+        return $requirements;
     }
 }
