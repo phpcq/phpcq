@@ -17,7 +17,7 @@ use function substr;
  * @covers \Phpcq\Runner\Platform\PlatformInformation
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class PlatformInformationTest extends TestCase
+final class PlatformInformationTest extends TestCase
 {
     public function testCustomValues(): void
     {
@@ -39,9 +39,7 @@ class PlatformInformationTest extends TestCase
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
         $loadedExtensions = array_filter(
             get_loaded_extensions(),
-            static function ($value): bool {
-                return !in_array($value, ['standard', 'Core']);
-            }
+            static fn($value): bool => !in_array($value, ['standard', 'Core'])
         );
 
         $this->assertCount(count($loadedExtensions), $platformInformation->getExtensions());

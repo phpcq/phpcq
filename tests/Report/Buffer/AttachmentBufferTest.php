@@ -9,7 +9,7 @@ use Phpcq\Runner\Report\Buffer\AttachmentBuffer;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Buffer\AttachmentBuffer */
-class AttachmentBufferTest extends TestCase
+final class AttachmentBufferTest extends TestCase
 {
     public function testConstructionCreatesWithCorrectValues(): void
     {

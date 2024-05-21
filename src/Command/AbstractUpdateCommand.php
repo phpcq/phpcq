@@ -146,6 +146,8 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->config->getComposer(),
             $this->findPhpCli()
         );
+
+        $this->composer->installBinary();
     }
 
     protected function doExecute(): int

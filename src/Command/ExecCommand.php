@@ -98,12 +98,15 @@ final class ExecCommand extends AbstractCommand
         $installedPlugin = $installed->getPlugin($instance->getName());
         /** @psalm-var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
+        $phpCli = $this->findPhpCli();
         $environment = new Environment(
             $projectConfig,
             new SingleProcessTaskFactory(new TaskFactory(
                 $pluginName,
                 $installedPlugin,
-                ...$this->findPhpCli()
+                $phpCli[0],
+                $phpCli[1],
+                true
             )),
             $tempDirectory,
             1,
@@ -156,9 +159,7 @@ final class ExecCommand extends AbstractCommand
 
         if ($input->mustSuggestArgumentValuesFor('application')) {
             $applicationNames = array_map(
-                static function (ApplicationDefinition $application): string {
-                    return $application->getName();
-                },
+                static fn(ApplicationDefinition $application): string => $application->getName(),
                 $definition->getApplications()
             );
 
@@ -170,9 +171,7 @@ final class ExecCommand extends AbstractCommand
         if ($input->mustSuggestArgumentValuesFor('args') && $input->getArgument('args') === []) {
             $application = $definition->getApplication((string) $input->getArgument('application'));
             $commandNames = array_map(
-                static function (CommandDefinition $command): string {
-                    return $command->getName();
-                },
+                static fn(CommandDefinition $command): string => $command->getName(),
                 $application->getCommands()
             );
 
