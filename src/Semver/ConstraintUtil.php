@@ -18,6 +18,7 @@ final class ConstraintUtil
 
     private static function versionParser(): VersionParser
     {
+        /** @psalm-var VersionParser|null $parser */
         static $parser = null;
 
         if ($parser === null) {
