@@ -11,7 +11,10 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  * @psalm-type TPlugin = array{
  *    version: string,
  *    signed: bool,
- *    requirements?: array<string,array{version?: string, signed?: bool}>
+ *    requirements?: array{
+ *        tools?: array<string,array{version?: string, signed?: bool}>,
+ *        composer?: array<string, string>
+ *    }
  * }
  * @psalm-type TTaskConfig = array{
  *   directories?: list<string>,

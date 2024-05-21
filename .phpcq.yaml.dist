@@ -57,6 +57,7 @@ phpcq:
     - 31C7E470E2138192
     - 2DF45277AEF09A2F
     - 5E6DDE998AB73B8E
+    - A978220305CD5C32
     # Composer normalize
     - C00543248C87FB13
     # PHPMD

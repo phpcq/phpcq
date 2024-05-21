@@ -10,13 +10,17 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\RepositoryDefinition\AbstractHash;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
+use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Phpcq\Runner\Composer;
+use Phpcq\Runner\Exception\InvalidArgumentException;
 use Phpcq\Runner\Repository\BuiltInPlugin;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
 use Phpcq\Runner\Repository\Repository;
 use Phpcq\Runner\Repository\RepositoryInterface;
 use Phpcq\Runner\Resolver\ResolverInterface;
+use Phpcq\Runner\Semver\ConstraintUtil;
 use Phpcq\Runner\Updater\Task\Composer\ComposerInstallTask;
 use Phpcq\Runner\Updater\Task\Composer\ComposerUpdateTask;
 use Phpcq\Runner\Updater\Task\Composer\RemoveComposerDependenciesTask;
@@ -229,7 +233,7 @@ final class UpdateCalculator
         foreach ($desired->getRequirements()->getToolRequirements() as $toolRequirement) {
             // FIXME: Check if configured requirement is within the tool requirement
             $requirementName = $toolRequirement->getName();
-            $constraint = $config['requirements'][$requirementName]['version']
+            $constraint = $config['requirements']['tools'][$requirementName]['version']
                 ?? $toolRequirement->getConstraint();
             $tool       = $this->resolver->resolveToolVersion($pluginName, $requirementName, $constraint);
             $toolName   = $tool->getName();
@@ -238,7 +242,7 @@ final class UpdateCalculator
                 yield new InstallToolTask(
                     $desired,
                     $tool,
-                    $config['requirements'][$toolName]['signed'] ?? true
+                    $config['requirements']['tools'][$toolName]['signed'] ?? true
                 );
 
                 continue;
@@ -250,7 +254,7 @@ final class UpdateCalculator
                     $desired,
                     $tool,
                     $installed,
-                    $config['requirements'][$toolName]['signed'] ?? true
+                    $config['requirements']['tools'][$toolName]['signed'] ?? true
                 );
                 continue;
             }
@@ -298,7 +302,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins) as $task) {
             yield $task;
         }
     }
@@ -324,7 +328,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins, $installedVersion) as $task) {
             yield $task;
         }
     }
@@ -347,7 +351,7 @@ final class UpdateCalculator
             yield $task;
         }
 
-        foreach ($this->calculateComposerTasks($pluginVersion, $installedVersion) as $task) {
+        foreach ($this->calculateComposerTasks($pluginVersion, $plugins, $installedVersion) as $task) {
             yield $task;
         }
     }
@@ -370,12 +374,16 @@ final class UpdateCalculator
     }
 
     /**
+     * @psalm-param array<string,TPlugin> $plugins
+     *
      * @psalm-return Generator<TaskInterface>
      */
     private function calculateComposerTasks(
         PluginVersionInterface $pluginVersion,
+        array $plugins,
         ?PluginVersionInterface $installedVersion = null
     ): Generator {
+        $config          = $plugins[$pluginVersion->getName()] ?? [];
         $hasRequirements = count($pluginVersion->getRequirements()->getComposerRequirements()) > 0;
         $isInstalled     = $installedVersion && $this->areComposerDependenciesInstalled(
             dirname($installedVersion->getFilePath())
@@ -383,7 +391,9 @@ final class UpdateCalculator
 
         if (!$isInstalled) {
             if ($hasRequirements) {
-                yield new ComposerInstallTask($pluginVersion);
+                $requirements = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
+
+                yield new ComposerInstallTask($pluginVersion, $requirements);
             }
 
             return;
@@ -391,9 +401,10 @@ final class UpdateCalculator
 
         if ($hasRequirements) {
             $targetDirectory = dirname($installedVersion->getFilePath());
+            $requirements    = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
 
             if ($this->composer->isUpdateRequired($targetDirectory)) {
-                yield new ComposerUpdateTask($pluginVersion);
+                yield new ComposerUpdateTask($pluginVersion, $requirements);
             }
 
             return;
@@ -412,5 +423,35 @@ final class UpdateCalculator
         }
 
         return is_dir($targetDirectory . '/vendor');
+    }
+
+    /** @param array<string,string> $overrides */
+    private function determineRequirements(
+        PluginVersionInterface $pluginVersion,
+        array $overrides
+    ): VersionRequirementList {
+        $requirements = new VersionRequirementList();
+
+        foreach ($pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
+            if (! isset($overrides[$requirement->getName()])) {
+                $requirements->add($requirement);
+
+                continue;
+            }
+
+            if (! ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Configured version constraint "%s" is not compatible with supported versions "%s"',
+                        $overrides[$requirement->getName()],
+                        $requirement->getConstraint(),
+                    )
+                );
+            }
+
+            $requirements->add(new VersionRequirement($requirement->getName(), $overrides[$requirement->getName()]));
+        }
+
+        return $requirements;
     }
 }
