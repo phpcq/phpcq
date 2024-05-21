@@ -86,7 +86,7 @@ final class SelfUpdateCommand extends AbstractCommand
             null,
             InputOption::VALUE_REQUIRED,
             'The channel of the release. Right now only unstable is available',
-            'unstable'
+            'stable'
         );
 
         $this->addOption(
@@ -144,12 +144,12 @@ final class SelfUpdateCommand extends AbstractCommand
             return 0;
         }
 
-        $pharUrl = $baseUri . '/phpcq.phar';
+        $pharUrl        = $this->getDownloadUrl($availableVersion);
         $downloadedPhar = tempnam(sys_get_temp_dir(), 'phpcq.phar-');
         $this->output->writeln('Download phpcq.phar from ' . $pharUrl, OutputInterface::VERBOSITY_VERBOSE);
         $this->downloader->downloadFileTo($pharUrl, $downloadedPhar, '', true);
 
-        $this->verifySignature($baseUri, $downloadedPhar);
+        $this->verifySignature($availableVersion, $downloadedPhar);
 
         $this->filesystem->copy($downloadedPhar, $this->pharFile);
         $this->cleanup($downloadedPhar);
@@ -227,14 +227,15 @@ final class SelfUpdateCommand extends AbstractCommand
         return !$dryRun;
     }
 
-    private function verifySignature(string $baseUri, string $downloadedPhar): void
+    private function verifySignature(string $version, string $downloadedPhar): void
     {
         if ($this->input->getOption('unsigned')) {
             return;
         }
 
         try {
-            $signature = $this->downloader->downloadFile($baseUri . '/phpcq.asc', '', true);
+            $signatureUrl = $this->getDownloadUrl($version, '.phar.asc');
+            $signature    = $this->downloader->downloadFile($signatureUrl, '', true);
         } catch (RuntimeException $exception) {
             $this->cleanup($downloadedPhar);
             throw new RuntimeException('Unable to download signature file', 1, $exception);
@@ -297,5 +298,14 @@ final class SelfUpdateCommand extends AbstractCommand
             $this->output->writeln('Updating used composer.phar');
             $composer->updateBinary();
         }
+    }
+
+    private function getDownloadUrl(string $version, string $extension = '.phar'): string
+    {
+        if ($this->input->getOption('channel') === 'stable') {
+            return $this->getBaseUri() . '/' . $version . $extension;
+        }
+
+        return $this->getBaseUri() . '/phpcq' . $extension;
     }
 }
