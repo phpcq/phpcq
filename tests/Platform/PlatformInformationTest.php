@@ -9,8 +9,13 @@ use Phpcq\Runner\Platform\PlatformInformation;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 
+use function in_array;
+use function str_contains;
+use function substr;
+
 /**
  * @covers \Phpcq\Runner\Platform\PlatformInformation
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PlatformInformationTest extends TestCase
 {
@@ -42,6 +47,10 @@ class PlatformInformationTest extends TestCase
         $this->assertCount(count($loadedExtensions), $platformInformation->getExtensions());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCurrentPlatformInformation(): void
     {
         $platformInformation = PlatformInformation::createFromCurrentPlatform();
@@ -51,8 +60,140 @@ class PlatformInformationTest extends TestCase
 
         foreach (array_keys($libraries) as $name) {
             $this->assertStringStartsWith('lib-', $name);
-            $name = $name === 'lib-ICU' ? 'intl' : substr($name, 4);
-            $this->assertContains($name, $loadedExtensions);
+            $name = substr($name, 4);
+
+            switch ($name) {
+                case 'amqp-librabbitmq':
+                case 'amqp-protocol':
+                    self::assertContains('amqp', $loadedExtensions);
+                    break;
+
+                case 'curl-zlib':
+                case 'curl-libssh':
+                case 'curl-libssh2':
+                case 'curl-openssl':
+                case 'curl-openssl-fips':
+                case 'curl-securetransport':
+                    self::assertContains('curl', $loadedExtensions);
+                    break;
+
+                case 'date-timelib':
+                case 'date-timezonedb-zoneinfo':
+                case 'date-zoneinfo':
+                    self::assertContains('date', $loadedExtensions);
+
+                    break;
+
+                case 'fileinfo-libmagic':
+                    self::assertContains('fileinfo', $loadedExtensions);
+
+                    break;
+
+                case 'gd-libjpeg':
+                case 'gd-freetype':
+                case 'gd-libxpm':
+                    self::assertContains('gd', $loadedExtensions);
+
+                    break;
+
+                case 'icu':
+                case 'icu-zoneinfo':
+                case 'icu-cldr':
+                case 'icu-unicode':
+                    self::assertContains('intl', $loadedExtensions);
+
+                    break;
+
+                case 'imagick-imagemagick':
+                    self::assertContains('imagick', $loadedExtensions);
+
+                    break;
+
+                case 'ldap-openldap':
+                    self::assertContains('ldap', $loadedExtensions);
+
+                    break;
+
+                case 'libsodium':
+                    self::assertTrue(in_array('libsodium', $loadedExtensions) || in_array('sodium', $loadedExtensions));
+
+                    break;
+
+                case 'libxslt':
+                case 'libxslt-libxml':
+                    self::assertContains('xsl', $loadedExtensions);
+
+                    break;
+
+                case 'mbstring-oniguruma':
+                case 'mbstring-libmbfl':
+                    self::assertContains('mbstring', $loadedExtensions);
+
+                    break;
+
+                case 'mysqlnd-mysqlnd':
+                    self::assertContains('mysqlnd', $loadedExtensions);
+
+                    break;
+
+                case 'mongodb-libmongoc':
+                case 'mongodb-libbson':
+                    self::assertContains('mongodb', $loadedExtensions);
+
+                    break;
+
+                case 'pdo_mysql-mysqlnd':
+                    self::assertContains('pdo_mysql', $loadedExtensions);
+
+                    break;
+
+                case 'pcre-unicode':
+                    self::assertContains('pcre', $loadedExtensions);
+
+                    break;
+
+                case 'pdo_pgsql-libpq':
+                    self::assertContains('pdo_pgsql', $loadedExtensions);
+
+                    break;
+
+                case 'pdo_sqlite-sqlite':
+                    self::assertContains('pdo_sqlite', $loadedExtensions);
+
+                    break;
+
+                case 'sqlite3-sqlite':
+                    self::assertContains('sqlite3', $loadedExtensions);
+
+                    break;
+
+                case 'pgsql-libpq':
+                    self::assertContains('pgsql', $loadedExtensions);
+
+                    break;
+
+                case 'dom-libxml':
+                case 'xml-libxml':
+                case 'simplexml-libxml':
+                case 'xmlreader-libxml':
+                case 'xmlwriter-libxml':
+                    self::assertContains('libxml', $loadedExtensions);
+
+                    break;
+
+                case 'yaml-libyaml':
+                    self::assertContains('yaml', $loadedExtensions);
+
+                    break;
+
+                case 'zip-libzip':
+                    self::assertContains('zip', $loadedExtensions);
+
+                    break;
+
+                default:
+                    self::assertContains($name, $loadedExtensions);
+            }
         }
     }
 
