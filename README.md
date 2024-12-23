@@ -8,6 +8,8 @@ PHP code quality project
 Code quality is an important part for growing projects, to raise and hold the quality of your software.
 The PHP code quality project helps you automate certain checks with continuous integration.
 
+Read more at [https://phpcq.github.io](https://phpcq.github.io/)
+
 PHPCQ is built on well known projects and unifies the reporting into one report:
 
  - [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker)
