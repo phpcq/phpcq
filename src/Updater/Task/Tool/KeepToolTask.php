@@ -22,16 +22,19 @@ final class KeepToolTask extends AbstractToolTask
         $this->installedToolVersion = $installedToolVersion;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return 'Will keep tool ' . $this->toolVersion->getName() . ' in version ' . $this->toolVersion->getVersion();
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return 'Keeping tool ' . $this->toolVersion->getName() . ' in version ' . $this->toolVersion->getVersion();
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $this->addTool(

@@ -25,6 +25,7 @@ abstract class AbstractToolTask implements TaskInterface
         $this->pluginVersion = $pluginVersion;
     }
 
+    #[\Override]
     public function getPluginName(): string
     {
         return $this->pluginVersion->getName();

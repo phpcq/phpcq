@@ -67,6 +67,7 @@ final class RunCommand extends AbstractCommand
      */
     private $pluginConfigFactory;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('run')->setDescription('Run configured build tasks');
@@ -137,6 +138,7 @@ final class RunCommand extends AbstractCommand
         parent::configure();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         // Stage 1: preparation.
@@ -188,6 +190,7 @@ final class RunCommand extends AbstractCommand
         return  $exitCode;
     }
 
+    #[\Override]
     protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         if ($input->mustSuggestArgumentValuesFor('task')) {

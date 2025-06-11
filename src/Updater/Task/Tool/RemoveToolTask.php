@@ -8,6 +8,7 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 final class RemoveToolTask extends AbstractToolTask
 {
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -17,6 +18,7 @@ final class RemoveToolTask extends AbstractToolTask
         );
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return sprintf(
@@ -26,6 +28,7 @@ final class RemoveToolTask extends AbstractToolTask
         );
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         if ($url = $this->toolVersion->getPharUrl()) {

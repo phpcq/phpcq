@@ -17,6 +17,7 @@ class Tasklist implements TasklistInterface
      */
     private $tasks = [];
 
+    #[\Override]
     public function add(TaskInterface $taskRunner): void
     {
         $this->tasks[] = $taskRunner;
@@ -27,6 +28,7 @@ class Tasklist implements TasklistInterface
      *
      * @psalm-return \Generator<array-key, TaskInterface, mixed, void>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         yield from $this->tasks;

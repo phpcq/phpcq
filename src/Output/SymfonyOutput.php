@@ -23,6 +23,7 @@ final class SymfonyOutput implements OutputInterface
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    #[\Override]
     public function write(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -32,6 +33,7 @@ final class SymfonyOutput implements OutputInterface
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    #[\Override]
     public function writeln(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,

@@ -48,6 +48,7 @@ final class DiffBuilder implements DiffBuilderInterface
         $this->filesystem = $filesystem;
     }
 
+    #[\Override]
     public function fromFile(string $file): DiffBuilderInterface
     {
         if ('/' !== $file[0]) {
@@ -59,6 +60,7 @@ final class DiffBuilder implements DiffBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function fromString(string $buffer): DiffBuilderInterface
     {
         // NOTE: We do not unlink the previous file on purpose here of already set.
@@ -72,6 +74,7 @@ final class DiffBuilder implements DiffBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {

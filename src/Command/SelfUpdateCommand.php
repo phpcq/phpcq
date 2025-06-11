@@ -67,6 +67,7 @@ final class SelfUpdateCommand extends AbstractCommand
         }
     }
 
+    #[\Override]
     protected function configure(): void
     {
         parent::configure();
@@ -119,6 +120,7 @@ final class SelfUpdateCommand extends AbstractCommand
         );
     }
 
+    #[\Override]
     protected function prepare(InputInterface $input): void
     {
         parent::prepare($input);
@@ -132,6 +134,7 @@ final class SelfUpdateCommand extends AbstractCommand
         $this->filesystem = new Filesystem();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $baseUri          = $this->getBaseUri();

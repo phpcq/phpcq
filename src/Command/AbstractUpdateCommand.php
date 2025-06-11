@@ -82,6 +82,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
      */
     protected $composer;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -109,6 +110,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         parent::configure();
     }
 
+    #[\Override]
     protected function prepare(InputInterface $input): void
     {
         parent::prepare($input);
@@ -150,6 +152,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         $this->composer->installBinary();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $requirementChecker = !$this->input->getOption('ignore-platform-reqs')

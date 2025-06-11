@@ -20,6 +20,7 @@ class SymfonyConsoleOutput implements OutputInterface
         $this->output = $output;
     }
 
+    #[\Override]
     public function write(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -28,6 +29,7 @@ class SymfonyConsoleOutput implements OutputInterface
         $this->output($message, false, $verbosity, $channel);
     }
 
+    #[\Override]
     public function writeln(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,

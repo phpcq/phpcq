@@ -20,21 +20,25 @@ class Options implements OptionsInterface
         $this->options = $options;
     }
 
+    #[\Override]
     public function getInt(string $name): int
     {
         return Constraints::intConstraint($this->getOption($name));
     }
 
+    #[\Override]
     public function getString(string $name): string
     {
         return Constraints::stringConstraint($this->getOption($name));
     }
 
+    #[\Override]
     public function getFloat(string $name): float
     {
         return Constraints::floatConstraint($this->getOption($name));
     }
 
+    #[\Override]
     public function getBool(string $name): bool
     {
         return Constraints::boolConstraint($this->getOption($name));
@@ -44,6 +48,7 @@ class Options implements OptionsInterface
      * @psalm-suppress MixedReturnTypeCoercion
      * @psalm-return list<string>
      */
+    #[\Override]
     public function getStringList(string $name): array
     {
         return Constraints::listConstraint($this->getOption($name), Validator::stringValidator());
@@ -53,11 +58,13 @@ class Options implements OptionsInterface
      * @psalm-suppress MixedReturnTypeCoercion
      * @psalm-return list<array<string,mixed>>
      */
+    #[\Override]
     public function getOptionsList(string $name): array
     {
         return Constraints::listConstraint($this->getOption($name), Validator::arrayValidator());
     }
 
+    #[\Override]
     public function getOptions(string $name): array
     {
         $value = Constraints::arrayConstraint($this->getOption($name));
@@ -65,11 +72,13 @@ class Options implements OptionsInterface
         return $value;
     }
 
+    #[\Override]
     public function has(string $name): bool
     {
         return array_key_exists($name, $this->options);
     }
 
+    #[\Override]
     public function getValue(): array
     {
         return $this->options;

@@ -34,6 +34,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
      */
     private $valueBuilder;
 
+    #[\Override]
     public function ofOptionsValue(): OptionsBuilderInterface
     {
         $this->declareType('array');
@@ -41,6 +42,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new OptionsBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofBoolValue(): BoolOptionBuilderInterface
     {
         $this->declareType('bool');
@@ -48,6 +50,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new BoolOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofEnumValue(): EnumOptionBuilderInterface
     {
         $this->declareType('enum');
@@ -55,6 +58,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new EnumOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofFloatValue(): FloatOptionBuilderInterface
     {
         $this->declareType('float');
@@ -62,6 +66,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new FloatOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofIntValue(): IntOptionBuilderInterface
     {
         $this->declareType('int');
@@ -69,6 +74,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new IntOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofStringListValue(): StringListOptionBuilderInterface
     {
         $this->declareType('string-list');
@@ -76,6 +82,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new StringListOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofOptionsListValue(): OptionsListOptionBuilderInterface
     {
         $this->declareType('option-list');
@@ -83,6 +90,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new OptionsListOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofStringValue(): StringOptionBuilderInterface
     {
         $this->declareType('string');
@@ -90,6 +98,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new StringOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofPrototypeValue(): PrototypeBuilderInterface
     {
         $this->declareType('prototype');
@@ -97,22 +106,26 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this->valueBuilder = new self($this->name, $this->description);
     }
 
+    #[\Override]
     public function isRequired(): PrototypeBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): PrototypeBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): PrototypeBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
     /** @psalm-param array<string, mixed> $defaultValue */
+    #[\Override]
     public function withDefaultValue(array $defaultValue): PrototypeBuilderInterface
     {
         $this->defaultValue = $defaultValue;
@@ -120,6 +133,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $this;
     }
 
+    #[\Override]
     public function selfValidate(): void
     {
         /** @psalm-suppress DocblockTypeContradiction */
@@ -130,6 +144,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         $this->valueBuilder->selfValidate();
     }
 
+    #[\Override]
     public function normalizeValue($raw): ?array
     {
         /** @psalm-suppress MixedAssignment */
@@ -159,6 +174,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         parent::validateValue($value);

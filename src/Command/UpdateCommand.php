@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class UpdateCommand extends AbstractUpdateCommand
 {
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('update')->setDescription('Update the phpcq installation');
@@ -27,6 +28,7 @@ final class UpdateCommand extends AbstractUpdateCommand
     }
 
     /** @psalm-return list<TaskInterface> */
+    #[\Override]
     protected function calculateTasks(): array
     {
         $verbosity  = $this->input->getOption('dry-run')
@@ -48,6 +50,7 @@ final class UpdateCommand extends AbstractUpdateCommand
     }
 
     /** @psalm-param list<TaskInterface> $tasks */
+    #[\Override]
     protected function executeTasks(array $tasks): void
     {
         if ($this->input->getOption('dry-run')) {

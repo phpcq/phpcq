@@ -57,6 +57,7 @@ use function count;
  */
 final class CodeClimateReportWriter implements ReportWriterInterface
 {
+    #[\Override]
     public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void
     {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {

@@ -39,6 +39,7 @@ abstract class AbstractReportWriter implements ReportWriterInterface
     /** @var Filesystem */
     private $filesystem;
 
+    #[\Override]
     public static function writeReport(
         string $targetPath,
         ReportBuffer $report,

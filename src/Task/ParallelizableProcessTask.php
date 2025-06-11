@@ -90,11 +90,13 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         $this->metadata = $metadata;
     }
 
+    #[\Override]
     public function getToolName(): string
     {
         return $this->taskName;
     }
 
+    #[\Override]
     public function runWithReport(TaskReportInterface $report): void
     {
         foreach ($this->metadata as $key => $value) {
@@ -117,6 +119,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         }
     }
 
+    #[\Override]
     public function tick(): bool
     {
         assert($this->process instanceof Process);
@@ -137,6 +140,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         return !$finished;
     }
 
+    #[\Override]
     public function getCost(): int
     {
         return $this->cost;

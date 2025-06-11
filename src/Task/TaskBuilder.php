@@ -22,6 +22,7 @@ final class TaskBuilder extends AbstractTaskBuilder
     }
 
 
+    #[\Override]
     protected function buildCommand(): array
     {
         return $this->command;

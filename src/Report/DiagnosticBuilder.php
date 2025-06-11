@@ -63,6 +63,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function forFile(string $file): FileDiagnosticBuilderInterface
     {
         // FIXME: if we would know the root dir, we could strip it here.
@@ -81,6 +82,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this->pendingFiles[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function fromSource(string $source): DiagnosticBuilderInterface
     {
         $this->source = $source;
@@ -88,6 +90,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withExternalInfoUrl(string $url): DiagnosticBuilderInterface
     {
         $this->externalInfoUrl = $url;
@@ -95,6 +98,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function forClass(string $className): DiagnosticBuilderInterface
     {
         $this->classNames[$className] = $className;
@@ -102,6 +106,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withCategory(string $category): DiagnosticBuilderInterface
     {
         $this->categories[$category] = $category;
@@ -109,6 +114,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         foreach ($this->pendingFiles as $pendingBuilder) {

@@ -30,6 +30,7 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
         $this->description = $description;
     }
 
+    #[\Override]
     public function isRequired(): ConsoleArgumentBuilderInterface
     {
         $this->required = true;
@@ -37,6 +38,7 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function isArray(): ConsoleArgumentBuilderInterface
     {
         $this->isArray = true;
@@ -44,6 +46,7 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withDefaultValue($value): ConsoleArgumentBuilderInterface
     {
         $this->defaultValue = $value;

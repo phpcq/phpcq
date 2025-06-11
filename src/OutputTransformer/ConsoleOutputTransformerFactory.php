@@ -31,6 +31,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
     }
 
     /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+    #[\Override]
     public function createFor(TaskReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
@@ -52,6 +53,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 $this->data   = BufferedLineReader::create();
             }
 
+            #[\Override]
             public function write(string $data, int $channel): void
             {
                 $this->data->push($data);
@@ -65,6 +67,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 }
             }
 
+            #[\Override]
             public function finish(int $exitCode): void
             {
                 $content = '';

@@ -23,6 +23,7 @@ final class KeepPluginTask extends AbstractPluginTask
         $this->installedVersion = $installedVersion;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -32,6 +33,7 @@ final class KeepPluginTask extends AbstractPluginTask
         );
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return sprintf(
@@ -41,6 +43,7 @@ final class KeepPluginTask extends AbstractPluginTask
         );
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $version = $this->installedVersion;

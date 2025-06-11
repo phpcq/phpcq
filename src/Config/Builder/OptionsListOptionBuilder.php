@@ -18,21 +18,25 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
 {
     use OptionsBuilderTrait;
 
+    #[\Override]
     public function isRequired(): OptionsListOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): OptionsListOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): OptionsListOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(array $defaultValue): OptionsListOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;
@@ -40,6 +44,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw): ?array
     {
         if (null === $raw) {
@@ -73,6 +78,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {

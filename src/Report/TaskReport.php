@@ -44,11 +44,13 @@ class TaskReport implements TaskReportInterface
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->report->getStatus();
     }
 
+    #[\Override]
     public function addMetadata(string $name, string $value): TaskReportInterface
     {
         $this->report->addMetadata($name, $value);
@@ -56,6 +58,7 @@ class TaskReport implements TaskReportInterface
         return $this;
     }
 
+    #[\Override]
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
         $builder = new DiagnosticBuilder(
@@ -70,6 +73,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingDiagnostics[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function addAttachment(string $name): AttachmentBuilderInterface
     {
         $builder = new AttachmentBuilder(
@@ -85,6 +89,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingAttachments[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function addDiff(string $name): DiffBuilderInterface
     {
         $builder = new DiffBuilder(
@@ -101,6 +106,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingDiffs[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function close(string $status): void
     {
         foreach ($this->pendingDiagnostics as $pendingBuilder) {

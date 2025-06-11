@@ -96,11 +96,13 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         $this->tty         = $tty;
     }
 
+    #[\Override]
     public function getToolName(): string
     {
         return $this->taskName;
     }
 
+    #[\Override]
     public function runWithReport(TaskReportInterface $report): void
     {
         foreach ($this->metadata as $key => $value) {
@@ -143,6 +145,7 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         }
     }
 
+    #[\Override]
     public function runForOutput(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);

@@ -53,21 +53,25 @@ class Environment implements EnvironmentInterface
         $this->pluginDirectory      = $pluginDirectory;
     }
 
+    #[\Override]
     public function getProjectConfiguration(): ProjectConfigInterface
     {
         return $this->projectConfiguration;
     }
 
+    #[\Override]
     public function getTaskFactory(): TaskFactoryInterface
     {
         return $this->taskFactory;
     }
 
+    #[\Override]
     public function getBuildTempDir(): string
     {
         return $this->tempDirectory;
     }
 
+    #[\Override]
     public function getUniqueTempFile(?PluginInterface $plugin = null, ?string $suffix = null): string
     {
         $fileName = uniqid($plugin ? $plugin->getName() : '');
@@ -78,11 +82,13 @@ class Environment implements EnvironmentInterface
         return $this->getBuildTempDir() . '/' . $fileName;
     }
 
+    #[\Override]
     public function getAvailableThreads(): int
     {
         return $this->availableThreads;
     }
 
+    #[\Override]
     public function getInstalledDir(): string
     {
         return $this->pluginDirectory;

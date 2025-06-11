@@ -49,6 +49,7 @@ final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilder
         $this->arguments  = $arguments;
     }
 
+    #[\Override]
     public function withoutXDebug(): PhpTaskBuilderInterface
     {
         $this->disableXDebug = true;
@@ -56,6 +57,7 @@ final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilder
         return $this;
     }
 
+    #[\Override]
     protected function buildCommand(): array
     {
         $phpArguments = $this->phpArguments;

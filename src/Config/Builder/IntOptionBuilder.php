@@ -21,21 +21,25 @@ final class IntOptionBuilder extends AbstractOptionBuilder implements IntOptionB
         $this->withValidator(Validator::intValidator());
     }
 
+    #[\Override]
     public function isRequired(): IntOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): IntOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): IntOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(int $defaultValue): IntOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

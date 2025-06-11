@@ -39,6 +39,7 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
         $this->questionHelper = $questionHelper;
     }
 
+    #[\Override]
     public function isTrusted(string $fingerprint): bool
     {
         if ($this->trustedKeys->isTrusted($fingerprint)) {

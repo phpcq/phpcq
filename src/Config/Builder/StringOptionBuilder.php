@@ -21,21 +21,25 @@ final class StringOptionBuilder extends AbstractOptionBuilder implements StringO
         $this->withValidator(Validator::stringValidator());
     }
 
+    #[\Override]
     public function isRequired(): StringOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): StringOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): StringOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(string $defaultValue): StringOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

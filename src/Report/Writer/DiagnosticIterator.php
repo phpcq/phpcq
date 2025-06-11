@@ -217,6 +217,7 @@ final class DiagnosticIterator implements IteratorAggregate
      * @return Generator|DiagnosticIteratorEntry[]
      * @psalm-return Generator<int, DiagnosticIteratorEntry>
      */
+    #[\Override]
     public function getIterator(): Generator
     {
         if ($this->previous instanceof self && $this->previous->sortCallback) {

@@ -65,6 +65,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         $this->metadata = $metadata;
     }
 
+    #[\Override]
     public function withWorkingDirectory(string $cwd): TaskBuilderInterface
     {
         $this->cwd = $cwd;
@@ -75,6 +76,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /**
      * @param string[] $env
      */
+    #[\Override]
     public function withEnv(array $env): TaskBuilderInterface
     {
         $this->env = $env;
@@ -86,6 +88,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
      * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no
      *                                           input
      */
+    #[\Override]
     public function withInput($input): TaskBuilderInterface
     {
         $this->input = $input;
@@ -96,6 +99,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /**
      * @param int|float $timeout
      */
+    #[\Override]
     public function withTimeout($timeout): TaskBuilderInterface
     {
         $this->timeout = $timeout;
@@ -103,6 +107,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskBuilderInterface
     {
         $this->transformerFactory = $factory;
@@ -110,6 +115,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function forceSingleProcess(): TaskBuilderInterface
     {
         if (1 !== $this->cost) {
@@ -121,6 +127,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withCosts(int $cost): TaskBuilderInterface
     {
         if (!$this->parallel && $cost !== 1) {
@@ -146,6 +153,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /** @return list<string> */
     abstract protected function buildCommand(): array;
 
+    #[\Override]
     public function build(): TaskInterface
     {
         $transformerFactory = $this->transformerFactory;

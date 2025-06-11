@@ -33,6 +33,7 @@ class ConsoleApplicationBuilder implements ConsoleApplicationBuilderInterface
         $this->description = $description;
     }
 
+    #[\Override]
     public function withOptionValueSeparator(string $separator): ConsoleApplicationBuilderInterface
     {
         $this->optionValueSeparator = $separator;
@@ -40,6 +41,7 @@ class ConsoleApplicationBuilder implements ConsoleApplicationBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function describeCommand(string $name, string $description): ConsoleCommandBuilderInterface
     {
         if (isset($this->commands[$name])) {

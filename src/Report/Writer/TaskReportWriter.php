@@ -33,6 +33,7 @@ final class TaskReportWriter extends AbstractReportWriter
             ->getIterator();
     }
 
+    #[\Override]
     protected function appendReportXml(DOMElement $rootNode): void
     {
         $outputNode = $this->xml->createElement('tasks', $rootNode);
@@ -44,6 +45,7 @@ final class TaskReportWriter extends AbstractReportWriter
         }
     }
 
+    #[\Override]
     protected function handleRange(DOMElement $diagnosticElement, DiagnosticIteratorEntry $entry): void
     {
         if (!$entry->getDiagnostic()->hasFileRanges()) {

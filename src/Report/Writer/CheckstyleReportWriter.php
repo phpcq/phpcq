@@ -26,6 +26,7 @@ final class CheckstyleReportWriter implements ReportWriterInterface
      */
     protected $xml;
 
+    #[\Override]
     public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void
     {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {

@@ -24,6 +24,7 @@ final class SignatureFileDownloader implements FileDownloaderInterface
         $this->output         = $output;
     }
 
+    #[\Override]
     public function downloadFile(string $url): string
     {
         try {

@@ -41,6 +41,7 @@ class HelpCommand extends AbstractCommand
         $this->command = $command;
     }
 
+    #[\Override]
     protected function configure(): void
     {
         parent::configure();
@@ -86,6 +87,7 @@ class HelpCommand extends AbstractCommand
         $this->addUsage('[options] exec --help <application> <command_name>');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $exitCode = 0;
@@ -111,6 +113,7 @@ class HelpCommand extends AbstractCommand
         return parent::execute($input, $output);
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $installed     = $this->getInstalledRepository(true);

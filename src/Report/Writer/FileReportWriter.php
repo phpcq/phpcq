@@ -35,6 +35,7 @@ final class FileReportWriter extends AbstractReportWriter
             ->getIterator();
     }
 
+    #[\Override]
     protected function appendReportXml(DOMElement $rootNode): void
     {
         $abstractNode       = $this->xml->createElement('abstract', $rootNode);
