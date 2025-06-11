@@ -26,6 +26,7 @@ final class OptionsBuilder extends AbstractOptionsBuilder
         $this->bypassValidation = true;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {

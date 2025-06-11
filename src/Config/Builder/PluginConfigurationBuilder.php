@@ -13,6 +13,7 @@ class PluginConfigurationBuilder extends AbstractOptionsBuilder implements Plugi
     /** @var bool */
     private $supportsDirectories = false;
 
+    #[\Override]
     public function supportDirectories(): PluginConfigurationBuilderInterface
     {
         if ($this->supportsDirectories) {
@@ -36,6 +37,7 @@ class PluginConfigurationBuilder extends AbstractOptionsBuilder implements Plugi
         return $this->supportsDirectories;
     }
 
+    #[\Override]
     protected function describeOption(string $name, ConfigOptionBuilderInterface $builder): void
     {
         if ('directories' === $name) {

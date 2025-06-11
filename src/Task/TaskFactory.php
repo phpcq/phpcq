@@ -56,6 +56,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilder
      */
+    #[\Override]
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
         $builder = new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
@@ -73,6 +74,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilderPhp
      */
+    #[\Override]
     public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         $pharUrl = $this->installed->getTool($toolName)->getPharUrl();
@@ -89,6 +91,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilderPhp
      */
+    #[\Override]
     public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         return new TaskBuilderPhp(

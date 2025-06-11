@@ -24,21 +24,25 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
      */
     private $valueBuilder;
 
+    #[\Override]
     public function isRequired(): EnumOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): EnumOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): EnumOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function ofStringValues(string ...$values): StringOptionBuilderInterface
     {
         /** @var list<string> $values */
@@ -50,6 +54,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return $this->valueBuilder = new StringOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofIntValues(int ...$values): IntOptionBuilderInterface
     {
         /** @var list<int> $values */
@@ -61,6 +66,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return $this->valueBuilder = new IntOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function ofFloatValues(float ...$values): FloatOptionBuilderInterface
     {
         /** @var list<float> $values */
@@ -72,6 +78,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return $this->valueBuilder = new FloatOptionBuilder($this->name, $this->description);
     }
 
+    #[\Override]
     public function normalizeValue($raw)
     {
         /** @psalm-suppress MixedAssignment */
@@ -80,6 +87,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         return parent::normalizeValue($raw);
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         parent::validateValue($value);
@@ -87,6 +95,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
         $this->valueBuilder->normalizeValue($value);
     }
 
+    #[\Override]
     public function selfValidate(): void
     {
         /** @psalm-suppress DocblockTypeContradiction */

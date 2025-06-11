@@ -24,6 +24,7 @@ final class Report implements ReportInterface
         $this->tempDir = $tempDir;
     }
 
+    #[\Override]
     public function addTaskReport(string $taskName, array $metadata = []): TaskReportInterface
     {
         return new TaskReport($this->report->createTaskReport($taskName, $metadata), $this->tempDir);

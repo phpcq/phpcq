@@ -23,16 +23,19 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         parent::__construct($name, $description, [Validator::stringValidator()]);
     }
 
+    #[\Override]
     public function isRequired(): StringListOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): StringListOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): StringListOptionBuilderInterface
     {
         return parent::withValidator($validator);
@@ -42,6 +45,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
      * @psalm-param list<string> $defaultValue
      * @return $this
      */
+    #[\Override]
     public function withDefaultValue(array $defaultValue): StringListOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;
@@ -49,6 +53,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw): ?array
     {
         if (null === $raw) {
@@ -80,6 +85,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {

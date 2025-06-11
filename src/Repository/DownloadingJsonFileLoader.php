@@ -35,6 +35,7 @@ final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
      *
      * @psalm-return TJsonRepository
      */
+    #[\Override]
     public function load(string $file, ?array $checksum = null): array
     {
         return $this->downloader->downloadJsonFile($file, dirname($file), $this->force, $checksum);

@@ -28,21 +28,25 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
         parent::__construct($name, $description, [Validator::arrayValidator()]);
     }
 
+    #[\Override]
     public function isRequired(): OptionsBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): OptionsBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): OptionsBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(array $defaultValue): OptionsBuilderInterface
     {
         $this->defaultValue = $defaultValue;
@@ -50,6 +54,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw): ?array
     {
         /** @psalm-suppress MixedAssignment */
@@ -71,6 +76,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
         return $this->normalizeOptions($value);
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         parent::validateValue($value);

@@ -44,6 +44,7 @@ class ProjectConfiguration implements ProjectConfigInterface
         $this->maxCpuCores        = $maxCpuCores;
     }
 
+    #[\Override]
     public function getProjectRootPath(): string
     {
         return $this->rootPath;
@@ -54,16 +55,19 @@ class ProjectConfiguration implements ProjectConfigInterface
      *
      * @psalm-return array<array-key, string>
      */
+    #[\Override]
     public function getDirectories(): array
     {
         return $this->directories;
     }
 
+    #[\Override]
     public function getArtifactOutputPath(): string
     {
         return $this->artifactOutputPath;
     }
 
+    #[\Override]
     public function getMaxCpuCores(): int
     {
         return $this->maxCpuCores;

@@ -30,6 +30,7 @@ abstract class AbstractComposerTask implements TaskInterface
         $this->requirements  = $requirements;
     }
 
+    #[\Override]
     public function getPluginName(): string
     {
         return $this->pluginVersion->getName();

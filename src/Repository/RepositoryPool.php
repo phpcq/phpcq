@@ -63,6 +63,7 @@ final class RepositoryPool implements IteratorAggregate
      *
      * @psalm-return \Generator<array-key, RepositoryInterface, mixed, void>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         yield from $this->repositories;

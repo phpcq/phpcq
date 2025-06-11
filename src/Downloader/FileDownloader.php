@@ -52,6 +52,7 @@ class FileDownloader implements DownloaderInterface
      *
      * @return void
      */
+    #[\Override]
     public function downloadFileTo(
         string $url,
         string $destinationFile,
@@ -78,6 +79,7 @@ class FileDownloader implements DownloaderInterface
      *
      * @return string
      */
+    #[\Override]
     public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string
     {
         if (!is_dir($this->cacheDirectory)) {
@@ -122,6 +124,7 @@ class FileDownloader implements DownloaderInterface
      * @return array
      * @psalm-return TJsonRepository
      */
+    #[\Override]
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
         /**

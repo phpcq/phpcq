@@ -44,6 +44,7 @@ class PlatformRequirementChecker implements PlatformRequirementCheckerInterface
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function isFulfilled(string $name, string $constraint): bool
     {
         return ($this->callback)($name, $constraint);

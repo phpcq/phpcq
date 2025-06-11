@@ -60,6 +60,7 @@ final class ExecCommand extends AbstractCommand
         return $argv;
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('exec')->setDescription('Execute a tool with the passed arguments');
@@ -79,6 +80,7 @@ final class ExecCommand extends AbstractCommand
         parent::configure();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $installed     = $this->getInstalledRepository(true);
@@ -140,6 +142,7 @@ final class ExecCommand extends AbstractCommand
         return $exitCode;
     }
 
+    #[\Override]
     public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         $this->prepare($input);

@@ -20,12 +20,14 @@ final class ValidateCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('validate')->setDescription('Validate the phpcq installation');
         parent::configure();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $this->output->writeln('Validate phpcq configuration', OutputInterface::VERBOSITY_VERY_VERBOSE);

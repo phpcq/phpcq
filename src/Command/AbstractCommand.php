@@ -65,6 +65,7 @@ abstract class AbstractCommand extends Command
      */
     protected $config;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -89,6 +90,7 @@ abstract class AbstractCommand extends Command
         );
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
@@ -98,6 +100,7 @@ abstract class AbstractCommand extends Command
         return $this->doExecute();
     }
 
+    #[\Override]
     public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         $this->prepare($input);

@@ -91,6 +91,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw)
     {
         if (null === $raw) {
@@ -111,6 +112,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {
@@ -135,6 +137,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         }
     }
 
+    #[\Override]
     public function selfValidate(): void
     {
     }

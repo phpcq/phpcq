@@ -58,6 +58,7 @@ final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterf
         $this->tempDirectory = $tempDirectory;
     }
 
+    #[\Override]
     public function describeApplication(
         string $description,
         ?string $applicationName = null

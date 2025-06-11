@@ -53,6 +53,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         $this->filesystem = $filesystem;
     }
 
+    #[\Override]
     public function fromFile(string $file): AttachmentBuilderInterface
     {
         if ('/' !== $file[0]) {
@@ -64,6 +65,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function fromString(string $buffer): AttachmentBuilderInterface
     {
         // NOTE: We do not unlink the previous file on purpose here of already set.
@@ -77,6 +79,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setMimeType(string $mimeType): AttachmentBuilderInterface
     {
         $this->mimeType = $mimeType;
@@ -84,6 +87,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {

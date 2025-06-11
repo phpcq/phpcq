@@ -31,6 +31,7 @@ class Application extends BaseApplication
         $this->setDefaultCommand('run');
     }
 
+    #[\Override]
     protected function getDefaultCommands(): array
     {
         $commands = [
@@ -54,6 +55,7 @@ class Application extends BaseApplication
         return $commands;
     }
 
+    #[\Override]
     public function getHelp(): string
     {
         $help = sprintf(

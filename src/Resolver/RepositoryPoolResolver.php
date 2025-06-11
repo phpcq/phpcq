@@ -19,11 +19,13 @@ final class RepositoryPoolResolver implements ResolverInterface
         $this->pool = $repositoryPool;
     }
 
+    #[\Override]
     public function resolvePluginVersion(string $pluginName, string $versionConstraint): PluginVersionInterface
     {
         return $this->pool->getPluginVersion($pluginName, $versionConstraint);
     }
 
+    #[\Override]
     public function resolveToolVersion(
         string $pluginName,
         string $toolName,

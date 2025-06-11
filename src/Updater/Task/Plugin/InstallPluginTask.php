@@ -24,6 +24,7 @@ final class InstallPluginTask extends AbstractInstallingPluginTask
         $this->signed = $signed;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -33,11 +34,13 @@ final class InstallPluginTask extends AbstractInstallingPluginTask
         );
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return sprintf('Installing %s version %s', $this->pluginVersion->getName(), $this->pluginVersion->getVersion());
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $bootstrapFile = sprintf('%1$s/plugin.php', $this->pluginVersion->getName());

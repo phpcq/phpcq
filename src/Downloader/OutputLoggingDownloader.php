@@ -34,6 +34,7 @@ final class OutputLoggingDownloader implements DownloaderInterface
         $this->verbosity  = $verbosity;
     }
 
+    #[\Override]
     public function downloadFileTo(
         string $url,
         string $destinationFile,
@@ -44,6 +45,7 @@ final class OutputLoggingDownloader implements DownloaderInterface
         $this->downloader->downloadFileTo($url, $destinationFile, $baseDir, $force);
     }
 
+    #[\Override]
     public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string
     {
         $this->output->writeln('Downloading ' . $url, $this->verbosity);
@@ -51,6 +53,7 @@ final class OutputLoggingDownloader implements DownloaderInterface
         return $this->downloader->downloadFile($url, $baseDir, $force, $hash);
     }
 
+    #[\Override]
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
         $this->output->writeln('Downloading json file ' . $url, $this->verbosity);

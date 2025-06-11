@@ -32,6 +32,7 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
         $this->signed           = $signed;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -53,6 +54,7 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
         return 'Will reinstall plugin ' . $this->getPluginName() . ' in version ' . $this->pluginVersion->getVersion();
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -74,6 +76,7 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
         return 'Reinstalling plugin ' . $this->getPluginName() . ' in version ' . $this->pluginVersion->getVersion();
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         if ($this->pluginVersion instanceof PhpFilePluginVersionInterface) {

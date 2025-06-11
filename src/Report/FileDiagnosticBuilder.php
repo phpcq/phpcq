@@ -39,6 +39,7 @@ final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
     /**
      * @return self
      */
+    #[\Override]
     public function forRange(
         int $line,
         ?int $column = null,
@@ -56,6 +57,7 @@ final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): DiagnosticBuilderInterface
     {
         if (empty($this->ranges)) {

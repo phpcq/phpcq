@@ -18,11 +18,13 @@ class SingleProcessTaskFactory implements TaskFactoryInterface
         $this->factory = $factory;
     }
 
+    #[\Override]
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
         return $this->factory->buildRunProcess($toolName, $command)->forceSingleProcess();
     }
 
+    #[\Override]
     public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         $taskBuilder = $this->factory->buildRunPhar($toolName, $arguments)->forceSingleProcess();
@@ -31,6 +33,7 @@ class SingleProcessTaskFactory implements TaskFactoryInterface
         return $taskBuilder;
     }
 
+    #[\Override]
     public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         $taskBuilder = $this->factory->buildPhpProcess($toolName, $arguments)->forceSingleProcess();

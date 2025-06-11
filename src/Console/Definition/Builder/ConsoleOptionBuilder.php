@@ -50,6 +50,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         $this->description = $description;
     }
 
+    #[\Override]
     public function isRequired(): ConsoleOptionBuilderInterface
     {
         $this->required = true;
@@ -57,6 +58,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function isArray(): ConsoleOptionBuilderInterface
     {
         $this->isArray = true;
@@ -64,6 +66,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withRequiredValue(?string $name = null): ConsoleOptionBuilderInterface
     {
         if (null !== $this->keyValueMap) {
@@ -76,6 +79,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withShortcut(string $shortcut): ConsoleOptionBuilderInterface
     {
         $this->shortcut = $shortcut;
@@ -83,6 +87,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withOptionalValue(?string $name = null, $defaultValue = null): ConsoleOptionBuilderInterface
     {
         if (null !== $this->keyValueMap) {
@@ -94,6 +99,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withKeyValueMap($defaultValue = null, ?string $valueSeparator = null): ConsoleOptionBuilderInterface
     {
         if (count($this->optionValues)) {
@@ -109,6 +115,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withOptionValueSeparator(string $separator): ConsoleOptionBuilderInterface
     {
         $this->valueSeparator = $separator;
@@ -116,6 +123,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withShortcutOnly(): ConsoleOptionBuilderInterface
     {
         $this->onlyShortcut = true;
