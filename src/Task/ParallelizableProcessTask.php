@@ -73,8 +73,8 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         array $command,
         TransformerFactory $transformer,
         int $cost,
-        string $cwd = null,
-        array $env = null,
+        ?string $cwd = null,
+        ?array $env = null,
         $input = null,
         ?float $timeout = 60,
         array $metadata = []

@@ -37,7 +37,7 @@ class TaskReport implements TaskReportInterface
     /** @var DiffBuilder[] */
     private $pendingDiffs = [];
 
-    public function __construct(TaskReportBuffer $report, string $tempDir, Filesystem $filesystem = null)
+    public function __construct(TaskReportBuffer $report, string $tempDir, ?Filesystem $filesystem = null)
     {
         $this->report     = $report;
         $this->tempDir    = $tempDir;

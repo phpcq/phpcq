@@ -28,9 +28,9 @@ class HelpCommand extends AbstractCommand
     /** @var BaseHelpCommand */
     private $help;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
-        // Set before parent constructor is called
+        // Set before the parent constructor is called
         $this->help = new BaseHelpCommand();
 
         parent::__construct($name);
