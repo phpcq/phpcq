@@ -264,7 +264,7 @@ final class InstalledRepositoryLoader
             return $baseDir . '/' . $url;
         }
         // Perform URL check.
-        $path        = parse_url($url, PHP_URL_PATH);
+        $path        = (string) parse_url($url, PHP_URL_PATH);
         $encodedPath = array_map('urlencode', explode('/', $path));
         $newUrl      = str_replace($path, implode('/', $encodedPath), $url);
         if (filter_var($newUrl, FILTER_VALIDATE_URL)) {

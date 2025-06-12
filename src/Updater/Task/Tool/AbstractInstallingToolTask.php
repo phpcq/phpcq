@@ -79,8 +79,8 @@ abstract class AbstractInstallingToolTask extends AbstractToolTask
         $signaturePath = $context->installedPluginPath . '/' . $signatureName;
         $context->downloader->downloadFileTo($signatureUrl, $signaturePath);
         $result = $context->signatureVerifier->verify(
-            file_get_contents($pharPath),
-            file_get_contents($signaturePath)
+            (string) file_get_contents($pharPath),
+            (string) file_get_contents($signaturePath)
         );
 
         if ($this->signed && !$result->isValid()) {

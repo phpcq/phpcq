@@ -72,7 +72,7 @@ abstract class AbstractComposerTask implements TaskInterface
         $lockFile = $this->locatePath($context, 'composer.lock');
 
         if ($context->filesystem->exists($lockFile)) {
-            return file_get_contents($lockFile);
+            return file_get_contents($lockFile) ?: null;
         }
 
         return null;

@@ -274,7 +274,7 @@ final class SelfUpdateCommand extends AbstractCommand
         }
 
         $signatureVerifier = $this->createSignatureVerifier();
-        $result            = $signatureVerifier->verify(file_get_contents($downloadedPhar), $signature);
+        $result            = $signatureVerifier->verify((string) file_get_contents($downloadedPhar), $signature);
 
         if (!$result->isValid()) {
             $this->cleanup($downloadedPhar);

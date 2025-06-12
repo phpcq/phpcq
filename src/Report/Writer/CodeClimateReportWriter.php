@@ -13,6 +13,7 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Symfony\Component\Filesystem\Filesystem;
 
+use function assert;
 use function count;
 
 /**
@@ -68,6 +69,11 @@ final class CodeClimateReportWriter implements ReportWriterInterface
         $filesystem->mkdir($targetPath);
 
         $fileHandle = fopen($targetPath . '/code-climate.json', 'wb');
+        if ($fileHandle === false) {
+            throw new RuntimeException(
+                sprintf('Could not open file "%s"for writing', $targetPath . '/code-climate.json')
+            );
+        }
 
         $iterator = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
             ->thenSortByFileAndRange()
@@ -81,7 +87,7 @@ final class CodeClimateReportWriter implements ReportWriterInterface
                 fwrite($fileHandle, ",\n");
             }
 
-            fwrite($fileHandle, json_encode(self::convertDiagnostic($diagnostics)));
+            fwrite($fileHandle, (string) json_encode(self::convertDiagnostic($diagnostics)));
             $addComma = true;
         }
         if ($addComma) {
@@ -102,12 +108,13 @@ final class CodeClimateReportWriter implements ReportWriterInterface
     private static function convertDiagnostic(Generator $diagnostics): array
     {
         $entry = $diagnostics->current();
+        assert($entry instanceof DiagnosticIteratorEntry);
         $error = $entry->getDiagnostic();
         $source = $error->getSource();
         $toolName = $entry->getTask()->getTaskName();
         $checkName = (null !== $source ? sprintf('%s: %s', $toolName, $source) : $toolName);
         $locations = self::convertRanges($diagnostics);
-        $fingerprint = md5($checkName . json_encode($locations));
+        $fingerprint = md5($checkName . ((string) json_encode($locations)));
 
         $result = [
             // Required. Must always be "issue".
@@ -149,6 +156,8 @@ final class CodeClimateReportWriter implements ReportWriterInterface
     private static function convertRanges(Generator $diagnostics): array
     {
         $entry = $diagnostics->current();
+        assert($entry instanceof DiagnosticIteratorEntry);
+
         if (!$entry->isFileRelated()) {
             $diagnostics->next();
             return [
@@ -172,6 +181,7 @@ final class CodeClimateReportWriter implements ReportWriterInterface
             $ranges[] = self::mapLocation($range);
             $diagnostics->next();
             $entry = $diagnostics->current();
+            assert($entry instanceof DiagnosticIteratorEntry);
         } while ($diagnostics->valid() && $diagnostic === $entry->getDiagnostic());
 
         return $ranges;

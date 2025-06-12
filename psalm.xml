@@ -28,5 +28,10 @@
                 <directory name="src"/>
             </errorLevel>
         </MissingClassConstType>
+        <ClassMustBeFinal>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </ClassMustBeFinal>
     </issueHandlers>
 </psalm>

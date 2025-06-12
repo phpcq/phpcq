@@ -87,6 +87,6 @@ final class UpdateExecutor
         $dumper->dump($context->installedRepository, $this->installedPluginPath . '/installed.json');
 
         $dumper = new LockFileDumper($filesystem);
-        $dumper->dump($context->lockRepository, getcwd() . '/.phpcq.lock');
+        $dumper->dump($context->lockRepository, ((string) getcwd()) . '/.phpcq.lock');
     }
 }

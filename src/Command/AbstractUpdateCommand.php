@@ -229,7 +229,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
 
     protected function getLockFileName(): string
     {
-        return getcwd() . '/.phpcq.lock';
+        return ((string) getcwd()) . '/.phpcq.lock';
     }
 
     protected function getUntrustedKeyStrategy(): TrustKeyStrategyInterface
