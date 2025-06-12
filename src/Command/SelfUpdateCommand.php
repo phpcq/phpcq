@@ -13,9 +13,14 @@ use Phpcq\Runner\Composer;
 use Phpcq\Runner\Downloader\DownloaderInterface;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Downloader\FileDownloader;
+use Phpcq\Runner\Platform\PlatformRequirementChecker;
+use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
+use Phpcq\Runner\SelfUpdate\Version;
+use Phpcq\Runner\SelfUpdate\VersionsRepositoryLoader;
 use Phpcq\Runner\Signature\InteractiveQuestionKeyTrustStrategy;
 use Phpcq\Runner\Signature\SignatureFileDownloader;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,6 +34,7 @@ use function is_string;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
+use function var_dump;
 
 final class SelfUpdateCommand extends AbstractCommand
 {
@@ -53,11 +59,16 @@ final class SelfUpdateCommand extends AbstractCommand
      */
     private $filesystem;
 
+    private PlatformRequirementCheckerInterface $requirementChecker;
+
     /**
      * @param string $pharFile The location of the execed phar file.
      */
-    public function __construct(string $pharFile, ?DownloaderInterface $downloader = null)
-    {
+    public function __construct(
+        string $pharFile,
+        ?DownloaderInterface $downloader = null,
+        ?PlatformRequirementCheckerInterface $requirementChecker = null
+    ) {
         parent::__construct();
 
         $this->pharFile = $pharFile;
@@ -65,6 +76,8 @@ final class SelfUpdateCommand extends AbstractCommand
         if ($downloader !== null) {
             $this->downloader = $downloader;
         }
+
+        $this->requirementChecker = $requirementChecker ?: PlatformRequirementChecker::create();
     }
 
     protected function configure(): void
@@ -72,6 +85,8 @@ final class SelfUpdateCommand extends AbstractCommand
         parent::configure();
 
         $this->setName('self-update')->setDescription('Updates the phpcq phar file');
+
+        $this->addArgument('version', InputArgument::OPTIONAL, 'The version constraint to update to');
 
         $this->addOption(
             'cache',
@@ -136,20 +151,24 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
-        $availableVersion = trim(substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6));
+        $repository       = (new VersionsRepositoryLoader($this->requirementChecker, $this->downloader))
+            ->load($baseUri . '/versions.json');
 
         $this->updateComposer();
 
-        if (!$this->shouldUpdate($installedVersion, $availableVersion)) {
+        $requiredVersion = $this->input->getArgument('version') ?: null;
+        $version         = $repository->findMatchingVersion($requiredVersion, ! $this->input->getOption('unsigned'));
+
+        if (!$this->shouldUpdate($installedVersion, $version->getVersion())) {
             return 0;
         }
 
-        $pharUrl        = $this->getDownloadUrl($availableVersion);
+        $pharUrl        = $this->getBaseUri() . '/' . $version->getPharFile();
         $downloadedPhar = tempnam(sys_get_temp_dir(), 'phpcq.phar-');
         $this->output->writeln('Download phpcq.phar from ' . $pharUrl, OutputInterface::VERBOSITY_VERBOSE);
         $this->downloader->downloadFileTo($pharUrl, $downloadedPhar, '', true);
 
-        $this->verifySignature($availableVersion, $downloadedPhar);
+        $this->verifySignature($version, $downloadedPhar);
 
         $this->filesystem->copy($downloadedPhar, $this->pharFile);
         $this->cleanup($downloadedPhar);
@@ -227,14 +246,18 @@ final class SelfUpdateCommand extends AbstractCommand
         return !$dryRun;
     }
 
-    private function verifySignature(string $version, string $downloadedPhar): void
+    private function verifySignature(Version $version, string $downloadedPhar): void
     {
         if ($this->input->getOption('unsigned')) {
             return;
         }
 
         try {
-            $signatureUrl = $this->getDownloadUrl($version, '.phar.asc');
+            if ($version->getSignatureFile() === null) {
+                throw new RuntimeException('Signature file not available');
+            }
+
+            $signatureUrl = $this->getBaseUri() . '/' . $version->getSignatureFile();
             $signature    = $this->downloader->downloadFile($signatureUrl, '', true);
         } catch (RuntimeException $exception) {
             $this->cleanup($downloadedPhar);
@@ -298,14 +321,5 @@ final class SelfUpdateCommand extends AbstractCommand
             $this->output->writeln('Updating used composer.phar');
             $composer->updateBinary();
         }
-    }
-
-    private function getDownloadUrl(string $version, string $extension = '.phar'): string
-    {
-        if ($this->input->getOption('channel') === 'stable') {
-            return $this->getBaseUri() . '/' . $version . $extension;
-        }
-
-        return $this->getBaseUri() . '/phpcq' . $extension;
     }
 }
