@@ -233,7 +233,7 @@ class Composer
             unlink($setupFile);
 
             throw new RuntimeException(
-                sprintf('Invalid checksum given. Expected "%s" got "%s".', $expectedChecksum, $actualChecksum)
+                sprintf('Invalid checksum given. Expected "%s" got "%s".', $expectedChecksum, (string) $actualChecksum)
             );
         }
 

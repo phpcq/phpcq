@@ -86,7 +86,7 @@ final class TaskReportWriter extends AbstractReportWriter
                 break;
             }
             $entry = $this->diagnostics->current();
-        } while ($this->diagnostics->valid() && $report === $entry->getTask());
+        } while ($entry !== null && $this->diagnostics->valid() && $report === $entry->getTask());
 
         $this->appendAttachments($task, $report);
         $this->appendDiffs($task, $report);

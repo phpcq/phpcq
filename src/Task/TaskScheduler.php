@@ -132,6 +132,7 @@ class TaskScheduler
         }
     }
 
+    /** @SuppressWarnings(PHPMD.CyclomaticComplexity) */
     private function fillUp(): void
     {
         if ($this->stop || $this->runningThreads === $this->parallelThreads) {
@@ -146,6 +147,10 @@ class TaskScheduler
 
         while ($this->runningThreads < $this->parallelThreads && $this->tasks->valid()) {
             $next = $this->tasks->current();
+            if ($next === null) {
+                continue;
+            }
+
             // If the pending task is not parallelizable, return if we still have some running.
             $cost = ($next instanceof ParallelTaskInterface) ? $next->getCost() : $this->parallelThreads;
             if ($this->runningThreads + $cost > $this->parallelThreads) {

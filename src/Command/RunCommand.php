@@ -318,7 +318,7 @@ final class RunCommand extends AbstractCommand
 
         /** @psalm-var list<string> $reports */
         $reports = (array) $this->input->getOption('report');
-        $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();
+        $targetPath = ((string) getcwd()) . '/' . $projectConfig->getArtifactOutputPath();
 
         foreach ($reports as $format) {
             if (!isset(self::REPORT_FORMATS[$format])) {

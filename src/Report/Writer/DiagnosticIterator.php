@@ -12,6 +12,8 @@ use LogicException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
+use function assert;
+
 /** @implements IteratorAggregate<int, DiagnosticIteratorEntry>  */
 final class DiagnosticIterator implements IteratorAggregate
 {
@@ -269,7 +271,8 @@ final class DiagnosticIterator implements IteratorAggregate
             // Per definition: The previous provider sorts all items by its condition.
             // Buffer all elements until the next "partition" begins.
             $entry2 = $parent->current();
-            $delta  = $this->previous->compare($entry1, $entry2);
+            assert($entry2 instanceof DiagnosticIteratorEntry);
+            $delta = $this->previous->compare($entry1, $entry2);
             if ($delta > 0) {
                 throw new LogicException('Parent appears to be unsorted?!?');
             }

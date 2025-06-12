@@ -80,7 +80,7 @@ abstract class AbstractCommand extends Command
             null,
             InputOption::VALUE_REQUIRED,
             'Path to the phpcq home directory',
-            getcwd() . '/.phpcq'
+            ((string) getcwd()) . '/.phpcq'
         );
         $this->addOption(
             'ignore-platform-reqs',
@@ -114,7 +114,7 @@ abstract class AbstractCommand extends Command
 
         $configFile = $this->input->getOption('config');
         if (!is_string($configFile)) {
-            $cwd = getcwd();
+            $cwd = (string) getcwd();
             foreach (['.phpcq.yaml', 'phpcq.yaml', '.phpcq.yaml.dist', 'phpcq.yaml.dist'] as $file) {
                 $configFile = $cwd . '/' . $file;
                 if (file_exists($configFile)) {
@@ -241,7 +241,7 @@ abstract class AbstractCommand extends Command
         }
 
         return new ProjectConfiguration(
-            getcwd(),
+            (string) getcwd(),
             $this->config->getDirectories(),
             $this->config->getArtifactDir(),
             $maxCores

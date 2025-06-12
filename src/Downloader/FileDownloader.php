@@ -85,12 +85,12 @@ class FileDownloader implements DownloaderInterface
         if (!is_dir($this->cacheDirectory)) {
             mkdir($this->cacheDirectory);
         }
-        $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
+        $cacheFile = $this->cacheDirectory . '/' . ((string) preg_replace('#[^a-zA-Z0-9]#', '-', $url));
         if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
             $url = $this->validateUrlOrFile($url, $baseDir);
 
             if (is_file($url)) {
-                file_put_contents($cacheFile, file_get_contents($url));
+                file_put_contents($cacheFile, (string) file_get_contents($url));
             } else {
                 $client = $this->getClient($url);
                 // FIXME: apply auth.
@@ -108,7 +108,7 @@ class FileDownloader implements DownloaderInterface
             }
         }
 
-        return file_get_contents($cacheFile);
+        return (string) file_get_contents($cacheFile);
     }
 
     /**
@@ -150,7 +150,7 @@ class FileDownloader implements DownloaderInterface
             return $baseDir . '/' . $url;
         }
         // Perform URL check.
-        $path        = parse_url($url, PHP_URL_PATH);
+        $path        = (string) parse_url($url, PHP_URL_PATH);
         $encodedPath = array_map('urlencode', explode('/', $path));
         $newUrl      = str_replace($path, implode('/', $encodedPath), $url);
         if (filter_var($newUrl, FILTER_VALIDATE_URL)) {

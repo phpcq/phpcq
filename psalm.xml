@@ -6,7 +6,7 @@
     hideExternalErrors="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
-    xsi:schemaLocation="https://getpsalm.org/schema/config https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config https://psalm.dev/schema/config"
 >
     <projectFiles>
         <directory name="src" />
@@ -22,5 +22,16 @@
                 <directory name="src"/>
             </errorLevel>
         </RiskyTruthyFalsyComparison>
+        <MissingClassConstType>
+            <!-- Silence MissingClassConstType errors - we are on PHP 8.1 level so far -->
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </MissingClassConstType>
+        <ClassMustBeFinal>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </ClassMustBeFinal>
     </issueHandlers>
 </psalm>
