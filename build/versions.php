@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/**
+ * This class a build script adding a released phar file to the versions.json repository. The command line script has to
+ * be called passing the following arguments:
+ *   1. Relative or absolute path of the versions.json
+ *   2. Relative or absolute path of the composer.json used for the build phar file
+ *   3. The version string as semver version
+ *   4. The path to the phpcq.phar file, relative to the location of the versions.json
+ *   5. Optional the path to the signature file, relative to the location of the versions.json
+ *
+ * Example: php ./build/versions.php ./versions.json ./composer.json 1.0.0 phpcq.phar
+ */
 (new class(... $GLOBALS['argv']) {
     private string $versionsJson;
     private string $composerJson;
@@ -17,11 +28,9 @@ declare(strict_types=1);
         string $phar,
         ?string $signature = null
     ) {
-        $versionChunks = explode(' ', $version);
-
         $this->versionsJson = $this->resolvePath($versionsJson);
         $this->composerJson = $this->resolvePath($composerJson);
-        $this->version      = array_pop($versionChunks);
+        $this->version      = $version;
         $this->phar         = $phar;
         $this->signature    = $signature;
     }
