@@ -1,0 +1,115 @@
+name: build-stable-phar
+
+env:
+  TARGET_REPOSITORY: phpcq/distrib
+  TARGET_BRANCH: master
+  TARGET_DIRECTORY: ./web
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  compile:
+    name: Build stable release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull source
+        uses: actions/checkout@v4
+
+      # We need the tags for the @git-version@ placeholder used by box
+      # See https://github.com/actions/checkout/issues/701
+      - name: Fetch git tags
+        run: git fetch --tags origin
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: xdebug2
+
+      - name: Cache composer cache directory
+        uses: actions/cache@v4
+        env:
+          cache-name: composer-cache-dir
+        with:
+          path: ~/.cache/composer
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Cache vendor directory
+        uses: actions/cache@v4
+        env:
+          cache-name: phpcq-vendor
+        with:
+          path: $GITHUB_WORKSPACE/vendor
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Install composer dependencies
+        run: composer update
+
+      - name: Install phpcq toolchain
+        run: $GITHUB_WORKSPACE/phpcq update -v
+
+      - name: Run tests
+        run: $GITHUB_WORKSPACE/phpcq run -v
+
+      - name: Compile .phar file
+        run: $GITHUB_WORKSPACE/phpcq run build -v
+
+      - name: Run phpcq.phar file to ensure it is stable and check itself.
+        run: $GITHUB_WORKSPACE/phpcq.phar -v
+
+      - name: Checkout target directory
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_BRANCH }}
+          path: ${{ env.TARGET_DIRECTORY }}
+          token: ${{ secrets.BUILDER_GITHUB_TOKEN }}
+
+      - name: Get version
+        id: get_version
+        run: |
+          $GITHUB_WORKSPACE/phpcq.phar --version >> "$RELEASE_VERSION"
+          RELEASE_VERSION_SEMVER = "${$RELEASE_VERSION#* }"
+
+      - name: Copy phar file to target
+        id: copy
+        run: |
+          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar
+          echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/stable/current.txt
+
+      - name: Update versions repository
+        id: update_versions
+        run: |
+          php $GITHUB_WORKSPACE/build/versions.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "${{ RELEASE_VERSION_SEMVER }}.phar"
+
+      - name: Generate Commit Message
+        run: |
+          echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
+          echo "Storing stable release ${{ RELEASE_VERSION_SEMVER }} of phpcq.phar" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        id: generate_commit_message
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: ${{ env.COMMIT_MSG }}
+          branch: ${{ env.TARGET_BRANCH }}
+          repository: ${{ env.TARGET_DIRECTORY }}
+          commit_user_name: PHP Code Quality Bot
+          commit_user_email: phpcq-bot@users.noreply.github.com
+          commit_author: PHP Code Quality Bot <phpcq-bot@users.noreply.github.com>
+
+      - name: Upload build directory to artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ success() }} || ${{ failure() }}
+        with:
+          name: phpcq-builds
+          path: .phpcq/build/
