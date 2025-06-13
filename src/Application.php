@@ -27,7 +27,7 @@ class Application extends BaseApplication
      */
     public function __construct()
     {
-        parent::__construct('phpcq', '@git-version@-@release-date@');
+        parent::__construct('phpcq', '@git-version@+@release-date@');
         $this->setDefaultCommand('run');
     }
 
