@@ -34,6 +34,7 @@ use Phpcq\Runner\Updater\Task\Tool\RemoveToolTask;
 use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
 use Phpcq\Runner\Updater\Task\TaskInterface;
 
+use function array_diff;
 use function count;
 use function file_exists;
 use function is_dir;
@@ -384,15 +385,14 @@ final class UpdateCalculator
         ?PluginVersionInterface $installedVersion = null
     ): Generator {
         $config          = $plugins[$pluginVersion->getName()] ?? [];
-        $hasRequirements = count($pluginVersion->getRequirements()->getComposerRequirements()) > 0;
+        $requirements    = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
+        $hasRequirements = count($requirements) > 0;
         $isInstalled     = $installedVersion && $this->areComposerDependenciesInstalled(
-            dirname($installedVersion->getFilePath())
+            dirname($installedVersion->getFilePath()),
         );
 
         if (!$isInstalled) {
             if ($hasRequirements) {
-                $requirements = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
-
                 yield new ComposerInstallTask($pluginVersion, $requirements);
             }
 
@@ -401,9 +401,10 @@ final class UpdateCalculator
 
         if ($hasRequirements) {
             $targetDirectory = dirname($installedVersion->getFilePath());
-            $requirements    = $this->determineRequirements($pluginVersion, $config['requirements']['composer'] ?? []);
+            $installed       = $this->requirementsToArray($installedVersion->getRequirements()->getComposerRequirements());
+            $required        = $this->requirementsToArray($requirements);
 
-            if ($this->composer->isUpdateRequired($targetDirectory)) {
+            if (array_diff($required, $installed) !== [] || $this->composer->isUpdateRequired($targetDirectory)) {
                 yield new ComposerUpdateTask($pluginVersion, $requirements);
             }
 
@@ -453,5 +454,16 @@ final class UpdateCalculator
         }
 
         return $requirements;
+    }
+
+    /** @return array<string, string> */
+    private function requirementsToArray(VersionRequirementList $requirements): array
+    {
+        $result = [];
+        foreach ($requirements as $requirement) {
+            $result[$requirement->getName()] = $requirement->getConstraint();
+        }
+
+        return $result;
     }
 }
