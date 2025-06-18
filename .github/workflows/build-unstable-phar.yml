@@ -86,7 +86,7 @@ jobs:
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/versions.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar"
 
       - name: Generate Commit Message
         run: |
