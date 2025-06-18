@@ -14,14 +14,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_merge;
+use function date;
 use function file_get_contents;
 use function file_put_contents;
 use function getenv;
+use function json_encode;
 use function realpath;
 use function sys_get_temp_dir;
 use function tempnam;
 use function uniqid;
 use function unlink;
+
+use const DATE_ATOM;
 
 /** @covers \Phpcq\Runner\Command\SelfUpdateCommand */
 final class SelfUpdateCommandTest extends TestCase
@@ -29,44 +33,44 @@ final class SelfUpdateCommandTest extends TestCase
     public function provideUpdate(): Generator
     {
         yield 'New version found' => [
-            'expectedOutput' => 'Version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
-                . ' New version <info>"0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc"</info> available.',
-            'installed'      => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
-            'available'      => '0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
+                . ' New version <info>"0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc"</info> available.',
+            'installed'      => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
+            'available'      => '0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc',
             'download'       => true,
             'force'          => false,
         ];
 
         yield 'Same version found' => [
-            'expectedOutput' => 'Version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
-            'installed'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
-            'available'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
+            'installed'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
+            'available'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
             'download'       => false,
             'force'          => false,
         ];
 
         yield 'Older version found' => [
-            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc"</info>'
-                . ' is newer than available version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info>.',
-            'installed' => '0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc',
-            'available' => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc"</info>'
+                . ' is newer than available version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info>.',
+            'installed' => '0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc',
+            'available' => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
             'download'       => false,
             'force'          => false,
         ];
 
         yield 'Force download on same version' => [
-            'expectedOutput' => 'Version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
-            'installed'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
-            'available'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
+            'installed'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
+            'available'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
             'download'       => true,
             'force'          => true,
         ];
 
         yield 'Force download on older version' => [
-            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc"</info>'
-                . ' is newer than available version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info>.',
-            'installed' => '0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc',
-            'available' => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc"</info>'
+                . ' is newer than available version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info>.',
+            'installed' => '0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc',
+            'available' => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
             'download'       => true,
             'force'          => true,
         ];
@@ -91,11 +95,22 @@ final class SelfUpdateCommandTest extends TestCase
 
         $downloadLocation = tempnam(sys_get_temp_dir(), 'phpcq.test.phar');
         $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $json = [
+            'updated' => date(DATE_ATOM),
+            'versions' => [
+                [
+                    'version' => $available,
+                    'phar' => 'phpcq.phar',
+                    'signature' => null,
+                    'requirements' => [],
+                ]
+            ]
+        ];
         $downloader
             ->expects($this->once())
-            ->method('downloadFile')
-            ->with('https://phpcq.github.io/distrib/phpcq/unstable/current.txt')
-            ->willReturn('phpcq ' . $available);
+            ->method('downloadJsonFile')
+            ->with('https://phpcq.github.io/distrib/phpcq/unstable/versions.json')
+            ->willReturn($json);
 
         if ($download) {
             $downloader
@@ -128,23 +143,23 @@ final class SelfUpdateCommandTest extends TestCase
     public function provideDryRun(): Generator
     {
         yield 'New version found' => [
-            'expectedOutput' => 'Version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
-                . ' New version <info>"0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc"</info> available.',
-            'installed' => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
-            'available' => '0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
+                . ' New version <info>"0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc"</info> available.',
+            'installed' => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
+            'available' => '0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc',
         ];
 
         yield 'Same version found' => [
-            'expectedOutput' => 'Version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
-            'installed'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
-            'available'    => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> already installed.',
+            'installed'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
+            'available'    => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
         ];
 
         yield 'Older version found' => [
-            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc"</info>'
-                 . ' is newer than available version <info>"0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc"</info>.',
-            'installed' => '0.0.0.1-dev-2022-01-20-16-01-15-UTC-a4873bc',
-            'available' => '0.0.0.1-dev-2022-01-19-16-01-15-UTC-a4873bc',
+            'expectedOutput' => 'Installed version <info>"0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc"</info>'
+                 . ' is newer than available version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info>.',
+            'installed' => '0.0.0.1-dev+2022-01-20-16-01-15-UTC-a4873bc',
+            'available' => '0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc',
         ];
     }
 
@@ -159,15 +174,28 @@ final class SelfUpdateCommandTest extends TestCase
                 'dry-run' => true,
                 'verbose' => null,
                 'force'   => false,
+                'unsigned' => true,
             ]
         );
+
+        $json = [
+            'updated' => date(DATE_ATOM),
+            'versions' => [
+                [
+                    'version' => $available,
+                    'phar' => 'phpcq.phar',
+                    'signature' => null,
+                    'requirements' => [],
+                ]
+            ]
+        ];
 
         $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
         $downloader
             ->expects($this->once())
-            ->method('downloadFile')
-            ->with('https://phpcq.github.io/distrib/phpcq/unstable/current.txt')
-            ->willReturn('phpcq ' . $available);
+            ->method('downloadJsonFile')
+            ->with('https://phpcq.github.io/distrib/phpcq/unstable/versions.json')
+            ->willReturn($json);
 
         $output = $this->getMockForAbstractClass(OutputInterface::class);
         $output
