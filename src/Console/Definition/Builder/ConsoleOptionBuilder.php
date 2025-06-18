@@ -14,12 +14,6 @@ use Phpcq\Runner\Console\Definition\OptionValue\SimpleOptionValueDefinition;
 
 final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
 {
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $description;
-
     /** @var string|null */
     private $shortcut;
 
@@ -44,10 +38,8 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
     /** @var bool */
     private $onlyShortcut = false;
 
-    public function __construct(string $name, string $description)
+    public function __construct(private readonly string $name, private readonly string $description)
     {
-        $this->name        = $name;
-        $this->description = $description;
     }
 
     #[\Override]

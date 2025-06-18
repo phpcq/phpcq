@@ -22,9 +22,6 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 final class TaskReportBuffer
 {
     /** @var string */
-    private $taskName;
-
-    /** @var string */
     private $status;
 
     /** @var DiagnosticBuffer[] */
@@ -36,18 +33,12 @@ final class TaskReportBuffer
     /** @var DiffBuffer[] */
     private $diffs = [];
 
-    /** @var string */
-    private $reportName;
-
-    /** @psalm-var array<string,string> */
-    private $metadata;
-
     /** @psalm-param array<string,string> $metadata */
-    public function __construct(string $taskName, string $reportName, array $metadata = [])
-    {
-        $this->taskName   = $taskName;
-        $this->reportName = $reportName;
-        $this->metadata   = $metadata;
+    public function __construct(
+        private readonly string $taskName,
+        private readonly string $reportName, /** @psalm-var array<string,string> */
+        private array $metadata = []
+    ) {
         $this->status     = ReportInterface::STATUS_STARTED;
     }
 

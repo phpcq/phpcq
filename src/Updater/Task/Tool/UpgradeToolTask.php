@@ -10,18 +10,13 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 final class UpgradeToolTask extends AbstractInstallingToolTask
 {
-    /** @var ToolVersionInterface */
-    private $oldToolVersion;
-
     public function __construct(
         PluginVersionInterface $pluginVersion,
         ToolVersionInterface $toolVersion,
-        ToolVersionInterface $oldToolVersion,
+        private readonly ToolVersionInterface $oldToolVersion,
         bool $signed
     ) {
         parent::__construct($pluginVersion, $toolVersion, $signed);
-
-        $this->oldToolVersion = $oldToolVersion;
     }
 
     #[\Override]

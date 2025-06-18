@@ -9,12 +9,6 @@ use Phpcq\Runner\Console\Definition\ArgumentDefinition;
 
 class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
 {
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $description;
-
     /** @var bool */
     private $isArray = false;
 
@@ -24,10 +18,8 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
     /** @var mixed */
     private $defaultValue;
 
-    public function __construct(string $name, string $description)
+    public function __construct(private readonly string $name, private readonly string $description)
     {
-        $this->name        = $name;
-        $this->description = $description;
     }
 
     #[\Override]

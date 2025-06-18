@@ -9,29 +9,14 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 /** @psalm-import-type TOutputVerbosity from OutputInterface */
 final class OutputLoggingDownloader implements DownloaderInterface
 {
-    /** @var DownloaderInterface */
-    private $downloader;
-
-    /** @var OutputInterface */
-    private $output;
-
-    /**
-     * @var int
-     * @psalm-var TOutputVerbosity
-     */
-    private $verbosity;
-
     /**
      * @psalm-param TOutputVerbosity $verbosity
      */
     public function __construct(
-        DownloaderInterface $downloader,
-        OutputInterface $output,
-        int $verbosity = OutputInterface::VERBOSITY_DEBUG
+        private readonly DownloaderInterface $downloader,
+        private readonly OutputInterface $output,
+        private readonly int $verbosity = OutputInterface::VERBOSITY_DEBUG
     ) {
-        $this->downloader = $downloader;
-        $this->output     = $output;
-        $this->verbosity  = $verbosity;
     }
 
     #[\Override]

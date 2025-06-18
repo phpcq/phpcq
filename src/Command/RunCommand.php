@@ -344,13 +344,13 @@ final class RunCommand extends AbstractCommand
             try {
                 $process->mustRun();
                 return (int) trim($process->getOutput());
-            } catch (Throwable $ignored) {
+            } catch (Throwable) {
                 // Fallback to grep.
                 $process = new Process(['grep', '-c', '^processor', '/proc/cpuinfo']);
                 try {
                     $process->mustRun();
                     return (int) trim($process->getOutput());
-                } catch (Throwable $ignored) {
+                } catch (Throwable) {
                     // Ignore exception and return the 1 default below.
                 }
             }

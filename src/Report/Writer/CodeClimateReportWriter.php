@@ -272,18 +272,11 @@ final class CodeClimateReportWriter implements ReportWriterInterface
     /** @return TCodeClimateIssueSeverity */
     private static function mapSeverity(string $severity): string
     {
-        switch ($severity) {
-            case TaskReportInterface::SEVERITY_NONE:
-            case TaskReportInterface::SEVERITY_INFO:
-                return 'info';
-            case TaskReportInterface::SEVERITY_MARGINAL:
-            case TaskReportInterface::SEVERITY_MINOR:
-                return 'minor';
-            case TaskReportInterface::SEVERITY_MAJOR:
-                return 'major';
-            case TaskReportInterface::SEVERITY_FATAL:
-            default:
-                return 'blocker';
-        }
+        return match ($severity) {
+            TaskReportInterface::SEVERITY_NONE, TaskReportInterface::SEVERITY_INFO => 'info',
+            TaskReportInterface::SEVERITY_MARGINAL, TaskReportInterface::SEVERITY_MINOR => 'minor',
+            TaskReportInterface::SEVERITY_MAJOR => 'major',
+            default => 'blocker',
+        };
     }
 }

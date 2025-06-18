@@ -19,25 +19,11 @@ use function dirname;
  */
 final class PluginConfigurationFactory
 {
-    /** @var PhpcqConfiguration */
-    private $phpcqConfiguration;
-
-    /** @var PluginRegistry */
-    private $plugins;
-
-    /**
-     * @var InstalledRepository
-     */
-    private $installedRepository;
-
     public function __construct(
-        PhpcqConfiguration $phpcqConfiguration,
-        PluginRegistry $plugins,
-        InstalledRepository $installedRepository
+        private readonly PhpcqConfiguration $phpcqConfiguration,
+        private readonly PluginRegistry $plugins,
+        private readonly InstalledRepository $installedRepository
     ) {
-        $this->phpcqConfiguration  = $phpcqConfiguration;
-        $this->plugins             = $plugins;
-        $this->installedRepository = $installedRepository;
     }
 
     public function createForTask(string $taskName, Environment $environment): PluginConfiguration

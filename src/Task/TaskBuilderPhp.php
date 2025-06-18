@@ -9,21 +9,6 @@ use Phpcq\PluginApi\Version10\Task\PhpTaskBuilderInterface;
 final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilderInterface
 {
     /**
-     * @var string
-     */
-    private $phpCliBinary;
-
-    /**
-     * @var list<string>
-     */
-    private $phpArguments;
-
-    /**
-     * @var list<string>
-     */
-    private $arguments;
-
-    /**
      * @var bool
      */
     private $disableXDebug = false;
@@ -38,15 +23,12 @@ final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilder
      */
     public function __construct(
         string $taskName,
-        string $phpCliBinary,
-        array $phpArguments,
-        array $arguments,
+        private readonly string $phpCliBinary,
+        private readonly array $phpArguments,
+        private readonly array $arguments,
         array $metadata
     ) {
         parent::__construct($taskName, $metadata);
-        $this->phpCliBinary = $phpCliBinary;
-        $this->phpArguments = $phpArguments;
-        $this->arguments  = $arguments;
     }
 
     #[\Override]

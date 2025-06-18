@@ -10,13 +10,8 @@ use Phpcq\Runner\Repository\RepositoryPool;
 
 final class RepositoryPoolResolver implements ResolverInterface
 {
-    /** @var RepositoryPool */
-    private $pool;
-
-    public function __construct(RepositoryPool $repositoryPool)
+    public function __construct(private readonly RepositoryPool $pool)
     {
-
-        $this->pool = $repositoryPool;
     }
 
     #[\Override]

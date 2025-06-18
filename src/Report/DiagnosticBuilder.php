@@ -15,23 +15,11 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
  */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {
-    /**
-     * @var string
-     * @psalm-var TDiagnosticSeverity
-     */
-    private $severity;
-
-    /** @var string */
-    private $message;
-
     /** @var FileRangeBuffer[] */
     private $files = [];
 
     /** @var string|null */
     private $source;
-
-    /** @var TaskReportInterface */
-    private $parent;
 
     /**
      * @var callable
@@ -55,11 +43,12 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
      * @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
      * @psalm-param TDiagnosticSeverity $severity
      */
-    public function __construct(TaskReportInterface $parent, string $severity, string $message, callable $callback)
-    {
-        $this->severity = $severity;
-        $this->message  = $message;
-        $this->parent   = $parent;
+    public function __construct(
+        private readonly TaskReportInterface $parent,
+        private readonly string $severity,
+        private readonly string $message,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 

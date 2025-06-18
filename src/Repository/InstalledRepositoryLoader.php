@@ -77,21 +77,13 @@ use const PHP_URL_PATH;
  */
 final class InstalledRepositoryLoader
 {
-    /**
-     * @var JsonFileLoaderInterface
-     */
-    private $jsonFileLoader;
+    private readonly JsonFileLoaderInterface $jsonFileLoader;
 
-    /** @var bool */
-    private $failOnError;
-
-    /**
-     * @param JsonFileLoaderInterface|null $jsonFileLoader
-     */
-    public function __construct(?JsonFileLoaderInterface $jsonFileLoader = null, bool $failOnError = true)
-    {
+    public function __construct(
+        ?JsonFileLoaderInterface $jsonFileLoader = null,
+        private readonly bool $failOnError = true
+    ) {
         $this->jsonFileLoader = $jsonFileLoader ?: new FileGetContentsJsonFileLoader();
-        $this->failOnError    = $failOnError;
     }
 
     public function loadFile(string $filePath): InstalledRepository

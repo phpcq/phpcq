@@ -12,20 +12,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class DiffBuilder implements DiffBuilderInterface
 {
-    /** @var string */
-    private $name;
-
     /** @var string|null */
     private $absolutePath;
-
-    /** @var TaskReportInterface */
-    private $parent;
-
-    /** @var string */
-    private $tempDir;
-
-    /** @var Filesystem */
-    private $filesystem;
 
     /**
      * @var callable
@@ -35,17 +23,13 @@ final class DiffBuilder implements DiffBuilderInterface
 
     /** @psalm-param callable(DiffBuffer, DiffBuilder): void $callback */
     public function __construct(
-        string $name,
-        TaskReportInterface $parent,
-        string $tempDir,
-        Filesystem $filesystem,
+        private readonly string $name,
+        private readonly TaskReportInterface $parent,
+        private readonly string $tempDir,
+        private readonly Filesystem $filesystem,
         callable $callback
     ) {
-        $this->parent   = $parent;
-        $this->tempDir  = $tempDir;
-        $this->name     = $name;
         $this->callback = $callback;
-        $this->filesystem = $filesystem;
     }
 
     #[\Override]

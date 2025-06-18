@@ -12,23 +12,8 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
  */
 final class DiagnosticBuffer
 {
-    /**
-     * @var string
-     * @psalm-var TDiagnosticSeverity
-     */
-    private $severity;
-
-    /** @var string */
-    private $message;
-
-    /** @var string|null */
-    private $source;
-
     /** @var null|FileRangeBuffer[] */
     private $fileRanges;
-
-    /** @var string|null */
-    private $externalInfoUrl;
 
     /** @var null|string[] */
     private $classNames = [];
@@ -44,19 +29,15 @@ final class DiagnosticBuffer
      * @psalm-param TDiagnosticSeverity $severity
      */
     public function __construct(
-        string $severity,
-        string $message,
-        ?string $source,
+        private readonly string $severity,
+        private readonly string $message,
+        private readonly ?string $source,
         ?array $fileRanges,
-        ?string $externalInfoUrl,
+        private readonly ?string $externalInfoUrl,
         ?array $classNames,
         ?array $categories
     ) {
-        $this->severity   = $severity;
-        $this->message    = $message;
-        $this->source     = $source;
         $this->fileRanges = $fileRanges ?: null;
-        $this->externalInfoUrl = $externalInfoUrl;
         $this->classNames = $classNames ?: null;
         $this->categories = $categories ?: null;
     }

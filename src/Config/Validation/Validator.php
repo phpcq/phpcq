@@ -23,31 +23,31 @@ final class Validator
     /** @psalm-return TValidator */
     public static function arrayValidator(): callable
     {
-        return [Constraints::class, 'arrayConstraint'];
+        return Constraints::arrayConstraint(...);
     }
 
     /** @psalm-return TValidator */
     public static function boolValidator(): callable
     {
-        return [Constraints::class, 'boolConstraint'];
+        return Constraints::boolConstraint(...);
     }
 
     /** @psalm-return TValidator */
     public static function floatValidator(): callable
     {
-        return [Constraints::class, 'floatConstraint'];
+        return Constraints::floatConstraint(...);
     }
 
     /** @psalm-return TValidator */
     public static function intValidator(): callable
     {
-        return [Constraints::class, 'intConstraint'];
+        return Constraints::intConstraint(...);
     }
 
     /** @psalm-return TValidator */
     public static function stringValidator(): callable
     {
-        return [Constraints::class, 'stringConstraint'];
+        return Constraints::stringConstraint(...);
     }
 
     /**

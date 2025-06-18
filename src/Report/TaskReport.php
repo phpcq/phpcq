@@ -19,28 +19,22 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class TaskReport implements TaskReportInterface
 {
-    /** @var TaskReportBuffer */
-    private $report;
-
-    /** @var string */
-    private $tempDir;
-
-    /** @var Filesystem */
-    private $filesystem;
+    private readonly Filesystem $filesystem;
 
     /** @var DiagnosticBuilder[] */
-    private $pendingDiagnostics = [];
+    private array $pendingDiagnostics = [];
 
     /** @var AttachmentBuilder[] */
-    private $pendingAttachments = [];
+    private array $pendingAttachments = [];
 
     /** @var DiffBuilder[] */
-    private $pendingDiffs = [];
+    private array $pendingDiffs = [];
 
-    public function __construct(TaskReportBuffer $report, string $tempDir, ?Filesystem $filesystem = null)
-    {
-        $this->report     = $report;
-        $this->tempDir    = $tempDir;
+    public function __construct(
+        private readonly TaskReportBuffer $report,
+        private readonly string $tempDir,
+        ?Filesystem $filesystem = null
+    ) {
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 

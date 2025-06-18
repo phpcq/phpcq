@@ -47,45 +47,14 @@ use function is_dir;
  */
 final class UpdateCalculator
 {
-    /**
-     * @var InstalledRepository
-     */
-    private $installed;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var Composer
-     */
-    private $composer;
-
-    /**
-     * @var int
-     * @psalm-var TOutputVerbosity
-     */
-    private $verbosity;
-
     /**  @psalm-param TOutputVerbosity $verbosity */
     public function __construct(
-        InstalledRepository $installed,
-        ResolverInterface $resolver,
-        Composer $composer,
-        OutputInterface $output,
-        int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
+        private readonly InstalledRepository $installed,
+        private readonly ResolverInterface $resolver,
+        private readonly Composer $composer,
+        private readonly OutputInterface $output,
+        private readonly int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
-        $this->installed = $installed;
-        $this->composer  = $composer;
-        $this->output    = $output;
-        $this->resolver  = $resolver;
-        $this->verbosity = $verbosity;
     }
 
     /**
@@ -401,7 +370,9 @@ final class UpdateCalculator
 
         if ($hasRequirements) {
             $targetDirectory = dirname($installedVersion->getFilePath());
-            $installed       = $this->requirementsToArray($installedVersion->getRequirements()->getComposerRequirements());
+            $installed       = $this->requirementsToArray(
+                $installedVersion->getRequirements()->getComposerRequirements()
+            );
             $required        = $this->requirementsToArray($requirements);
 
             if (array_diff($required, $installed) !== [] || $this->composer->isUpdateRequired($targetDirectory)) {

@@ -44,22 +44,16 @@ class Repository implements RepositoryInterface
     private $parser;
 
     /**
-     * @var PlatformRequirementCheckerInterface|null
-     */
-    private $requirementChecker;
-
-    /**
      * Repository constructor.
      *
      * @param PlatformRequirementCheckerInterface|null $requirementChecker
      * @param DefinitionRepositoryInterface|null       $repository
      */
     public function __construct(
-        ?PlatformRequirementCheckerInterface $requirementChecker = null,
+        private ?PlatformRequirementCheckerInterface $requirementChecker = null,
         ?DefinitionRepositoryInterface $repository = null
     ) {
         $this->repository         = $repository ?: new DecoratedRepository();
-        $this->requirementChecker = $requirementChecker;
         $this->parser             = new VersionParser();
     }
 

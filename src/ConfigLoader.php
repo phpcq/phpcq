@@ -31,11 +31,6 @@ use function array_keys;
 final class ConfigLoader
 {
     /**
-     * @var string
-     */
-    private $configPath;
-
-    /**
      * Load configuration from yaml file and return a preprocessed configuration.
      *
      * @param string $configPath Path of the yaml configuration file.
@@ -45,9 +40,8 @@ final class ConfigLoader
         return (new self($configPath))->getConfig();
     }
 
-    public function __construct(string $configPath)
+    public function __construct(private readonly string $configPath)
     {
-        $this->configPath = $configPath;
     }
 
     public function getConfig(): PhpcqConfiguration

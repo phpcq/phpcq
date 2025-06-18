@@ -26,20 +26,8 @@ use function strpos;
  * } */
 class FileDownloader implements DownloaderInterface
 {
-    /**
-     * @var array
-     */
-    private $authConfig;
-
-    /**
-     * @var string
-     */
-    private $cacheDirectory;
-
-    public function __construct(string $cacheDirectory, array $authConfig = [])
+    public function __construct(private readonly string $cacheDirectory, private readonly array $authConfig = [])
     {
-        $this->cacheDirectory = $cacheDirectory;
-        $this->authConfig     = $authConfig;
     }
 
     /**
@@ -202,7 +190,7 @@ class FileDownloader implements DownloaderInterface
     private function getClient(string $url): Client
     {
         $options = [];
-        if (!is_file($url) && strpos($url, 'https://hkps.pool.sks-keyservers.net') === 0) {
+        if (!is_file($url) && str_starts_with($url, 'https://hkps.pool.sks-keyservers.net')) {
             $options['verify'] = __DIR__ . '/Resources/certs/sks-keyservers.netCA.pem';
         }
 
