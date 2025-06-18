@@ -154,8 +154,7 @@ final class SelfUpdateCommand extends AbstractCommand
     {
         $this->updateComposer();
 
-        $pharFile = Phar::running(false);
-        if ($pharFile === '') {
+        if ($this->pharFile === '') {
             $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
             return 0;
         }
@@ -165,6 +164,7 @@ final class SelfUpdateCommand extends AbstractCommand
         $repository       = (new VersionsRepositoryLoader($this->requirementChecker, $this->downloader))
             ->load($baseUri . '/versions.json');
 
+        /** @var string|null $requiredVersion */
         $requiredVersion = $this->input->getArgument('version') ?: null;
         $version         = $repository->findMatchingVersion($requiredVersion, ! $this->input->getOption('unsigned'));
 
