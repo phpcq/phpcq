@@ -59,7 +59,7 @@ final class PhpcqConfigurationBuilder
         );
     }
 
-    /** @psalm-return array<string,mixed> */
+    /** @return array<string,mixed> */
     public function processConfig(array $raw): array
     {
         $this->builder->selfValidate();

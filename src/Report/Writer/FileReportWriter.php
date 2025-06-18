@@ -15,8 +15,7 @@ final class FileReportWriter extends AbstractReportWriter
     public const REPORT_FILE = '/file-report.xml';
 
     /**
-     * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
     private $diagnostics;
 

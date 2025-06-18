@@ -31,8 +31,8 @@ class Composer
     private ?array $command = null;
 
     /**
-     * @psalm-param array{0:string, 1: list<string>} $phpCli
-     * @psalm-param TComposerConfig                  $composerConfig
+     * @param array{0:string, 1: list<string>} $phpCli
+     * @param TComposerConfig                  $composerConfig
      */
     public function __construct(
         private readonly DownloaderInterface $downloader,

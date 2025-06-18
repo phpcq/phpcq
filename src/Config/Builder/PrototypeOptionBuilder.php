@@ -124,7 +124,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         return parent::withValidator($validator);
     }
 
-    /** @psalm-param array<string, mixed> $defaultValue */
+    /** @param array<string, mixed> $defaultValue */
     #[\Override]
     public function withDefaultValue(array $defaultValue): PrototypeBuilderInterface
     {

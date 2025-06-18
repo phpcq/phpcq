@@ -47,7 +47,7 @@ use function is_dir;
  */
 final class UpdateCalculator
 {
-    /**  @psalm-param TOutputVerbosity $verbosity */
+    /** @param TOutputVerbosity $verbosity */
     public function __construct(
         private readonly InstalledRepository $installed,
         private readonly ResolverInterface $resolver,
@@ -59,9 +59,9 @@ final class UpdateCalculator
 
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-param array<string,TPlugin> $plugins
-     * @psalm-return list<TaskInterface>
+     * @return list<TaskInterface>
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
@@ -69,7 +69,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      */
     private function calculateDesiredPlugins(array $plugins): RepositoryInterface
     {
@@ -88,11 +88,9 @@ final class UpdateCalculator
 
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-param array<string,TPlugin> $plugins
-     *
-     * @return array[]
-     * @psalm-return list<TaskInterface>
+     * @return list<TaskInterface>
      */
     protected function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -187,9 +185,9 @@ final class UpdateCalculator
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-return Generator<TaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateToolTasks(
         PluginVersionInterface $desired,
@@ -254,7 +252,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      *
      * @return Generator<TaskInterface>
      */
@@ -278,7 +276,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      *
      * @return Generator<TaskInterface>
      */
@@ -304,7 +302,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      *
      * @return Generator<TaskInterface>
      */
@@ -344,9 +342,9 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-return Generator<TaskInterface>
+     * @return Generator<TaskInterface>
      */
     private function calculateComposerTasks(
         PluginVersionInterface $pluginVersion,

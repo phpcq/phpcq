@@ -31,9 +31,7 @@ class ProjectConfiguration implements ProjectConfigInterface
     }
 
     /**
-     * @return string[]
-     *
-     * @psalm-return array<array-key, string>
+     * @return array<array-key, string>
      */
     #[\Override]
     public function getDirectories(): array

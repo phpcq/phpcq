@@ -200,10 +200,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<TaskInterface> */
+    /** @return list<TaskInterface> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<TaskInterface> $tasks */
+    /** @param list<TaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';

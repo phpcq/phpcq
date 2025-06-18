@@ -24,7 +24,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
      */
     private $callback;
 
-    /** @psalm-param callable(AttachmentBuffer, AttachmentBuilder): void $callback */
+    /** @param callable(AttachmentBuffer, AttachmentBuilder): void $callback */
     public function __construct(
         private readonly string $name,
         private readonly TaskReportInterface $parent,

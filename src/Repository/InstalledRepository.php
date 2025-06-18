@@ -55,9 +55,7 @@ final class InstalledRepository
     /**
      * Iterate over all installed plugins.
      *
-     * @return Generator|InstalledPlugin[]
-     *
-     * @psalm-return Generator<InstalledPlugin>
+     * @return Generator<InstalledPlugin>
      */
     public function iteratePlugins(): Generator
     {
@@ -87,9 +85,7 @@ final class InstalledRepository
     /**
      * Iterate over all installed tools.
      *
-     * @return Generator
-     *
-     * @psalm-return Generator<ToolVersionInterface>
+     * @return Generator<ToolVersionInterface>
      */
     public function iterateToolVersions(): Generator
     {

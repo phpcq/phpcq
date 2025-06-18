@@ -27,7 +27,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<TaskInterface> */
+    /** @return list<TaskInterface> */
     #[\Override]
     protected function calculateTasks(): array
     {
@@ -49,7 +49,7 @@ final class UpdateCommand extends AbstractUpdateCommand
         return $calculator->calculate($this->config->getPlugins(), $force);
     }
 
-    /** @psalm-param list<TaskInterface> $tasks */
+    /** @param list<TaskInterface> $tasks */
     #[\Override]
     protected function executeTasks(array $tasks): void
     {

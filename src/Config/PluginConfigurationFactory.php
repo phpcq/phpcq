@@ -45,7 +45,7 @@ final class PluginConfigurationFactory
     }
 
     /**
-     * @psalm-param TTaskConfig $taskConfig
+     * @param TTaskConfig $taskConfig
      */
     private function createConfiguration(
         ConfigurationPluginInterface $plugin,

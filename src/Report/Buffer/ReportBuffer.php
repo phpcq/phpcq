@@ -42,7 +42,7 @@ final class ReportBuffer
         $this->startedAt = new DateTimeImmutable();
     }
 
-    /** @psalm-param array<string,string> $metadata */
+    /** @param array<string,string> $metadata */
     public function createTaskReport(string $taskName, array $metadata = []): TaskReportBuffer
     {
         $reportName = $taskName;
@@ -77,9 +77,7 @@ final class ReportBuffer
     }
 
     /**
-     * @return TaskReportBuffer[]|iterable
-     *
-     * @psalm-return list<TaskReportBuffer>
+     * @return list<TaskReportBuffer>
      */
     public function getTaskReports(): iterable
     {
@@ -87,7 +85,7 @@ final class ReportBuffer
     }
 
     /**
-     * @psalm-return TReportSummary
+     * @return TReportSummary
      */
     public function countDiagnosticsGroupedBySeverity(): array
     {

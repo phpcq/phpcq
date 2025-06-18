@@ -42,7 +42,7 @@ class Options implements OptionsInterface
 
     /**
      * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-return list<string>
+     * @return list<string>
      */
     #[\Override]
     public function getStringList(string $name): array
@@ -52,7 +52,7 @@ class Options implements OptionsInterface
 
     /**
      * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-return list<array<string,mixed>>
+     * @return list<array<string,mixed>>
      */
     #[\Override]
     public function getOptionsList(string $name): array

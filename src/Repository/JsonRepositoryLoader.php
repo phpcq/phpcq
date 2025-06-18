@@ -55,7 +55,7 @@ class JsonRepositoryLoader
     ) {
     }
 
-    /** @psalm-param ?TRepositoryCheckSum $hash */
+    /** @param ?TRepositoryCheckSum $hash */
     public function loadFile(string $filePath, ?array $hash = null): RepositoryInterface
     {
         return new Repository(

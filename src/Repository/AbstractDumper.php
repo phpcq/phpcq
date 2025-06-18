@@ -74,9 +74,7 @@ abstract class AbstractDumper
     }
 
     /**
-     * @return null|string[]
-     *
-     * @psalm-return array{type: string, value: string}|null
+     * @return array{type: string, value: string}|null
      */
     protected function encodeHash(?AbstractHash $hash): ?array
     {

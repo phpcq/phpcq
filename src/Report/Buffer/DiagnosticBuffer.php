@@ -26,7 +26,7 @@ final class DiagnosticBuffer
      * @param null|string[] $classNames
      * @param null|string[] $categories
      *
-     * @psalm-param TDiagnosticSeverity $severity
+     * @param TDiagnosticSeverity $severity
      */
     public function __construct(
         private readonly string $severity,
@@ -45,8 +45,7 @@ final class DiagnosticBuffer
     /**
      * Get severity.
      *
-     * @return string
-     * @psalm-return TDiagnosticSeverity
+     * @return TDiagnosticSeverity
      */
     public function getSeverity(): string
     {
@@ -68,7 +67,7 @@ final class DiagnosticBuffer
         return null !== $this->fileRanges;
     }
 
-    /** @psalm-return Generator<int, FileRangeBuffer> */
+    /** @return Generator<int, FileRangeBuffer> */
     public function getFileRanges(): Generator
     {
         if (null === $this->fileRanges) {
@@ -89,7 +88,7 @@ final class DiagnosticBuffer
         return null !== $this->classNames;
     }
 
-    /** @psalm-return Generator<int, string> */
+    /** @return Generator<int, string> */
     public function getClassNames(): Generator
     {
         if (null === $this->classNames) {
@@ -105,7 +104,7 @@ final class DiagnosticBuffer
         return null !== $this->categories;
     }
 
-    /** @psalm-return Generator<int, string> */
+    /** @return Generator<int, string> */
     public function getCategories(): Generator
     {
         if (null === $this->categories) {

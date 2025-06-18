@@ -42,7 +42,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
     }
 
     /**
-     * @psalm-param list<string> $defaultValue
+     * @param list<string> $defaultValue
      * @return $this
      */
     #[\Override]

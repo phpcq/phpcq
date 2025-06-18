@@ -40,9 +40,7 @@ interface RepositoryInterface
     /**
      * Iterate over all plugins.
      *
-     * @return Generator|PluginVersionInterface[]
-     *
-     * @psalm-return Generator<PluginVersionInterface>
+     * @return Generator<PluginVersionInterface>
      */
     public function iteratePluginVersions(): Generator;
 
@@ -71,9 +69,7 @@ interface RepositoryInterface
     /**
      * Iterate over all tools.
      *
-     * @return Generator|ToolVersionInterface[]
-     *
-     * @psalm-return Generator<ToolVersionInterface>
+     * @return Generator<ToolVersionInterface>
      */
     public function iterateToolVersions(): Generator;
 }

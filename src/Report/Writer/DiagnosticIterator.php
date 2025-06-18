@@ -71,7 +71,7 @@ final class DiagnosticIterator implements IteratorAggregate
         return static::sortBy(static::sortBy($this, self::fileNameSorter()), self::fileRangeSorter());
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function toolSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -79,7 +79,7 @@ final class DiagnosticIterator implements IteratorAggregate
         };
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function fileNameSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -99,7 +99,7 @@ final class DiagnosticIterator implements IteratorAggregate
         };
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function fileRangeSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -130,7 +130,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-return callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool
+     * @return callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool
      */
     private static function minimumSeverityFilter(string $minimumSeverity): callable
     {
@@ -142,7 +142,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
     private static function createSorted(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
@@ -150,7 +150,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool $callback
+     * @param callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool $callback
      */
     private static function createFiltered(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
@@ -158,7 +158,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
     private static function sortBy(DiagnosticIterator $previous, callable $callback): DiagnosticIterator
     {
@@ -174,7 +174,7 @@ final class DiagnosticIterator implements IteratorAggregate
         $this->sortCallback = $callback;
     }
 
-    /** @psalm-return Generator<int, DiagnosticIteratorEntry> */
+    /** @return Generator<int, DiagnosticIteratorEntry> */
     private static function reportIterator(ReportBuffer $report): Generator
     {
         foreach ($report->getTaskReports() as $taskReport) {
@@ -207,8 +207,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @return Generator|DiagnosticIteratorEntry[]
-     * @psalm-return Generator<int, DiagnosticIteratorEntry>
+     * @return Generator<int, DiagnosticIteratorEntry>
      */
     #[\Override]
     public function getIterator(): Generator
@@ -239,7 +238,7 @@ final class DiagnosticIterator implements IteratorAggregate
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @psalm-return Generator<int, DiagnosticIteratorEntry, mixed, null>
+     * @return Generator<int, DiagnosticIteratorEntry, mixed, null>
      */
     private function iterateSorted(): Generator
     {

@@ -21,7 +21,7 @@ final class DiffBuilder implements DiffBuilderInterface
      */
     private $callback;
 
-    /** @psalm-param callable(DiffBuffer, DiffBuilder): void $callback */
+    /** @param callable(DiffBuffer, DiffBuilder): void $callback */
     public function __construct(
         private readonly string $name,
         private readonly TaskReportInterface $parent,

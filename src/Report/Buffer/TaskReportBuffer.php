@@ -33,7 +33,7 @@ final class TaskReportBuffer
     /** @var DiffBuffer[] */
     private $diffs = [];
 
-    /** @psalm-param array<string,string> $metadata */
+    /** @param array<string,string> $metadata */
     public function __construct(
         private readonly string $taskName,
         private readonly string $reportName, /** @psalm-var array<string,string> */
@@ -93,9 +93,7 @@ final class TaskReportBuffer
     }
 
     /**
-     * @return Generator|DiagnosticBuffer[]
-     *
-     * @psalm-return Generator<int, DiagnosticBuffer, mixed, void>
+     * @return Generator<int, DiagnosticBuffer, mixed, void>
      */
     public function getDiagnostics(): Generator
     {
@@ -117,8 +115,7 @@ final class TaskReportBuffer
     /**
      * Get attachments.
      *
-     * @return AttachmentBuffer[]
-     * @psalm-return list<AttachmentBuffer>
+     * @return list<AttachmentBuffer>
      */
     public function getAttachments(): array
     {
@@ -128,15 +125,14 @@ final class TaskReportBuffer
     /**
      * Get diffs.
      *
-     * @return DiffBuffer[]
-     * @psalm-return list<DiffBuffer>
+     * @return list<DiffBuffer>
      */
     public function getDiffs(): array
     {
         return array_values($this->diffs);
     }
 
-    /** @psalm-return TTaskReportSummary */
+    /** @return TTaskReportSummary */
     public function countDiagnosticsGroupedBySeverity(): array
     {
         /** @psalm-var TTaskReportSummary $summary */

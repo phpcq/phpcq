@@ -12,7 +12,7 @@ use function is_object;
 
 final class Constraints
 {
-    /** @psalm-param mixed $value */
+    /** @param mixed $value */
     public static function boolConstraint($value): bool
     {
         if (!is_bool($value)) {
@@ -22,7 +22,7 @@ final class Constraints
         return $value;
     }
 
-    /** @psalm-param mixed $value */
+    /** @param mixed $value */
     public static function floatConstraint($value): float
     {
         if (!is_float($value)) {
@@ -32,7 +32,7 @@ final class Constraints
         return $value;
     }
 
-    /** @psalm-param mixed $value */
+    /** @param mixed $value */
     public static function intConstraint($value): int
     {
         if (!is_int($value)) {
@@ -42,7 +42,7 @@ final class Constraints
         return $value;
     }
 
-    /** @psalm-param mixed $value */
+    /** @param mixed $value */
     public static function arrayConstraint($value): array
     {
         if (!is_array($value)) {
@@ -52,7 +52,7 @@ final class Constraints
         return $value;
     }
 
-    /** @psalm-param mixed $value */
+    /** @param mixed $value */
     public static function stringConstraint($value): string
     {
         if (!is_string($value)) {
@@ -64,8 +64,8 @@ final class Constraints
 
     /**
      * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-param mixed $value
-     * @psalm-return list<mixed>
+     * @param mixed $value
+     * @return list<mixed>
      */
     public static function listConstraint($value, ?callable $itemValidator = null): array
     {
@@ -91,8 +91,8 @@ final class Constraints
 
     /**
      * @param mixed $value
-     * @psalm-param list<mixed> $acceptedValues
-     * @psalm-return mixed
+     * @param list<mixed> $acceptedValues
+     * @return mixed
      */
     public static function enumConstraint($value, array $acceptedValues)
     {

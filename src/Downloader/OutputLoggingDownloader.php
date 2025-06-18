@@ -10,7 +10,7 @@ use Phpcq\PluginApi\Version10\Output\OutputInterface;
 final class OutputLoggingDownloader implements DownloaderInterface
 {
     /**
-     * @psalm-param TOutputVerbosity $verbosity
+     * @param TOutputVerbosity $verbosity
      */
     public function __construct(
         private readonly DownloaderInterface $downloader,

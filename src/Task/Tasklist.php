@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Task;
 
+use Override;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Traversable;
 
@@ -17,18 +18,16 @@ class Tasklist implements TasklistInterface
      */
     private $tasks = [];
 
-    #[\Override]
+    #[Override]
     public function add(TaskInterface $taskRunner): void
     {
         $this->tasks[] = $taskRunner;
     }
 
     /**
-     * @return TaskInterface[]|iterable
-     *
-     * @psalm-return \Generator<array-key, TaskInterface, mixed, void>
+     * @return \Generator<array-key, TaskInterface, mixed, void>
      */
-    #[\Override]
+    #[Override]
     public function getIterator(): Traversable
     {
         yield from $this->tasks;

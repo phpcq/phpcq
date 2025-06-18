@@ -40,8 +40,8 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
     private $categories = [];
 
     /**
-     * @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
-     * @psalm-param TDiagnosticSeverity $severity
+     * @param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
+     * @param TDiagnosticSeverity $severity
      */
     public function __construct(
         private readonly TaskReportInterface $parent,

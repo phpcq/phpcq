@@ -113,9 +113,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return Traversable<int, ToolVersionInterface>
-     *
-     * @psalm-return \Generator<int, ToolVersionInterface, mixed, void>
+     * @return Generator<int, ToolVersionInterface, mixed, void>
      */
     #[\Override]
     public function iterateToolVersions(): Generator
@@ -128,9 +126,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return PluginVersionInterface[]
-     *
-     * @psalm-return array<string, PluginVersionInterface>
+     * @return array<string, PluginVersionInterface>
      */
     private function findMatchingPluginVersions(string $name, string $versionConstraint): array
     {
@@ -157,9 +153,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return ToolVersionInterface[]
-     *
-     * @psalm-return array<string, ToolVersionInterface>
+     * @return array<string, ToolVersionInterface>
      */
     private function findMatchingToolVersions(string $name, string $versionConstraint): array
     {
