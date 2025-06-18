@@ -71,8 +71,8 @@ abstract class AbstractCommand extends Command
             'config',
             'c',
             InputOption::VALUE_REQUIRED,
-            'The configuration file to use. If not defined following paths are checked in the cwd: <i>.phpcq.yml, '
-            . 'phpcq.yml, .phpcq.yml.dist, phpcq.yml.dist</i>'
+            'The configuration file to use. If not defined following paths are checked in the cwd: <i>.phpcq.yaml, '
+            . 'phpcq.yaml, .phpcq.yaml.dist, phpcq.yaml.dist</i>'
         );
         $this->addOption(
             'home-dir',
