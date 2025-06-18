@@ -89,7 +89,7 @@ final class InstalledRepositoryLoader
     public function loadFile(string $filePath): InstalledRepository
     {
         $baseDir   = dirname($filePath);
-        /** @psalm-var TInstalledRepository $installed */
+        /** @var TInstalledRepository $installed */
         $installed = $this->jsonFileLoader->load($this->validateUrlOrFile($filePath, $baseDir));
         // BC compatibility for old style repository, simulate an empty one.
         // FIXME: remove this, this bc compat causes the MixedArgumentTypeCoercion below

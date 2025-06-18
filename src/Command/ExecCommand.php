@@ -98,7 +98,7 @@ final class ExecCommand extends AbstractCommand
 
         $instance = $plugins->getPluginByName($pluginName);
         $installedPlugin = $installed->getPlugin($instance->getName());
-        /** @psalm-var list<string> $toolArguments */
+        /** @var list<string> $toolArguments */
         $toolArguments = $this->input->getArgument('args');
         $phpCli = $this->findPhpCli();
         $environment = new Environment(

@@ -24,7 +24,7 @@ trait OptionsBuilderTrait
 {
     /**
      * @var ConfigOptionBuilderInterface[]
-     * @psalm-var array<string, ConfigOptionBuilderInterface>
+     * @var array<string, ConfigOptionBuilderInterface>
      */
     protected $options = [];
 

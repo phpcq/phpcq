@@ -85,7 +85,7 @@ final class Constraints
             $expected++;
         }
 
-        /** @psalm-var list<mixed> $value */
+        /** @var list<mixed> $value */
         return $value;
     }
 

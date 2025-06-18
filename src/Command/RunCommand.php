@@ -316,7 +316,7 @@ final class RunCommand extends AbstractCommand
             );
         }
 
-        /** @psalm-var list<string> $reports */
+        /** @var list<string> $reports */
         $reports = (array) $this->input->getOption('report');
         $targetPath = ((string) getcwd()) . '/' . $projectConfig->getArtifactOutputPath();
 

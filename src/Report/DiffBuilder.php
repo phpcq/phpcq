@@ -16,8 +16,7 @@ final class DiffBuilder implements DiffBuilderInterface
     private $absolutePath;
 
     /**
-     * @var callable
-     * @psalm-var callable(DiffBuffer, DiffBuilder): void
+     * @var callable(DiffBuffer, DiffBuilder): void
      */
     private $callback;
 

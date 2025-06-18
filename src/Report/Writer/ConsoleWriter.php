@@ -24,7 +24,7 @@ final class ConsoleWriter
 
     /**
      * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
     private $diagnostics;
 

@@ -70,7 +70,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
             return null;
         }
 
-        /** @psalm-var array<string, mixed> $value */
+        /** @var array<string, mixed> $value */
         $value = Constraints::arrayConstraint($value);
 
         return $this->normalizeOptions($value);
@@ -84,7 +84,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
         /** @var array $value - We validate it withing parent validator */
         $diff = array_diff_key($value, $this->options);
         if (count($diff) > 0) {
-            /** @psalm-var list<string> $keys */
+            /** @var list<string> $keys */
             $keys = array_keys($diff);
             throw ConfigurationValidationErrorException::withCustomMessage(
                 [$keys[0]],

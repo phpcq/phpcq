@@ -100,7 +100,7 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
         }
 
         $value = Constraints::listConstraint($value, Validator::stringValidator());
-        /** @psalm-var list<string> $value */
+        /** @var list<string> $value */
         foreach ($value as $index => $option) {
             try {
                 foreach ($this->validators as $validator) {

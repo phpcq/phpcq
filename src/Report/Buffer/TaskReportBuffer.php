@@ -36,7 +36,7 @@ final class TaskReportBuffer
     /** @param array<string,string> $metadata */
     public function __construct(
         private readonly string $taskName,
-        private readonly string $reportName, /** @psalm-var array<string,string> */
+        private readonly string $reportName, /** @var array<string,string> */
         private array $metadata = []
     ) {
         $this->status     = ReportInterface::STATUS_STARTED;
@@ -135,7 +135,7 @@ final class TaskReportBuffer
     /** @return TTaskReportSummary */
     public function countDiagnosticsGroupedBySeverity(): array
     {
-        /** @psalm-var TTaskReportSummary $summary */
+        /** @var TTaskReportSummary $summary */
         $summary = [
             TaskReportInterface::SEVERITY_FATAL    => 0,
             TaskReportInterface::SEVERITY_MAJOR    => 0,

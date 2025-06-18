@@ -46,7 +46,7 @@ final class ConfigLoader
 
     public function getConfig(): PhpcqConfiguration
     {
-        /** @psalm-var array */
+        /** @var array */
         $config = Yaml::parseFile($this->configPath);
 
         if (!isset($config['phpcq'])) {
@@ -58,7 +58,7 @@ final class ConfigLoader
         $processed = $configBuilder->processConfig($config['phpcq']);
         unset($config['phpcq']);
         $processed = array_merge($processed, $config);
-        /** @psalm-var TConfig $processed */
+        /** @var TConfig $processed */
 
         // Support simplified chain plugin configuration
         foreach ($processed['tasks'] ?? [] as $task => $taskConfig) {

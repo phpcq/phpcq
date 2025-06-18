@@ -25,18 +25,18 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     /** @var bool */
     protected $required = false;
 
-    /** @psalm-var TType|null */
+    /** @var TType|null */
     protected $defaultValue;
 
     /**
      * @var callable[]
-     * @psalm-var list<callable(mixed): mixed>
+     * @var list<callable(mixed): mixed>
      */
     protected $normalizer = [];
 
     /**
      * @var callable[]
-     * @psalm-var list<callable(mixed): void>
+     * @var list<callable(mixed): void>
      */
     protected $validators;
 

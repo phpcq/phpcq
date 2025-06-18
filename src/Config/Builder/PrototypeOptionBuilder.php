@@ -163,7 +163,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
         }
 
         /**
-         * @psalm-var array<string, mixed> $raw
+         * @var array<string, mixed> $raw
          * @psalm-suppress MixedAssignment
          */
         foreach ($raw as $key => $value) {

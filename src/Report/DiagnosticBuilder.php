@@ -23,7 +23,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
 
     /**
      * @var callable
-     * @psalm-var callable(DiagnosticBuffer, DiagnosticBuilder): void
+     * @var callable(DiagnosticBuffer, DiagnosticBuilder): void
      */
     private $callback;
 
