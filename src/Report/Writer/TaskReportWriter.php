@@ -19,7 +19,7 @@ final class TaskReportWriter extends AbstractReportWriter
 
     /**
      * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
     private $diagnostics;
 

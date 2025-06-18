@@ -73,7 +73,7 @@ final class PhpcqConfigurationBuilder
             throw ConfigurationValidationErrorException::fromError(['phpcq'], $exception);
         }
 
-        /** @psalm-var array<string,mixed> $processed */
+        /** @var array<string,mixed> $processed */
         return $processed;
     }
 

@@ -84,7 +84,7 @@ final class PluginConfigurationFactory
             );
         }
 
-        /** @psalm-var array<string,mixed> $processed */
+        /** @var array<string,mixed> $processed */
         $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
         $configOptionsBuilder->validateValue($processed);
 

@@ -156,7 +156,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
                     throw new RuntimeException('If defining multiple optional values, the value needs a name');
                 }
             }
-            /** @psalm-var array<string,mixed> $values */
+            /** @var array<string,mixed> $values */
 
             return new OptionParamsDefinition($this->isValueRequired, $values);
         }

@@ -19,7 +19,7 @@ final class DiagnosticIterator implements IteratorAggregate
 {
     /**
      * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
-     * @psalm-var array{
+     * @var array{
      *  none: int,
      *  info: int,
      *  marginal: int,

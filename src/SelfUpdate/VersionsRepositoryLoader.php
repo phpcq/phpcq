@@ -31,7 +31,7 @@ final class VersionsRepositoryLoader
 
     public function load(string $file): VersionsRepository
     {
-        /** @psalm-var TVersionRepository $json */
+        /** @var TVersionRepository $json */
         $json         = $this->downloader->downloadJsonFile($file, '', true);
         $repository   = new VersionsRepository($this->requirementChecker);
 

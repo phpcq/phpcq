@@ -218,7 +218,7 @@ abstract class AbstractCommand extends Command
         if (!is_string($executable)) {
             throw new RuntimeException('PHP executable not found');
         }
-        /** @psalm-var list<string> $arguments */
+        /** @var list<string> $arguments */
         $arguments = $finder->findArguments();
 
         return [$executable, $arguments];

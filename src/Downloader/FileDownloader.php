@@ -112,7 +112,7 @@ class FileDownloader implements DownloaderInterface
     {
         /**
          * @var null|array $data
-         * @psalm-var ?TJsonRepository $data
+         * @var ?TJsonRepository $data
          */
         $data = json_decode($this->downloadFile($url, $baseDir, $force, $hash), true);
         if (null === $data) {
@@ -163,7 +163,7 @@ class FileDownloader implements DownloaderInterface
         }
 
         /**
-         * @psalm-var array<AbstractHash::SHA_1|AbstractHash::SHA_256|AbstractHash::SHA_384|AbstractHash::SHA_512,
+         * @var array<AbstractHash::SHA_1|AbstractHash::SHA_256|AbstractHash::SHA_384|AbstractHash::SHA_512,
          * string> $hashMap
          */
         static $hashMap = [

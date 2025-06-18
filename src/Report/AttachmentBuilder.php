@@ -20,7 +20,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
 
     /**
      * @var callable
-     * @psalm-var callable(AttachmentBuffer, AttachmentBuilder): void
+     * @var callable(AttachmentBuffer, AttachmentBuilder): void
      */
     private $callback;
 

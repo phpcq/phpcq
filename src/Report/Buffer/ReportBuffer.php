@@ -32,7 +32,7 @@ final class ReportBuffer
     private $completedAt;
 
     /**
-     * @psalm-var array<string,TaskReportBuffer>
+     * @var array<string,TaskReportBuffer>
      * @var TaskReportBuffer[]
      */
     private $taskReports = [];
@@ -89,7 +89,7 @@ final class ReportBuffer
      */
     public function countDiagnosticsGroupedBySeverity(): array
     {
-        /** @psalm-var TReportSummary $summary */
+        /** @var TReportSummary $summary */
         $summary = [
             TaskReportInterface::SEVERITY_FATAL    => 0,
             TaskReportInterface::SEVERITY_MAJOR    => 0,

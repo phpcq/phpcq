@@ -64,7 +64,7 @@ class Options implements OptionsInterface
     public function getOptions(string $name): array
     {
         $value = Constraints::arrayConstraint($this->getOption($name));
-        /** @psalm-var array<string,mixed> $value */
+        /** @var array<string,mixed> $value */
         return $value;
     }
 

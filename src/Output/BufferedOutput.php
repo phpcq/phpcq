@@ -15,7 +15,7 @@ class BufferedOutput implements OutputInterface
     /**
      * @var mixed[][]
      *
-     * @psalm-var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
+     * @var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
      */
     private $buffer = [];
 

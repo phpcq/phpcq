@@ -21,7 +21,7 @@ final class FileReportWriter extends AbstractReportWriter
 
     /**
      * @var DOMElement[]
-     * @psalm-var array<string,DOMElement>
+     * @var array<string,DOMElement>
      */
     private $fileElements = [];
 

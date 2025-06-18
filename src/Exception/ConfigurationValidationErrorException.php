@@ -17,7 +17,7 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
 
     /** @param list<string> $path */
     protected function __construct(
-        /** @psalm-var list<string> */
+        /** @var list<string> */
         private readonly array $path,
         string $message = '',
         int $code = 0,
