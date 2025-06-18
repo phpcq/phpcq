@@ -59,6 +59,8 @@ final class SelfUpdateCommand extends AbstractCommand
      */
     private $filesystem;
 
+    private PlatformRequirementCheckerInterface $requirementChecker;
+
     /**
      * @param string $pharFile The location of the execed phar file.
      */
