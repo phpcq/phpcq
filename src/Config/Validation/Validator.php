@@ -10,8 +10,8 @@ namespace Phpcq\Runner\Config\Validation;
 final class Validator
 {
     /**
-     * @psalm-param TValidator $validator
-     * @psalm-return TValidator
+     * @param TValidator $validator
+     * @return TValidator
      */
     public static function listItemValidator(callable $validator): callable
     {
@@ -20,39 +20,39 @@ final class Validator
         };
     }
 
-    /** @psalm-return TValidator */
+    /** @return TValidator */
     public static function arrayValidator(): callable
     {
         return Constraints::arrayConstraint(...);
     }
 
-    /** @psalm-return TValidator */
+    /** @return TValidator */
     public static function boolValidator(): callable
     {
         return Constraints::boolConstraint(...);
     }
 
-    /** @psalm-return TValidator */
+    /** @return TValidator */
     public static function floatValidator(): callable
     {
         return Constraints::floatConstraint(...);
     }
 
-    /** @psalm-return TValidator */
+    /** @return TValidator */
     public static function intValidator(): callable
     {
         return Constraints::intConstraint(...);
     }
 
-    /** @psalm-return TValidator */
+    /** @return TValidator */
     public static function stringValidator(): callable
     {
         return Constraints::stringConstraint(...);
     }
 
     /**
-     * @psalm-param list<mixed> $values
-     * @psalm-return TValidator
+     * @param list<mixed> $values
+     * @return TValidator
      */
     public static function enumValidator(array $values): callable
     {

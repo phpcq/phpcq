@@ -22,8 +22,7 @@ class TaskScheduler
     public const LOG_END    = '%1$s finished';
 
     /**
-     * @var ReportWritingTaskInterface[]|Generator
-     * @psalm-var Generator<array-key, ReportWritingTaskInterface>
+     * @var Generator<array-key, ReportWritingTaskInterface>
      */
     private $tasks;
 
@@ -180,8 +179,7 @@ class TaskScheduler
     }
 
     /**
-     * @return ReportWritingTaskInterface[]|Generator
-     * @psalm-return Generator<int, ReportWritingTaskInterface>
+     * @return Generator<int, ReportWritingTaskInterface>
      */
     private function nextTaskGenerator(TasklistInterface $tasks): Generator
     {

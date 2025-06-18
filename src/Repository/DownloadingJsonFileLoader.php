@@ -23,9 +23,9 @@ final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
     }
 
     /**
-     * @psalm-param TRepositoryCheckSum|null $checksum
+     * @param TRepositoryCheckSum|null $checksum
      *
-     * @psalm-return TJsonRepository
+     * @return TJsonRepository
      */
     #[\Override]
     public function load(string $file, ?array $checksum = null): array

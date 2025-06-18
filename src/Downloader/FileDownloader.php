@@ -58,12 +58,10 @@ class FileDownloader implements DownloaderInterface
     /**
      * Download a file and return it's content.
      *
-     * @param string     $url
-     * @param string     $baseDir
-     * @param bool       $force
-     * @param array|null $hash
-     *
-     * @psalm-param ?TRepositoryCheckSum $hash
+     * @param string                   $url
+     * @param string                   $baseDir
+     * @param bool                     $force
+     * @param TRepositoryCheckSum|null $hash
      *
      * @return string
      */
@@ -105,12 +103,9 @@ class FileDownloader implements DownloaderInterface
      * @param string     $url
      * @param string     $baseDir
      * @param bool       $force
-     * @param array|null $hash
+     * @param TRepositoryCheckSum|null $hash
      *
-     * @psalm-param ?TRepositoryCheckSum $hash
-     *
-     * @return array
-     * @psalm-return TJsonRepository
+     * @return TJsonRepository
      */
     #[\Override]
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
@@ -157,9 +152,7 @@ class FileDownloader implements DownloaderInterface
      * Check the hash for the passed cache file - return true if it is valid, false otherwise.
      *
      * @param string     $cacheFile The file to check
-     * @param array|null $hash      he hash to validate.
-     *
-     * @psalm-param ?TRepositoryCheckSum $hash
+     * @param TRepositoryCheckSum|null $hash The hash to validate.
      *
      * @return bool
      */

@@ -17,9 +17,7 @@ class InstalledPlugin
     private array $tools = [];
 
     /**
-     * @param array|ToolVersionInterface[] $tools
-     *
-     * @psalm-param list<ToolVersionInterface> $tools
+     * @param list<ToolVersionInterface> $tools
      */
     public function __construct(
         private readonly PluginVersionInterface $version,
@@ -58,9 +56,7 @@ class InstalledPlugin
     /**
      * Iterate over all installed tools.
      *
-     * @return Generator|ToolVersionInterface[]
-     *
-     * @psalm-return Generator<ToolVersionInterface>
+     * @return Generator<ToolVersionInterface>
      */
     public function iterateTools(): Generator
     {

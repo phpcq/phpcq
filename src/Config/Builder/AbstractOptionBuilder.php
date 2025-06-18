@@ -40,7 +40,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
      */
     protected $validators;
 
-    /** @psalm-param list<TValidator> $validators */
+    /** @param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         $this->name        = $name;
@@ -49,9 +49,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     }
 
     /**
-     * @return $this
-     *
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */
@@ -63,9 +61,9 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     }
 
     /**
-     * @psalm-param callable(mixed): void $normalizer
+     * @param callable(mixed): void $normalizer
      *
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */
@@ -77,10 +75,9 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     }
 
     /**
-     * @psalm-param callable(mixed): void $validator
+     * @param callable(mixed): void $validator
      *
-     * @return $this
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */

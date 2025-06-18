@@ -209,7 +209,7 @@ abstract class AbstractCommand extends Command
         return $this->phpcqPath . '/plugins';
     }
 
-    /** @psalm-return array{string, list<string>} */
+    /** @return array{string, list<string>} */
     protected function findPhpCli(): array
     {
         $finder     = new PhpExecutableFinder();

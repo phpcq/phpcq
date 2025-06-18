@@ -83,9 +83,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             }
 
             /**
-             * @return string[]
-             *
-             * @psalm-return array{0: string, 1: TDiagnosticSeverity}
+             * @return array{0: string, 1: TDiagnosticSeverity}
              */
             private function calculateStatusAndSeverity(int $exitCode): array
             {

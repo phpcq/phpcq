@@ -19,8 +19,7 @@ class RepositoryFactory
     }
 
     /**
-     * @param mixed[] $repositories
-     * @psalm-param list<array{type:string, url?: string}> $repositories
+     * @param list<array{type:string, url?: string}> $repositories
      */
     public function buildPool(array $repositories): RepositoryPool
     {

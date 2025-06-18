@@ -103,7 +103,7 @@ final class InstalledRepositoryLoader
         return $this->createRepository($installed, $baseDir);
     }
 
-    /** @psalm-param TInstalledRepository $installed */
+    /** @param TInstalledRepository $installed */
     private function createRepository(array $installed, string $baseDir): InstalledRepository
     {
         $repository = new InstalledRepository();
@@ -133,7 +133,7 @@ final class InstalledRepositoryLoader
         return $repository;
     }
 
-    /** @psalm-param TInstalledPluginVersion $information */
+    /** @param TInstalledPluginVersion $information */
     private function createInstalledPlugin(string $name, array $information, string $baseDir): InstalledPlugin
     {
         $version = new PhpFilePluginVersion(
@@ -163,7 +163,7 @@ final class InstalledRepositoryLoader
         return new InstalledPlugin($version, $tools, $information['composerLock'] ?? null);
     }
 
-    /** @psalm-param TInstalledToolVersion $information */
+    /** @param TInstalledToolVersion $information */
     private function createToolVersion(string $name, array $information, string $baseDir): ToolVersionInterface
     {
         return new ToolVersion(
@@ -179,14 +179,14 @@ final class InstalledRepositoryLoader
     }
 
     /**
-     * @psalm-param TRepositoryCheckSum $hash
+     * @param TRepositoryCheckSum $hash
      */
     private function loadPluginHash(array $hash): PluginHash
     {
         return PluginHash::create($hash['type'], $hash['value']);
     }
 
-    /** @psalm-param TRepositoryPluginRequirements|null $requirements */
+    /** @param TRepositoryPluginRequirements|null $requirements */
     private function loadPluginRequirements(?array $requirements): PluginRequirements
     {
         $result = new PluginRequirements();
@@ -211,7 +211,7 @@ final class InstalledRepositoryLoader
     }
 
 
-    /** @psalm-param TRepositoryToolRequirements|null $requirements */
+    /** @param TRepositoryToolRequirements|null $requirements */
     private function loadToolRequirements(?array $requirements): ToolRequirements
     {
         $result = new ToolRequirements();
@@ -234,7 +234,7 @@ final class InstalledRepositoryLoader
     }
 
     /**
-     * @psalm-param TRepositoryCheckSum|null $hash
+     * @param TRepositoryCheckSum|null $hash
      */
     private function loadToolHash(?array $hash): ?ToolHash
     {

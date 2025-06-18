@@ -33,7 +33,7 @@ final class UpdateExecutor
         $this->filesystem          = new Filesystem();
     }
 
-    /** @psalm-param list<TaskInterface> $tasks */
+    /** @param list<TaskInterface> $tasks */
     public function execute(array $tasks): void
     {
         $context = new UpdateContext(

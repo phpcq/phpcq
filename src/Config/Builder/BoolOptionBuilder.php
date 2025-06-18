@@ -13,7 +13,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
  */
 final class BoolOptionBuilder extends AbstractOptionBuilder implements BoolOptionBuilderInterface
 {
-    /** @psalm-param list<TValidator> $validators */
+    /** @param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         parent::__construct($name, $description, $validators);

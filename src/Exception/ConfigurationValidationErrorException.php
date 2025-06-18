@@ -15,7 +15,7 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
     /** @var Throwable|null $rootError */
     private $rootError;
 
-    /** @psalm-param list<string> $path */
+    /** @param list<string> $path */
     protected function __construct(
         /** @psalm-var list<string> */
         private readonly array $path,
@@ -28,13 +28,13 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
         $this->rootError = $rootError ?: $this;
     }
 
-    /** @psalm-param list<string> $path */
+    /** @param list<string> $path */
     public static function withCustomMessage(array $path, string $message, Throwable $previous = null): self
     {
         return new self($path, $message, 0, $previous);
     }
 
-    /** @psalm-param list<string> $path */
+    /** @param list<string> $path */
     public static function fromError(
         array $path,
         Throwable $rootException,
@@ -50,7 +50,7 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
         );
     }
 
-    /** @psalm-param list<string> $outerPath */
+    /** @param list<string> $outerPath */
     public function withOuterPath(array $outerPath): self
     {
         $path = array_merge($outerPath, $this->getPath());
@@ -69,7 +69,7 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
         return $this->rootError ?: $this;
     }
 
-    /** @psalm-return list<string> */
+    /** @return list<string> */
     public function getPath(): array
     {
         return $this->path;

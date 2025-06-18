@@ -106,9 +106,9 @@ trait OptionsBuilderTrait
     }
 
     /**
-     * @psalm-param array<string,mixed> $options
+     * @param array<string,mixed> $options
      *
-     * @psalm-return array<string,mixed>
+     * @return array<string,mixed>
      */
     protected function normalizeOptions(array $options): array
     {

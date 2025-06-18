@@ -61,9 +61,7 @@ final class PluginRegistry implements IteratorAggregate
     }
 
     /**
-     * @return PluginInterface[]|Generator|iterable
-     *
-     * @psalm-return Generator<string, PluginInterface, mixed, void>
+     * @return Generator<string, PluginInterface, mixed, void>
      */
     #[\Override]
     public function getIterator(): Traversable
