@@ -30,7 +30,7 @@ final class ComposerUpdateTask extends AbstractComposerTask
         }
 
         $this->dumpComposerJson($context);
-        $context->composer->installDependencies($this->getTargetDirectory($context));
+        $context->composer->updateDependencies($this->getTargetDirectory($context));
         $this->updateComposerLock($context);
     }
 }

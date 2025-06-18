@@ -1,4 +1,4 @@
-name: rebuild-phar
+name: build-stable-phar
 
 env:
   TARGET_REPOSITORY: phpcq/distrib
@@ -7,12 +7,12 @@ env:
 
 on:
   push:
-    branches:
-      - 'master'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   compile:
-    name: Rebuild unstable phar
+    name: Build stable release
     runs-on: ubuntu-latest
 
     steps:
@@ -80,25 +80,25 @@ jobs:
       - name: Copy phar file to target
         id: copy
         run: |
-          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
-          echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
+          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar
+          echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/stable/current.txt
 
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "${{ RELEASE_VERSION_SEMVER }}.phar"
 
       - name: Generate Commit Message
         run: |
           echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
-          echo "Storing unstable build of phpcq.phar" >> $GITHUB_ENV
+          echo "Storing stable release ${{ RELEASE_VERSION_SEMVER }} of phpcq.phar" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         id: generate_commit_message
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: ${{ env.COMMIT_MSG }}
           branch: ${{ env.TARGET_BRANCH }}

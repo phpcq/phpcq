@@ -12,6 +12,12 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInterface;
 use Throwable;
 
+use function array_diff;
+use function array_keys;
+use function array_values;
+use function in_array;
+use function is_array;
+
 final class PhpcqConfigurationBuilder
 {
     /** @var OptionsBuilder */
@@ -118,15 +124,37 @@ final class PhpcqConfigurationBuilder
             ->isRequired();
 
         $requirements = $builder
-            ->describePrototypeOption('requirements', 'Override the tool requirements of the plugin')
+            ->describeOptions('requirements', 'Override the requirements of the plugin')
+            ->withNormalizer(
+                static function ($config) {
+                    if (! is_array($config)) {
+                        return $config;
+                    }
+
+                    foreach (array_keys($config) as $key) {
+                        if (! in_array($key, ['tools', 'composer'])) {
+                            return ['tools' => $config];
+                        }
+                    }
+
+                    return $config;
+                }
+            );
+
+        $toolRequirements = $requirements->describePrototypeOption('tools', 'Tool requirements')
             ->ofOptionsValue();
-        $requirements
+
+        $toolRequirements
                 ->describeStringOption('version', 'The version constraint')
                 ->withValidator($validateConstraint);
-        $requirements
+
+        $toolRequirements
             ->describeBoolOption('signed', 'If set to false no signature verification happens')
             ->withDefaultValue(true)
             ->isRequired();
+
+        $requirements->describePrototypeOption('composer', 'Composer requirements')
+            ->ofStringValue();
     }
 
     private function describeComposer(OptionsBuilderInterface $builder): void
