@@ -100,7 +100,7 @@ final class SelfUpdateCommand extends AbstractCommand
             'channel',
             null,
             InputOption::VALUE_REQUIRED,
-            'The channel of the release. Right now only unstable is available',
+            'The channel of the release.',
             'stable'
         );
 
