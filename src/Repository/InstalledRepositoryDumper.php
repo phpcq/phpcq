@@ -92,7 +92,7 @@ final class InstalledRepositoryDumper extends AbstractDumper
 
     private function getRelativePath(string $path, string $baseDir): string
     {
-        if (strpos($path, $baseDir) === 0) {
+        if (str_starts_with($path, $baseDir)) {
             return substr($path, strlen($baseDir) + 1);
         }
 

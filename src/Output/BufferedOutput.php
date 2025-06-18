@@ -19,17 +19,13 @@ class BufferedOutput implements OutputInterface
      */
     private $buffer = [];
 
-    /** @var OutputInterface */
-    private $output;
-
     /**
      * BufferedOutput constructor.
      *
      * @param OutputInterface $output
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(private readonly OutputInterface $output)
     {
-        $this->output = $output;
     }
 
     #[\Override]

@@ -38,9 +38,6 @@ use function tempnam;
 
 final class SelfUpdateCommand extends AbstractCommand
 {
-    /** @var string */
-    private $pharFile;
-
     /**
      * Only valid when examined from within doExecute().
      *
@@ -59,19 +56,17 @@ final class SelfUpdateCommand extends AbstractCommand
      */
     private $filesystem;
 
-    private PlatformRequirementCheckerInterface $requirementChecker;
+    private readonly PlatformRequirementCheckerInterface $requirementChecker;
 
     /**
      * @param string $pharFile The location of the execed phar file.
      */
     public function __construct(
-        string $pharFile,
+        private readonly string $pharFile,
         ?DownloaderInterface $downloader = null,
         ?PlatformRequirementCheckerInterface $requirementChecker = null
     ) {
         parent::__construct();
-
-        $this->pharFile = $pharFile;
 
         if ($downloader !== null) {
             $this->downloader = $downloader;

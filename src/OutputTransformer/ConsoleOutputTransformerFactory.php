@@ -16,18 +16,12 @@ use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
     /**
-     * @var string
-     */
-    private $toolName;
-
-    /**
      * ConsoleOutputTransformerFactory constructor.
      *
      * @param string $toolName
      */
-    public function __construct(string $toolName)
+    public function __construct(private readonly string $toolName)
     {
-        $this->toolName = $toolName;
     }
 
     /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
@@ -35,8 +29,6 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
     public function createFor(TaskReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
-            /** @var TaskReportInterface */
-            private $report;
             /** @var BufferedLineReader */
             private $data;
             /** @var string */
@@ -47,9 +39,8 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             /**
              * Create a new instance.
              */
-            public function __construct(TaskReportInterface $report)
+            public function __construct(private readonly TaskReportInterface $report)
             {
-                $this->report = $report;
                 $this->data   = BufferedLineReader::create();
             }
 

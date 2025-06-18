@@ -21,55 +21,27 @@ use function hash_file;
 use function is_array;
 use function sprintf;
 use function unlink;
-use function strpos;
 
 /**
  * @psalm-import-type TComposerConfig from \Phpcq\Runner\Config\PhpcqConfiguration
  */
 class Composer
 {
-    /** @var OutputInterface */
-    private $output;
-
-    /** @var Filesystem */
-    private $filesystem;
-
-    /** @var DownloaderInterface */
-    private $downloader;
-
-    /** @var string */
-    private $installDir;
-
-    /**
-     * @var array
-     * @psalm-var TComposerConfig
-     */
-    private $composerConfig;
-
-    /** @var array{0:string, 1: list<string>} */
-    private $phpCli;
-
     /** @var list<string>|null */
-    private $command;
+    private ?array $command = null;
 
     /**
      * @psalm-param array{0:string, 1: list<string>} $phpCli
      * @psalm-param TComposerConfig                  $composerConfig
      */
     public function __construct(
-        DownloaderInterface $downloader,
-        Filesystem $filesystem,
-        OutputInterface $output,
-        string $installDir,
-        array $composerConfig,
-        array $phpCli
+        private readonly DownloaderInterface $downloader,
+        private readonly Filesystem $filesystem,
+        private readonly OutputInterface $output,
+        private readonly string $installDir,
+        private array $composerConfig,
+        private array $phpCli
     ) {
-        $this->output         = $output;
-        $this->filesystem     = $filesystem;
-        $this->downloader     = $downloader;
-        $this->installDir     = $installDir;
-        $this->composerConfig = $composerConfig;
-        $this->phpCli         = $phpCli;
     }
 
     public function isBinaryAutoDiscovered(): bool
@@ -145,11 +117,11 @@ class Composer
             $process = $this->createProcess(['update', '--dry-run', '--no-progress'], $targetDirectory);
             $process->mustRun();
             $output  = $process->getOutput() ?: $process->getErrorOutput();
-        } catch (ProcessFailedException $exception) {
+        } catch (ProcessFailedException) {
             return true;
         }
 
-        return strpos($output, 'Nothing to install, update or remove') === false;
+        return !str_contains($output, 'Nothing to install, update or remove');
     }
 
     private function execute(array $command, string $targetDirectory): void

@@ -9,17 +9,13 @@ use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
 final class SymfonyOutput implements OutputInterface
 {
-    /** @var SymfonyOutputInterface */
-    private $output;
-
     /**
      * SymfonyOutput constructor.
      *
      * @param SymfonyOutputInterface $output
      */
-    public function __construct(SymfonyOutputInterface $output)
+    public function __construct(private readonly SymfonyOutputInterface $output)
     {
-        $this->output = $output;
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */

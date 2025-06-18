@@ -15,21 +15,12 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
 {
     use HashValidator;
 
-    /** @var PluginVersionInterface */
-    private $oldPluginVersion;
-
-    /** @var bool */
-    private $signed;
-
     public function __construct(
         PluginVersionInterface $pluginVersion,
-        PluginVersionInterface $oldPluginVersion,
-        bool $signed
+        private PluginVersionInterface $oldPluginVersion,
+        private bool $signed
     ) {
         parent::__construct($pluginVersion);
-
-        $this->oldPluginVersion = $oldPluginVersion;
-        $this->signed           = $signed;
     }
 
     #[\Override]

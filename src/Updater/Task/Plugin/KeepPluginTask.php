@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Updater\Task\Plugin;
 
+use Override;
 use Phpcq\RepositoryDefinition\Plugin\PhpFilePluginVersion;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\Runner\Updater\UpdateContext;
@@ -13,17 +14,14 @@ use function sprintf;
 
 final class KeepPluginTask extends AbstractPluginTask
 {
-    /** @var PluginVersionInterface */
-    private $installedVersion;
-
-    public function __construct(PluginVersionInterface $pluginVersion, PluginVersionInterface $installedVersion)
-    {
+    public function __construct(
+        PluginVersionInterface $pluginVersion,
+        private readonly PluginVersionInterface $installedVersion
+    ) {
         parent::__construct($pluginVersion);
-
-        $this->installedVersion = $installedVersion;
     }
 
-    #[\Override]
+    #[Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -33,7 +31,7 @@ final class KeepPluginTask extends AbstractPluginTask
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getExecutionDescription(): string
     {
         return sprintf(
@@ -43,7 +41,7 @@ final class KeepPluginTask extends AbstractPluginTask
         );
     }
 
-    #[\Override]
+    #[Override]
     public function execute(UpdateContext $context): void
     {
         $version = $this->installedVersion;

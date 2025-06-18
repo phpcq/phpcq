@@ -38,14 +38,7 @@ final class DiagnosticIterator implements IteratorAggregate
     ];
 
     /**
-     * @var DiagnosticIterator|Generator|Iterator
-     * @psalm-var DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator
-     */
-    private $previous;
-
-    /**
-     * @var callable|null
-     * @psalm-var null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
+     * @var null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
      */
     private $sortCallback;
 
@@ -173,13 +166,11 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @param DiagnosticIterator|Generator|Iterator $previous
-     * @psalm-param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator $previous
-     * @psalm-param null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator $previous
+     * @param null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
-    private function __construct($previous, ?callable $callback)
+    private function __construct(private $previous, ?callable $callback)
     {
-        $this->previous     = $previous;
         $this->sortCallback = $callback;
     }
 

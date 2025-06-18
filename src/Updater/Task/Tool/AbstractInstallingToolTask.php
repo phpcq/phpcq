@@ -15,14 +15,12 @@ abstract class AbstractInstallingToolTask extends AbstractToolTask
 {
     use HashValidator;
 
-    /** @var bool */
-    private $signed;
-
-    public function __construct(PluginVersionInterface $pluginVersion, ToolVersionInterface $toolVersion, bool $signed)
-    {
+    public function __construct(
+        PluginVersionInterface $pluginVersion,
+        ToolVersionInterface $toolVersion,
+        private readonly bool $signed
+    ) {
         parent::__construct($pluginVersion, $toolVersion);
-
-        $this->signed = $signed;
     }
 
     protected function install(UpdateContext $context): void

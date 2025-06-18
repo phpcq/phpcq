@@ -15,20 +15,16 @@ class ConfigurationValidationErrorException extends InvalidConfigurationExceptio
     /** @var Throwable|null $rootError */
     private $rootError;
 
-    /** @psalm-var list<string> */
-    private $path;
-
     /** @psalm-param list<string> $path */
     protected function __construct(
-        array $path,
+        /** @psalm-var list<string> */
+        private readonly array $path,
         string $message = '',
         int $code = 0,
         Throwable $previous = null,
         ?Throwable $rootError = null
     ) {
         parent::__construct($message, $code, $previous);
-
-        $this->path      = $path;
         $this->rootError = $rootError ?: $this;
     }
 

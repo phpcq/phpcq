@@ -13,42 +13,14 @@ use Symfony\Component\Filesystem\Filesystem;
 /** @psalm-immutable  */
 final class UpdateContext
 {
-    /** @var Filesystem */
-    public $filesystem;
-
-    /** @var Composer */
-    public $composer;
-
-    /** @var InstalledRepository */
-    public $installedRepository;
-
-    /** @var InstalledRepository */
-    public $lockRepository;
-
-    /** @var SignatureVerifier */
-    public $signatureVerifier;
-
-    /** @var DownloaderInterface */
-    public $downloader;
-
-    /** @var string */
-    public $installedPluginPath;
-
     public function __construct(
-        Filesystem $filesystem,
-        Composer $composer,
-        InstalledRepository $installedRepository,
-        InstalledRepository $lockRepository,
-        SignatureVerifier $signatureVerifier,
-        DownloaderInterface $downloader,
-        string $installedPluginPath
+        public Filesystem $filesystem,
+        public Composer $composer,
+        public InstalledRepository $installedRepository,
+        public InstalledRepository $lockRepository,
+        public SignatureVerifier $signatureVerifier,
+        public DownloaderInterface $downloader,
+        public string $installedPluginPath
     ) {
-        $this->filesystem          = $filesystem;
-        $this->composer            = $composer;
-        $this->installedRepository = $installedRepository;
-        $this->lockRepository      = $lockRepository;
-        $this->signatureVerifier   = $signatureVerifier;
-        $this->downloader          = $downloader;
-        $this->installedPluginPath = $installedPluginPath;
     }
 }

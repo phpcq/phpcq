@@ -10,12 +10,8 @@ use Phpcq\PluginApi\Version10\Task\TaskFactoryInterface;
 
 class SingleProcessTaskFactory implements TaskFactoryInterface
 {
-    /** @var TaskFactoryInterface */
-    private $factory;
-
-    public function __construct(TaskFactoryInterface $factory)
+    public function __construct(private readonly TaskFactoryInterface $factory)
     {
-        $this->factory = $factory;
     }
 
     #[\Override]

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Task;
 
+use Override;
 use Phpcq\PluginApi\Version10\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Output\OutputTransformerFactoryInterface;
 use Phpcq\PluginApi\Version10\Task\TaskBuilderInterface;
@@ -13,11 +14,6 @@ use Traversable;
 
 abstract class AbstractTaskBuilder implements TaskBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $taskName;
-
     /**
      * @var string|null
      */
@@ -49,9 +45,6 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /** @var int */
     private $cost = 1;
 
-    /** @var array<string,string> */
-    private $metadata;
-
     private bool $tty = false;
 
     /**
@@ -59,13 +52,11 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
      *
      * @param array<string,string> $metadata
      */
-    public function __construct(string $taskName, array $metadata)
+    public function __construct(private readonly string $taskName, private readonly array $metadata)
     {
-        $this->taskName = $taskName;
-        $this->metadata = $metadata;
     }
 
-    #[\Override]
+    #[Override]
     public function withWorkingDirectory(string $cwd): TaskBuilderInterface
     {
         $this->cwd = $cwd;
@@ -76,7 +67,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /**
      * @param string[] $env
      */
-    #[\Override]
+    #[Override]
     public function withEnv(array $env): TaskBuilderInterface
     {
         $this->env = $env;
@@ -88,7 +79,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
      * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no
      *                                           input
      */
-    #[\Override]
+    #[Override]
     public function withInput($input): TaskBuilderInterface
     {
         $this->input = $input;
@@ -99,7 +90,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /**
      * @param int|float $timeout
      */
-    #[\Override]
+    #[Override]
     public function withTimeout($timeout): TaskBuilderInterface
     {
         $this->timeout = $timeout;
@@ -107,7 +98,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskBuilderInterface
     {
         $this->transformerFactory = $factory;
@@ -115,7 +106,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function forceSingleProcess(): TaskBuilderInterface
     {
         if (1 !== $this->cost) {
@@ -127,7 +118,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function withCosts(int $cost): TaskBuilderInterface
     {
         if (!$this->parallel && $cost !== 1) {
@@ -153,7 +144,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     /** @return list<string> */
     abstract protected function buildCommand(): array;
 
-    #[\Override]
+    #[Override]
     public function build(): TaskInterface
     {
         $transformerFactory = $this->transformerFactory;

@@ -14,14 +14,9 @@ final class InstallPluginTask extends AbstractInstallingPluginTask
 {
     use HashValidator;
 
-    /** @var bool */
-    private $signed;
-
-    public function __construct(PluginVersionInterface $pluginVersion, bool $signed)
+    public function __construct(PluginVersionInterface $pluginVersion, private bool $signed)
     {
         parent::__construct($pluginVersion);
-
-        $this->signed = $signed;
     }
 
     #[\Override]

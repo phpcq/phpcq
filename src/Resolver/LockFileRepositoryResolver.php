@@ -13,12 +13,8 @@ use Phpcq\Runner\Repository\InstalledRepository;
 
 final class LockFileRepositoryResolver implements ResolverInterface
 {
-    /** @var InstalledRepository */
-    protected $repository;
-
-    public function __construct(InstalledRepository $repository)
+    public function __construct(protected InstalledRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     #[\Override]

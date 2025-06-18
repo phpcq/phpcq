@@ -13,24 +13,6 @@ use Phpcq\Runner\Repository\InstalledPlugin;
 class TaskFactory implements TaskFactoryInterface
 {
     /**
-     * The installed plugin.
-     *
-     * @var InstalledPlugin
-     */
-    private $installed;
-
-    /** @var string */
-    private $taskName;
-
-    /** @var string */
-    private $phpCliBinary;
-
-    /** @var list<string> */
-    private $phpArguments;
-
-    private bool $tty;
-
-    /**
      * Create a new instance.
      *
      * @param InstalledPlugin $installed
@@ -38,17 +20,15 @@ class TaskFactory implements TaskFactoryInterface
      * @param list<string>    $phpArguments
      */
     public function __construct(
-        string $taskName,
-        InstalledPlugin $installed,
-        string $phpCliBinary,
-        array $phpArguments,
-        bool $tty = false
+        private readonly string $taskName,
+        /**
+         * The installed plugin.
+         */
+        private readonly InstalledPlugin $installed,
+        private readonly string $phpCliBinary,
+        private readonly array $phpArguments,
+        private readonly bool $tty = false
     ) {
-        $this->taskName     = $taskName;
-        $this->installed    = $installed;
-        $this->phpCliBinary = $phpCliBinary;
-        $this->phpArguments = $phpArguments;
-        $this->tty          = $tty;
     }
 
     /**

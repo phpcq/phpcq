@@ -251,8 +251,8 @@ final class PlatformInformationTest extends TestCase
         $versionParser = new VersionParser();
         try {
             return $versionParser->normalize($prettyVersion);
-        } catch (UnexpectedValueException $e) {
-            return $versionParser->normalize(preg_replace('#^([^~+-]+).*$#', '$1', $prettyVersion));
+        } catch (UnexpectedValueException) {
+            return $versionParser->normalize(preg_replace('#^([^~+-]+).*$#', '$1', (string) $prettyVersion));
         }
     }
 }

@@ -37,7 +37,7 @@ final class TaskBuilderTest extends TestCase
         $this->assertPrivateProperty('/path/to/working-directory', 'cwd', $runner);
         $this->assertPrivateProperty(['var1' => 'value1', 'var2' => 'value2"'], 'env', $runner);
         $this->assertPrivateProperty('input-values', 'input', $runner);
-        $this->assertPrivateProperty(3600.0, 'timeout', $runner);
+        $this->assertPrivateProperty(3600, 'timeout', $runner);
     }
 
     public function testThrowsExceptionWhenTryingToSetCostOnSingleThread(): void
@@ -83,7 +83,7 @@ final class TaskBuilderTest extends TestCase
         $this->assertPrivateProperty('/path/to/working-directory', 'cwd', $runner);
         $this->assertPrivateProperty(['var1' => 'value1', 'var2' => 'value2"'], 'env', $runner);
         $this->assertPrivateProperty('input-values', 'input', $runner);
-        $this->assertPrivateProperty(3600.0, 'timeout', $runner);
+        $this->assertPrivateProperty(3600, 'timeout', $runner);
     }
 
     private static function assertPrivateProperty($expected, string $property, object $instance): void

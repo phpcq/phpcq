@@ -15,22 +15,14 @@ class ConsoleApplicationBuilder implements ConsoleApplicationBuilderInterface
     use ArgumentsBuilderTrait;
     use OptionsBuilderTrait;
 
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $description;
-
     /** @var array<string,ConsoleCommandBuilder> */
     private $commands = [];
 
     /** @var string */
     private $optionValueSeparator = ConsoleOptionBuilderInterface::VALUE_SEPARATOR_EQUAL_SIGN;
 
-    public function __construct(string $name, string $description)
+    public function __construct(private string $name, private string $description)
     {
-        $this->name = $name;
-        $this->description = $description;
     }
 
     #[\Override]

@@ -11,13 +11,9 @@ use Phpcq\PluginApi\Version10\Configuration\OptionsInterface;
 
 class Options implements OptionsInterface
 {
-    /** @var array<string, mixed> */
-    private $options;
-
     /** @param array<string, mixed> $options */
-    public function __construct(array $options)
+    public function __construct(private array $options)
     {
-        $this->options = $options;
     }
 
     #[\Override]

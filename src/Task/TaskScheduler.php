@@ -27,18 +27,6 @@ class TaskScheduler
      */
     private $tasks;
 
-    /** @var int */
-    private $parallelThreads;
-
-    /** @var OutputInterface */
-    private $output;
-
-    /** @var Report */
-    private $report;
-
-    /** @var bool */
-    private $fastFinish;
-
     /** @var bool */
     private $stop;
 
@@ -53,16 +41,12 @@ class TaskScheduler
 
     public function __construct(
         TasklistInterface $tasks,
-        int $parallelThreads,
-        Report $report,
-        OutputInterface $output,
-        bool $fastFinish
+        private readonly int $parallelThreads,
+        private readonly Report $report,
+        private readonly OutputInterface $output,
+        private readonly bool $fastFinish
     ) {
         $this->tasks           = $this->nextTaskGenerator($tasks);
-        $this->parallelThreads = $parallelThreads;
-        $this->report          = $report;
-        $this->output          = $output;
-        $this->fastFinish      = $fastFinish;
         $this->stop            = false;
         $this->success         = true;
         $this->runningThreads  = 0;

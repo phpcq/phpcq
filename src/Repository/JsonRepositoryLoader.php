@@ -44,27 +44,15 @@ use Phpcq\RepositoryDefinition\RepositoryLoader;
 class JsonRepositoryLoader
 {
     /**
-     * @var JsonFileLoaderInterface|null
-     */
-    private $jsonFileLoader;
-
-    /**
-     * @var PlatformRequirementCheckerInterface|null
-     */
-    private $requirementChecker;
-
-    /**
      * Create a new instance.
      *
      * @param PlatformRequirementCheckerInterface|null $requirementChecker
      * @param JsonFileLoaderInterface|null             $jsonFileLoader
      */
     public function __construct(
-        ?PlatformRequirementCheckerInterface $requirementChecker = null,
-        ?JsonFileLoaderInterface $jsonFileLoader = null
+        private readonly ?PlatformRequirementCheckerInterface $requirementChecker = null,
+        private readonly ?JsonFileLoaderInterface $jsonFileLoader = null
     ) {
-        $this->requirementChecker = $requirementChecker;
-        $this->jsonFileLoader     = $jsonFileLoader;
     }
 
     /** @psalm-param ?TRepositoryCheckSum $hash */

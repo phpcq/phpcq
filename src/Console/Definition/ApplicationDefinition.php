@@ -17,9 +17,6 @@ final class ApplicationDefinition extends AbstractDefinition
     /** @var list<ArgumentDefinition> */
     private $arguments = [];
 
-    /** @var string */
-    private $optionValueSeparator;
-
     /**
      * @param string               $name
      * @param string               $description
@@ -34,11 +31,9 @@ final class ApplicationDefinition extends AbstractDefinition
         array $options,
         array $arguments,
         array $commands,
-        string $optionValueSeparator
+        private readonly string $optionValueSeparator
     ) {
         parent::__construct($name, $description);
-
-        $this->optionValueSeparator = $optionValueSeparator;
 
         foreach ($commands as $command) {
             $this->commands[$command->getName()] = $command;

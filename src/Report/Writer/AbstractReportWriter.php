@@ -27,17 +27,9 @@ abstract class AbstractReportWriter implements ReportWriterInterface
     /** @var string */
     public const REPORT_FILE = '';
 
-    /** @var ReportBuffer */
-    protected $report;
+    protected XmlBuilder $xml;
 
-    /** @var XmlBuilder */
-    protected $xml;
-
-    /** @var string $targetPath */
-    private $targetPath;
-
-    /** @var Filesystem */
-    private $filesystem;
+    private readonly Filesystem $filesystem;
 
     #[\Override]
     public static function writeReport(
@@ -55,15 +47,21 @@ abstract class AbstractReportWriter implements ReportWriterInterface
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) - Implementations may use the parameter */
-    protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
-    {
-        $this->targetPath  = $targetPath;
-        $this->report      = $report;
+    protected function __construct(
+        private readonly string $targetPath,
+        protected ReportBuffer $report,
+        string $minimumSeverity
+    ) {
+        $this->report = $report;
         /**
          * @psalm-suppress MixedOperand - No way to indicate type of static references constants
          * @psalm-suppress MixedArgument
          */
-        $this->xml         = new XmlBuilder($targetPath, 'phpcq:' . static::ROOT_NODE_NAME, static::XML_NAMESPACE);
+        $this->xml         = new XmlBuilder(
+            $this->targetPath,
+            'phpcq:' . static::ROOT_NODE_NAME,
+            static::XML_NAMESPACE
+        );
         $this->filesystem  = new Filesystem();
         $this->filesystem->mkdir($this->targetPath);
     }

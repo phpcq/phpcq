@@ -75,17 +75,12 @@ final class UpdateCalculator
 
     /**  @psalm-param TOutputVerbosity $verbosity */
     public function __construct(
-        InstalledRepository $installed,
-        ResolverInterface $resolver,
-        Composer $composer,
-        OutputInterface $output,
-        int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
+        private readonly InstalledRepository $installed,
+        private readonly ResolverInterface $resolver,
+        private readonly Composer $composer,
+        private readonly OutputInterface $output,
+        private readonly int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
-        $this->installed = $installed;
-        $this->composer  = $composer;
-        $this->output    = $output;
-        $this->resolver  = $resolver;
-        $this->verbosity = $verbosity;
     }
 
     /**

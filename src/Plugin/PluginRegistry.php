@@ -42,7 +42,7 @@ final class PluginRegistry implements IteratorAggregate
         $plugin = require $filePath;
         assert(is_object($plugin));
         if (!$plugin instanceof PluginInterface) {
-            throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
+            throw new RuntimeException('Not a valid plugin: ' . $plugin::class);
         }
 
         $name = $plugin->getName();

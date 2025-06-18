@@ -42,12 +42,8 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  */
 final class PhpcqConfiguration
 {
-    /** @var OptionsInterface */
-    private $options;
-
-    public function __construct(OptionsInterface $options)
+    public function __construct(private readonly OptionsInterface $options)
     {
-        $this->options = $options;
     }
 
     /**
