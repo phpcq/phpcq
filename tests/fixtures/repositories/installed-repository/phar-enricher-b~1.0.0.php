@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationInterface;
 use Phpcq\PluginApi\Version10\EnvironmentInterface;
