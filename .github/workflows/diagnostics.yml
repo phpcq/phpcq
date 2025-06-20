@@ -21,12 +21,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.4'
-            phpcq_install: 'update'
-            phpcq_flags: ''
-          - php: '8.0'
-            phpcq_install: 'update'
-            phpcq_flags: ''
           - php: '8.1'
             phpcq_install: 'update'
             phpcq_flags: ''
