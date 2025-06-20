@@ -126,12 +126,12 @@ final class PhpcqConfigurationBuilder
             ->describeOptions('requirements', 'Override the requirements of the plugin')
             ->withNormalizer(
                 static function ($config) {
-                    if (! is_array($config)) {
+                    if (!is_array($config)) {
                         return $config;
                     }
 
                     foreach (array_keys($config) as $key) {
-                        if (! in_array($key, ['tools', 'composer'])) {
+                        if (!in_array($key, ['tools', 'composer'])) {
                             return ['tools' => $config];
                         }
                     }

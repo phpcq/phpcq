@@ -136,7 +136,7 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     public function selfValidate(): void
     {
         /** @psalm-suppress RedundantPropertyInitializationCheck */
-        if (! isset($this->valueBuilder)) {
+        if (!isset($this->valueBuilder)) {
             throw new RuntimeException('Prototype value type has to be defined');
         }
 

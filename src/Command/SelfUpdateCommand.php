@@ -159,7 +159,7 @@ final class SelfUpdateCommand extends AbstractCommand
 
         /** @psalm-var string|null $requiredVersion */
         $requiredVersion = $this->input->getArgument('version') ?: null;
-        $version         = $repository->findMatchingVersion($requiredVersion, ! $this->input->getOption('unsigned'));
+        $version         = $repository->findMatchingVersion($requiredVersion, !$this->input->getOption('unsigned'));
 
         if (!$this->shouldUpdate($installedVersion, $version->getVersion())) {
             return 0;

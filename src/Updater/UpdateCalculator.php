@@ -402,13 +402,13 @@ final class UpdateCalculator
         $requirements = new VersionRequirementList();
 
         foreach ($pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
-            if (! isset($overrides[$requirement->getName()])) {
+            if (!isset($overrides[$requirement->getName()])) {
                 $requirements->add($requirement);
 
                 continue;
             }
 
-            if (! ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
+            if (!ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Configured version constraint "%s" is not compatible with supported versions "%s"',

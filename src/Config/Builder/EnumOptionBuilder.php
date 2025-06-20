@@ -98,7 +98,7 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
     public function selfValidate(): void
     {
         /** @psalm-suppress RedundantPropertyInitializationCheck */
-        if (! isset($this->valueBuilder)) {
+        if (!isset($this->valueBuilder)) {
             throw new RuntimeException('Enum value type has to be defined');
         }
     }
