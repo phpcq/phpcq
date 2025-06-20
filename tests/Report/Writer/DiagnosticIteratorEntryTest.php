@@ -11,7 +11,7 @@ use Phpcq\Runner\Report\Writer\DiagnosticIteratorEntry;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Writer\DiagnosticIteratorEntry */
-class DiagnosticIteratorEntryTest extends TestCase
+final class DiagnosticIteratorEntryTest extends TestCase
 {
     public function testCanBeInstantiatedWithoutFileRange(): void
     {

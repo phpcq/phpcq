@@ -20,44 +20,24 @@ use function dirname;
 
 final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterface
 {
-    /** @var ProjectConfiguration */
-    private $projectConfig;
-
-    /** @var PluginRegistry */
-    private $plugins;
-
-    /** @var InstalledRepository */
-    private $installed;
-
-    /** @var array{string, list<string>} */
-    private $phpCli;
-
-    /** @var string */
-    private $tempDirectory;
-
     /** @var array<string,ConsoleApplicationBuilder>  */
-    private $applications = [];
+    private array $applications = [];
 
-    /** @var string|null */
-    private $currentPluginName;
+    private ?string $currentPluginName = null;
 
     /**
      * @param array{string, list<string>} $phpCli
      */
     public function __construct(
-        ProjectConfiguration $projectConfig,
-        PluginRegistry $plugins,
-        InstalledRepository $installed,
-        array $phpCli,
-        string $tempDirectory
+        private readonly ProjectConfiguration $projectConfig,
+        private readonly PluginRegistry $plugins,
+        private readonly InstalledRepository $installed,
+        private readonly array $phpCli,
+        private readonly string $tempDirectory
     ) {
-        $this->projectConfig = $projectConfig;
-        $this->plugins       = $plugins;
-        $this->installed     = $installed;
-        $this->phpCli        = $phpCli;
-        $this->tempDirectory = $tempDirectory;
     }
 
+    #[\Override]
     public function describeApplication(
         string $description,
         ?string $applicationName = null

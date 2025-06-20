@@ -15,23 +15,20 @@ class BufferedOutput implements OutputInterface
     /**
      * @var mixed[][]
      *
-     * @psalm-var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
+     * @var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
      */
-    private $buffer = [];
-
-    /** @var OutputInterface */
-    private $output;
+    private array $buffer = [];
 
     /**
      * BufferedOutput constructor.
      *
      * @param OutputInterface $output
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(private readonly OutputInterface $output)
     {
-        $this->output = $output;
     }
 
+    #[\Override]
     public function write(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -40,6 +37,7 @@ class BufferedOutput implements OutputInterface
         $this->buffer[] = [false, [$message, $verbosity, $channel]];
     }
 
+    #[\Override]
     public function writeln(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,

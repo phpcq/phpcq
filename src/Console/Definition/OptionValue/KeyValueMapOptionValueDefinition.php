@@ -6,18 +6,10 @@ namespace Phpcq\Runner\Console\Definition\OptionValue;
 
 final class KeyValueMapOptionValueDefinition extends OptionValueDefinition
 {
-    /** @var mixed */
-    private $defaultValue;
-
-    /** @var string */
-    private $valueSeparator;
-
     /** @param mixed $defaultValue */
-    public function __construct(bool $required, $defaultValue, string $valueSeparator)
+    public function __construct(bool $required, private $defaultValue, private readonly string $valueSeparator)
     {
         parent::__construct($required);
-        $this->defaultValue = $defaultValue;
-        $this->valueSeparator = $valueSeparator;
     }
 
     /** @return mixed */

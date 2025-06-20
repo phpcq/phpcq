@@ -10,20 +10,16 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 final class UpgradeToolTask extends AbstractInstallingToolTask
 {
-    /** @var ToolVersionInterface */
-    private $oldToolVersion;
-
     public function __construct(
         PluginVersionInterface $pluginVersion,
         ToolVersionInterface $toolVersion,
-        ToolVersionInterface $oldToolVersion,
+        private readonly ToolVersionInterface $oldToolVersion,
         bool $signed
     ) {
         parent::__construct($pluginVersion, $toolVersion, $signed);
-
-        $this->oldToolVersion = $oldToolVersion;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -44,6 +40,7 @@ final class UpgradeToolTask extends AbstractInstallingToolTask
             . $this->toolVersion->getVersion();
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -64,6 +61,7 @@ final class UpgradeToolTask extends AbstractInstallingToolTask
             . $this->toolVersion->getVersion();
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         if ($url = $this->oldToolVersion->getPharUrl()) {

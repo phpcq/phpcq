@@ -16,16 +16,13 @@ use function krsort;
 
 final class VersionsRepository
 {
-    private PlatformRequirementCheckerInterface $requirementChecker;
-
     /** @var list<Version> */
     private array $versions = [];
 
-    private VersionParser $parser;
+    private readonly VersionParser $parser;
 
-    public function __construct(PlatformRequirementCheckerInterface $requirementChecker)
+    public function __construct(private readonly PlatformRequirementCheckerInterface $requirementChecker)
     {
-        $this->requirementChecker = $requirementChecker;
         $this->parser = new VersionParser();
     }
 
@@ -70,7 +67,7 @@ final class VersionsRepository
                 continue;
             }
 
-            $normalized = $this->parser->normalize($version->getVersion());;
+            $normalized = $this->parser->normalize($version->getVersion());
 
             yield $normalized => $version;
         }

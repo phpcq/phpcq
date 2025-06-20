@@ -33,20 +33,9 @@ class Repository implements RepositoryInterface
     use RepositoryHasToolVersionTrait;
     use RepositoryHasPluginVersionTrait;
 
-    /**
-     * @var DefinitionRepositoryInterface
-     */
-    private $repository;
+    private DefinitionRepositoryInterface $repository;
 
-    /**
-     * @var VersionParser
-     */
-    private $parser;
-
-    /**
-     * @var PlatformRequirementCheckerInterface|null
-     */
-    private $requirementChecker;
+    private VersionParser $parser;
 
     /**
      * Repository constructor.
@@ -55,11 +44,10 @@ class Repository implements RepositoryInterface
      * @param DefinitionRepositoryInterface|null       $repository
      */
     public function __construct(
-        ?PlatformRequirementCheckerInterface $requirementChecker = null,
+        private ?PlatformRequirementCheckerInterface $requirementChecker = null,
         ?DefinitionRepositoryInterface $repository = null
     ) {
         $this->repository         = $repository ?: new DecoratedRepository();
-        $this->requirementChecker = $requirementChecker;
         $this->parser             = new VersionParser();
     }
 
@@ -72,6 +60,7 @@ class Repository implements RepositoryInterface
         $this->repository->getPlugin($pluginVersion->getName())->addVersion($pluginVersion);
     }
 
+    #[\Override]
     public function getPluginVersion(string $name, string $versionConstraint): PluginVersionInterface
     {
         if ($this->repository->hasPlugin($name)) {
@@ -84,6 +73,7 @@ class Repository implements RepositoryInterface
         throw new PluginVersionNotFoundException($name, $versionConstraint);
     }
 
+    #[\Override]
     public function iteratePluginVersions(): Generator
     {
         foreach ($this->repository->iteratePlugins() as $plugin) {
@@ -102,6 +92,7 @@ class Repository implements RepositoryInterface
         $this->repository->getTool($toolVersion->getName())->addVersion($toolVersion);
     }
 
+    #[\Override]
     public function getToolVersion(string $name, string $versionConstraint): ToolVersionInterface
     {
         // No tool specified, exit out.
@@ -116,10 +107,9 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return Traversable<int, ToolVersionInterface>
-     *
-     * @psalm-return \Generator<int, ToolVersionInterface, mixed, void>
+     * @return Generator<int, ToolVersionInterface, mixed, void>
      */
+    #[\Override]
     public function iterateToolVersions(): Generator
     {
         foreach ($this->repository->iterateTools() as $tool) {
@@ -130,9 +120,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return PluginVersionInterface[]
-     *
-     * @psalm-return array<string, PluginVersionInterface>
+     * @return array<string, PluginVersionInterface>
      */
     private function findMatchingPluginVersions(string $name, string $versionConstraint): array
     {
@@ -159,9 +147,7 @@ class Repository implements RepositoryInterface
     }
 
     /**
-     * @return ToolVersionInterface[]
-     *
-     * @psalm-return array<string, ToolVersionInterface>
+     * @return array<string, ToolVersionInterface>
      */
     private function findMatchingToolVersions(string $name, string $versionConstraint): array
     {

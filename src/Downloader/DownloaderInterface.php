@@ -35,9 +35,7 @@ interface DownloaderInterface
      * @param string     $url
      * @param string     $baseDir
      * @param bool       $force
-     * @param array|null $hash
-     *
-     * @psalm-param ?TRepositoryCheckSum $hash
+     * @param TRepositoryCheckSum|null $hash
      *
      * @return string
      */
@@ -49,12 +47,9 @@ interface DownloaderInterface
      * @param string     $url
      * @param string     $baseDir
      * @param bool       $force
-     * @param array|null $hash
+     * @param TRepositoryCheckSum|null $hash
      *
-     * @psalm-param ?TRepositoryCheckSum $hash
-     *
-     * @return array
-     * @psalm-return TJsonRepository
+     * @return TJsonRepository
      */
     public function downloadJsonFile(
         string $url,

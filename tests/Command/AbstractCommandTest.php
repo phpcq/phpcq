@@ -10,9 +10,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Command\AbstractCommand
  */
-class AbstractCommandTest extends TestCase
+final class AbstractCommandTest extends TestCase
 {
-    public function testConfigureHonorsConfigArgument()
+    public function testConfigureHonorsConfigArgument(): void
     {
         $command    = $this->getMockForAbstractClass(AbstractCommand::class);
         $definition = $command->getDefinition();

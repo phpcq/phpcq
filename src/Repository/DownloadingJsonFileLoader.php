@@ -18,23 +18,16 @@ use function dirname;
  */
 final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
 {
-    /** @var DownloaderInterface */
-    private $downloader;
-
-    /** @var bool */
-    private $force;
-
-    public function __construct(DownloaderInterface $downloader, bool $force = false)
+    public function __construct(private readonly DownloaderInterface $downloader, private readonly bool $force = false)
     {
-        $this->downloader = $downloader;
-        $this->force      = $force;
     }
 
     /**
-     * @psalm-param TRepositoryCheckSum|null $checksum
+     * @param TRepositoryCheckSum|null $checksum
      *
-     * @psalm-return TJsonRepository
+     * @return TJsonRepository
      */
+    #[\Override]
     public function load(string $file, ?array $checksum = null): array
     {
         return $this->downloader->downloadJsonFile($file, dirname($file), $this->force, $checksum);

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Exception\InvalidHashException
  */
-class InvalidHashExceptionTest extends TestCase
+final class InvalidHashExceptionTest extends TestCase
 {
     public function testInitialization(): void
     {

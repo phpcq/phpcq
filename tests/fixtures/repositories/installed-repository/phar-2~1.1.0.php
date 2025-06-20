@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Phpcq\PluginApi\Version10\Definition\ExecTaskDefinitionBuilderInterface;
 use Phpcq\PluginApi\Version10\EnvironmentInterface;
 use Phpcq\PluginApi\Version10\PluginInterface;

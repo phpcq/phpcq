@@ -19,17 +19,14 @@ abstract class AbstractComposerTask implements TaskInterface
 {
     protected const JSON_ENCODE_OPTIONS = JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT;
 
-    protected PluginVersionInterface $pluginVersion;
-
-    protected ?VersionRequirementList $requirements;
-
     /** @param ?VersionRequirementList $requirements */
-    public function __construct(PluginVersionInterface $pluginVersion, ?VersionRequirementList $requirements = null)
-    {
-        $this->pluginVersion = $pluginVersion;
-        $this->requirements  = $requirements;
+    public function __construct(
+        protected PluginVersionInterface $pluginVersion,
+        protected ?VersionRequirementList $requirements = null
+    ) {
     }
 
+    #[\Override]
     public function getPluginName(): string
     {
         return $this->pluginVersion->getName();
@@ -71,7 +68,7 @@ abstract class AbstractComposerTask implements TaskInterface
         $lockFile = $this->locatePath($context, 'composer.lock');
 
         if ($context->filesystem->exists($lockFile)) {
-            return file_get_contents($lockFile);
+            return file_get_contents($lockFile) ?: null;
         }
 
         return null;

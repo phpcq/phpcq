@@ -17,47 +17,17 @@ use Traversable;
 
 class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
 {
-    /** @var string */
-    private $taskName;
+    private ?Transformer $transformer = null;
 
-    /** @var string[] */
-    private $command;
+    private ?Process $process = null;
 
-    /** @var int */
-    private $cost;
-
-    /** @var string|null */
-    private $cwd;
-
-    /** @var string[]|null */
-    private $env;
-
-    /** @var resource|string|Traversable|null */
-    private $input;
-
-    /** @var int|float|null */
-    private $timeout;
-
-    /** @var TransformerFactory */
-    private $factory;
-
-    /** @var Transformer|null */
-    private $transformer;
-
-    /** @var Process|null */
-    private $process;
-
-    /** @var int|null */
-    private $errorOffset;
-
-    /** @var array<string,string> */
-    private $metadata;
+    private ?int $errorOffset = null;
 
     /**
      * @param string                           $taskName    The name of the task
      * @param string[]                         $command     The command to run and its arguments listed as separate
      *                                                      entries
-     * @param TransformerFactory               $transformer The output transformer
+     * @param TransformerFactory               $factory     The output transformer
      * @param string|null                      $cwd         The working directory or null to use the working dir of the
      *                                                      current PHP process
      * @param string[]|null                    $env         The environment variables or null to use the same
@@ -69,32 +39,25 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
      * @param array<string,string>             $metadata    Process metadata
      */
     public function __construct(
-        string $taskName,
-        array $command,
-        TransformerFactory $transformer,
-        int $cost,
-        string $cwd = null,
-        array $env = null,
-        $input = null,
-        ?float $timeout = 60,
-        array $metadata = []
+        private readonly string $taskName,
+        private readonly array $command,
+        private readonly TransformerFactory $factory,
+        private readonly int $cost,
+        private readonly ?string $cwd = null,
+        private readonly ?array $env = null,
+        private $input = null,
+        private readonly float|null|int $timeout = 60,
+        private readonly array $metadata = []
     ) {
-        $this->taskName = $taskName;
-        $this->command  = $command;
-        $this->cost     = $cost;
-        $this->cwd      = $cwd;
-        $this->env      = $env;
-        $this->input    = $input;
-        $this->timeout  = $timeout;
-        $this->factory  = $transformer;
-        $this->metadata = $metadata;
     }
 
+    #[\Override]
     public function getToolName(): string
     {
         return $this->taskName;
     }
 
+    #[\Override]
     public function runWithReport(TaskReportInterface $report): void
     {
         foreach ($this->metadata as $key => $value) {
@@ -117,6 +80,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         }
     }
 
+    #[\Override]
     public function tick(): bool
     {
         assert($this->process instanceof Process);
@@ -137,6 +101,7 @@ class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
         return !$finished;
     }
 
+    #[\Override]
     public function getCost(): int
     {
         return $this->cost;
