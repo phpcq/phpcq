@@ -92,8 +92,7 @@ final class InstalledRepositoryDumperTest extends TestCase
                                 '1d2e73a06f2883832c702f2888e7b1795b892698b8f4363f84d170970a0c9d2f8d2f923fd2c0582fa6ce' .
                                 '6f0dfeffdc3b296d016a35f517995e2c30dd83eef4f5',
                         ],
-                        'tools' => [
-                        ],
+                        'tools' => [],
                     ],
                     'plugin-name2' => [
                         'api-version'  => '1.0.0',
