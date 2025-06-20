@@ -181,8 +181,7 @@ final class CodeClimateReportWriter implements ReportWriterInterface
             $ranges[] = self::mapLocation($range);
             $diagnostics->next();
             $entry = $diagnostics->current();
-            assert($entry instanceof DiagnosticIteratorEntry);
-        } while ($diagnostics->valid() && $diagnostic === $entry->getDiagnostic());
+        } while ($diagnostics->valid() && $entry && $diagnostic === $entry->getDiagnostic());
 
         return $ranges;
     }
