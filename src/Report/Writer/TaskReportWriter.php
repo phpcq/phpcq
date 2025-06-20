@@ -21,7 +21,7 @@ final class TaskReportWriter extends AbstractReportWriter
      * @var Generator|DiagnosticIteratorEntry[]
      * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $diagnostics;
+    private readonly Generator|array $diagnostics;
 
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {

@@ -24,19 +24,16 @@ class TaskScheduler
     /**
      * @var Generator<array-key, ReportWritingTaskInterface>
      */
-    private $tasks;
+    private readonly Generator $tasks;
 
-    /** @var bool */
-    private $stop;
+    private bool $stop;
 
-    /** @var bool */
-    private $success;
+    private bool $success;
 
-    /** @var int */
-    private $runningThreads;
+    private int $runningThreads;
 
     /** @var SplObjectStorage<ParallelTaskInterface, TaskReportInterface> */
-    private $threads;
+    private readonly SplObjectStorage $threads;
 
     public function __construct(
         TasklistInterface $tasks,

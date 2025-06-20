@@ -43,17 +43,7 @@ use const PCRE_VERSION;
  */
 class PlatformInformation implements PlatformInformationInterface
 {
-    /** @var VersionParser */
-    public static $versionParser;
-
-    /** @var string */
-    private $phpVersion;
-
-    /** @param array<string, string> */
-    private $extensions;
-
-    /** @param array<string, string> */
-    private $libraries;
+    public static VersionParser $versionParser;
 
     /**
      * PlatformInformation constructor.
@@ -62,11 +52,8 @@ class PlatformInformation implements PlatformInformationInterface
      * @param array<string, string> $extensions
      * @param array<string, string> $libraries
      */
-    public function __construct(string $phpVersion, array $extensions, array $libraries)
+    public function __construct(private string $phpVersion, private array $extensions, private array $libraries)
     {
-        $this->phpVersion = $phpVersion;
-        $this->extensions = $extensions;
-        $this->libraries  = $libraries;
     }
 
     public static function createFromCurrentPlatform(): self

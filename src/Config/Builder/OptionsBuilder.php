@@ -12,8 +12,7 @@ use function sprintf;
 /** @extends AbstractOptionsBuilder<array<string,mixed>> */
 final class OptionsBuilder extends AbstractOptionsBuilder
 {
-    /** @var bool */
-    private $bypassValidation = false;
+    private bool $bypassValidation = false;
 
     /**
      * FIXME: Remove as soon we can validate referenced configurations

@@ -21,10 +21,9 @@ use function dirname;
 final class ExecTaskDefinitionBuilder implements ExecTaskDefinitionBuilderInterface
 {
     /** @var array<string,ConsoleApplicationBuilder>  */
-    private $applications = [];
+    private array $applications = [];
 
-    /** @var string|null */
-    private $currentPluginName;
+    private ?string $currentPluginName = null;
 
     /**
      * @param array{string, list<string>} $phpCli

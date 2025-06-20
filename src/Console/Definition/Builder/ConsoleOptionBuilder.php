@@ -14,29 +14,23 @@ use Phpcq\Runner\Console\Definition\OptionValue\SimpleOptionValueDefinition;
 
 final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
 {
-    /** @var string|null */
-    private $shortcut;
+    private ?string $shortcut = null;
 
-    /** @var bool */
-    private $required = false;
+    private bool $required = false;
 
-    /** @var bool  */
-    private $isArray = false;
+    private bool $isArray = false;
 
-    /** @var bool */
-    private $isValueRequired = false;
+    private bool $isValueRequired = false;
 
     /** @var array<string|int,mixed> */
-    private $optionValues = [];
+    private array $optionValues = [];
 
     /** @var array{defaultValue: mixed, valueSeparator: string}|null */
-    private $keyValueMap;
+    private ?array $keyValueMap = null;
 
-    /** @var string|null */
-    private $valueSeparator = null;
+    private ?string $valueSeparator = null;
 
-    /** @var bool */
-    private $onlyShortcut = false;
+    private bool $onlyShortcut = false;
 
     public function __construct(private readonly string $name, private readonly string $description)
     {

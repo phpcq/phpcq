@@ -9,13 +9,13 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
 final class ApplicationDefinition extends AbstractDefinition
 {
     /** @var array<string,CommandDefinition> */
-    private $commands = [];
+    private array $commands = [];
 
     /** @var list<OptionDefinition> */
-    private $options = [];
+    private array $options = [];
 
     /** @var list<ArgumentDefinition> */
-    private $arguments = [];
+    private array $arguments = [];
 
     /**
      * @param string               $name

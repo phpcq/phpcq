@@ -30,9 +30,8 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
 
     /**
      * @psalm-suppress PropertyNotSetInConstructor selfValidate() checks it.
-     * @var ConfigOptionBuilderInterface
      */
-    private $valueBuilder;
+    private ConfigOptionBuilderInterface $valueBuilder;
 
     #[\Override]
     public function ofOptionsValue(): OptionsBuilderInterface
@@ -136,8 +135,8 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
     #[\Override]
     public function selfValidate(): void
     {
-        /** @psalm-suppress DocblockTypeContradiction */
-        if (null === $this->valueBuilder) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (! isset($this->valueBuilder)) {
             throw new RuntimeException('Prototype value type has to be defined');
         }
 

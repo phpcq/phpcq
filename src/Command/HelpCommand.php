@@ -22,11 +22,9 @@ class HelpCommand extends AbstractCommand
 
     protected static $defaultName = 'help';
 
-    /** @var Command|null */
-    private $command;
+    private ?Command $command = null;
 
-    /** @var BaseHelpCommand */
-    private $help;
+    private BaseHelpCommand $help;
 
     public function __construct(?string $name = null)
     {

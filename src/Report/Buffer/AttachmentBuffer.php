@@ -11,18 +11,14 @@ use Phpcq\Runner\Exception\RuntimeException;
  */
 class AttachmentBuffer
 {
-    private readonly string $absolutePath;
-
     public function __construct(
-        string $absolutePath,
+        private readonly string $absolutePath,
         private readonly string $localName,
         private readonly ?string $mimeType
     ) {
         if ('/' !== $absolutePath[0]) {
             throw new RuntimeException('Absolute path expected but got: "' . $absolutePath . '"');
         }
-
-        $this->absolutePath = $absolutePath;
     }
 
     public function getAbsolutePath(): string

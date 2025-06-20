@@ -11,10 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class XmlBuilder
 {
-    /**
-     * @var DOMDocument
-     */
-    protected $document;
+    protected DOMDocument $document;
 
     public function __construct(protected string $targetPath, string $rootNode, private readonly ?string $rootNameSpace)
     {

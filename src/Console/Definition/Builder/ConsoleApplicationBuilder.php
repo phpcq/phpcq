@@ -16,10 +16,9 @@ class ConsoleApplicationBuilder implements ConsoleApplicationBuilderInterface
     use OptionsBuilderTrait;
 
     /** @var array<string,ConsoleCommandBuilder> */
-    private $commands = [];
+    private array $commands = [];
 
-    /** @var string */
-    private $optionValueSeparator = ConsoleOptionBuilderInterface::VALUE_SEPARATOR_EQUAL_SIGN;
+    private string $optionValueSeparator = ConsoleOptionBuilderInterface::VALUE_SEPARATOR_EQUAL_SIGN;
 
     public function __construct(private string $name, private string $description)
     {
