@@ -46,7 +46,6 @@ final class UpgradePluginTaskTest extends TestCase
             'installed' => '1.0.1',
         ];
 
-
         yield 'Test reinstall description' => [
             'description' => 'Will reinstall plugin foo in version 1.0.1',
             'desired'   => '1.0.1',

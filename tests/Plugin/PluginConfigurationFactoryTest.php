@@ -25,8 +25,7 @@ final class PluginConfigurationFactoryTest extends TestCase
     public function testCreate(): void
     {
         $configuration = new PhpcqConfiguration(new Options([
-            'plugins' => [
-            ],
+            'plugins' => [],
             'tasks' => [
                 'test' => [
                     'plugin' => 'phar-3',
@@ -60,8 +59,7 @@ final class PluginConfigurationFactoryTest extends TestCase
         $configuration = new PhpcqConfiguration(
             new Options(
                 [
-                    'plugins' => [
-                    ],
+                    'plugins' => [],
                     'tasks' => [
                         'test' => [
                             'plugin' => 'phar-3',
