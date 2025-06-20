@@ -19,7 +19,7 @@ final class RepositoryPool implements IteratorAggregate
     /**
      * @var RepositoryInterface[]
      */
-    private $repositories = [];
+    private array $repositories = [];
 
     public function addRepository(RepositoryInterface $repository): void
     {

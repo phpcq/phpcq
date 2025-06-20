@@ -21,17 +21,16 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
  */
 final class TaskReportBuffer
 {
-    /** @var string */
-    private $status;
+    private string $status;
 
     /** @var DiagnosticBuffer[] */
-    private $diagnostics = [];
+    private array $diagnostics = [];
 
     /** @var AttachmentBuffer[] */
-    private $attachments = [];
+    private array $attachments = [];
 
     /** @var DiffBuffer[] */
-    private $diffs = [];
+    private array $diffs = [];
 
     /** @param array<string,string> $metadata */
     public function __construct(

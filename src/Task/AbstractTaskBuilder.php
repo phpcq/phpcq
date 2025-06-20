@@ -14,36 +14,25 @@ use Traversable;
 
 abstract class AbstractTaskBuilder implements TaskBuilderInterface
 {
-    /**
-     * @var string|null
-     */
-    private $cwd = null;
+    private ?string $cwd = null;
 
     /**
      * @var string[]|null
      */
-    private $env = null;
+    private ?array $env = null;
 
     /**
      * @var resource|string|Traversable|null
      */
-    private $input = null;
+    private mixed $input = null;
 
-    /**
-     * @var int|float|null
-     */
-    private $timeout = null;
+    private int|float|null $timeout = null;
 
-    /**
-     * @var OutputTransformerFactoryInterface|null
-     */
-    private $transformerFactory;
+    private ?OutputTransformerFactoryInterface $transformerFactory = null;
 
-    /** @var bool */
-    private $parallel = true;
+    private bool $parallel = true;
 
-    /** @var int */
-    private $cost = 1;
+    private int $cost = 1;
 
     private bool $tty = false;
 
@@ -76,8 +65,8 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     }
 
     /**
-     * @param resource|string|Traversable $input The input as stream resource, scalar or \Traversable, or null for no
-     *                                           input
+     * @param resource|string|Traversable $input The input as a stream resource, scalar or \Traversable, or null
+     *                                                   for no input
      */
     #[Override]
     public function withInput($input): TaskBuilderInterface

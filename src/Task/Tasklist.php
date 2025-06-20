@@ -16,7 +16,7 @@ class Tasklist implements TasklistInterface
     /**
      * @var TaskInterface[]
      */
-    private $tasks = [];
+    private array $tasks = [];
 
     #[Override]
     public function add(TaskInterface $taskRunner): void

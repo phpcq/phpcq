@@ -17,7 +17,7 @@ class BufferedOutput implements OutputInterface
      *
      * @var list<array{bool, array{string, TOutputVerbosity, TOutputChannel}}>
      */
-    private $buffer = [];
+    private array $buffer = [];
 
     /**
      * BufferedOutput constructor.

@@ -8,8 +8,7 @@ use Phpcq\Runner\Exception\RuntimeException;
 
 trait TypeTrait
 {
-    /** @var string|null */
-    private $type;
+    private ?string $type = null;
 
     private function declareType(string $requestedType): void
     {

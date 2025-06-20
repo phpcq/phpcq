@@ -12,8 +12,7 @@ use function implode;
 
 class ConfigurationValidationErrorException extends InvalidConfigurationException
 {
-    /** @var Throwable|null $rootError */
-    private $rootError;
+    private ?Throwable $rootError = null;
 
     /** @param list<string> $path */
     protected function __construct(

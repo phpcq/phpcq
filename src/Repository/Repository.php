@@ -33,15 +33,9 @@ class Repository implements RepositoryInterface
     use RepositoryHasToolVersionTrait;
     use RepositoryHasPluginVersionTrait;
 
-    /**
-     * @var DefinitionRepositoryInterface
-     */
-    private $repository;
+    private DefinitionRepositoryInterface $repository;
 
-    /**
-     * @var VersionParser
-     */
-    private $parser;
+    private VersionParser $parser;
 
     /**
      * Repository constructor.

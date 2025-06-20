@@ -13,13 +13,13 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 final class DiagnosticBuffer
 {
     /** @var null|FileRangeBuffer[] */
-    private $fileRanges;
+    private ?array $fileRanges = null;
 
     /** @var null|string[] */
-    private $classNames = [];
+    private ?array $classNames = [];
 
     /** @var null|string[] */
-    private $categories = [];
+    private ?array $categories = [];
 
     /**
      * @param null|FileRangeBuffer[] $fileRanges

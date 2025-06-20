@@ -12,11 +12,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class AttachmentBuilder implements AttachmentBuilderInterface
 {
-    /** @var string|null */
-    private $mimeType;
+    private ?string $mimeType = null;
 
-    /** @var string|null */
-    private $absolutePath;
+    private ?string $absolutePath = null;
 
     /**
      * @var callable

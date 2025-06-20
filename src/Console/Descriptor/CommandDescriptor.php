@@ -9,8 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CommandDescriptor extends AbstractDescriptor
 {
-    /** @var OptionsDescriptor */
-    private $optionDescriptor;
+    private readonly OptionsDescriptor $optionDescriptor;
 
     public function __construct(OutputInterface $output)
     {

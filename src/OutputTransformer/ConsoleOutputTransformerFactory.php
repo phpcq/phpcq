@@ -29,12 +29,9 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
     public function createFor(TaskReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
-            /** @var BufferedLineReader */
-            private $data;
-            /** @var string */
-            private $stdErr = '';
-            /** @var string */
-            private $stdOut = '';
+            private readonly BufferedLineReader $data;
+            private string $stdErr = '';
+            private string $stdOut = '';
 
             /**
              * Create a new instance.

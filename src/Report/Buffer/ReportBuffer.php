@@ -22,20 +22,17 @@ use function array_values;
  */
 final class ReportBuffer
 {
-    /** @var string */
-    private $status = 'started';
+    private string $status = 'started';
 
-    /** @var DateTimeImmutable */
-    private $startedAt;
+    private readonly DateTimeImmutable $startedAt;
 
-    /** @var DateTimeImmutable|null */
-    private $completedAt;
+    private ?DateTimeImmutable $completedAt = null;
 
     /**
      * @var array<string,TaskReportBuffer>
      * @var TaskReportBuffer[]
      */
-    private $taskReports = [];
+    private array $taskReports = [];
 
     public function __construct()
     {

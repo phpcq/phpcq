@@ -32,38 +32,30 @@ abstract class AbstractCommand extends Command
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var InputInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $input;
+    protected InputInterface $input;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var OutputInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $output;
+    protected OutputInterface $output;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var string
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $phpcqPath;
+    protected string $phpcqPath;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var PhpcqConfiguration
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $config;
+    protected PhpcqConfiguration $config;
 
     #[\Override]
     protected function configure(): void
@@ -187,8 +179,11 @@ abstract class AbstractCommand extends Command
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if ($this->output && $this->output->isVeryVerbose()) {
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
+        if (isset($this->output) && $this->output->isVeryVerbose()) {
             $this->output->writeln('Using HOME: ' . $phpcqPath);
         }
 
@@ -197,7 +192,11 @@ abstract class AbstractCommand extends Command
 
     protected function getWrapWidth(): int
     {
-        if ($this->output instanceof ConsoleOutputInterface) {
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
+        if (isset($this->output) && $this->output instanceof ConsoleOutputInterface) {
             return (new Terminal())->getWidth();
         }
 
@@ -233,8 +232,8 @@ abstract class AbstractCommand extends Command
      */
     protected function createProjectConfiguration(int $maxCores): ProjectConfiguration
     {
-        /** @psalm-suppress DocblockTypeContradiction */
-        if ($this->config === null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->config)) {
             throw new RuntimeException(
                 'Phpcq configuration is not set. Method is only available within doExecute().'
             );

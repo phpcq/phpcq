@@ -61,11 +61,9 @@ final class RunCommand extends AbstractCommand
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var PluginConfigurationFactory
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $pluginConfigFactory;
+    private PluginConfigurationFactory $pluginConfigFactory;
 
     #[\Override]
     protected function configure(): void

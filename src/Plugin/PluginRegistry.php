@@ -22,7 +22,7 @@ use function get_class;
 final class PluginRegistry implements IteratorAggregate
 {
     /** @var array<string, PluginInterface> */
-    private $plugins = [];
+    private array $plugins = [];
 
     public static function buildFromInstalledRepository(InstalledRepository $repository): self
     {

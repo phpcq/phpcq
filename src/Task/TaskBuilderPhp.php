@@ -8,10 +8,7 @@ use Phpcq\PluginApi\Version10\Task\PhpTaskBuilderInterface;
 
 final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilderInterface
 {
-    /**
-     * @var bool
-     */
-    private $disableXDebug = false;
+    private bool $disableXDebug = false;
 
     /**
      * Create a new instance.

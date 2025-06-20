@@ -41,20 +41,16 @@ final class SelfUpdateCommand extends AbstractCommand
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var DownloaderInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $downloader;
+    private DownloaderInterface $downloader;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var Filesystem
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $filesystem;
+    private Filesystem $filesystem;
 
     private readonly PlatformRequirementCheckerInterface $requirementChecker;
 

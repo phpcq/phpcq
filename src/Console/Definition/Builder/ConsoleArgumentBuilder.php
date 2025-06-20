@@ -9,14 +9,11 @@ use Phpcq\Runner\Console\Definition\ArgumentDefinition;
 
 class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
 {
-    /** @var bool */
-    private $isArray = false;
+    private bool $isArray = false;
 
-    /** @var bool */
-    private $required = false;
+    private bool $required = false;
 
-    /** @var mixed */
-    private $defaultValue;
+    private mixed $defaultValue = null;
 
     public function __construct(private readonly string $name, private readonly string $description)
     {

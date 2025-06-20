@@ -16,14 +16,7 @@ use function sprintf;
  */
 abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 {
-    /** @var string */
-    protected $name;
-
-    /** @var string */
-    protected $description;
-
-    /** @var bool */
-    protected $required = false;
+    protected bool $required = false;
 
     /** @var TType|null */
     protected $defaultValue;
@@ -32,20 +25,11 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
      * @var callable[]
      * @var list<callable(mixed): mixed>
      */
-    protected $normalizer = [];
-
-    /**
-     * @var callable[]
-     * @var list<callable(mixed): void>
-     */
-    protected $validators;
+    protected array $normalizer = [];
 
     /** @param list<TValidator> $validators */
-    public function __construct(string $name, string $description, array $validators = [])
+    public function __construct(protected string $name, protected string $description, protected array $validators = [])
     {
-        $this->name        = $name;
-        $this->description = $description;
-        $this->validators  = $validators;
     }
 
     /**

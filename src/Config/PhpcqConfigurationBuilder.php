@@ -20,8 +20,7 @@ use function is_array;
 
 final class PhpcqConfigurationBuilder
 {
-    /** @var OptionsBuilder */
-    private $builder;
+    private readonly OptionsBuilder $builder;
 
     public function __construct()
     {

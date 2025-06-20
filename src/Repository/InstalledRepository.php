@@ -12,10 +12,10 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 final class InstalledRepository
 {
     /** @var array<string, InstalledPlugin> */
-    private $plugins = [];
+    private array $plugins = [];
 
     /** @var array<string, ToolVersionInterface> */
-    private $tools = [];
+    private array $tools = [];
 
     public function addPlugin(InstalledPlugin $plugin): void
     {

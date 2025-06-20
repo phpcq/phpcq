@@ -20,9 +20,8 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
 
     /**
      * @psalm-suppress PropertyNotSetInConstructor selfValidate() checks it.
-     * @var ConfigOptionBuilderInterface
      */
-    private $valueBuilder;
+    private ConfigOptionBuilderInterface $valueBuilder;
 
     #[\Override]
     public function isRequired(): EnumOptionBuilderInterface
@@ -98,8 +97,8 @@ final class EnumOptionBuilder extends AbstractOptionBuilder implements EnumOptio
     #[\Override]
     public function selfValidate(): void
     {
-        /** @psalm-suppress DocblockTypeContradiction */
-        if (null === $this->valueBuilder) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (! isset($this->valueBuilder)) {
             throw new RuntimeException('Enum value type has to be defined');
         }
     }

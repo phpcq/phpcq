@@ -18,7 +18,6 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface
 use Throwable;
 
 use function array_key_exists;
-use function assert;
 
 trait OptionsBuilderTrait
 {
@@ -26,7 +25,7 @@ trait OptionsBuilderTrait
      * @var ConfigOptionBuilderInterface[]
      * @var array<string, ConfigOptionBuilderInterface>
      */
-    protected $options = [];
+    protected array $options = [];
 
     public function describeOptions(string $name, string $description): OptionsBuilderInterface
     {

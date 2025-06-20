@@ -18,10 +18,7 @@ use function getcwd;
 
 final class UpdateExecutor
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
+    private readonly Filesystem $filesystem;
 
     public function __construct(
         private readonly DownloaderInterface $downloader,

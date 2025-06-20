@@ -46,41 +46,32 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var string
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $cachePath;
+    protected string $cachePath;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var JsonRepositoryLoader
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $repositoryLoader;
+    protected JsonRepositoryLoader $repositoryLoader;
 
-    /** @var InstalledRepository|null */
-    protected $lockFileRepository;
+    protected ?InstalledRepository $lockFileRepository = null;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var DownloaderInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $downloader;
+    protected DownloaderInterface $downloader;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var Composer
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $composer;
+    protected Composer $composer;
 
     #[\Override]
     protected function configure(): void
@@ -115,14 +106,20 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     {
         parent::prepare($input);
 
-        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
         if (!isset($this->output)) {
-            // In auto completion output does not exist.
+            // In auto-completion output does not exist.
             return;
         }
 
         $cachePath = $this->input->getOption('cache');
-        /** @psalm-suppress RedundantConditionGivenDocblockType - Psalm got confused by isset($this->output) */
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
         assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 

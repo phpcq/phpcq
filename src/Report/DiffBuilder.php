@@ -12,8 +12,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class DiffBuilder implements DiffBuilderInterface
 {
-    /** @var string|null */
-    private $absolutePath;
+    private ?string $absolutePath = null;
 
     /**
      * @var callable(DiffBuffer, DiffBuilder): void

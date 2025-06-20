@@ -26,7 +26,7 @@ final class ConsoleWriter
      * @var Generator|DiagnosticIteratorEntry[]
      * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $diagnostics;
+    private Generator|array $diagnostics;
 
     public static function writeReport(
         OutputInterface $output,

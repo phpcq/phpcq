@@ -17,14 +17,11 @@ use Traversable;
 
 class ParallelizableProcessTask implements ReportWritingParallelTaskInterface
 {
-    /** @var Transformer|null */
-    private $transformer;
+    private ?Transformer $transformer = null;
 
-    /** @var Process|null */
-    private $process;
+    private ?Process $process = null;
 
-    /** @var int|null */
-    private $errorOffset;
+    private ?int $errorOffset = null;
 
     /**
      * @param string                           $taskName    The name of the task

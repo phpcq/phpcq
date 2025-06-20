@@ -17,13 +17,13 @@ final class FileReportWriter extends AbstractReportWriter
     /**
      * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $diagnostics;
+    private readonly Generator $diagnostics;
 
     /**
      * @var DOMElement[]
      * @var array<string,DOMElement>
      */
-    private $fileElements = [];
+    private array $fileElements = [];
 
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {

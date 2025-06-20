@@ -19,12 +19,8 @@ abstract class AbstractDumper
 {
     protected const JSON_OPTIONS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR;
 
-    /** @var Filesystem */
-    protected $filesystem;
-
-    public function __construct(Filesystem $filesystem)
+    public function __construct(protected Filesystem $filesystem)
     {
-        $this->filesystem = $filesystem;
     }
 
     protected function encodePluginRequirements(PluginRequirements $requirements): stdClass
