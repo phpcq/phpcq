@@ -12,18 +12,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class SignatureFileDownloader implements FileDownloaderInterface
 {
-    /** @var DownloaderInterface */
-    private $fileDownloader;
-
-    /** @var OutputInterface */
-    private $output;
-
-    public function __construct(DownloaderInterface $fileDownloader, OutputInterface $output)
-    {
-        $this->fileDownloader = $fileDownloader;
-        $this->output         = $output;
+    public function __construct(
+        private readonly DownloaderInterface $fileDownloader,
+        private readonly OutputInterface $output
+    ) {
     }
 
+    #[\Override]
     public function downloadFile(string $url): string
     {
         try {

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class EnumOptionBuilderTest extends TestCase
+final class EnumOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
@@ -25,12 +25,8 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofStringValues('bar');
         $builder->selfValidate();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 'BAR';
-        }));
-        $this->assertSame($builder, $builder->withNormalizer(function ($var) {
-            return $var . ' 2';
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 'BAR'));
+        $this->assertSame($builder, $builder->withNormalizer(fn($var) => $var . ' 2'));
         $this->assertEquals('BAR 2', $builder->normalizeValue('bar'));
     }
 

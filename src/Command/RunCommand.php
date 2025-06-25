@@ -61,12 +61,11 @@ final class RunCommand extends AbstractCommand
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var PluginConfigurationFactory
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $pluginConfigFactory;
+    private PluginConfigurationFactory $pluginConfigFactory;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('run')->setDescription('Run configured build tasks');
@@ -137,6 +136,7 @@ final class RunCommand extends AbstractCommand
         parent::configure();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         // Stage 1: preparation.
@@ -188,6 +188,7 @@ final class RunCommand extends AbstractCommand
         return  $exitCode;
     }
 
+    #[\Override]
     protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         if ($input->mustSuggestArgumentValuesFor('task')) {
@@ -313,9 +314,9 @@ final class RunCommand extends AbstractCommand
             );
         }
 
-        /** @psalm-var list<string> $reports */
+        /** @var list<string> $reports */
         $reports = (array) $this->input->getOption('report');
-        $targetPath = getcwd() . '/' . $projectConfig->getArtifactOutputPath();
+        $targetPath = ((string) getcwd()) . '/' . $projectConfig->getArtifactOutputPath();
 
         foreach ($reports as $format) {
             if (!isset(self::REPORT_FORMATS[$format])) {
@@ -341,13 +342,13 @@ final class RunCommand extends AbstractCommand
             try {
                 $process->mustRun();
                 return (int) trim($process->getOutput());
-            } catch (Throwable $ignored) {
+            } catch (Throwable) {
                 // Fallback to grep.
                 $process = new Process(['grep', '-c', '^processor', '/proc/cpuinfo']);
                 try {
                     $process->mustRun();
                     return (int) trim($process->getOutput());
-                } catch (Throwable $ignored) {
+                } catch (Throwable) {
                     // Ignore exception and return the 1 default below.
                 }
             }

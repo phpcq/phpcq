@@ -13,22 +13,6 @@ use Phpcq\Runner\Repository\InstalledPlugin;
 class TaskFactory implements TaskFactoryInterface
 {
     /**
-     * The installed plugin.
-     *
-     * @var InstalledPlugin
-     */
-    private $installed;
-
-    /** @var string */
-    private $taskName;
-
-    /** @var string */
-    private $phpCliBinary;
-
-    /** @var list<string> */
-    private $phpArguments;
-
-    /**
      * Create a new instance.
      *
      * @param InstalledPlugin $installed
@@ -36,15 +20,15 @@ class TaskFactory implements TaskFactoryInterface
      * @param list<string>    $phpArguments
      */
     public function __construct(
-        string $taskName,
-        InstalledPlugin $installed,
-        string $phpCliBinary,
-        array $phpArguments
+        private readonly string $taskName,
+        /**
+         * The installed plugin.
+         */
+        private readonly InstalledPlugin $installed,
+        private readonly string $phpCliBinary,
+        private readonly array $phpArguments,
+        private readonly bool $tty = false
     ) {
-        $this->taskName     = $taskName;
-        $this->installed    = $installed;
-        $this->phpCliBinary = $phpCliBinary;
-        $this->phpArguments = $phpArguments;
     }
 
     /**
@@ -52,9 +36,16 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilder
      */
+    #[\Override]
     public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface
     {
-        return new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
+        $builder = new TaskBuilder($this->taskName, array_values($command), $this->getMetadata($toolName));
+
+        if ($this->tty) {
+            return $builder->withTty();
+        }
+
+        return $builder;
     }
 
     /**
@@ -63,6 +54,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilderPhp
      */
+    #[\Override]
     public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         $pharUrl = $this->installed->getTool($toolName)->getPharUrl();
@@ -79,6 +71,7 @@ class TaskFactory implements TaskFactoryInterface
      *
      * @return TaskBuilderPhp
      */
+    #[\Override]
     public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface
     {
         return new TaskBuilderPhp(

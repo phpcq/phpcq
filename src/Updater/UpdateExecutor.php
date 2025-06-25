@@ -18,52 +18,19 @@ use function getcwd;
 
 final class UpdateExecutor
 {
-    /**
-     * @var DownloaderInterface
-     */
-    private $downloader;
-
-    /**
-     * @var string
-     */
-    private $installedPluginPath;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var SignatureVerifier
-     */
-    private $verifier;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var Composer
-     */
-    private $composer;
+    private readonly Filesystem $filesystem;
 
     public function __construct(
-        DownloaderInterface $downloader,
-        SignatureVerifier $verifier,
-        string $pluginPath,
-        OutputInterface $output,
-        Composer $composer
+        private readonly DownloaderInterface $downloader,
+        private readonly SignatureVerifier $verifier,
+        private readonly string $installedPluginPath,
+        private readonly OutputInterface $output,
+        private readonly Composer $composer
     ) {
-        $this->downloader          = $downloader;
-        $this->verifier            = $verifier;
-        $this->installedPluginPath = $pluginPath;
-        $this->output              = $output;
         $this->filesystem          = new Filesystem();
-        $this->composer            = $composer;
     }
 
-    /** @psalm-param list<TaskInterface> $tasks */
+    /** @param list<TaskInterface> $tasks */
     public function execute(array $tasks): void
     {
         $context = new UpdateContext(
@@ -87,6 +54,6 @@ final class UpdateExecutor
         $dumper->dump($context->installedRepository, $this->installedPluginPath . '/installed.json');
 
         $dumper = new LockFileDumper($filesystem);
-        $dumper->dump($context->lockRepository, getcwd() . '/.phpcq.lock');
+        $dumper->dump($context->lockRepository, ((string) getcwd()) . '/.phpcq.lock');
     }
 }

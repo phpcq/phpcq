@@ -11,20 +11,11 @@ use Phpcq\Runner\Exception\RuntimeException;
  */
 class DiffBuffer
 {
-    /** @var string */
-    private $absolutePath;
-
-    /** @var string */
-    private $localName;
-
-    public function __construct(string $absolutePath, string $localName)
+    public function __construct(private readonly string $absolutePath, private readonly string $localName)
     {
         if ('/' !== $absolutePath[0]) {
             throw new RuntimeException('Absolute path expected but got: "' . $absolutePath . '"');
         }
-
-        $this->absolutePath = $absolutePath;
-        $this->localName    = $localName;
     }
 
     public function getAbsolutePath(): string

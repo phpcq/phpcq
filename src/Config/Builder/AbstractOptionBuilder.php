@@ -16,42 +16,24 @@ use function sprintf;
  */
 abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
 {
-    /** @var string */
-    protected $name;
+    protected bool $required = false;
 
-    /** @var string */
-    protected $description;
-
-    /** @var bool */
-    protected $required = false;
-
-    /** @psalm-var TType|null */
+    /** @var TType|null */
     protected $defaultValue;
 
     /**
      * @var callable[]
-     * @psalm-var list<callable(mixed): mixed>
+     * @var list<callable(mixed): mixed>
      */
-    protected $normalizer = [];
+    protected array $normalizer = [];
 
-    /**
-     * @var callable[]
-     * @psalm-var list<callable(mixed): void>
-     */
-    protected $validators;
-
-    /** @psalm-param list<TValidator> $validators */
-    public function __construct(string $name, string $description, array $validators = [])
+    /** @param list<TValidator> $validators */
+    public function __construct(protected string $name, protected string $description, protected array $validators = [])
     {
-        $this->name        = $name;
-        $this->description = $description;
-        $this->validators  = $validators;
     }
 
     /**
-     * @return $this
-     *
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */
@@ -63,9 +45,9 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     }
 
     /**
-     * @psalm-param callable(mixed): void $normalizer
+     * @param callable(mixed): void $normalizer
      *
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */
@@ -77,10 +59,9 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     }
 
     /**
-     * @psalm-param callable(mixed): void $validator
+     * @param callable(mixed): void $validator
      *
-     * @return $this
-     * @psalm-return TReturnType
+     * @return TReturnType
      * @psalm-suppress InvalidReturnStatement - Works for child classes
      * @psalm-suppress InvalidReturnType - Works for child classes
      */
@@ -91,6 +72,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw)
     {
         if (null === $raw) {
@@ -111,6 +93,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {
@@ -135,6 +118,7 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
         }
     }
 
+    #[\Override]
     public function selfValidate(): void
     {
     }

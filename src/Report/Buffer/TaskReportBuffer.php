@@ -21,33 +21,23 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
  */
 final class TaskReportBuffer
 {
-    /** @var string */
-    private $taskName;
-
-    /** @var string */
-    private $status;
+    private string $status;
 
     /** @var DiagnosticBuffer[] */
-    private $diagnostics = [];
+    private array $diagnostics = [];
 
     /** @var AttachmentBuffer[] */
-    private $attachments = [];
+    private array $attachments = [];
 
     /** @var DiffBuffer[] */
-    private $diffs = [];
+    private array $diffs = [];
 
-    /** @var string */
-    private $reportName;
-
-    /** @psalm-var array<string,string> */
-    private $metadata;
-
-    /** @psalm-param array<string,string> $metadata */
-    public function __construct(string $taskName, string $reportName, array $metadata = [])
-    {
-        $this->taskName   = $taskName;
-        $this->reportName = $reportName;
-        $this->metadata   = $metadata;
+    /** @param array<string,string> $metadata */
+    public function __construct(
+        private readonly string $taskName,
+        private readonly string $reportName, /** @var array<string,string> */
+        private array $metadata = []
+    ) {
         $this->status     = ReportInterface::STATUS_STARTED;
     }
 
@@ -102,9 +92,7 @@ final class TaskReportBuffer
     }
 
     /**
-     * @return Generator|DiagnosticBuffer[]
-     *
-     * @psalm-return Generator<int, DiagnosticBuffer, mixed, void>
+     * @return Generator<int, DiagnosticBuffer, mixed, void>
      */
     public function getDiagnostics(): Generator
     {
@@ -126,8 +114,7 @@ final class TaskReportBuffer
     /**
      * Get attachments.
      *
-     * @return AttachmentBuffer[]
-     * @psalm-return list<AttachmentBuffer>
+     * @return list<AttachmentBuffer>
      */
     public function getAttachments(): array
     {
@@ -137,18 +124,17 @@ final class TaskReportBuffer
     /**
      * Get diffs.
      *
-     * @return DiffBuffer[]
-     * @psalm-return list<DiffBuffer>
+     * @return list<DiffBuffer>
      */
     public function getDiffs(): array
     {
         return array_values($this->diffs);
     }
 
-    /** @psalm-return TTaskReportSummary */
+    /** @return TTaskReportSummary */
     public function countDiagnosticsGroupedBySeverity(): array
     {
-        /** @psalm-var TTaskReportSummary $summary */
+        /** @var TTaskReportSummary $summary */
         $summary = [
             TaskReportInterface::SEVERITY_FATAL    => 0,
             TaskReportInterface::SEVERITY_MAJOR    => 0,

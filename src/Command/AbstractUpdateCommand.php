@@ -46,42 +46,34 @@ abstract class AbstractUpdateCommand extends AbstractCommand
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var string
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $cachePath;
+    protected string $cachePath;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var JsonRepositoryLoader
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $repositoryLoader;
+    protected JsonRepositoryLoader $repositoryLoader;
 
-    /** @var InstalledRepository|null */
-    protected $lockFileRepository;
+    protected ?InstalledRepository $lockFileRepository = null;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var DownloaderInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $downloader;
+    protected DownloaderInterface $downloader;
 
     /**
      * Only valid when examined from within performUpdate().
      *
-     * @var Composer
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $composer;
+    protected Composer $composer;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -109,18 +101,25 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         parent::configure();
     }
 
+    #[\Override]
     protected function prepare(InputInterface $input): void
     {
         parent::prepare($input);
 
-        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
         if (!isset($this->output)) {
-            // In auto completion output does not exist.
+            // In auto-completion output does not exist.
             return;
         }
 
         $cachePath = $this->input->getOption('cache');
-        /** @psalm-suppress RedundantConditionGivenDocblockType - Psalm got confused by isset($this->output) */
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
         assert(is_string($cachePath));
         $this->createDirectory($cachePath);
 
@@ -146,8 +145,11 @@ abstract class AbstractUpdateCommand extends AbstractCommand
             $this->config->getComposer(),
             $this->findPhpCli()
         );
+
+        $this->composer->installBinary();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $requirementChecker = !$this->input->getOption('ignore-platform-reqs')
@@ -195,10 +197,10 @@ abstract class AbstractUpdateCommand extends AbstractCommand
         return 0;
     }
 
-    /** @psalm-return list<TaskInterface> */
+    /** @return list<TaskInterface> */
     abstract protected function calculateTasks(): array;
 
-    /** @psalm-param list<TaskInterface> $tasks */
+    /** @param list<TaskInterface> $tasks */
     protected function executeTasks(array $tasks): void
     {
         $gnupgPath = $this->phpcqPath . '/gnupg';
@@ -224,7 +226,7 @@ abstract class AbstractUpdateCommand extends AbstractCommand
 
     protected function getLockFileName(): string
     {
-        return getcwd() . '/.phpcq.lock';
+        return ((string) getcwd()) . '/.phpcq.lock';
     }
 
     protected function getUntrustedKeyStrategy(): TrustKeyStrategyInterface

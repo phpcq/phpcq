@@ -38,7 +38,7 @@ abstract class AbstractInstallingPluginTask extends AbstractPluginTask
         $signatureName = sprintf('%1$s~%2$s.asc', $pluginVersion->getName(), $pluginVersion->getVersion());
         $signaturePath = $context->installedPluginPath . '/' . $pluginVersion->getName() . '/' . $signatureName;
         file_put_contents($signaturePath, $signature);
-        $result = $context->signatureVerifier->verify(file_get_contents($pharPath), $signature);
+        $result = $context->signatureVerifier->verify((string) file_get_contents($pharPath), $signature);
 
         if ($requireSigned && !$result->isValid()) {
             $context->filesystem->remove($pharPath);

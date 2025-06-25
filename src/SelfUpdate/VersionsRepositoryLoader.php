@@ -7,7 +7,6 @@ namespace Phpcq\Runner\SelfUpdate;
 use Phpcq\RepositoryDefinition\VersionRequirement;
 use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Phpcq\Runner\Downloader\DownloaderInterface;
-use Phpcq\Runner\Downloader\FileDownloader;
 use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
 
 /**
@@ -24,21 +23,15 @@ use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
  */
 final class VersionsRepositoryLoader
 {
-    private PlatformRequirementCheckerInterface $requirementChecker;
-
-    private DownloaderInterface $downloader;
-
     public function __construct(
-        PlatformRequirementCheckerInterface $requirementChecker,
-        DownloaderInterface $downloader
+        private readonly PlatformRequirementCheckerInterface $requirementChecker,
+        private readonly DownloaderInterface $downloader
     ) {
-        $this->requirementChecker = $requirementChecker;
-        $this->downloader = $downloader;
     }
 
     public function load(string $file): VersionsRepository
     {
-        /** @psalm-var TVersionRepository $json */
+        /** @var TVersionRepository $json */
         $json         = $this->downloader->downloadJsonFile($file, '', true);
         $repository   = new VersionsRepository($this->requirementChecker);
 

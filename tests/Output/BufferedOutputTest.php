@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Output\BufferedOutput
  */
-class BufferedOutputTest extends TestCase
+final class BufferedOutputTest extends TestCase
 {
     public function testWriteOnRelease(): void
     {

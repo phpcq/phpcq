@@ -117,7 +117,7 @@ final class OptionsDescriptor extends AbstractDescriptor
     /** @param mixed $defaultValue */
     private function describeDefaultValue($defaultValue): string
     {
-        return ' <comment>[default: ' . json_encode($defaultValue) . ']</comment>';
+        return ' <comment>[default: ' . ((string) json_encode($defaultValue)) . ']</comment>';
     }
 
     /** @return Generator<string,string> */
@@ -170,7 +170,7 @@ final class OptionsDescriptor extends AbstractDescriptor
         /** @psalm-suppress MixedAssignment */
         foreach ($value->getParams() as $name => $default) {
             if ($default !== null) {
-                $params[] = '[' . $name . '=' . json_encode($default) . ']';
+                $params[] = '[' . $name . '=' . ((string) json_encode($default)) . ']';
             } else {
                 $params[] = '[' . $name . ']';
             }

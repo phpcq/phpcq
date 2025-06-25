@@ -8,52 +8,17 @@ use Phpcq\Runner\Console\Definition\OptionValue\OptionValueDefinition;
 
 final class OptionDefinition extends AbstractDefinition
 {
-    /**
-     * @var string|null
-     */
-    private $shortcut;
-
-    /**
-     * @var bool
-     */
-    private $required;
-
-    /**
-     * @var bool
-     */
-    private $isArray;
-
-    /**
-     * @var OptionValueDefinition|null
-     */
-    private $optionValue;
-
-    /**
-     * @var string
-     */
-    private $valueSeparator;
-
-    /** @var bool */
-    private $onlyShortcut;
-
     public function __construct(
         string $name,
         string $description,
-        ?string $shortcut,
-        bool $required,
-        bool $isArray,
-        bool $onlyShortcut,
-        ?OptionValueDefinition $optionValue,
-        string $valueSeparator
+        private readonly ?string $shortcut,
+        private readonly bool $required,
+        private readonly bool $isArray,
+        private readonly bool $onlyShortcut,
+        private readonly ?OptionValueDefinition $optionValue,
+        private readonly string $valueSeparator
     ) {
         parent::__construct($name, $description);
-
-        $this->shortcut = $shortcut;
-        $this->required = $required;
-        $this->isArray = $isArray;
-        $this->optionValue = $optionValue;
-        $this->valueSeparator = $valueSeparator;
-        $this->onlyShortcut = $onlyShortcut;
     }
 
     public function getShortcut(): ?string
