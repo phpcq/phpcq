@@ -57,7 +57,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         $builder = new FileDiagnosticBuilder(
             $this,
             $file,
-            /** @param FileRangeBuffer[] $rangeBuffers */
+            /** @param list<FileRangeBuffer> $rangeBuffers */
             function (array $rangeBuffers, FileDiagnosticBuilder $builder) {
                 foreach ($rangeBuffers as $rangeBuffer) {
                     $this->files[] = $rangeBuffer;

@@ -12,16 +12,16 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
 {
     /**
-     * @var array<int, FileRangeBuffer>
+     * @var list<FileRangeBuffer>
      */
     private array $ranges = [];
 
     /**
-     * @var callable(array<int, FileRangeBuffer>, FileDiagnosticBuilder): void
+     * @var callable(list<FileRangeBuffer>, FileDiagnosticBuilder): void
      */
     private $callback;
 
-    /** @param callable(array<int, FileRangeBuffer>, FileDiagnosticBuilder): void $callback */
+    /** @param callable(list<FileRangeBuffer>, FileDiagnosticBuilder): void $callback */
     public function __construct(
         private readonly DiagnosticBuilderInterface $parent,
         private readonly string $file,
