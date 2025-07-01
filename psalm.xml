@@ -24,6 +24,8 @@
             </errorLevel>
         </RiskyTruthyFalsyComparison>
         <MissingClassConstType>
+            <!-- Silence MissingClassConstType errors - we are on PHP 8.1 level so far.
+            The findUnusedIssueHandlerSuppression can be removed when requiring PHP 8.2 -->
             <errorLevel type="suppress">
                 <directory name="src"/>
             </errorLevel>
