@@ -12,19 +12,19 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
  */
 final class DiagnosticBuffer
 {
-    /** @var null|FileRangeBuffer[] */
+    /** @var null|list<FileRangeBuffer> */
     private ?array $fileRanges = null;
 
-    /** @var null|string[] */
+    /** @var null|list<string> */
     private ?array $classNames = [];
 
-    /** @var null|string[] */
+    /** @var null|list<string> */
     private ?array $categories = [];
 
     /**
-     * @param null|FileRangeBuffer[] $fileRanges
-     * @param null|string[] $classNames
-     * @param null|string[] $categories
+     * @param null|list<FileRangeBuffer> $fileRanges
+     * @param null|list<string> $classNames
+     * @param null|list<string> $categories
      *
      * @param TDiagnosticSeverity $severity
      */

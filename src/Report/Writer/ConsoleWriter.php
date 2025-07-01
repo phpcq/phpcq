@@ -23,10 +23,9 @@ final class ConsoleWriter
     use RenderRangeTrait;
 
     /**
-     * @var Generator|DiagnosticIteratorEntry[]
      * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private Generator|array $diagnostics;
+    private Generator $diagnostics;
 
     public static function writeReport(
         OutputInterface $output,

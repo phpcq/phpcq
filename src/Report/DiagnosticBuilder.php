@@ -15,7 +15,7 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
  */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {
-    /** @var FileRangeBuffer[] */
+    /** @var list<FileRangeBuffer> */
     private array $files = [];
 
     private ?string $source = null;
@@ -26,15 +26,15 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
      */
     private $callback;
 
-    /** @var FileDiagnosticBuilder[] */
+    /** @var array<string, FileDiagnosticBuilder> */
     private array $pendingFiles = [];
 
     private ?string $externalInfoUrl = null;
 
-    /** @var string[] */
+    /** @var array<string, string> */
     private array $classNames = [];
 
-    /** @var string[] */
+    /** @var array<string, string> */
     private array $categories = [];
 
     /**
