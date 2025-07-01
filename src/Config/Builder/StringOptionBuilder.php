@@ -13,7 +13,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\StringOptionBuilderInterface
  */
 final class StringOptionBuilder extends AbstractOptionBuilder implements StringOptionBuilderInterface
 {
-    /** @psalm-param list<TValidator> $validators */
+    /** @param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         parent::__construct($name, $description, $validators);
@@ -21,21 +21,25 @@ final class StringOptionBuilder extends AbstractOptionBuilder implements StringO
         $this->withValidator(Validator::stringValidator());
     }
 
+    #[\Override]
     public function isRequired(): StringOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): StringOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): StringOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(string $defaultValue): StringOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

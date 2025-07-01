@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Phpcq\Runner\Plugin;
 
 use Generator;
@@ -20,7 +22,7 @@ use function get_class;
 final class PluginRegistry implements IteratorAggregate
 {
     /** @var array<string, PluginInterface> */
-    private $plugins = [];
+    private array $plugins = [];
 
     public static function buildFromInstalledRepository(InstalledRepository $repository): self
     {
@@ -42,7 +44,7 @@ final class PluginRegistry implements IteratorAggregate
         $plugin = require $filePath;
         assert(is_object($plugin));
         if (!$plugin instanceof PluginInterface) {
-            throw new RuntimeException('Not a valid plugin: ' . get_class($plugin));
+            throw new RuntimeException('Not a valid plugin: ' . $plugin::class);
         }
 
         $name = $plugin->getName();
@@ -61,10 +63,9 @@ final class PluginRegistry implements IteratorAggregate
     }
 
     /**
-     * @return PluginInterface[]|Generator|iterable
-     *
-     * @psalm-return Generator<string, PluginInterface, mixed, void>
+     * @return Generator<string, PluginInterface, mixed, void>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         yield from $this->plugins;

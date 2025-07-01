@@ -9,7 +9,7 @@ use Phpcq\Runner\Report\Buffer\DiffBuffer;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Buffer\DiffBuffer */
-class DiffBufferTest extends TestCase
+final class DiffBufferTest extends TestCase
 {
     public function testConstructionCreatesWithCorrectValues(): void
     {

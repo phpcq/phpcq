@@ -9,20 +9,17 @@ use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
 final class SymfonyOutput implements OutputInterface
 {
-    /** @var SymfonyOutputInterface */
-    private $output;
-
     /**
      * SymfonyOutput constructor.
      *
      * @param SymfonyOutputInterface $output
      */
-    public function __construct(SymfonyOutputInterface $output)
+    public function __construct(private readonly SymfonyOutputInterface $output)
     {
-        $this->output = $output;
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    #[\Override]
     public function write(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -32,6 +29,7 @@ final class SymfonyOutput implements OutputInterface
     }
 
     /** @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+    #[\Override]
     public function writeln(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,

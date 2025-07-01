@@ -32,11 +32,13 @@ final class ChainPlugin implements ConfigurationPluginInterface
         );
     }
 
+    #[\Override]
     public function getName(): string
     {
         return 'chain';
     }
 
+    #[\Override]
     public function describeConfiguration(PluginConfigurationBuilderInterface $configOptionsBuilder): void
     {
         $configOptionsBuilder

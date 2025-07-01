@@ -10,7 +10,7 @@ use function sys_get_temp_dir;
 
 trait TemporaryFileProducingTestTrait
 {
-    private static $tempdir;
+    private static string $tempdir;
 
     public static function setUpBeforeClass(): void
     {

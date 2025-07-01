@@ -10,6 +10,7 @@ use function sprintf;
 
 final class RemovePluginTask extends AbstractPluginTask
 {
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -19,11 +20,13 @@ final class RemovePluginTask extends AbstractPluginTask
         );
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return sprintf('Removing %s version %s', $this->pluginVersion->getName(), $this->pluginVersion->getVersion());
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $context->filesystem->remove($context->installedPluginPath . '/' . $this->pluginVersion->getName());

@@ -6,19 +6,10 @@ namespace Phpcq\Runner\Console\Definition\OptionValue;
 
 final class SimpleOptionValueDefinition extends OptionValueDefinition
 {
-    /** @var mixed */
-    private $defaultValue;
-
-    /** @var string|null */
-    private $valueName;
-
     /** @param mixed $defaultValue */
-    public function __construct(bool $required, $defaultValue, ?string $valueName)
+    public function __construct(bool $required, private $defaultValue, private readonly ?string $valueName)
     {
         parent::__construct($required);
-
-        $this->defaultValue = $defaultValue;
-        $this->valueName = $valueName;
     }
 
     /**

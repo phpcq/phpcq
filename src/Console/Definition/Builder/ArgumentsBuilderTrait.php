@@ -11,7 +11,7 @@ use Phpcq\Runner\Console\Definition\ArgumentDefinition;
 trait ArgumentsBuilderTrait
 {
     /** @var array<string,ConsoleArgumentBuilder> */
-    private $arguments = [];
+    private array $arguments = [];
 
     public function describeArgument(string $name, string $description): ConsoleArgumentBuilderInterface
     {

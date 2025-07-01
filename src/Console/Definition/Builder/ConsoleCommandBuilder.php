@@ -15,16 +15,8 @@ final class ConsoleCommandBuilder implements ConsoleCommandBuilderInterface
     use ArgumentsBuilderTrait;
     use OptionsBuilderTrait;
 
-    /** @var string */
-    private $name;
-
-    /** @var string */
-    private $description;
-
-    public function __construct(string $name, string $description)
+    public function __construct(private string $name, private string $description)
     {
-        $this->name        = $name;
-        $this->description = $description;
     }
 
     /** @SuppressWarnings(PHPMD.LongVariable) */

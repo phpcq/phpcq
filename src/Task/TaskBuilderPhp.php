@@ -8,25 +8,7 @@ use Phpcq\PluginApi\Version10\Task\PhpTaskBuilderInterface;
 
 final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilderInterface
 {
-    /**
-     * @var string
-     */
-    private $phpCliBinary;
-
-    /**
-     * @var list<string>
-     */
-    private $phpArguments;
-
-    /**
-     * @var list<string>
-     */
-    private $arguments;
-
-    /**
-     * @var bool
-     */
-    private $disableXDebug = false;
+    private bool $disableXDebug = false;
 
     /**
      * Create a new instance.
@@ -38,17 +20,15 @@ final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilder
      */
     public function __construct(
         string $taskName,
-        string $phpCliBinary,
-        array $phpArguments,
-        array $arguments,
+        private readonly string $phpCliBinary,
+        private readonly array $phpArguments,
+        private readonly array $arguments,
         array $metadata
     ) {
         parent::__construct($taskName, $metadata);
-        $this->phpCliBinary = $phpCliBinary;
-        $this->phpArguments = $phpArguments;
-        $this->arguments  = $arguments;
     }
 
+    #[\Override]
     public function withoutXDebug(): PhpTaskBuilderInterface
     {
         $this->disableXDebug = true;
@@ -56,6 +36,7 @@ final class TaskBuilderPhp extends AbstractTaskBuilder implements PhpTaskBuilder
         return $this;
     }
 
+    #[\Override]
     protected function buildCommand(): array
     {
         $phpArguments = $this->phpArguments;

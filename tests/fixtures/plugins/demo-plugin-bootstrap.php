@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Phpcq\PluginApi\Version10\BuildConfigInterface;
 use Phpcq\PluginApi\Version10\ConfigurationOptionsBuilderInterface;
 use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
@@ -28,11 +30,8 @@ return new class implements ConfigurationPluginInterface {
     public function processConfig(array $config, BuildConfigInterface $buildConfig): iterable
     {
         yield new class ($config) implements TaskRunnerInterface {
-            private $config;
-
-            public function __construct(array $config)
+            public function __construct(private readonly array $config)
             {
-                $this->config = $config;
             }
 
             public function run(OutputInterface $output): void

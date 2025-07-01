@@ -12,7 +12,7 @@ use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Buffer\TaskReportBuffer */
-class TaskReportBufferTest extends TestCase
+final class TaskReportBufferTest extends TestCase
 {
     public function testConstructionCreatesEmpty(): void
     {

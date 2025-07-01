@@ -20,8 +20,7 @@ use function is_array;
 
 final class PhpcqConfigurationBuilder
 {
-    /** @var OptionsBuilder */
-    private $builder;
+    private readonly OptionsBuilder $builder;
 
     public function __construct()
     {
@@ -59,7 +58,7 @@ final class PhpcqConfigurationBuilder
         );
     }
 
-    /** @psalm-return array<string,mixed> */
+    /** @return array<string,mixed> */
     public function processConfig(array $raw): array
     {
         $this->builder->selfValidate();
@@ -73,7 +72,7 @@ final class PhpcqConfigurationBuilder
             throw ConfigurationValidationErrorException::fromError(['phpcq'], $exception);
         }
 
-        /** @psalm-var array<string,mixed> $processed */
+        /** @var array<string,mixed> $processed */
         return $processed;
     }
 
@@ -127,12 +126,12 @@ final class PhpcqConfigurationBuilder
             ->describeOptions('requirements', 'Override the requirements of the plugin')
             ->withNormalizer(
                 static function ($config) {
-                    if (! is_array($config)) {
+                    if (!is_array($config)) {
                         return $config;
                     }
 
                     foreach (array_keys($config) as $key) {
-                        if (! in_array($key, ['tools', 'composer'])) {
+                        if (!in_array($key, ['tools', 'composer'])) {
                             return ['tools' => $config];
                         }
                     }

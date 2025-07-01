@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Repository;
 
+use Generator;
 use IteratorAggregate;
+use Override;
 use Phpcq\Runner\Exception\PluginVersionNotFoundException;
 use Phpcq\Runner\Exception\ToolVersionNotFoundException;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
@@ -15,9 +17,9 @@ use Traversable;
 final class RepositoryPool implements IteratorAggregate
 {
     /**
-     * @var RepositoryInterface[]
+     * @var list<RepositoryInterface>
      */
-    private $repositories = [];
+    private array $repositories = [];
 
     public function addRepository(RepositoryInterface $repository): void
     {
@@ -59,10 +61,9 @@ final class RepositoryPool implements IteratorAggregate
     /**
      * Iterate over all repositories.
      *
-     * @return \Generator|RepositoryInterface[]
-     *
-     * @psalm-return \Generator<array-key, RepositoryInterface, mixed, void>
+     * @return Generator<array-key, RepositoryInterface, mixed, void>
      */
+    #[Override]
     public function getIterator(): Traversable
     {
         yield from $this->repositories;
