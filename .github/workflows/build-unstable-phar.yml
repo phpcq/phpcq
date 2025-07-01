@@ -83,10 +83,17 @@ jobs:
           cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
           echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
 
+      - name: Sign phar file
+        uses: sfuhrm/gpg-sign-action@main
+        with:
+          path: ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/phar.phar
+          gpg-key: "${{ secrets.GPG_KEYFILE }}"
+          gpg-passphrase: "${{ secrets.GPG_PASSPHRASE }}"
+
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar" "phar.asc"
 
       - name: Generate Commit Message
         run: |
