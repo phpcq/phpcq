@@ -17,7 +17,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     private ?string $cwd = null;
 
     /**
-     * @var string[]|null
+     * @var array<string, string>|null
      */
     private ?array $env = null;
 
@@ -54,7 +54,9 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     }
 
     /**
-     * @param string[] $env
+     * @param array<string, string> $env
+     *
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     #[Override]
     public function withEnv(array $env): TaskBuilderInterface

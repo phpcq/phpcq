@@ -23,13 +23,13 @@ final class TaskReportBuffer
 {
     private string $status;
 
-    /** @var DiagnosticBuffer[] */
+    /** @var list<DiagnosticBuffer> */
     private array $diagnostics = [];
 
-    /** @var AttachmentBuffer[] */
+    /** @var list<AttachmentBuffer> */
     private array $attachments = [];
 
-    /** @var DiffBuffer[] */
+    /** @var list<DiffBuffer> */
     private array $diffs = [];
 
     /** @param array<string,string> $metadata */
@@ -118,7 +118,7 @@ final class TaskReportBuffer
      */
     public function getAttachments(): array
     {
-        return array_values($this->attachments);
+        return $this->attachments;
     }
 
     /**
@@ -128,7 +128,7 @@ final class TaskReportBuffer
      */
     public function getDiffs(): array
     {
-        return array_values($this->diffs);
+        return $this->diffs;
     }
 
     /** @return TTaskReportSummary */

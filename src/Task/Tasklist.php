@@ -14,7 +14,7 @@ use Traversable;
 class Tasklist implements TasklistInterface
 {
     /**
-     * @var TaskInterface[]
+     * @var list<TaskInterface>
      */
     private array $tasks = [];
 
@@ -24,9 +24,7 @@ class Tasklist implements TasklistInterface
         $this->tasks[] = $taskRunner;
     }
 
-    /**
-     * @return \Generator<array-key, TaskInterface, mixed, void>
-     */
+    /** {@inheritDoc} */
     #[Override]
     public function getIterator(): Traversable
     {

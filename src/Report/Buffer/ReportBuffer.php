@@ -30,7 +30,6 @@ final class ReportBuffer
 
     /**
      * @var array<string,TaskReportBuffer>
-     * @var TaskReportBuffer[]
      */
     private array $taskReports = [];
 

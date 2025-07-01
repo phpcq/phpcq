@@ -17,7 +17,7 @@ use Traversable;
 final class RepositoryPool implements IteratorAggregate
 {
     /**
-     * @var RepositoryInterface[]
+     * @var list<RepositoryInterface>
      */
     private array $repositories = [];
 
