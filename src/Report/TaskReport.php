@@ -21,13 +21,13 @@ class TaskReport implements TaskReportInterface
 {
     private readonly Filesystem $filesystem;
 
-    /** @var DiagnosticBuilder[] */
+    /** @var array<string, DiagnosticBuilder> */
     private array $pendingDiagnostics = [];
 
-    /** @var AttachmentBuilder[] */
+    /** @var array<string, AttachmentBuilder> */
     private array $pendingAttachments = [];
 
-    /** @var DiffBuilder[] */
+    /** @var array<string, DiffBuilder> */
     private array $pendingDiffs = [];
 
     public function __construct(
