@@ -29,7 +29,7 @@ PATTERN;
         // OpenSSL 1 used 1.2.3a style versioning, 3+ uses semver
         $patch = '';
         if (version_compare($matches['version'], '3.0.0', '<')) {
-            $patch = '.' . self::convertAlphaVersionToIntVersion($matches['patch']);
+            $patch = '.' . ((string) self::convertAlphaVersionToIntVersion($matches['patch']));
         }
 
         $isFips = str_contains($matches['suffix'], 'fips');
@@ -44,7 +44,7 @@ PATTERN;
             return null;
         }
 
-        return $matches['major'] . '.' . self::convertAlphaVersionToIntVersion($matches['minor']);
+        return $matches['major'] . '.' . ((string) self::convertAlphaVersionToIntVersion($matches['minor']));
     }
 
     public static function parseZoneinfoVersion(string $zoneinfoVersion): ?string
@@ -53,7 +53,7 @@ PATTERN;
             return null;
         }
 
-        return $matches['year'] . '.' . self::convertAlphaVersionToIntVersion($matches['revision']);
+        return $matches['year'] . '.' . ((string) self::convertAlphaVersionToIntVersion($matches['revision']));
     }
 
     public static function convertLibxpmVersionId(int $versionId): string

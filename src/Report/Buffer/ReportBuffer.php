@@ -45,7 +45,7 @@ final class ReportBuffer
         if (isset($this->taskReports[$reportName])) {
             $number = 0;
             do {
-                $reportName = $taskName . '-' . ++$number;
+                $reportName = $taskName . '-' . ((string) ++$number);
             } while (isset($this->taskReports[$reportName]));
         }
         return $this->taskReports[$reportName] = new TaskReportBuffer($taskName, $reportName, $metadata);

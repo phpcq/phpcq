@@ -87,10 +87,10 @@ final class GithubActionConsoleWriter
 
         $buffer = 'file=' . $range->getFile();
         if (null !== ($line = $range->getStartLine())) {
-            $buffer .= ',line=' . $line;
+            $buffer .= ',line=' . (string) $line;
         }
         if (null !== ($column = $range->getStartColumn())) {
-            $buffer .= ',col=' . $column;
+            $buffer .= ',col=' . (string) $column;
         }
 
         return $buffer;
