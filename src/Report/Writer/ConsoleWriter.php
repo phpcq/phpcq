@@ -142,7 +142,7 @@ final class ConsoleWriter
             $conclusion .= ': ';
             $prefix = '';
             foreach ($summary as $severity => $count) {
-                $conclusion .= $prefix . $count . ' ' . $severity . ($count > 1 ? 's' : '');
+                $conclusion .= $prefix . ((string) $count) . ' ' . $severity . ($count > 1 ? 's' : '');
                 $prefix = ', ';
             }
         }

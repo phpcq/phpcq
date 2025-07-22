@@ -204,7 +204,7 @@ class TaskScheduler
                 OutputInterface::CHANNEL_STDERR
             );
             $output->writeln(
-                $exception->getFile() . ' on line ' . $exception->getLine(),
+                $exception->getFile() . ' on line ' . (string) $exception->getLine(),
                 OutputInterface::VERBOSITY_VERBOSE,
                 OutputInterface::CHANNEL_STDERR
             );
