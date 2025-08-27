@@ -39,7 +39,7 @@ jobs:
 
     steps:
       - name: Pull source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
