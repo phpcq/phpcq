@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class ToolNotFoundExceptionTest extends TestCase
 {
-    public function testInitializesCorrectly()
+    public function testInitializesCorrectly(): void
     {
         $previous  = new Exception();
         $exception = new ToolVersionNotFoundException('supertool', '^1.0.0.0', 0, $previous);

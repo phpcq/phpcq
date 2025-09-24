@@ -22,34 +22,30 @@ use function array_values;
  */
 final class ReportBuffer
 {
-    /** @var string */
-    private $status = 'started';
+    private string $status = 'started';
 
-    /** @var DateTimeImmutable */
-    private $startedAt;
+    private readonly DateTimeImmutable $startedAt;
 
-    /** @var DateTimeImmutable|null */
-    private $completedAt;
+    private ?DateTimeImmutable $completedAt = null;
 
     /**
-     * @psalm-var array<string,TaskReportBuffer>
-     * @var TaskReportBuffer[]
+     * @var array<string,TaskReportBuffer>
      */
-    private $taskReports = [];
+    private array $taskReports = [];
 
     public function __construct()
     {
         $this->startedAt = new DateTimeImmutable();
     }
 
-    /** @psalm-param array<string,string> $metadata */
+    /** @param array<string,string> $metadata */
     public function createTaskReport(string $taskName, array $metadata = []): TaskReportBuffer
     {
         $reportName = $taskName;
         if (isset($this->taskReports[$reportName])) {
             $number = 0;
             do {
-                $reportName = $taskName . '-' . ++$number;
+                $reportName = $taskName . '-' . ((string) ++$number);
             } while (isset($this->taskReports[$reportName]));
         }
         return $this->taskReports[$reportName] = new TaskReportBuffer($taskName, $reportName, $metadata);
@@ -77,9 +73,7 @@ final class ReportBuffer
     }
 
     /**
-     * @return TaskReportBuffer[]|iterable
-     *
-     * @psalm-return list<TaskReportBuffer>
+     * @return list<TaskReportBuffer>
      */
     public function getTaskReports(): iterable
     {
@@ -87,11 +81,11 @@ final class ReportBuffer
     }
 
     /**
-     * @psalm-return TReportSummary
+     * @return TReportSummary
      */
     public function countDiagnosticsGroupedBySeverity(): array
     {
-        /** @psalm-var TReportSummary $summary */
+        /** @var TReportSummary $summary */
         $summary = [
             TaskReportInterface::SEVERITY_FATAL    => 0,
             TaskReportInterface::SEVERITY_MAJOR    => 0,

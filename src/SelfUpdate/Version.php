@@ -8,24 +8,12 @@ use Phpcq\RepositoryDefinition\VersionRequirementList;
 
 final class Version
 {
-    private string $version;
-
-    private string $pharFile;
-
-    private ?string $signatureFile;
-
-    private VersionRequirementList $requirements;
-
     public function __construct(
-        string $version,
-        VersionRequirementList $requirements,
-        string $pharFile,
-        ?string $signatureFile = null
+        private readonly string $version,
+        private readonly VersionRequirementList $requirements,
+        private readonly string $pharFile,
+        private readonly ?string $signatureFile = null
     ) {
-        $this->version       = $version;
-        $this->requirements  = $requirements;
-        $this->pharFile      = $pharFile;
-        $this->signatureFile = $signatureFile;
     }
 
     public function getVersion(): string

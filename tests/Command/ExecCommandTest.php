@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Command\ExecCommand
  */
-class ExecCommandTest extends TestCase
+final class ExecCommandTest extends TestCase
 {
     public function prepareProvider(): array
     {

@@ -20,12 +20,14 @@ final class ValidateCommand extends AbstractCommand
 {
     use InstalledRepositoryLoadingCommandTrait;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('validate')->setDescription('Validate the phpcq installation');
         parent::configure();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $this->output->writeln('Validate phpcq configuration', OutputInterface::VERBOSITY_VERY_VERBOSE);
@@ -57,7 +59,7 @@ final class ValidateCommand extends AbstractCommand
      */
     private function validatePlugin(PluginRegistry $plugins, string $taskName): bool
     {
-        /** @psalm-var array<string,array<string,bool>> */
+        /** @var array<string,array<string,bool>> */
         static $cache = [];
 
         $configValues = $this->config->getConfigForTask($taskName);
@@ -83,7 +85,7 @@ final class ValidateCommand extends AbstractCommand
         $plugin->describeConfiguration($configOptionsBuilder);
 
         try {
-            /** @psalm-var array<string,mixed> $processed */
+            /** @var array<string,mixed> $processed */
             $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
             $configOptionsBuilder->validateValue($processed);
 

@@ -11,26 +11,11 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class XmlBuilder
 {
-    /**
-     * @var string
-     */
-    protected $targetPath;
+    protected DOMDocument $document;
 
-    /**
-     * @var DOMDocument
-     */
-    protected $document;
-
-    /**
-     * @var string|null
-     */
-    private $rootNameSpace;
-
-    public function __construct(string $targetPath, string $rootNode, ?string $rootNameSpace)
+    public function __construct(protected string $targetPath, string $rootNode, private readonly ?string $rootNameSpace)
     {
-        $this->targetPath    = $targetPath;
         $this->document      = new DOMDocument('1.0');
-        $this->rootNameSpace = $rootNameSpace;
         $this->document->appendChild($this->createElement($rootNode));
     }
 

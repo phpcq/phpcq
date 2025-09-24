@@ -12,7 +12,7 @@ use Phpcq\Runner\Console\Definition\OptionDefinition;
 trait OptionsBuilderTrait
 {
     /** @var array<string,ConsoleOptionBuilder> */
-    private $options = [];
+    private array $options = [];
 
     public function describeOption(string $name, string $description): ConsoleOptionBuilderInterface
     {

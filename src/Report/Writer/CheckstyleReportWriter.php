@@ -16,16 +16,11 @@ final class CheckstyleReportWriter implements ReportWriterInterface
 {
     public const ROOT_NODE_NAME = 'checkstyle';
 
-    /**
-     * @var DiagnosticIterator
-     */
-    protected $diagnostics;
+    protected DiagnosticIterator $diagnostics;
 
-    /**
-     * @var XmlBuilder
-     */
-    protected $xml;
+    protected XmlBuilder $xml;
 
+    #[\Override]
     public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void
     {
         if ($report->getStatus() === ReportInterface::STATUS_STARTED) {

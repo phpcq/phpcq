@@ -11,7 +11,7 @@ use Phpcq\Runner\Task\SingleProcessTaskFactory;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Task\SingleProcessTaskFactory */
-class SingleProcessTaskFactoryTest extends TestCase
+final class SingleProcessTaskFactoryTest extends TestCase
 {
     public function testBuildRunProcess(): void
     {

@@ -8,16 +8,19 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 final class RemoveComposerDependenciesTask extends AbstractComposerTask
 {
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return 'Will remove composer dependencies of plugin ' . $this->getPluginName();
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return 'Removing composer dependencies of plugin ' . $this->getPluginName();
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $context->filesystem->remove(

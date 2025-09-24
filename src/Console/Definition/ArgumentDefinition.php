@@ -6,23 +6,15 @@ namespace Phpcq\Runner\Console\Definition;
 
 final class ArgumentDefinition extends AbstractDefinition
 {
-    /** @var bool */
-    private $required;
-
-    /** @var bool */
-    private $isArray;
-
-    /** @var mixed */
-    private $defaultValue;
-
     /** @param mixed $defaultValue */
-    public function __construct(string $name, string $description, bool $required, bool $isArray, $defaultValue)
-    {
+    public function __construct(
+        string $name,
+        string $description,
+        private readonly bool $required,
+        private readonly bool $isArray,
+        private $defaultValue
+    ) {
         parent::__construct($name, $description);
-
-        $this->required     = $required;
-        $this->isArray      = $isArray;
-        $this->defaultValue = $defaultValue;
     }
 
     public function isRequired(): bool

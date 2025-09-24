@@ -4,41 +4,36 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Report;
 
+use Override;
 use Phpcq\PluginApi\Version10\Report\DiagnosticBuilderInterface;
 use Phpcq\PluginApi\Version10\Report\FileDiagnosticBuilderInterface;
 use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 
 final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
 {
-    /** @var DiagnosticBuilderInterface */
-    private $parent;
-
     /**
-     * @var FileRangeBuffer[]
-     * @psalm-var array<int, FileRangeBuffer>
+     * @var list<FileRangeBuffer>
      */
-    private $ranges = [];
-
-    /** @var string */
-    private $file;
+    private array $ranges = [];
 
     /**
-     * @var callable
-     * @psalm-var callable(array<int, FileRangeBuffer>, FileDiagnosticBuilder): void
+     * @var callable(list<FileRangeBuffer>, FileDiagnosticBuilder): void
      */
     private $callback;
 
-    /** @psalm-param callable(array<int, FileRangeBuffer>, FileDiagnosticBuilder): void $callback */
-    public function __construct(DiagnosticBuilderInterface $parent, string $file, callable $callback)
-    {
-        $this->parent   = $parent;
-        $this->file     = $file;
+    /** @param callable(list<FileRangeBuffer>, FileDiagnosticBuilder): void $callback */
+    public function __construct(
+        private readonly DiagnosticBuilderInterface $parent,
+        private readonly string $file,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 
     /**
      * @return self
      */
+    #[Override]
     public function forRange(
         int $line,
         ?int $column = null,
@@ -56,6 +51,7 @@ final class FileDiagnosticBuilder implements FileDiagnosticBuilderInterface
         return $this;
     }
 
+    #[Override]
     public function end(): DiagnosticBuilderInterface
     {
         if (empty($this->ranges)) {

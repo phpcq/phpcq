@@ -14,7 +14,7 @@ trait RepositoryHasPluginVersionTrait
         try {
             $this->getPluginVersion($name, $versionConstraint);
             return true;
-        } catch (PluginVersionNotFoundException $exception) {
+        } catch (PluginVersionNotFoundException) {
             return false;
         }
     }

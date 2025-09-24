@@ -23,9 +23,7 @@ final class BoolOptionBuilderTest extends TestCase
     public function testNormalizesValue(): void
     {
         $builder = $this->createInstance();
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return false;
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => false));
         $this->assertEquals(false, $builder->normalizeValue('false'));
     }
 

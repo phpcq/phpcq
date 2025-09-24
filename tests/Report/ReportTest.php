@@ -10,7 +10,7 @@ use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Report */
-class ReportTest extends TestCase
+final class ReportTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

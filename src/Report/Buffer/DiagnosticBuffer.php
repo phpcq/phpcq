@@ -12,51 +12,32 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
  */
 final class DiagnosticBuffer
 {
-    /**
-     * @var string
-     * @psalm-var TDiagnosticSeverity
-     */
-    private $severity;
+    /** @var null|list<FileRangeBuffer> */
+    private ?array $fileRanges = null;
 
-    /** @var string */
-    private $message;
+    /** @var null|list<string> */
+    private ?array $classNames = [];
 
-    /** @var string|null */
-    private $source;
-
-    /** @var null|FileRangeBuffer[] */
-    private $fileRanges;
-
-    /** @var string|null */
-    private $externalInfoUrl;
-
-    /** @var null|string[] */
-    private $classNames = [];
-
-    /** @var null|string[] */
-    private $categories = [];
+    /** @var null|list<string> */
+    private ?array $categories = [];
 
     /**
-     * @param null|FileRangeBuffer[] $fileRanges
-     * @param null|string[] $classNames
-     * @param null|string[] $categories
+     * @param null|list<FileRangeBuffer> $fileRanges
+     * @param null|list<string> $classNames
+     * @param null|list<string> $categories
      *
-     * @psalm-param TDiagnosticSeverity $severity
+     * @param TDiagnosticSeverity $severity
      */
     public function __construct(
-        string $severity,
-        string $message,
-        ?string $source,
+        private readonly string $severity,
+        private readonly string $message,
+        private readonly ?string $source,
         ?array $fileRanges,
-        ?string $externalInfoUrl,
+        private readonly ?string $externalInfoUrl,
         ?array $classNames,
         ?array $categories
     ) {
-        $this->severity   = $severity;
-        $this->message    = $message;
-        $this->source     = $source;
         $this->fileRanges = $fileRanges ?: null;
-        $this->externalInfoUrl = $externalInfoUrl;
         $this->classNames = $classNames ?: null;
         $this->categories = $categories ?: null;
     }
@@ -64,8 +45,7 @@ final class DiagnosticBuffer
     /**
      * Get severity.
      *
-     * @return string
-     * @psalm-return TDiagnosticSeverity
+     * @return TDiagnosticSeverity
      */
     public function getSeverity(): string
     {
@@ -87,7 +67,7 @@ final class DiagnosticBuffer
         return null !== $this->fileRanges;
     }
 
-    /** @psalm-return Generator<int, FileRangeBuffer> */
+    /** @return Generator<int, FileRangeBuffer> */
     public function getFileRanges(): Generator
     {
         if (null === $this->fileRanges) {
@@ -108,7 +88,7 @@ final class DiagnosticBuffer
         return null !== $this->classNames;
     }
 
-    /** @psalm-return Generator<int, string> */
+    /** @return Generator<int, string> */
     public function getClassNames(): Generator
     {
         if (null === $this->classNames) {
@@ -124,7 +104,7 @@ final class DiagnosticBuffer
         return null !== $this->categories;
     }
 
-    /** @psalm-return Generator<int, string> */
+    /** @return Generator<int, string> */
     public function getCategories(): Generator
     {
         if (null === $this->categories) {

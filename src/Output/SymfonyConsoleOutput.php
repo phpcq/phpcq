@@ -9,17 +9,14 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 class SymfonyConsoleOutput implements OutputInterface
 {
-    /** @var ConsoleOutputInterface */
-    private $output;
-
     /**
      * @param ConsoleOutputInterface $output
      */
-    public function __construct(ConsoleOutputInterface $output)
+    public function __construct(private readonly ConsoleOutputInterface $output)
     {
-        $this->output = $output;
     }
 
+    #[\Override]
     public function write(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -28,6 +25,7 @@ class SymfonyConsoleOutput implements OutputInterface
         $this->output($message, false, $verbosity, $channel);
     }
 
+    #[\Override]
     public function writeln(
         string $message,
         int $verbosity = self::VERBOSITY_NORMAL,
@@ -38,14 +36,9 @@ class SymfonyConsoleOutput implements OutputInterface
 
     private function output(string $output, bool $newLine, int $verbosity, int $channel): void
     {
-        switch ($channel) {
-            case self::CHANNEL_STDERR:
-                $this->output->getErrorOutput()->write($output, $newLine, $verbosity);
-                break;
-
-            case self::CHANNEL_STDOUT:
-            default:
-                $this->output->write($output, $newLine, $verbosity);
-        }
+        match ($channel) {
+            self::CHANNEL_STDERR => $this->output->getErrorOutput()->write($output, $newLine, $verbosity),
+            default => $this->output->write($output, $newLine, $verbosity),
+        };
     }
 }

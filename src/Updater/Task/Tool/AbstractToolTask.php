@@ -13,18 +13,13 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 abstract class AbstractToolTask implements TaskInterface
 {
-    /** @var ToolVersionInterface */
-    protected $toolVersion;
-
-    /** @var PluginVersionInterface */
-    protected $pluginVersion;
-
-    public function __construct(PluginVersionInterface $pluginVersion, ToolVersionInterface $toolVersion)
-    {
-        $this->toolVersion = $toolVersion;
-        $this->pluginVersion = $pluginVersion;
+    public function __construct(
+        protected PluginVersionInterface $pluginVersion,
+        protected ToolVersionInterface $toolVersion
+    ) {
     }
 
+    #[\Override]
     public function getPluginName(): string
     {
         return $this->pluginVersion->getName();

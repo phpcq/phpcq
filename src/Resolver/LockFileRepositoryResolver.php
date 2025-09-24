@@ -13,14 +13,11 @@ use Phpcq\Runner\Repository\InstalledRepository;
 
 final class LockFileRepositoryResolver implements ResolverInterface
 {
-    /** @var InstalledRepository */
-    protected $repository;
-
-    public function __construct(InstalledRepository $repository)
+    public function __construct(protected InstalledRepository $repository)
     {
-        $this->repository = $repository;
     }
 
+    #[\Override]
     public function resolvePluginVersion(string $pluginName, string $versionConstraint): PluginVersionInterface
     {
         $version = $this->repository->getPlugin($pluginName)->getPluginVersion();
@@ -31,6 +28,7 @@ final class LockFileRepositoryResolver implements ResolverInterface
         return $version;
     }
 
+    #[\Override]
     public function resolveToolVersion(
         string $pluginName,
         string $toolName,
