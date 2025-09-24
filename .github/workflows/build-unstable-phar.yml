@@ -87,7 +87,7 @@ jobs:
         run: |
           gpg-agent --daemon --disable-scdaemon
           echo "${{ secrets.GPG_KEYFILE }}"  | gpg --batch --no-tty --import
-          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar"
+          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/phar.phar"
 
       - name: Update versions repository
         id: update_versions
