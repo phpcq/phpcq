@@ -84,11 +84,10 @@ jobs:
           echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/stable/current.txt
 
       - name: Sign phar file
-        uses: sfuhrm/gpg-sign-action@main
-        with:
-          path: ${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar
-          gpg-key: "${{ secrets.GPG_KEYFILE }}"
-          gpg-passphrase: "${{ secrets.GPG_PASSPHRASE }}"
+        run: |
+          gpg-agent --daemon --disable-scdaemon
+          echo "${{ secrets.GPG_KEYFILE }}"  | gpg --batch --no-tty --import
+          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar"
 
       - name: Update versions repository
         id: update_versions
