@@ -107,8 +107,9 @@ class PlatformInformation implements PlatformInformationInterface
      */
     public function getInstalledVersion(string $name): ?string
     {
-        if ($name === 'php') {
-            return $this->getPhpVersion();
+        // PHP (php and the subtypes: php-64bit, php-ipv6, php-zts php-debug)
+        if (1 === preg_match('#^php(?:-(?:64bit|ipv6|zts|debug))?$#', $name)) {
+            return $this->getPhpPackageVersion($name);
         }
 
         if (strpos($name, '-') === false) {
@@ -753,5 +754,56 @@ class PlatformInformation implements PlatformInformationInterface
 
             return self::$versionParser->normalize($prettyVersion);
         }
+    }
+
+    private function getPhpPackageVersion(string $name): ?string
+    {
+        switch ($name) {
+            case 'php':
+                return $this->getPhpVersion();
+            case 'php-64bit':
+                return $this->getPhpVersion64Bit();
+            case 'php-ipv6':
+                return $this->getPhpVersionIpv6();
+            case 'php-zts':
+                return $this->getPhpVersionZts();
+            case 'php-debug':
+                return $this->getPhpVersionDebug();
+            default:
+        }
+
+        throw new UnexpectedValueException(sprintf('Unknown package name "%s"', $name));
+    }
+
+    private function getPhpVersion64Bit(): ?string
+    {
+        if (\PHP_INT_SIZE === 8) {
+            return $this->getPhpVersion();
+        }
+        return null;
+    }
+
+    private function getPhpVersionIpv6(): ?string
+    {
+        if (\defined('AF_INET6') /** composer also checks if inet_pton supports '::'. */) {
+            return $this->getPhpVersion();
+        }
+        return null;
+    }
+
+    private function getPhpVersionZts(): ?string
+    {
+        if (\defined('PHP_ZTS') && \PHP_ZTS) {
+            return $this->getPhpVersion();
+        }
+        return null;
+    }
+
+    private function getPhpVersionDebug(): ?string
+    {
+        if (\PHP_DEBUG) {
+            return $this->getPhpVersion();
+        }
+        return null;
     }
 }
