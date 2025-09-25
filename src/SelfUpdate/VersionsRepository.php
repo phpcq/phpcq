@@ -70,7 +70,7 @@ final class VersionsRepository
                 continue;
             }
 
-            $normalized = $this->parser->normalize($version->getVersion());;
+            $normalized = $this->parser->normalize($version->getVersion());
 
             yield $normalized => $version;
         }
