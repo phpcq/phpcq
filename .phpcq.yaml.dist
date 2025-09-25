@@ -151,3 +151,8 @@ tasks:
     plugin: composer-normalize
     config:
       dry_run: false
+
+  psalm:
+    config:
+      custom_flags:
+        - '--use-baseline=psalm-baseline.xml'

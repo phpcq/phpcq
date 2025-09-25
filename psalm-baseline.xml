@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.13.1@1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51">
+  <file src="src/Application.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Application]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function getDefaultCommands(): array]]></code>
+      <code><![CDATA[public function getHelp(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Command/AbstractCommand.php">
+    <InvalidArgument>
+      <code><![CDATA[getcwd() . '/.phpcq']]></code>
+    </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int]]></code>
+      <code><![CDATA[public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseArgument>
+      <code><![CDATA[getcwd()]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyFalseOperand>
+      <code><![CDATA[$cwd]]></code>
+      <code><![CDATA[getcwd()]]></code>
+    </PossiblyFalseOperand>
+  </file>
+  <file src="src/Command/AbstractUpdateCommand.php">
+    <InvalidArgument>
+      <code><![CDATA[(getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq']]></code>
+    </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+      <code><![CDATA[protected function prepare(InputInterface $input): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseOperand>
+      <code><![CDATA[getcwd()]]></code>
+    </PossiblyFalseOperand>
+  </file>
+  <file src="src/Command/ExecCommand.php">
+    <InvalidCast>
+      <code><![CDATA[$input->getArgument('application')]]></code>
+    </InvalidCast>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+      <code><![CDATA[public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void]]></code>
+    </MissingOverrideAttribute>
+    <ReservedWord>
+      <code><![CDATA[$input->getArgument('args')]]></code>
+    </ReservedWord>
+    <TypeDoesNotContainType>
+      <code><![CDATA[$input->getArgument('args') === []]]></code>
+    </TypeDoesNotContainType>
+  </file>
+  <file src="src/Command/HelpCommand.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[HelpCommand]]></code>
+    </ClassMustBeFinal>
+    <InvalidArgument>
+      <code><![CDATA[$argument->getName() === 'command_name' ? null : $argument->getDefault()]]></code>
+      <code><![CDATA[$commandName]]></code>
+      <code><![CDATA[$option->getDefault()]]></code>
+    </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Command/InstallCommand.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function calculateTasks(): array]]></code>
+      <code><![CDATA[protected function configure(): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Command/PlatformInformationCommand.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PlatformInformationCommand]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure()]]></code>
+      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Command/RunCommand.php">
+    <InvalidArgument>
+      <code><![CDATA[$numCores]]></code>
+      <code><![CDATA['default']]></code>
+      <code><![CDATA[TaskReportInterface::SEVERITY_MARGINAL]]></code>
+      <code><![CDATA[['default']]]></code>
+      <code><![CDATA[['file-report']]]></code>
+    </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseOperand>
+      <code><![CDATA[getcwd()]]></code>
+    </PossiblyFalseOperand>
+  </file>
+  <file src="src/Command/SelfUpdateCommand.php">
+    <InvalidArgument>
+      <code><![CDATA['https://phpcq.github.io/distrib/phpcq']]></code>
+      <code><![CDATA['unstable']]></code>
+      <code><![CDATA[(getenv('HOME') ?: sys_get_temp_dir()) . '/.cache/phpcq']]></code>
+    </InvalidArgument>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+      <code><![CDATA[protected function prepare(InputInterface $input): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseArgument>
+      <code><![CDATA[$downloadedPhar]]></code>
+      <code><![CDATA[$downloadedPhar]]></code>
+      <code><![CDATA[$downloadedPhar]]></code>
+      <code><![CDATA[$downloadedPhar]]></code>
+      <code><![CDATA[file_get_contents($downloadedPhar)]]></code>
+      <code><![CDATA[substr($this->downloader->downloadFile($baseUri . '/current.txt', '', true), 6)]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="src/Command/UpdateCommand.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function calculateTasks(): array]]></code>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function executeTasks(array $tasks): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Command/ValidateCommand.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void]]></code>
+      <code><![CDATA[protected function doExecute(): int]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Composer.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Composer]]></code>
+    </ClassMustBeFinal>
+    <PossiblyFalseArgument>
+      <code><![CDATA[$actualChecksum]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="src/Config/Builder/AbstractOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function normalizeValue($raw)]]></code>
+      <code><![CDATA[public function selfValidate(): void]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/AbstractOptionsBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): OptionsBuilderInterface]]></code>
+      <code><![CDATA[public function normalizeValue($raw): ?array]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+      <code><![CDATA[public function withDefaultValue(array $defaultValue): OptionsBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): OptionsBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): OptionsBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/BoolOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): BoolOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withDefaultValue(bool $defaultValue): BoolOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): BoolOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): BoolOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/EnumOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): EnumOptionBuilderInterface]]></code>
+      <code><![CDATA[public function normalizeValue($raw)]]></code>
+      <code><![CDATA[public function ofFloatValues(float ...$values): FloatOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofIntValues(int ...$values): IntOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofStringValues(string ...$values): StringOptionBuilderInterface]]></code>
+      <code><![CDATA[public function selfValidate(): void]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): EnumOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): EnumOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/FloatOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): FloatOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withDefaultValue(float $defaultValue): FloatOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): FloatOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): FloatOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/IntOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): IntOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withDefaultValue(int $defaultValue): IntOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): IntOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): IntOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/OptionsBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/OptionsListOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): OptionsListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function normalizeValue($raw): ?array]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+      <code><![CDATA[public function withDefaultValue(array $defaultValue): OptionsListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): OptionsListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): OptionsListOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/PluginConfigurationBuilder.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PluginConfigurationBuilder]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function describeOption(string $name, ConfigOptionBuilderInterface $builder): void]]></code>
+      <code><![CDATA[public function supportDirectories(): PluginConfigurationBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/PrototypeOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): PrototypeBuilderInterface]]></code>
+      <code><![CDATA[public function normalizeValue($raw): ?array]]></code>
+      <code><![CDATA[public function ofBoolValue(): BoolOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofEnumValue(): EnumOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofFloatValue(): FloatOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofIntValue(): IntOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofOptionsListValue(): OptionsListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofOptionsValue(): OptionsBuilderInterface]]></code>
+      <code><![CDATA[public function ofPrototypeValue(): PrototypeBuilderInterface]]></code>
+      <code><![CDATA[public function ofStringListValue(): StringListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function ofStringValue(): StringOptionBuilderInterface]]></code>
+      <code><![CDATA[public function selfValidate(): void]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+      <code><![CDATA[public function withDefaultValue(array $defaultValue): PrototypeBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): PrototypeBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): PrototypeBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/StringListOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): StringListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function normalizeValue($raw): ?array]]></code>
+      <code><![CDATA[public function validateValue($value): void]]></code>
+      <code><![CDATA[public function withDefaultValue(array $defaultValue): StringListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): StringListOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): StringListOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Builder/StringOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isRequired(): StringOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withDefaultValue(string $defaultValue): StringOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withNormalizer(callable $normalizer): StringOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withValidator(callable $validator): StringOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/Options.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getBool(string $name): bool]]></code>
+      <code><![CDATA[public function getFloat(string $name): float]]></code>
+      <code><![CDATA[public function getInt(string $name): int]]></code>
+      <code><![CDATA[public function getOptions(string $name): array]]></code>
+      <code><![CDATA[public function getOptionsList(string $name): array]]></code>
+      <code><![CDATA[public function getString(string $name): string]]></code>
+      <code><![CDATA[public function getStringList(string $name): array]]></code>
+      <code><![CDATA[public function getValue(): array]]></code>
+      <code><![CDATA[public function has(string $name): bool]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Config/PluginConfiguration.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PluginConfiguration]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Config/ProjectConfiguration.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ProjectConfiguration]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getArtifactOutputPath(): string]]></code>
+      <code><![CDATA[public function getDirectories(): array]]></code>
+      <code><![CDATA[public function getMaxCpuCores(): int]]></code>
+      <code><![CDATA[public function getProjectRootPath(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/ConfigLoader.php">
+    <ReservedWord>
+      <code><![CDATA[Yaml::parseFile($this->configPath)]]></code>
+    </ReservedWord>
+  </file>
+  <file src="src/Console/Definition/Builder/ConsoleApplicationBuilder.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConsoleApplicationBuilder]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function describeCommand(string $name, string $description): ConsoleCommandBuilderInterface]]></code>
+      <code><![CDATA[public function withOptionValueSeparator(string $separator): ConsoleApplicationBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Console/Definition/Builder/ConsoleArgumentBuilder.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConsoleArgumentBuilder]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isArray(): ConsoleArgumentBuilderInterface]]></code>
+      <code><![CDATA[public function isRequired(): ConsoleArgumentBuilderInterface]]></code>
+      <code><![CDATA[public function withDefaultValue($value): ConsoleArgumentBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Console/Definition/Builder/ConsoleOptionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isArray(): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function isRequired(): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withKeyValueMap($defaultValue = null, ?string $valueSeparator = null): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withOptionValueSeparator(string $separator): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withOptionalValue(?string $name = null, $defaultValue = null): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withRequiredValue(?string $name = null): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withShortcut(string $shortcut): ConsoleOptionBuilderInterface]]></code>
+      <code><![CDATA[public function withShortcutOnly(): ConsoleOptionBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Console/Definition/ExecTaskDefinitionBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function describeApplication(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Console/Descriptor/OptionsDescriptor.php">
+    <PossiblyFalseOperand>
+      <code><![CDATA[json_encode($default)]]></code>
+      <code><![CDATA[json_encode($defaultValue)]]></code>
+    </PossiblyFalseOperand>
+  </file>
+  <file src="src/Downloader/FileDownloader.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[FileDownloader]]></code>
+    </ClassMustBeFinal>
+    <FalsableReturnStatement>
+      <code><![CDATA[file_get_contents($cacheFile)]]></code>
+    </FalsableReturnStatement>
+    <InvalidFalsableReturnType>
+      <code><![CDATA[string]]></code>
+    </InvalidFalsableReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string]]></code>
+      <code><![CDATA[public function downloadFileTo(]]></code>
+      <code><![CDATA[public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseArgument>
+      <code><![CDATA[$path]]></code>
+      <code><![CDATA[$path]]></code>
+      <code><![CDATA[file_get_contents($url)]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyNullArgument>
+      <code><![CDATA[$path]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullOperand>
+      <code><![CDATA[preg_replace('#[^a-zA-Z0-9]#', '-', $url)]]></code>
+    </PossiblyNullOperand>
+  </file>
+  <file src="src/Downloader/OutputLoggingDownloader.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string]]></code>
+      <code><![CDATA[public function downloadFileTo(]]></code>
+      <code><![CDATA[public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Environment.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Environment]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getAvailableThreads(): int]]></code>
+      <code><![CDATA[public function getBuildTempDir(): string]]></code>
+      <code><![CDATA[public function getInstalledDir(): string]]></code>
+      <code><![CDATA[public function getProjectConfiguration(): ProjectConfigInterface]]></code>
+      <code><![CDATA[public function getTaskFactory(): TaskFactoryInterface]]></code>
+      <code><![CDATA[public function getUniqueTempFile(?PluginInterface $plugin = null, ?string $suffix = null): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Exception/ConfigurationValidationErrorException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ConfigurationValidationErrorException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidArgumentException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidArgumentException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidHashException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidHashException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/PluginVersionNotFoundException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PluginVersionNotFoundException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/RuntimeException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[RuntimeException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/ToolVersionNotFoundException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ToolVersionNotFoundException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Output/BufferedOutput.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[BufferedOutput]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function write(]]></code>
+      <code><![CDATA[public function writeln(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Output/SymfonyConsoleOutput.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SymfonyConsoleOutput]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function write(]]></code>
+      <code><![CDATA[public function writeln(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Output/SymfonyOutput.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function write(]]></code>
+      <code><![CDATA[public function writeln(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/OutputTransformer/ConsoleOutputTransformerFactory.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function createFor(TaskReportInterface $report): OutputTransformerInterface]]></code>
+      <code><![CDATA[public function finish(int $exitCode): void]]></code>
+      <code><![CDATA[public function write(string $data, int $channel): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Platform/PlatformRequirementChecker.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[PlatformRequirementChecker]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isFulfilled(string $name, string $constraint): bool]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Plugin/ChainPlugin.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function describeConfiguration(PluginConfigurationBuilderInterface $configOptionsBuilder): void]]></code>
+      <code><![CDATA[public function getName(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Plugin/PluginRegistry.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getIterator(): Traversable]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/AttachmentBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function end(): TaskReportInterface]]></code>
+      <code><![CDATA[public function fromFile(string $file): AttachmentBuilderInterface]]></code>
+      <code><![CDATA[public function fromString(string $buffer): AttachmentBuilderInterface]]></code>
+      <code><![CDATA[public function setMimeType(string $mimeType): AttachmentBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Buffer/AttachmentBuffer.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[AttachmentBuffer]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Report/Buffer/DiffBuffer.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DiffBuffer]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Report/DiagnosticBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function end(): TaskReportInterface]]></code>
+      <code><![CDATA[public function forClass(string $className): DiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function forFile(string $file): FileDiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function fromSource(string $source): DiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function withCategory(string $category): DiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function withExternalInfoUrl(string $url): DiagnosticBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/DiffBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function end(): TaskReportInterface]]></code>
+      <code><![CDATA[public function fromFile(string $file): DiffBuilderInterface]]></code>
+      <code><![CDATA[public function fromString(string $buffer): DiffBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/FileDiagnosticBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function end(): DiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function forRange(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Report.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function addTaskReport(string $taskName, array $metadata = []): TaskReportInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/TaskReport.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TaskReport]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function addAttachment(string $name): AttachmentBuilderInterface]]></code>
+      <code><![CDATA[public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface]]></code>
+      <code><![CDATA[public function addDiff(string $name): DiffBuilderInterface]]></code>
+      <code><![CDATA[public function addMetadata(string $name, string $value): TaskReportInterface]]></code>
+      <code><![CDATA[public function close(string $status): void]]></code>
+      <code><![CDATA[public function getStatus(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Writer/AbstractReportWriter.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public static function writeReport(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Writer/CheckstyleReportWriter.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Writer/CodeClimateReportWriter.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public static function writeReport(string $targetPath, ReportBuffer $report, string $minimumSeverity): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyFalseArgument>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[$fileHandle]]></code>
+      <code><![CDATA[json_encode(self::convertDiagnostic($diagnostics))]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyFalseOperand>
+      <code><![CDATA[json_encode($locations)]]></code>
+    </PossiblyFalseOperand>
+    <PossiblyNullReference>
+      <code><![CDATA[getDiagnostic]]></code>
+      <code><![CDATA[getDiagnostic]]></code>
+      <code><![CDATA[isFileRelated]]></code>
+    </PossiblyNullReference>
+  </file>
+  <file src="src/Report/Writer/DiagnosticIterator.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getIterator(): Generator]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyNullArgument>
+      <code><![CDATA[$entry2]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Report/Writer/FileReportWriter.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function appendReportXml(DOMElement $rootNode): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Report/Writer/TaskReportWriter.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function appendReportXml(DOMElement $rootNode): void]]></code>
+      <code><![CDATA[protected function handleRange(DOMElement $diagnosticElement, DiagnosticIteratorEntry $entry): void]]></code>
+    </MissingOverrideAttribute>
+    <PossiblyNullReference>
+      <code><![CDATA[getTask]]></code>
+    </PossiblyNullReference>
+  </file>
+  <file src="src/Repository/DownloadingJsonFileLoader.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function load(string $file, ?array $checksum = null): array]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Repository/InstalledRepositoryDumper.php">
+    <FalsableReturnStatement>
+      <code><![CDATA[substr($path, strlen($baseDir) + 1)]]></code>
+    </FalsableReturnStatement>
+    <InvalidFalsableReturnType>
+      <code><![CDATA[string]]></code>
+    </InvalidFalsableReturnType>
+  </file>
+  <file src="src/Repository/InstalledRepositoryLoader.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[$path]]></code>
+      <code><![CDATA[$path]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyNullArgument>
+      <code><![CDATA[$path]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Repository/JsonRepositoryLoader.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[JsonRepositoryLoader]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Repository/Repository.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Repository]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getPluginVersion(string $name, string $versionConstraint): PluginVersionInterface]]></code>
+      <code><![CDATA[public function getToolVersion(string $name, string $versionConstraint): ToolVersionInterface]]></code>
+      <code><![CDATA[public function iteratePluginVersions(): Generator]]></code>
+      <code><![CDATA[public function iterateToolVersions(): Generator]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Repository/RepositoryFactory.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[RepositoryFactory]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Repository/RepositoryPool.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getIterator(): Traversable]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Resolver/LockFileRepositoryResolver.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function resolvePluginVersion(string $pluginName, string $versionConstraint): PluginVersionInterface]]></code>
+      <code><![CDATA[public function resolveToolVersion(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Resolver/RepositoryPoolResolver.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function resolvePluginVersion(string $pluginName, string $versionConstraint): PluginVersionInterface]]></code>
+      <code><![CDATA[public function resolveToolVersion(]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Signature/InteractiveQuestionKeyTrustStrategy.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function isTrusted(string $fingerprint): bool]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Signature/SignatureFileDownloader.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function downloadFile(string $url): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/AbstractTaskBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function build(): TaskInterface]]></code>
+      <code><![CDATA[public function forceSingleProcess(): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withCosts(int $cost): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withEnv(array $env): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withInput($input): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withOutputTransformer(OutputTransformerFactoryInterface $factory): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withTimeout($timeout): TaskBuilderInterface]]></code>
+      <code><![CDATA[public function withWorkingDirectory(string $cwd): TaskBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/ParallelizableProcessTask.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ParallelizableProcessTask]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getCost(): int]]></code>
+      <code><![CDATA[public function getToolName(): string]]></code>
+      <code><![CDATA[public function runWithReport(TaskReportInterface $report): void]]></code>
+      <code><![CDATA[public function tick(): bool]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/ProcessTask.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[ProcessTask]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getToolName(): string]]></code>
+      <code><![CDATA[public function runForOutput(OutputInterface $output): void]]></code>
+      <code><![CDATA[public function runWithReport(TaskReportInterface $report): void]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/SingleProcessTaskFactory.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[SingleProcessTaskFactory]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface]]></code>
+      <code><![CDATA[public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface]]></code>
+      <code><![CDATA[public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/TaskBuilder.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function buildCommand(): array]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/TaskBuilderPhp.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function buildCommand(): array]]></code>
+      <code><![CDATA[public function withoutXDebug(): PhpTaskBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/TaskFactory.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TaskFactory]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function buildPhpProcess(string $toolName, array $arguments = []): PhpTaskBuilderInterface]]></code>
+      <code><![CDATA[public function buildRunPhar(string $toolName, array $arguments = []): PhpTaskBuilderInterface]]></code>
+      <code><![CDATA[public function buildRunProcess(string $toolName, array $command): TaskBuilderInterface]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/TaskScheduler.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[TaskScheduler]]></code>
+    </ClassMustBeFinal>
+    <PossiblyNullArgument>
+      <code><![CDATA[$next]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="src/Task/Tasklist.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Tasklist]]></code>
+    </ClassMustBeFinal>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function add(TaskInterface $taskRunner): void]]></code>
+      <code><![CDATA[public function getIterator(): Traversable]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Task/TasklistInterface.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getIterator(): Traversable;]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Composer/AbstractComposerTask.php">
+    <FalsableReturnStatement>
+      <code><![CDATA[file_get_contents($lockFile)]]></code>
+    </FalsableReturnStatement>
+    <InvalidFalsableReturnType>
+      <code><![CDATA[?string]]></code>
+    </InvalidFalsableReturnType>
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getPluginName(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Composer/ComposerInstallTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Composer/ComposerUpdateTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Composer/RemoveComposerDependenciesTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Plugin/AbstractInstallingPluginTask.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[file_get_contents($pharPath)]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="src/Updater/Task/Plugin/AbstractPluginTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getPluginName(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Plugin/InstallPluginTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Plugin/KeepPluginTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Plugin/RemovePluginTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Plugin/UpgradePluginTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Tool/AbstractInstallingToolTask.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[file_get_contents($pharPath)]]></code>
+      <code><![CDATA[file_get_contents($signaturePath)]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="src/Updater/Task/Tool/AbstractToolTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getPluginName(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Tool/InstallToolTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Tool/KeepToolTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Tool/RemoveToolTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/Task/Tool/UpgradeToolTask.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function execute(UpdateContext $context): void]]></code>
+      <code><![CDATA[public function getExecutionDescription(): string]]></code>
+      <code><![CDATA[public function getPurposeDescription(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Updater/UpdateExecutor.php">
+    <PossiblyFalseOperand>
+      <code><![CDATA[getcwd()]]></code>
+    </PossiblyFalseOperand>
+  </file>
+</files>
