@@ -75,7 +75,7 @@ jobs:
         id: get_version
         run: |
           RELEASE_VERSION=$(php $GITHUB_WORKSPACE/phpcq.phar --version)
-          RELEASE_VERSION_SEMVER="${$RELEASE_VERSION#* }"
+          RELEASE_VERSION_SEMVER="${RELEASE_VERSION#* }"
 
       - name: Copy phar file to target
         id: copy
