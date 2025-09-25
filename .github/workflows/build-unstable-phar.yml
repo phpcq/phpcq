@@ -76,13 +76,13 @@ jobs:
         run: |
           RELEASE_VERSION=$(php $GITHUB_WORKSPACE/phpcq.phar --version)
           RELEASE_VERSION_SEMVER="${RELEASE_VERSION#* }"
+          echo "version=$RELEASE_VERSION_SEMVER" >> $GITHUB_OUTPUT
 
       - name: Copy phar file to target
         id: copy
         run: |
           cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
-          echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
-          echo "${{ RELEASE_VERSION }} detected"
+          echo "${{ steps.get_version.outputs.version }}" > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
 
       - name: Sign phar file
         run: |
@@ -92,7 +92,7 @@ jobs:
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "phpcq.phar" "phar.asc"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/versions.json" "$GITHUB_WORKSPACE/composer.json" "${{ steps.get_version.outputs.version }}" "phpcq.phar" "phar.asc"
 
       - name: Generate Commit Message
         run: |

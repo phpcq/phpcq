@@ -76,28 +76,28 @@ jobs:
         run: |
           RELEASE_VERSION=$(php $GITHUB_WORKSPACE/phpcq.phar --version)
           RELEASE_VERSION_SEMVER="${RELEASE_VERSION#* }"
-          echo "${{ RELEASE_VERSION }} detected"
+          echo "version=$RELEASE_VERSION_SEMVER" >> $GITHUB_OUTPUT
 
       - name: Copy phar file to target
         id: copy
         run: |
-          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar
-          echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/stable/current.txt
+          cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ steps.get_version.outputs.version }}.phar
+          echo ${{ steps.get_version.outputs.version }} > ${{ env.TARGET_DIRECTORY }}/phpcq/stable/current.txt
 
       - name: Sign phar file
         run: |
           echo "${{ secrets.GPG_KEYFILE }}" | gpg --batch --no-tty --import
-          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar"
+          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ steps.get_version.outputs.version }}.phar"
 
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "$RELEASE_VERSION_SEMVER" "${{ RELEASE_VERSION_SEMVER }}.phar" "${{ RELEASE_VERSION_SEMVER }}.asc"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "${{ steps.get_version.outputs.version }}" "${{ steps.get_version.outputs.version }}.phar" "${{ steps.get_version.outputs.version }}.asc"
 
       - name: Generate Commit Message
         run: |
           echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
-          echo "Storing stable release ${{ RELEASE_VERSION_SEMVER }} of phpcq.phar" >> $GITHUB_ENV
+          echo "Storing stable release ${{ steps.get_version.outputs.version }} of phpcq.phar" >> $GITHUB_ENV
           echo "" >> $GITHUB_ENV
           echo "https://github.com/phpcq/phpcq/tree/${{ github.sha }}" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
