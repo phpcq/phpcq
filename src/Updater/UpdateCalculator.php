@@ -400,9 +400,10 @@ final class UpdateCalculator
         }
 
         if ($hasRequirements) {
-            $targetDirectory = dirname($installedVersion->getFilePath());
-            $installed       = $this->requirementsToArray($installedVersion->getRequirements()->getComposerRequirements());
-            $required        = $this->requirementsToArray($requirements);
+            $targetDirectory      = dirname($installedVersion->getFilePath());
+            $composerRequirements = $installedVersion->getRequirements()->getComposerRequirements();
+            $installed            = $this->requirementsToArray($composerRequirements);
+            $required             = $this->requirementsToArray($requirements);
 
             if (array_diff($required, $installed) !== [] || $this->composer->isUpdateRequired($targetDirectory)) {
                 yield new ComposerUpdateTask($pluginVersion, $requirements);
