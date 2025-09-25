@@ -156,6 +156,7 @@ final class SelfUpdateCommand extends AbstractCommand
 
         $this->updateComposer();
 
+        /** @psalm-var string|null $requiredVersion */
         $requiredVersion = $this->input->getArgument('version') ?: null;
         $version         = $repository->findMatchingVersion($requiredVersion, ! $this->input->getOption('unsigned'));
 
