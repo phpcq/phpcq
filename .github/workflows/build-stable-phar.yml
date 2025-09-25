@@ -76,6 +76,7 @@ jobs:
         run: |
           RELEASE_VERSION=$(php $GITHUB_WORKSPACE/phpcq.phar --version)
           RELEASE_VERSION_SEMVER="${RELEASE_VERSION#* }"
+          echo "${{ RELEASE_VERSION_SEMVER }} detected"
 
       - name: Copy phar file to target
         id: copy
@@ -85,7 +86,7 @@ jobs:
 
       - name: Sign phar file
         run: |
-          echo "${{ secrets.GPG_KEYFILE }}"  | gpg --batch --no-tty --import
+          echo "${{ secrets.GPG_KEYFILE }}" | gpg --batch --no-tty --import
           gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ RELEASE_VERSION_SEMVER }}.phar"
 
       - name: Update versions repository
