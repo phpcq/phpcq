@@ -82,7 +82,7 @@ jobs:
         run: |
           cp $GITHUB_WORKSPACE/phpcq.phar ${{ env.TARGET_DIRECTORY }}/phpcq/unstable
           echo $RELEASE_VERSION > ${{ env.TARGET_DIRECTORY }}/phpcq/unstable/current.txt
-          echo "${{ RELEASE_VERSION_SEMVER }} detected"
+          echo "$RELEASE_VERSION_SEMVER detected"
 
       - name: Sign phar file
         run: |

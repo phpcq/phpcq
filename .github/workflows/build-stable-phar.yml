@@ -76,7 +76,7 @@ jobs:
         run: |
           RELEASE_VERSION=$(php $GITHUB_WORKSPACE/phpcq.phar --version)
           RELEASE_VERSION_SEMVER="${RELEASE_VERSION#* }"
-          echo "${{ RELEASE_VERSION_SEMVER }} detected"
+          echo "$RELEASE_VERSION_SEMVER detected"
 
       - name: Copy phar file to target
         id: copy
