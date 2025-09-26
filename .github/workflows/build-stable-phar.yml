@@ -93,7 +93,7 @@ jobs:
       - name: Update versions repository
         id: update_versions
         run: |
-          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "${{ steps.get_version.outputs.version }}" "${{ steps.get_version.outputs.version }}.phar" "${{ steps.get_version.outputs.version }}.asc"
+          php $GITHUB_WORKSPACE/build/add-version.php "${{ env.TARGET_DIRECTORY }}/phpcq/stable/versions.json" "$GITHUB_WORKSPACE/composer.json" "${{ steps.get_version.outputs.version }}" "${{ steps.get_version.outputs.version }}.phar" "${{ steps.get_version.outputs.version }}.phar.asc"
 
       - name: Generate Commit Message
         run: |
