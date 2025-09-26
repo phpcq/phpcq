@@ -88,7 +88,7 @@ jobs:
       - name: Sign phar file
         run: |
           echo "${{ secrets.GPG_KEYFILE }}"  | gpg --batch --no-tty --import
-          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ env.GPG_SECRET }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/phpcq.phar"
+          gpg --batch --no-tty --pinentry-mode=loopback --passphrase '${{ env.GPG_SECRET }}' --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/unstable/phpcq.phar"
 
       - name: Update versions repository
         id: update_versions
