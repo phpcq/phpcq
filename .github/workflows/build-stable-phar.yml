@@ -4,6 +4,7 @@ env:
   TARGET_REPOSITORY: phpcq/distrib
   TARGET_BRANCH: master
   TARGET_DIRECTORY: ./web
+  GPG_SECRET: '${{ secrets.GPG_PASSPHRASE }}'
 
 on:
   push:
@@ -87,7 +88,7 @@ jobs:
       - name: Sign phar file
         run: |
           echo "${{ secrets.GPG_KEYFILE }}" | gpg --batch --no-tty --import
-          gpg --batch --no-tty --pinentry-mode=loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ steps.get_version.outputs.version }}.phar"
+          gpg --batch --no-tty --pinentry-mode=loopback --passphrase '${{ env.GPG_SECRET }}' --armor --detach-sign "${{ env.TARGET_DIRECTORY }}/phpcq/stable/${{ steps.get_version.outputs.version }}.phar"
 
       - name: Update versions repository
         id: update_versions
