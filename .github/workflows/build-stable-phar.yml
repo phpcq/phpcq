@@ -105,7 +105,7 @@ jobs:
         id: generate_commit_message
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: ${{ env.COMMIT_MSG }}
           branch: ${{ env.TARGET_BRANCH }}
