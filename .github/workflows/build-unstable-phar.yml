@@ -115,7 +115,7 @@ jobs:
           commit_author: PHP Code Quality Bot <phpcq-bot@users.noreply.github.com>
 
       - name: Upload build directory to artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: ${{ success() }} || ${{ failure() }}
         with:
           name: phpcq-builds
