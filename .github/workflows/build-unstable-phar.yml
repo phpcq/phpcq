@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Pull source
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # We need the tags for the @git-version@ placeholder used by box
       # See https://github.com/actions/checkout/issues/701
@@ -65,7 +65,7 @@ jobs:
         run: $GITHUB_WORKSPACE/phpcq.phar -v
 
       - name: Checkout target directory
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.TARGET_REPOSITORY }}
           ref: ${{ env.TARGET_BRANCH }}
