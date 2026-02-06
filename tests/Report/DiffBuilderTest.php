@@ -20,7 +20,7 @@ final class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -43,7 +43,7 @@ final class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -69,7 +69,7 @@ final class DiffBuilderTest extends TestCase
 
         $filesystem->expects($this->never())->method('dumpFile');
 
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -98,7 +98,7 @@ final class DiffBuilderTest extends TestCase
                 $this->assertSame('file contents', $data);
             });
 
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,
@@ -126,7 +126,7 @@ final class DiffBuilderTest extends TestCase
         $filesystem->expects($this->once())->method('dumpFile');
 
         $called = false;
-        $report = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report = $this->createMock(TaskReportInterface::class);
         $builder = new DiffBuilder(
             'some-file.txt',
             $report,

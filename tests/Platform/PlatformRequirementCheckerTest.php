@@ -7,6 +7,7 @@ namespace Phpcq\Runner\Test\Platform;
 use Phpcq\Runner\Platform\PlatformInformation;
 use Phpcq\Runner\Platform\PlatformInformationInterface;
 use Phpcq\Runner\Platform\PlatformRequirementChecker;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +17,7 @@ final class PlatformRequirementCheckerTest extends TestCase
 {
     public function testChecksAgainstPlatformInformation(): void
     {
-        $platform = $this->getMockForAbstractClass(PlatformInformationInterface::class);
+        $platform = $this->createMock(PlatformInformationInterface::class);
         $checker  = PlatformRequirementChecker::create($platform);
 
         $platform->method('getInstalledVersion')->with('php')->willReturn('1.0.0');
@@ -25,7 +26,7 @@ final class PlatformRequirementCheckerTest extends TestCase
         self::assertFalse($checker->isFulfilled('php', '^2.0.0'));
     }
 
-    public function currentPlatformProvider(): array
+    public static function currentPlatformProvider(): array
     {
         $platform = PlatformInformation::createFromCurrentPlatform();
         $result = [];
@@ -39,9 +40,7 @@ final class PlatformRequirementCheckerTest extends TestCase
         return $result;
     }
 
-    /**
-     * @dataProvider currentPlatformProvider
-     */
+    #[DataProvider('currentPlatformProvider')]
     public function testCreatesCurrentPlatformInformationIfNonPassed(string $name, string $constraint): void
     {
         $checker = PlatformRequirementChecker::create();

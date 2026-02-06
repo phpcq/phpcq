@@ -8,6 +8,7 @@ use Phpcq\Runner\Config\Builder\EnumOptionBuilder;
 use Phpcq\Runner\Config\Builder\StringOptionBuilder;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -110,7 +111,7 @@ final class EnumOptionBuilderTest extends TestCase
         $builder->validateValue(1);
     }
 
-    public function preventMultipleValueDefinitionsProvider(): array
+    public static function preventMultipleValueDefinitionsProvider(): array
     {
         return [
             'prevent double string definitions' => [
@@ -170,7 +171,7 @@ final class EnumOptionBuilderTest extends TestCase
         ];
     }
 
-    /** @dataProvider preventMultipleValueDefinitionsProvider */
+    #[DataProvider('preventMultipleValueDefinitionsProvider')]
     public function testPreventsMultipleValueDefinitions(
         string $methodA,
         array $argumentsA,

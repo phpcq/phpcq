@@ -13,7 +13,7 @@ final class OptionDefinitionTest extends TestCase
 {
     public function testDefinition(): void
     {
-        $optionValue = $this->getMockForAbstractClass(OptionValueDefinition::class, [], '', false);
+        $optionValue = $this->createMock(OptionValueDefinition::class);
         $definition = new OptionDefinition(
             'foo',
             'Full description',
@@ -37,7 +37,7 @@ final class OptionDefinitionTest extends TestCase
 
     public function testShortcutOnly(): void
     {
-        $optionValue = $this->getMockForAbstractClass(OptionValueDefinition::class, [], '', false);
+        $optionValue = $this->createMock(OptionValueDefinition::class);
         $definition = new OptionDefinition(
             'foo',
             'Full description',

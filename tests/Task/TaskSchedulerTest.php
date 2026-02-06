@@ -15,6 +15,7 @@ use Phpcq\Runner\Report\Report;
 use Phpcq\Runner\Task\TasklistInterface;
 use Phpcq\Runner\Task\TaskScheduler;
 use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -25,12 +26,12 @@ final class TaskSchedulerTest extends TestCase
 
     public function testCanRunEmptyList(): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
         // Dummy report - not used but can not mock due to lack of interface.
         $report = new Report(new ReportBuffer(), self::$tempdir);
 
-        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $list = $this->createMock(TasklistInterface::class);
         $generator = function () {
             yield from [];
         };
@@ -42,12 +43,12 @@ final class TaskSchedulerTest extends TestCase
 
     public function testCanNotBeRunTwice(): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
         // Dummy report - not used but can not mock due to lack of interface.
         $report = new Report(new ReportBuffer(), self::$tempdir);
 
-        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $list = $this->createMock(TasklistInterface::class);
         $generator = function () {
             yield from [];
         };
@@ -61,152 +62,152 @@ final class TaskSchedulerTest extends TestCase
     }
 
     /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
-    public function taskListProvider(): array
+    public static function taskListProvider(): array
     {
         return [
             'run non parallel tasks sequentially even if 4 threads available' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->end('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-2'),
-                    $this->start('tool-3'),
-                    $this->end('tool-3'),
-                    $this->start('tool-4'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::end('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-2'),
+                    self::start('tool-3'),
+                    self::end('tool-3'),
+                    self::start('tool-4'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 4,
-                'tasks' => [
-                    $this->succeedingTask('tool-1'),
-                    $this->succeedingTask('tool-2'),
-                    $this->succeedingTask('tool-3'),
-                    $this->succeedingTask('tool-4'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingTask('tool-1'),
+                    $testCase->succeedingTask('tool-2'),
+                    $testCase->succeedingTask('tool-3'),
+                    $testCase->succeedingTask('tool-4'),
                 ],
             ],
             'run parallel tasks parallel in 4 threads' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->start('tool-3'),
-                    $this->start('tool-4'),
-                    $this->end('tool-1'),
-                    $this->end('tool-2'),
-                    $this->end('tool-3'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::start('tool-3'),
+                    self::start('tool-4'),
+                    self::end('tool-1'),
+                    self::end('tool-2'),
+                    self::end('tool-3'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 4,
-                'tasks' => [
-                    $this->succeedingParallelTask(1, 'tool-1'),
-                    $this->succeedingParallelTask(2, 'tool-2'),
-                    $this->succeedingParallelTask(3, 'tool-3'),
-                    $this->succeedingParallelTask(4, 'tool-4'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(1, 'tool-1'),
+                    $testCase->succeedingParallelTask(2, 'tool-2'),
+                    $testCase->succeedingParallelTask(3, 'tool-3'),
+                    $testCase->succeedingParallelTask(4, 'tool-4'),
                 ],
             ],
             'run parallel tasks parallel in 2 threads' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-1'),
-                    $this->start('tool-3'),
-                    $this->end('tool-2'),
-                    $this->start('tool-4'),
-                    $this->end('tool-3'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-1'),
+                    self::start('tool-3'),
+                    self::end('tool-2'),
+                    self::start('tool-4'),
+                    self::end('tool-3'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 2,
-                'tasks' => [
-                    $this->succeedingParallelTask(2, 'tool-1'),
-                    $this->succeedingParallelTask(3, 'tool-2'),
-                    $this->succeedingParallelTask(3, 'tool-3'),
-                    $this->succeedingParallelTask(4, 'tool-4'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(2, 'tool-1'),
+                    $testCase->succeedingParallelTask(3, 'tool-2'),
+                    $testCase->succeedingParallelTask(3, 'tool-3'),
+                    $testCase->succeedingParallelTask(4, 'tool-4'),
                 ],
             ],
             'run parallel tasks parallel in 2 threads, filling up the from pending tasks after one finished' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-1'),
-                    $this->start('tool-3'),
-                    $this->end('tool-2'),
-                    $this->start('tool-4'),
-                    $this->end('tool-3'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-1'),
+                    self::start('tool-3'),
+                    self::end('tool-2'),
+                    self::start('tool-4'),
+                    self::end('tool-3'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 2,
-                'tasks' => [
-                    $this->succeedingParallelTask(1, 'tool-1'),
-                    $this->succeedingParallelTask(2, 'tool-2'),
-                    $this->succeedingParallelTask(2, 'tool-3'),
-                    $this->succeedingParallelTask(2, 'tool-4'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(1, 'tool-1'),
+                    $testCase->succeedingParallelTask(2, 'tool-2'),
+                    $testCase->succeedingParallelTask(2, 'tool-3'),
+                    $testCase->succeedingParallelTask(2, 'tool-4'),
                 ],
             ],
             'run parallel tasks parallel in 2 threads, blocking for non parallelizable task' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-1'),
-                    $this->end('tool-2'),
-                    $this->start('tool-3'),
-                    $this->end('tool-3'),
-                    $this->start('tool-4'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-1'),
+                    self::end('tool-2'),
+                    self::start('tool-3'),
+                    self::end('tool-3'),
+                    self::start('tool-4'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 2,
-                'tasks' => [
-                    $this->succeedingParallelTask(1, 'tool-1'),
-                    $this->succeedingParallelTask(2, 'tool-2'),
-                    $this->mockTask('tool-3', ReportInterface::STATUS_PASSED),
-                    $this->succeedingParallelTask(2, 'tool-4'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(1, 'tool-1'),
+                    $testCase->succeedingParallelTask(2, 'tool-2'),
+                    $testCase->mockTask('tool-3', ReportInterface::STATUS_PASSED),
+                    $testCase->succeedingParallelTask(2, 'tool-4'),
                 ],
             ],
             'run parallel tasks parallel in 4 threads depending on costs' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-1'),
-                    $this->end('tool-2'),
-                    $this->start('tool-3'),
-                    $this->start('tool-4'),
-                    $this->end('tool-3'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-1'),
+                    self::end('tool-2'),
+                    self::start('tool-3'),
+                    self::start('tool-4'),
+                    self::end('tool-3'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 4,
-                'tasks' => [
-                    $this->succeedingParallelTask(1, 'tool-1', 1),
-                    $this->succeedingParallelTask(2, 'tool-2', 2),
-                    $this->succeedingParallelTask(3, 'tool-3', 3),
-                    $this->succeedingParallelTask(4, 'tool-4', 1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(1, 'tool-1', 1),
+                    $testCase->succeedingParallelTask(2, 'tool-2', 2),
+                    $testCase->succeedingParallelTask(3, 'tool-3', 3),
+                    $testCase->succeedingParallelTask(4, 'tool-4', 1),
                 ],
             ],
             'run mixed task types in 4 threads depending on costs' => [
                 'expected' => [
-                    $this->start('tool-1'),
-                    $this->start('tool-2'),
-                    $this->end('tool-1'),
-                    $this->end('tool-2'),
-                    $this->start('tool-3'),
-                    $this->end('tool-3'),
-                    $this->start('blocker'),
-                    $this->end('blocker'),
-                    $this->start('tool-4'),
-                    $this->end('tool-4'),
+                    self::start('tool-1'),
+                    self::start('tool-2'),
+                    self::end('tool-1'),
+                    self::end('tool-2'),
+                    self::start('tool-3'),
+                    self::end('tool-3'),
+                    self::start('blocker'),
+                    self::end('blocker'),
+                    self::start('tool-4'),
+                    self::end('tool-4'),
                 ],
                 'threads' => 4,
-                'tasks' => [
-                    $this->succeedingParallelTask(1, 'tool-1', 1),
-                    $this->succeedingParallelTask(2, 'tool-2', 2),
-                    $this->succeedingParallelTask(3, 'tool-3', 3),
-                    $this->succeedingTask('blocker'),
-                    $this->succeedingParallelTask(4, 'tool-4', 1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(1, 'tool-1', 1),
+                    $testCase->succeedingParallelTask(2, 'tool-2', 2),
+                    $testCase->succeedingParallelTask(3, 'tool-3', 3),
+                    $testCase->succeedingTask('blocker'),
+                    $testCase->succeedingParallelTask(4, 'tool-4', 1),
                 ],
             ],
         ];
     }
 
-    /** @dataProvider taskListProvider */
-    public function testRunsTasks(array $expected, int $threads, array $tasks): void
+    #[DataProvider('taskListProvider')]
+    public function testRunsTasks(array $expected, int $threads, callable $tasks): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
         $result = [];
         $output
             ->expects($this->exactly(count($expected)))
@@ -218,9 +219,9 @@ final class TaskSchedulerTest extends TestCase
         // Dummy report - not used but can not mock due to lack of interface.
         $report = new Report(new ReportBuffer(), self::$tempdir);
 
-        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $list = $this->createMock(TasklistInterface::class);
         $generator = function () use ($tasks) {
-            foreach ($tasks as $task) {
+            foreach ($tasks($this) as $task) {
                 yield $task;
             }
         };
@@ -313,25 +314,25 @@ final class TaskSchedulerTest extends TestCase
                     'failure-1' => ReportInterface::STATUS_FAILED,
                 ],
                 'fastFinish' => true,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->throwingTask('failure-1'),
-                    $this->skippedParallelTask(1),
-                    $this->skippedParallelTask(1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->throwingTask('failure-1'),
+                    $testCase->skippedParallelTask(1),
+                    $testCase->skippedParallelTask(1),
                 ]
             ],
         ];
     }
 
-    /** @dataProvider fastFinishProvider */
-    public function testFastFinishWorksAsExpected(array $expected, bool $fastFinish, array $tasks): void
+    #[DataProvider('fastFinishProvider')]
+    public function testFastFinishWorksAsExpected(array $expected, bool $fastFinish, callable $tasks): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
         $report = new Report($buffer = new ReportBuffer(), self::$tempdir);
 
-        $list = $this->getMockForAbstractClass(TasklistInterface::class);
+        $list = $this->createMock(TasklistInterface::class);
         $generator = function () use ($tasks) {
-            foreach ($tasks as $task) {
+            foreach ($tasks($this) as $task) {
                 yield $task;
             }
         };
@@ -348,26 +349,29 @@ final class TaskSchedulerTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    private function start(string $toolName): string
+    private static function start(string $toolName): string
     {
         return $toolName . ' starting';
     }
 
-    private function end(string $toolName): string
+    private static function end(string $toolName): string
     {
         return $toolName . ' finished';
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function succeedingTask(string $toolName): ReportWritingTaskInterface
     {
         return $this->mockTask($toolName, ReportInterface::STATUS_PASSED);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function failingTask(string $toolName): ReportWritingTaskInterface
     {
         return $this->mockTask($toolName, ReportInterface::STATUS_FAILED);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function throwingTask(string $toolName): ReportWritingTaskInterface
     {
         return $this->mockTask($toolName, new RuntimeException('fail miserably'));
@@ -376,7 +380,7 @@ final class TaskSchedulerTest extends TestCase
     /** @param string|Throwable|null $result */
     private function mockTask(?string $toolName, $result): ReportWritingTaskInterface
     {
-        $mock = $this->getMockForAbstractClass(ReportWritingTaskInterface::class);
+        $mock = $this->createMock(ReportWritingTaskInterface::class);
         $mock->method('getToolName')->willReturn($toolName);
         // Should be skipped.
         if (null === $result) {
@@ -397,6 +401,7 @@ final class TaskSchedulerTest extends TestCase
         return $mock;
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function succeedingParallelTask(
         int $tickDuration,
         string $toolName,
@@ -405,6 +410,7 @@ final class TaskSchedulerTest extends TestCase
         return $this->mockParallelizableTask($tickDuration, $cost, $toolName, ReportInterface::STATUS_PASSED);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function failingParallelTask(
         int $tickDuration,
         string $toolName,
@@ -413,6 +419,7 @@ final class TaskSchedulerTest extends TestCase
         return $this->mockParallelizableTask($tickDuration, $cost, $toolName, ReportInterface::STATUS_FAILED);
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function throwingParallelTask(
         int $tickDuration,
         string $toolName,
@@ -433,7 +440,7 @@ final class TaskSchedulerTest extends TestCase
         string $toolName,
         $result
     ): ReportWritingParallelTaskInterface {
-        $mock = $this->getMockForAbstractClass(ReportWritingParallelTaskInterface::class);
+        $mock = $this->createMock(ReportWritingParallelTaskInterface::class);
         $mock->method('getToolName')->willReturn($toolName);
 
         // Should be skipped.

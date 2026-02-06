@@ -9,6 +9,7 @@ use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Phpcq\Runner\Report\Writer\DiagnosticIterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class DiagnosticIteratorTest extends TestCase
 {
-    public function iterateEmptyProvider(): array
+    public static function iterateEmptyProvider(): array
     {
         $report = new ReportBuffer();
         return [
@@ -28,13 +29,13 @@ final class DiagnosticIteratorTest extends TestCase
         ];
     }
 
-    /** @dataProvider iterateEmptyProvider */
+    #[DataProvider('iterateEmptyProvider')]
     public function testIteratesEmpty(DiagnosticIterator $iterator): void
     {
         $this->assertEmpty(iterator_to_array($iterator));
     }
 
-    public function iterateSingleItemProvider(): array
+    public static function iterateSingleItemProvider(): array
     {
         $report = new ReportBuffer();
         $report
@@ -48,7 +49,7 @@ final class DiagnosticIteratorTest extends TestCase
         ];
     }
 
-    /** @dataProvider iterateSingleItemProvider */
+    #[DataProvider('iterateSingleItemProvider')]
     public function testIteratesSingleItem(DiagnosticIterator $iterator): void
     {
         $this->assertCount(1, iterator_to_array($iterator));

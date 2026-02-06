@@ -32,7 +32,7 @@ final class InstalledRepositoryDumperTest extends TestCase
 
         $pluginRequirements = new PluginRequirements();
         $pluginRequirements->getPhpRequirements()->add(new VersionRequirement('php', '^7.3'));
-        $installedPlugin = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedPlugin = $this->createMock(PluginVersionInterface::class);
         $installedPlugin->method('getName')->willReturn('plugin-name');
         $installedPlugin->method('getApiVersion')->willReturn('1.0.0');
         $installedPlugin->method('getVersion')->willReturn('2.0.0');
@@ -44,7 +44,7 @@ final class InstalledRepositoryDumperTest extends TestCase
 
         $pluginRequirements = new PluginRequirements();
         $pluginRequirements->getPhpRequirements()->add(new VersionRequirement('php', '^7.3'));
-        $installedPlugin = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedPlugin = $this->createMock(PluginVersionInterface::class);
         $installedPlugin->method('getName')->willReturn('plugin-name2');
         $installedPlugin->method('getApiVersion')->willReturn('1.0.0');
         $installedPlugin->method('getVersion')->willReturn('3.0.0');
@@ -56,7 +56,7 @@ final class InstalledRepositoryDumperTest extends TestCase
         $toolRequirements = new ToolRequirements();
         $toolRequirements->getPhpRequirements()->add(new VersionRequirement('php', '^7.3'));
 
-        $toolForPlugin = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $toolForPlugin = $this->createMock(ToolVersionInterface::class);
         $toolForPlugin->method('getName')->willReturn('tool1');
         $toolForPlugin->method('getVersion')->willReturn('1.0.0');
         $toolForPlugin->method('getPharUrl')->willReturn(self::$tempdir . '/tools/tool-code2.phar');

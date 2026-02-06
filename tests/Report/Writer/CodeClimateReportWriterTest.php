@@ -11,6 +11,7 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Phpcq\Runner\Report\Writer\CodeClimateReportWriter;
 use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -21,7 +22,7 @@ final class CodeClimateReportWriterTest extends TestCase
     use TemporaryFileProducingTestTrait;
 
     /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
-    public function writeErrorsProvider(): array
+    public static function writeErrorsProvider(): array
     {
         return [
             'writes simple error' => [
@@ -485,14 +486,12 @@ final class CodeClimateReportWriterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider writeErrorsProvider
-     */
-    public function testWriteErrors(array $expected, string $task, DiagnosticBuffer $diagnostic): void
+    #[DataProvider('writeErrorsProvider')]
+    public function testWriteErrors(array $expected, string $tool, DiagnosticBuffer $diagnostic): void
     {
         $tempDir    = self::$tempdir . '/' . uniqid('phpcq', true);
         $report     = new ReportBuffer();
-        $toolReport = $report->createTaskReport($task);
+        $toolReport = $report->createTaskReport($tool);
         $toolReport->addDiagnostic($diagnostic);
         $report->complete(ReportInterface::STATUS_FAILED);
 
@@ -500,7 +499,7 @@ final class CodeClimateReportWriterTest extends TestCase
         self::assertSame($expected, json_decode(file_get_contents($tempDir . '/code-climate.json'), true));
     }
 
-    public function ignoredSeveritiesProvider(): array
+    public static function ignoredSeveritiesProvider(): array
     {
         return [
             'ignores info severity'   => [TaskReportInterface::SEVERITY_INFO],
@@ -508,9 +507,7 @@ final class CodeClimateReportWriterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider ignoredSeveritiesProvider
-     */
+    #[DataProvider('ignoredSeveritiesProvider')]
     public function testIgnoresMessagesWithLowerSeverityThanWarning(string $severity): void
     {
         $tempDir    = self::$tempdir . '/' . uniqid('phpcq', true);

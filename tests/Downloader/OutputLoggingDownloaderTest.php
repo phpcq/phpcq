@@ -14,8 +14,8 @@ final class OutputLoggingDownloaderTest extends TestCase
 {
     public function testDownloadFileTo(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
         $downloader
             ->expects($this->once())
@@ -33,8 +33,8 @@ final class OutputLoggingDownloaderTest extends TestCase
 
     public function testDownloadFile(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
         $downloader
             ->expects($this->once())
@@ -52,8 +52,8 @@ final class OutputLoggingDownloaderTest extends TestCase
 
     public function testJsonDownloadFile(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
         $downloader
             ->expects($this->once())

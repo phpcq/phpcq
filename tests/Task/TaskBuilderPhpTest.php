@@ -116,7 +116,6 @@ final class TaskBuilderPhpTest extends TestCase
     private static function assertPrivateProperty($expected, string $property, object $instance): void
     {
         $reflection = new ReflectionProperty($instance, $property);
-        $reflection->setAccessible(true);
         self::assertSame($expected, $reflection->getValue($instance));
     }
 

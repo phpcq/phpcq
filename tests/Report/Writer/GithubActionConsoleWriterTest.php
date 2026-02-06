@@ -9,6 +9,7 @@ use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class GithubActionConsoleWriterTest extends TestCase
 {
     /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
-    public function writeErrorsProvider(): array
+    public static function writeErrorsProvider(): array
     {
         return [
             'writes simple error' => [
@@ -215,26 +216,24 @@ final class GithubActionConsoleWriterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider writeErrorsProvider
-     */
-    public function testWriteErrors(string $expected, string $task, DiagnosticBuffer $diagnostic): void
+    #[DataProvider('writeErrorsProvider')]
+    public function testWriteErrors(string $expected, string $tool, DiagnosticBuffer $diagnostic): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
         $output
             ->expects($this->once())
             ->method('writeln')
             ->with($expected);
 
         $report = new ReportBuffer();
-        $toolReport = $report->createTaskReport($task);
+        $toolReport = $report->createTaskReport($tool);
         $toolReport->addDiagnostic($diagnostic);
 
         $instance = new GithubActionConsoleWriter($output, $report);
         $instance->write();
     }
 
-    public function ignoredSeveritiesProvider(): array
+    public static function ignoredSeveritiesProvider(): array
     {
         return [
             'ignores info severity' => [TaskReportInterface::SEVERITY_INFO],
@@ -242,12 +241,10 @@ final class GithubActionConsoleWriterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider ignoredSeveritiesProvider
-     */
+    #[DataProvider('ignoredSeveritiesProvider')]
     public function testIgnoresMessagesWithLowerSeverityThanWarning(string $severity): void
     {
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
         $output
             ->expects($this->never())
             ->method('writeln');

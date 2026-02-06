@@ -16,7 +16,7 @@ final class VersionsRepositoryLoaderTest extends TestCase
 {
     public function testLoad(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $downloader->method('downloadJsonFile')->willReturn(
             [
                 'updated' => date(DATE_ATOM),
@@ -40,7 +40,7 @@ final class VersionsRepositoryLoaderTest extends TestCase
 
     public function testMatchingLatest(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $downloader->method('downloadJsonFile')->willReturn(
             [
                 'updated' => date(DATE_ATOM),
@@ -70,7 +70,7 @@ final class VersionsRepositoryLoaderTest extends TestCase
 
     public function testMatchingSigned(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $downloader->method('downloadJsonFile')->willReturn(
             [
                 'updated' => date(DATE_ATOM),
@@ -100,7 +100,7 @@ final class VersionsRepositoryLoaderTest extends TestCase
 
     public function testMatchingRequirements(): void
     {
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $downloader->method('downloadJsonFile')->willReturn(
             [
                 'updated' => date(DATE_ATOM),

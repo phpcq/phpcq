@@ -16,7 +16,7 @@ final class SingleProcessTaskFactoryTest extends TestCase
     public function testBuildRunProcess(): void
     {
         $builder = $this->mockSingleForcingTaskBuilder();
-        $factory = $this->getMockForAbstractClass(TaskFactoryInterface::class);
+        $factory = $this->createMock(TaskFactoryInterface::class);
         $factory
             ->expects($this->once())
             ->method('buildRunProcess')
@@ -32,7 +32,7 @@ final class SingleProcessTaskFactoryTest extends TestCase
     public function testBuildRunPhar(): void
     {
         $builder = $this->mockSingleForcingTaskBuilder(PhpTaskBuilderInterface::class);
-        $factory = $this->getMockForAbstractClass(TaskFactoryInterface::class);
+        $factory = $this->createMock(TaskFactoryInterface::class);
         $factory
             ->expects($this->once())
             ->method('buildRunPhar')
@@ -48,7 +48,7 @@ final class SingleProcessTaskFactoryTest extends TestCase
     public function testBuildPhpProcess(): void
     {
         $builder = $this->mockSingleForcingTaskBuilder(PhpTaskBuilderInterface::class);
-        $factory = $this->getMockForAbstractClass(TaskFactoryInterface::class);
+        $factory = $this->createMock(TaskFactoryInterface::class);
         $factory
             ->expects($this->once())
             ->method('buildPhpProcess')
@@ -65,7 +65,7 @@ final class SingleProcessTaskFactoryTest extends TestCase
     protected function mockSingleForcingTaskBuilder(
         string $instance = TaskBuilderInterface::class
     ): TaskBuilderInterface {
-        $builder = $this->getMockForAbstractClass($instance);
+        $builder = $this->createMock($instance);
         $builder
             ->expects($this->once())
             ->method('forceSingleProcess')

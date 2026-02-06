@@ -14,8 +14,8 @@ final class EnvironmentTest extends TestCase
 {
     public function testEnvironment(): void
     {
-        $projectConfig = $this->getMockForAbstractClass(ProjectConfigInterface::class);
-        $taskFactory = $this->getMockForAbstractClass(TaskFactoryInterface::class);
+        $projectConfig = $this->createMock(ProjectConfigInterface::class);
+        $taskFactory = $this->createMock(TaskFactoryInterface::class);
         $instance = new Environment($projectConfig, $taskFactory, '/tmp', 1, '/foo/bar');
 
         self::assertSame($projectConfig, $instance->getProjectConfiguration());

@@ -45,8 +45,8 @@ final class ChainPluginTest extends TestCase
     public function testConfigurationDescription(): void
     {
         $instance             = new ChainPlugin();
-        $configOptionsBuilder = $this->getMockForAbstractClass(PluginConfigurationBuilderInterface::class);
-        $tasksOption          = $this->getMockForAbstractClass(StringListOptionBuilderInterface::class);
+        $configOptionsBuilder = $this->createMock(PluginConfigurationBuilderInterface::class);
+        $tasksOption          = $this->createMock(StringListOptionBuilderInterface::class);
         $configOptionsBuilder->expects($this->once())
             ->method('describeStringListOption')
             ->with('tasks', 'The list of tasks which are executed when running the task')
@@ -62,7 +62,7 @@ final class ChainPluginTest extends TestCase
     public function testTaskNames(): void
     {
         $instance = new ChainPlugin();
-        $config = $this->getMockForAbstractClass(PluginConfigurationInterface::class);
+        $config = $this->createMock(PluginConfigurationInterface::class);
         $config
             ->expects($this->once())
             ->method('getStringList')

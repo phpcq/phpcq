@@ -18,10 +18,10 @@ final class PluginRegistryTest extends TestCase
 {
     public function testLoadFromInstalledRepository(): void
     {
-        $version1 = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version1 = $this->createMock(PhpFilePluginVersionInterface::class);
         $version1->expects($this->once())->method('getName')->willReturn('tool1');
 
-        $version2 = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version2 = $this->createMock(PhpFilePluginVersionInterface::class);
         $version2->expects($this->once())->method('getName')->willReturn('tool2');
 
         $instance = new InstalledRepository();
@@ -37,10 +37,10 @@ final class PluginRegistryTest extends TestCase
 
     public function testGetByType(): void
     {
-        $version1 = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version1 = $this->createMock(PhpFilePluginVersionInterface::class);
         $version1->expects($this->once())->method('getName')->willReturn('tool1');
 
-        $version2 = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version2 = $this->createMock(PhpFilePluginVersionInterface::class);
         $version2->expects($this->once())->method('getName')->willReturn('tool2');
 
         $instance = new InstalledRepository();
