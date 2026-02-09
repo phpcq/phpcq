@@ -227,7 +227,7 @@ final class DiagnosticIterator implements IteratorAggregate
         }
 
         $values = iterator_to_array($this->previous);
-        usort($values, [$this, 'compare']);
+        usort($values, $this->compare(...));
 
         foreach ($values as $entry) {
             yield $entry;

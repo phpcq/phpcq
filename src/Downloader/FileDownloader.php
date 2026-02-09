@@ -134,7 +134,7 @@ class FileDownloader implements DownloaderInterface
         }
         // Perform URL check.
         $path        = (string) parse_url($url, PHP_URL_PATH);
-        $encodedPath = array_map('urlencode', explode('/', $path));
+        $encodedPath = array_map(urlencode(...), explode('/', $path));
         $newUrl      = str_replace($path, implode('/', $encodedPath), $url);
         if (filter_var($newUrl, FILTER_VALIDATE_URL)) {
             return $newUrl;

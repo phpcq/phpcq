@@ -71,7 +71,7 @@ PATTERN;
      */
     private static function convertAlphaVersionToIntVersion(string $alpha): int
     {
-        return strlen($alpha) * (-ord('a') + 1) + array_sum(array_map('ord', str_split($alpha)));
+        return strlen($alpha) * (-ord('a') + 1) + array_sum(array_map(ord(...), str_split($alpha)));
     }
 
     private static function convertVersionId(int $versionId, int $base): string
