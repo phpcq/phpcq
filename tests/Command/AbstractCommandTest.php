@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Test\Command;
 
 use Phpcq\Runner\Command\AbstractCommand;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Symfony\Component\Console\Input\InputDefinition;
 
 /**
@@ -15,8 +16,12 @@ final class AbstractCommandTest extends TestCase
 {
     public function testConfigureHonorsConfigArgument(): void
     {
-        $command    = $this->getMockForAbstractClass(AbstractCommand::class);
-        $definition = $command->getDefinition();
+        $command    = $this->createPartialMock(AbstractCommand::class, ['doExecute']);
+        $definition = new InputDefinition();
+        $command->setDefinition($definition);
+
+        $reflectionMethod = new ReflectionMethod($command, 'configure');
+        $reflectionMethod->invoke($command);
 
         $this->assertTrue($definition->hasOption('config'));
         $option = $definition->getOption('config');

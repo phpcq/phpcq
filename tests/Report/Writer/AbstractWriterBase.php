@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 use function tempnam;
 
-abstract class AbstractWriterTest extends TestCase
+abstract class AbstractWriterBase extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

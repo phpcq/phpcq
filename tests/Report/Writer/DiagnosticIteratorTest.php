@@ -40,7 +40,7 @@ final class DiagnosticIteratorTest extends TestCase
         $report = new ReportBuffer();
         $report
             ->createTaskReport('tool')
-            ->addDiagnostic($this->diagnostic(TaskReportInterface::SEVERITY_MAJOR, 'test'));
+            ->addDiagnostic(self::diagnostic(TaskReportInterface::SEVERITY_MAJOR, 'test'));
         return [
             'file/range' => [DiagnosticIterator::sortByFileAndRange($report)],
             'tool' => [DiagnosticIterator::sortByTool($report)],
@@ -290,7 +290,7 @@ final class DiagnosticIteratorTest extends TestCase
         );
     }
 
-    private function diagnostic(
+    private static function diagnostic(
         string $severity,
         string $message,
         ?string $source = null,

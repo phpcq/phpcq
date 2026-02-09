@@ -232,7 +232,7 @@ final class TaskSchedulerTest extends TestCase
         $this->assertSame($expected, $result, 'Execution steps did not match.');
     }
 
-    public function fastFinishProvider(): array
+    public static function fastFinishProvider(): array
     {
         return [
             'continues on failure if fast finish is not enabled' => [
@@ -244,12 +244,12 @@ final class TaskSchedulerTest extends TestCase
                     'success-3' => ReportInterface::STATUS_PASSED,
                 ],
                 'fastFinish' => false,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->failingParallelTask(4, 'failure-1'),
-                    $this->succeedingParallelTask(1, 'success-2'),
-                    $this->failingTask('failure-2'),
-                    $this->succeedingParallelTask(1, 'success-3'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->failingParallelTask(4, 'failure-1'),
+                    $testCase->succeedingParallelTask(1, 'success-2'),
+                    $testCase->failingTask('failure-2'),
+                    $testCase->succeedingParallelTask(1, 'success-3'),
                 ]
             ],
             'stops on failure of parallel task if fast finish is enabled' => [
@@ -258,11 +258,11 @@ final class TaskSchedulerTest extends TestCase
                     'failure-1' => ReportInterface::STATUS_FAILED,
                 ],
                 'fastFinish' => true,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->failingParallelTask(4, 'failure-1'),
-                    $this->skippedParallelTask(1),
-                    $this->skippedParallelTask(1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->failingParallelTask(4, 'failure-1'),
+                    $testCase->skippedParallelTask(1),
+                    $testCase->skippedParallelTask(1),
                 ]
             ],
             'stops on failure of single run task if fast finish is enabled' => [
@@ -271,11 +271,11 @@ final class TaskSchedulerTest extends TestCase
                     'failure-1' => ReportInterface::STATUS_FAILED,
                 ],
                 'fastFinish' => true,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->failingTask('failure-1'),
-                    $this->skippedParallelTask(1),
-                    $this->skippedParallelTask(1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->failingTask('failure-1'),
+                    $testCase->skippedParallelTask(1),
+                    $testCase->skippedParallelTask(1),
                 ]
             ],
             'continues on exception if fast finish is not enabled' => [
@@ -287,12 +287,12 @@ final class TaskSchedulerTest extends TestCase
                     'success-3' => ReportInterface::STATUS_PASSED,
                 ],
                 'fastFinish' => false,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->throwingParallelTask(4, 'failure-1'),
-                    $this->succeedingParallelTask(1, 'success-2'),
-                    $this->throwingTask('failure-2'),
-                    $this->succeedingParallelTask(1, 'success-3'),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->throwingParallelTask(4, 'failure-1'),
+                    $testCase->succeedingParallelTask(1, 'success-2'),
+                    $testCase->throwingTask('failure-2'),
+                    $testCase->succeedingParallelTask(1, 'success-3'),
                 ]
             ],
             'stops on exception of parallel task if fast finish is enabled' => [
@@ -301,11 +301,11 @@ final class TaskSchedulerTest extends TestCase
                     'failure-1' => ReportInterface::STATUS_FAILED,
                 ],
                 'fastFinish' => true,
-                'tasks' => [
-                    $this->succeedingParallelTask(8, 'success-1'),
-                    $this->throwingParallelTask(4, 'failure-1'),
-                    $this->skippedParallelTask(1),
-                    $this->skippedParallelTask(1),
+                'tasks' => static fn (self $testCase): array => [
+                    $testCase->succeedingParallelTask(8, 'success-1'),
+                    $testCase->throwingParallelTask(4, 'failure-1'),
+                    $testCase->skippedParallelTask(1),
+                    $testCase->skippedParallelTask(1),
                 ]
             ],
             'stops on exception of single run task if fast finish is enabled' => [
@@ -428,6 +428,7 @@ final class TaskSchedulerTest extends TestCase
         return $this->mockParallelizableTask($tickDuration, $cost, $toolName, new RuntimeException('fail miserably'));
     }
 
+    /** @SuppressWarnings(PHPMD.UnusedPrivateMethod) */
     private function skippedParallelTask(int $tickDuration): ReportWritingParallelTaskInterface
     {
         return $this->mockParallelizableTask($tickDuration, 1, uniqid('skipped-'), null);

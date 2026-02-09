@@ -127,21 +127,24 @@ final class SelfUpdateCommandTest extends TestCase
         }
 
         $output = $this->createMock(OutputInterface::class);
-        $stubber = $output
-            ->expects($download ? $this->exactly(2) : $this->once())
-            ->method('writeln');
 
         if ($download) {
-            $stubber->with(
-                $this->callback(
-                    $this->consecutiveCalls(
-                        'Download phpcq.phar from https://phpcq.github.io/distrib/phpcq/unstable/phpcq.phar',
-                        $expectedOutput
-                    )
-                )
-            );
+            $output
+                ->expects($this->exactly(2))
+                ->method('writeln')
+                ->with(
+                    $this->callback(
+                        $this->consecutiveCalls(
+                            $expectedOutput,
+                            'Download phpcq.phar from https://phpcq.github.io/distrib/phpcq/unstable/phpcq.phar',
+                        )
+                    ),
+                );
         } else {
-            $stubber->with($expectedOutput);
+            $output
+                ->expects($this->once())
+                ->method('writeln')
+                ->with($expectedOutput);
         }
 
         $command = new SelfUpdateCommand($downloadLocation, $downloader);
