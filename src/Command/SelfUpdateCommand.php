@@ -143,8 +143,6 @@ final class SelfUpdateCommand extends AbstractCommand
     #[\Override]
     protected function doExecute(): int
     {
-        $this->updateComposer();
-
         if (! $this->pharFile) {
             $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
             return 0;
@@ -166,7 +164,7 @@ final class SelfUpdateCommand extends AbstractCommand
         }
 
         $pharUrl        = $this->getBaseUri() . '/' . $version->getPharFile();
-        $downloadedPhar = tempnam(sys_get_temp_dir(), 'phpcq.phar-');
+        $downloadedPhar = (string) tempnam(sys_get_temp_dir(), 'phpcq.phar-');
         $this->output->writeln('Download phpcq.phar from ' . $pharUrl, OutputInterface::VERBOSITY_VERBOSE);
         $this->downloader->downloadFileTo($pharUrl, $downloadedPhar, '', true);
 
