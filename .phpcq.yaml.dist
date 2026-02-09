@@ -158,11 +158,6 @@ tasks:
     config:
       dry_run: false
 
-  psalm:
-    config:
-      custom_flags:
-        - '--use-baseline=psalm-baseline.xml'
-
   rector-fix:
     plugin: rector
     config:
