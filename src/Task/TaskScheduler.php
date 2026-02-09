@@ -33,7 +33,7 @@ class TaskScheduler
     private int $runningThreads;
 
     /** @var SplObjectStorage<ParallelTaskInterface, TaskReportInterface> */
-    private readonly SplObjectStorage $threads;
+    private SplObjectStorage $threads;
 
     public function __construct(
         TasklistInterface $tasks,
@@ -104,7 +104,7 @@ class TaskScheduler
     {
         $this->output->writeln(sprintf(self::LOG_END, $thread->getToolName()), OutputInterface::VERBOSITY_DEBUG);
         $report = $this->threads->offsetGet($thread);
-        $this->threads->detach($thread);
+        unset($this->threads[$thread]);
         $this->runningThreads -= $thread->getCost();
         $this->success = $this->success && $report->getStatus() === TaskReportInterface::STATUS_PASSED;
         if ($this->fastFinish && !$this->success) {
@@ -171,7 +171,7 @@ class TaskScheduler
             $this->output->writeln(sprintf(self::LOG_END, $name), OutputInterface::VERBOSITY_DEBUG);
             return;
         }
-        $this->threads->attach($task, $report);
+        $this->threads[$task] = $report;
         $this->runningThreads += $task->getCost();
     }
 
