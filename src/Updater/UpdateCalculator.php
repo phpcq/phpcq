@@ -45,15 +45,15 @@ use function is_dir;
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-final class UpdateCalculator
+final readonly class UpdateCalculator
 {
     /**  @psalm-param TOutputVerbosity $verbosity */
     public function __construct(
-        private readonly InstalledRepository $installed,
-        private readonly ResolverInterface $resolver,
-        private readonly Composer $composer,
-        private readonly OutputInterface $output,
-        private readonly int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
+        private InstalledRepository $installed,
+        private ResolverInterface $resolver,
+        private Composer $composer,
+        private OutputInterface $output,
+        private int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
     }
 

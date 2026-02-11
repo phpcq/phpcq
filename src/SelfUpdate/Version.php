@@ -6,13 +6,13 @@ namespace Phpcq\Runner\SelfUpdate;
 
 use Phpcq\RepositoryDefinition\VersionRequirementList;
 
-final class Version
+final readonly class Version
 {
     public function __construct(
-        private readonly string $version,
-        private readonly VersionRequirementList $requirements,
-        private readonly string $pharFile,
-        private readonly ?string $signatureFile = null
+        private string $version,
+        private VersionRequirementList $requirements,
+        private string $pharFile,
+        private ?string $signatureFile = null
     ) {
     }
 

@@ -8,12 +8,12 @@ use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
 use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 
-final class DiagnosticIteratorEntry
+final readonly class DiagnosticIteratorEntry
 {
     public function __construct(
-        private readonly TaskReportBuffer $task,
-        private readonly DiagnosticBuffer $diagnostic,
-        private readonly ?FileRangeBuffer $range
+        private TaskReportBuffer $task,
+        private DiagnosticBuffer $diagnostic,
+        private ?FileRangeBuffer $range
     ) {
     }
 

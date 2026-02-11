@@ -17,12 +17,12 @@ use function dirname;
 /**
  * @psalm-import-type TTaskConfig from PhpcqConfiguration
  */
-final class PluginConfigurationFactory
+final readonly class PluginConfigurationFactory
 {
     public function __construct(
-        private readonly PhpcqConfiguration $phpcqConfiguration,
-        private readonly PluginRegistry $plugins,
-        private readonly InstalledRepository $installedRepository
+        private PhpcqConfiguration $phpcqConfiguration,
+        private PluginRegistry $plugins,
+        private InstalledRepository $installedRepository
     ) {
     }
 

@@ -20,7 +20,7 @@ return RectorConfig::configure()
         AddTestsVoidReturnTypeWhereNoReturnRector::class,
     ])
     ->withSets([
-        LevelSetList::UP_TO_PHP_81,
+        LevelSetList::UP_TO_PHP_82,
     ])
     ->withSkip([
         __DIR__ . '/src/Platform/PlatformInformation.php',

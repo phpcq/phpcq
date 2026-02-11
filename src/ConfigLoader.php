@@ -28,7 +28,7 @@ use function array_keys;
  *   auth: array
  * }
  */
-final class ConfigLoader
+final readonly class ConfigLoader
 {
     /**
      * Load configuration from yaml file and return a preprocessed configuration.
@@ -40,7 +40,7 @@ final class ConfigLoader
         return (new self($configPath))->getConfig();
     }
 
-    public function __construct(private readonly string $configPath)
+    public function __construct(private string $configPath)
     {
     }
 
