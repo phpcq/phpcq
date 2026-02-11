@@ -116,7 +116,7 @@ jobs:
 
       - name: Upload build directory to artifact
         uses: actions/upload-artifact@v6
-        if: ${{ success() }} || ${{ failure() }}
+        if: ${{ success() || failure() }}
         with:
           name: phpcq-builds
           path: .phpcq/build/
