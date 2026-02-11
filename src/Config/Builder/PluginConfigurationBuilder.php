@@ -10,9 +10,9 @@ use Phpcq\PluginApi\Version10\Configuration\PluginConfigurationBuilderInterface;
 /** @extends AbstractOptionsBuilder<array<string,mixed>> */
 class PluginConfigurationBuilder extends AbstractOptionsBuilder implements PluginConfigurationBuilderInterface
 {
-    /** @var bool */
-    private $supportsDirectories = false;
+    private bool $supportsDirectories = false;
 
+    #[\Override]
     public function supportDirectories(): PluginConfigurationBuilderInterface
     {
         if ($this->supportsDirectories) {
@@ -36,6 +36,7 @@ class PluginConfigurationBuilder extends AbstractOptionsBuilder implements Plugi
         return $this->supportsDirectories;
     }
 
+    #[\Override]
     protected function describeOption(string $name, ConfigOptionBuilderInterface $builder): void
     {
         if ('directories' === $name) {

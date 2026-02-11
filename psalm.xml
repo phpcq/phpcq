@@ -2,12 +2,12 @@
 <psalm
     errorLevel="1"
     findUnusedBaselineEntry="false"
+    findUnusedIssueHandlerSuppression="false"
     findUnusedCode="false"
     hideExternalErrors="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config https://getpsalm.org/schema/config"
-    errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
         <directory name="src" />
@@ -24,9 +24,16 @@
             </errorLevel>
         </RiskyTruthyFalsyComparison>
         <MissingClassConstType>
+            <!-- Silence MissingClassConstType errors - we are on PHP 8.1 level so far.
+            The findUnusedIssueHandlerSuppression can be removed when requiring PHP 8.2 -->
             <errorLevel type="suppress">
                 <directory name="src"/>
             </errorLevel>
         </MissingClassConstType>
+        <ClassMustBeFinal>
+            <errorLevel type="suppress">
+                <directory name="src"/>
+            </errorLevel>
+        </ClassMustBeFinal>
     </issueHandlers>
 </psalm>

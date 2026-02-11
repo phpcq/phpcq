@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
 /** @covers \Phpcq\Runner\Report\TaskReport */
-class TaskReportTest extends TestCase
+final class TaskReportTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

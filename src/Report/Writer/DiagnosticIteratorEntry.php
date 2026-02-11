@@ -10,18 +10,11 @@ use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
 
 final class DiagnosticIteratorEntry
 {
-    /** @var TaskReportBuffer */
-    private $task;
-    /** @var DiagnosticBuffer */
-    private $diagnostic;
-    /** @var null|FileRangeBuffer */
-    private $range;
-
-    public function __construct(TaskReportBuffer $task, DiagnosticBuffer $diagnostic, ?FileRangeBuffer $range)
-    {
-        $this->task       = $task;
-        $this->diagnostic = $diagnostic;
-        $this->range      = $range;
+    public function __construct(
+        private readonly TaskReportBuffer $task,
+        private readonly DiagnosticBuffer $diagnostic,
+        private readonly ?FileRangeBuffer $range
+    ) {
     }
 
     public function getTask(): TaskReportBuffer

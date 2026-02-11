@@ -22,7 +22,7 @@ use const DATE_ATOM;
  * @covers \Phpcq\Runner\Report\Writer\AbstractReportWriter
  * @covers \Phpcq\Runner\Report\Writer\FileReportWriter
  */
-final class FileReportWriterTest extends AbstractWriterTest
+final class FileReportWriterBase extends AbstractWriterBase
 {
     use TemporaryFileProducingTestTrait;
 

@@ -21,42 +21,6 @@ use function implode;
  */
 class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterface
 {
-    /** @var string */
-    private $taskName;
-
-    /**
-     * @var string[]
-     */
-    private $command;
-
-    /**
-     * @var string|null
-     */
-    private $cwd;
-
-    /**
-     * @var string[]|null
-     */
-    private $env;
-
-    /**
-     * @var resource|string|Traversable|null
-     */
-    private $input;
-
-    /**
-     * @var int|float|null
-     */
-    private $timeout;
-
-    /**
-     * @var TransformerFactory
-     */
-    private $transformer;
-
-    /** @var array<string,string> */
-    private $metadata;
-
     /**
      * @param string                           $taskName    The name of the tool the task belongs to
      * @param string[] $command                             The command to run and its arguments listed as separate
@@ -73,30 +37,25 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
      * @param array<string,string>             $metadata    Process metadata
      */
     public function __construct(
-        string $taskName,
-        array $command,
-        TransformerFactory $transformer,
-        string $cwd = null,
-        array $env = null,
-        $input = null,
-        ?float $timeout = 60,
-        array $metadata = []
+        private readonly string $taskName,
+        private readonly array $command,
+        private readonly TransformerFactory $transformer,
+        private readonly ?string $cwd = null,
+        private readonly ?array $env = null,
+        private $input = null,
+        private readonly float|null|int $timeout = 60,
+        private readonly array $metadata = [],
+        private readonly bool $tty = false
     ) {
-        $this->taskName    = $taskName;
-        $this->command     = $command;
-        $this->cwd         = $cwd;
-        $this->env         = $env;
-        $this->input       = $input;
-        $this->timeout     = $timeout;
-        $this->transformer = $transformer;
-        $this->metadata    = $metadata;
     }
 
+    #[\Override]
     public function getToolName(): string
     {
         return $this->taskName;
     }
 
+    #[\Override]
     public function runWithReport(TaskReportInterface $report): void
     {
         foreach ($this->metadata as $key => $value) {
@@ -139,9 +98,11 @@ class ProcessTask implements ReportWritingTaskInterface, OutputWritingTaskInterf
         }
     }
 
+    #[\Override]
     public function runForOutput(OutputInterface $output): void
     {
         $process = new Process($this->command, $this->cwd, $this->env, $this->input, $this->timeout);
+        $process->setTty($this->tty);
         $output->writeln('', OutputInterface::VERBOSITY_VERBOSE, OutputInterface::CHANNEL_STDERR);
         $output->writeln(
             'Executing: ' . $process->getCommandLine(),

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 /**
  * @covers \Phpcq\Runner\Output\SymfonyOutput
  */
-class SymfonyOutputTest extends TestCase
+final class SymfonyOutputTest extends TestCase
 {
     public function testWrite(): void
     {

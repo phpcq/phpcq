@@ -14,12 +14,12 @@ final class RemoveToolTaskTest extends TestCase
 {
     public function testDescription(): void
     {
-        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $toolVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
+        $toolVersion = $this->createMock(ToolVersionInterface::class);
         $toolVersion->expects($this->once())->method('getName')->willReturn('foo');
         $toolVersion->expects($this->once())->method('getVersion')->willReturn('1.0.1');
 
-        $installedVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $installedVersion = $this->createMock(ToolVersionInterface::class);
 
         $instance = new RemoveToolTask($pluginVersion, $toolVersion, $installedVersion);
 

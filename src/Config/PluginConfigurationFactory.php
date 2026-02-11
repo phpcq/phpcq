@@ -19,25 +19,11 @@ use function dirname;
  */
 final class PluginConfigurationFactory
 {
-    /** @var PhpcqConfiguration */
-    private $phpcqConfiguration;
-
-    /** @var PluginRegistry */
-    private $plugins;
-
-    /**
-     * @var InstalledRepository
-     */
-    private $installedRepository;
-
     public function __construct(
-        PhpcqConfiguration $phpcqConfiguration,
-        PluginRegistry $plugins,
-        InstalledRepository $installedRepository
+        private readonly PhpcqConfiguration $phpcqConfiguration,
+        private readonly PluginRegistry $plugins,
+        private readonly InstalledRepository $installedRepository
     ) {
-        $this->phpcqConfiguration  = $phpcqConfiguration;
-        $this->plugins             = $plugins;
-        $this->installedRepository = $installedRepository;
     }
 
     public function createForTask(string $taskName, Environment $environment): PluginConfiguration
@@ -59,7 +45,7 @@ final class PluginConfigurationFactory
     }
 
     /**
-     * @psalm-param TTaskConfig $taskConfig
+     * @param TTaskConfig $taskConfig
      */
     private function createConfiguration(
         ConfigurationPluginInterface $plugin,
@@ -98,7 +84,7 @@ final class PluginConfigurationFactory
             );
         }
 
-        /** @psalm-var array<string,mixed> $processed */
+        /** @var array<string,mixed> $processed */
         $processed = $configOptionsBuilder->normalizeValue($pluginConfig);
         $configOptionsBuilder->validateValue($processed);
 

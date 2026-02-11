@@ -17,14 +17,9 @@ final class ExecTaskDefinitionBuilderTest extends TestCase
 {
     public function testDefaults(): void
     {
-        $projectConfiguration = $this->getMockForAbstractClass(
-            ProjectConfiguration::class,
-            [],
-            '',
-            false
-        );
+        $projectConfiguration = $this->createMock(ProjectConfiguration::class);
 
-        $version = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version = $this->createMock(PhpFilePluginVersionInterface::class);
         $version->expects($this->once())->method('getName')->willReturn('phar-2');
         $version->expects($this->exactly(2))
             ->method('getFilePath')

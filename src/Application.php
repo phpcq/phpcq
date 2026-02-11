@@ -31,9 +31,10 @@ class Application extends BaseApplication
         $this->setDefaultCommand('run');
     }
 
+    #[\Override]
     protected function getDefaultCommands(): array
     {
-        $commands = [
+        return [
             new HelpCommand(),
             new ListCommand(),
             new CompleteCommand(),
@@ -44,16 +45,11 @@ class Application extends BaseApplication
             new ValidateCommand(),
             new PlatformInformationCommand(),
             new ExecCommand(),
+            new SelfUpdateCommand(Phar::running(false), null, null),
         ];
-
-        $pharFile = Phar::running(false);
-        if ($pharFile !== '') {
-            $commands[] = new SelfUpdateCommand($pharFile);
-        }
-
-        return $commands;
     }
 
+    #[\Override]
     public function getHelp(): string
     {
         $help = sprintf(

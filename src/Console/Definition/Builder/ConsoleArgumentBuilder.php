@@ -9,27 +9,17 @@ use Phpcq\Runner\Console\Definition\ArgumentDefinition;
 
 class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
 {
-    /** @var string */
-    private $name;
+    private bool $isArray = false;
 
-    /** @var string */
-    private $description;
+    private bool $required = false;
 
-    /** @var bool */
-    private $isArray = false;
+    private mixed $defaultValue = null;
 
-    /** @var bool */
-    private $required = false;
-
-    /** @var mixed */
-    private $defaultValue;
-
-    public function __construct(string $name, string $description)
+    public function __construct(private readonly string $name, private readonly string $description)
     {
-        $this->name        = $name;
-        $this->description = $description;
     }
 
+    #[\Override]
     public function isRequired(): ConsoleArgumentBuilderInterface
     {
         $this->required = true;
@@ -37,6 +27,7 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function isArray(): ConsoleArgumentBuilderInterface
     {
         $this->isArray = true;
@@ -44,6 +35,7 @@ class ConsoleArgumentBuilder implements ConsoleArgumentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withDefaultValue($value): ConsoleArgumentBuilderInterface
     {
         $this->defaultValue = $value;

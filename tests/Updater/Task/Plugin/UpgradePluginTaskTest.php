@@ -9,19 +9,20 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Updater\Task\Plugin\UpgradePluginTask;
 use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Updater\Task\Plugin\UpgradePluginTask */
 final class UpgradePluginTaskTest extends TestCase
 {
-    /** @dataProvider descriptionTestProvider  */
+    #[DataProvider('descriptionTestProvider')]
     public function testDescription(string $description, string $desired, string $installed): void
     {
-        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
         $pluginVersion->expects($this->atLeastOnce())->method('getName')->willReturn('foo');
         $pluginVersion->expects($this->atLeastOnce())->method('getVersion')->willReturn($desired);
 
-        $installedVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $installedVersion = $this->createMock(PluginVersionInterface::class);
         $installedVersion->expects($this->atLeastOnce())->method('getVersion')->willReturn($installed);
 
         $instance = new UpgradePluginTask($pluginVersion, $installedVersion, true);
@@ -32,7 +33,7 @@ final class UpgradePluginTaskTest extends TestCase
         );
     }
 
-    public function descriptionTestProvider(): Generator
+    public static function descriptionTestProvider(): Generator
     {
         yield 'Test upgrade description' => [
             'description' => 'Will upgrade plugin foo from version 1.0.0 to version 1.0.1',
@@ -45,7 +46,6 @@ final class UpgradePluginTaskTest extends TestCase
             'desired'   => '1.0.0',
             'installed' => '1.0.1',
         ];
-
 
         yield 'Test reinstall description' => [
             'description' => 'Will reinstall plugin foo in version 1.0.1',

@@ -12,21 +12,14 @@ use function is_string;
 class RepositoryFactory
 {
     /**
-     * @var JsonRepositoryLoader
-     */
-    private $repositoryLoader;
-
-    /**
      * @param JsonRepositoryLoader $repositoryLoader The repository loader to use.
      */
-    public function __construct(JsonRepositoryLoader $repositoryLoader)
+    public function __construct(private readonly JsonRepositoryLoader $repositoryLoader)
     {
-        $this->repositoryLoader = $repositoryLoader;
     }
 
     /**
-     * @param mixed[] $repositories
-     * @psalm-param list<array{type:string, url?: string}> $repositories
+     * @param list<array{type:string, url?: string}> $repositories
      */
     public function buildPool(array $repositories): RepositoryPool
     {

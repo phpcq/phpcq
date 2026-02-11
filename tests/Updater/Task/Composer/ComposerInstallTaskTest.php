@@ -13,7 +13,7 @@ final class ComposerInstallTaskTest extends TestCase
 {
     public function testDescription(): void
     {
-        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
         $pluginVersion->expects($this->once())->method('getName')->willReturn('foo');
 
         $instance = new ComposerInstallTask($pluginVersion);

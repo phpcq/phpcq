@@ -11,31 +11,19 @@ use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 
 class InstalledPlugin
 {
-    /** @var PluginVersionInterface */
-    private $version;
+    /**
+     * @var array<string,ToolVersionInterface>
+     */
+    private array $tools = [];
 
     /**
-     * @var array|ToolVersionInterface[]
-     *
-     * @psalm-var array<string,ToolVersionInterface>
+     * @param list<ToolVersionInterface> $tools
      */
-    private $tools = [];
-
-    /**
-     * @var string|null
-     */
-    private $composerLock;
-
-    /**
-     * @param array|ToolVersionInterface[] $tools
-     *
-     * @psalm-param list<ToolVersionInterface> $tools
-     */
-    public function __construct(PluginVersionInterface $version, array $tools = [], ?string $composerLock = null)
-    {
-        $this->version = $version;
-        $this->composerLock = $composerLock;
-
+    public function __construct(
+        private readonly PluginVersionInterface $version,
+        array $tools = [],
+        private ?string $composerLock = null
+    ) {
         foreach ($tools as $tool) {
             $this->tools[$tool->getName()] = $tool;
         }
@@ -68,9 +56,7 @@ class InstalledPlugin
     /**
      * Iterate over all installed tools.
      *
-     * @return Generator|ToolVersionInterface[]
-     *
-     * @psalm-return Generator<ToolVersionInterface>
+     * @return Generator<ToolVersionInterface>
      */
     public function iterateTools(): Generator
     {

@@ -11,6 +11,7 @@ final class InstallToolTask extends AbstractInstallingToolTask
 {
     use HashValidator;
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         return sprintf(
@@ -20,6 +21,7 @@ final class InstallToolTask extends AbstractInstallingToolTask
         );
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         return sprintf(
@@ -29,6 +31,7 @@ final class InstallToolTask extends AbstractInstallingToolTask
         );
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         $this->install($context);

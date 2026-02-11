@@ -10,7 +10,7 @@ use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Config\Builder\StringListOptionBuilder */
-class StringListOptionBuilderTest extends TestCase
+final class StringListOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
@@ -26,9 +26,7 @@ class StringListOptionBuilderTest extends TestCase
     {
         $builder = $this->createInstance();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 'BAR';
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 'BAR'));
         $this->assertEquals(['BAR'], $builder->normalizeValue(['bar']));
     }
 

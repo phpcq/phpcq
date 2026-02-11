@@ -13,7 +13,7 @@ final class InstallPluginTaskTest extends TestCase
 {
     public function testDescription(): void
     {
-        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
         $pluginVersion->expects($this->once())->method('getName')->willReturn('foo');
         $pluginVersion->expects($this->once())->method('getVersion')->willReturn('1.0.1');
 

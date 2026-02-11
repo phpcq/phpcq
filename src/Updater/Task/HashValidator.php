@@ -32,7 +32,7 @@ trait HashValidator
                 break;
 
             default:
-                throw new RuntimeException('Unsupported hash: ' . get_class($hash));
+                throw new RuntimeException('Unsupported hash: ' . $hash::class);
         }
     }
 }

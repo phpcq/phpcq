@@ -9,16 +9,6 @@ use Throwable;
 class PluginVersionNotFoundException extends \RuntimeException implements Exception
 {
     /**
-     * @var string
-     */
-    private $pluginName;
-
-    /**
-     * @var string
-     */
-    private $constraint;
-
-    /**
      * Create a new instance.
      *
      * @param string         $pluginName
@@ -26,15 +16,17 @@ class PluginVersionNotFoundException extends \RuntimeException implements Except
      * @param int            $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $pluginName, string $constraint, int $code = 0, Throwable $previous = null)
-    {
+    public function __construct(
+        private readonly string $pluginName,
+        private readonly string $constraint,
+        int $code = 0,
+        Throwable $previous = null
+    ) {
         parent::__construct(
             'Plugin not found: ' . $pluginName . ':' . $constraint,
             $code,
             $previous
         );
-        $this->pluginName   = $pluginName;
-        $this->constraint = $constraint;
     }
 
     /**

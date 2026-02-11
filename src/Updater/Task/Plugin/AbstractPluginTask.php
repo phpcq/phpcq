@@ -12,14 +12,11 @@ use Phpcq\Runner\Updater\UpdateContext;
 
 abstract class AbstractPluginTask implements TaskInterface
 {
-    /** @var PluginVersionInterface */
-    protected $pluginVersion;
-
-    public function __construct(PluginVersionInterface $pluginVersion)
+    public function __construct(protected PluginVersionInterface $pluginVersion)
     {
-        $this->pluginVersion = $pluginVersion;
     }
 
+    #[\Override]
     public function getPluginName(): string
     {
         return $this->pluginVersion->getName();

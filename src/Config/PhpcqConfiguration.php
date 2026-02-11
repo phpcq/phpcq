@@ -42,16 +42,12 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  */
 final class PhpcqConfiguration
 {
-    /** @var OptionsInterface */
-    private $options;
-
-    public function __construct(OptionsInterface $options)
+    public function __construct(private readonly OptionsInterface $options)
     {
-        $this->options = $options;
     }
 
     /**
-     * @psalm-param TConfig
+     * @param TConfig
      */
     public static function fromArray(array $options): self
     {
@@ -59,8 +55,7 @@ final class PhpcqConfiguration
     }
 
     /**
-     * @return string[]
-     * @psalm-return list<string>
+     * @return list<string>
      */
     public function getDirectories(): array
     {
@@ -72,25 +67,25 @@ final class PhpcqConfiguration
         return $this->options->getString('artifact');
     }
 
-    /** @psalm-return array<string,TPlugin> */
+    /** @return array<string,TPlugin> */
     public function getPlugins(): array
     {
         return $this->options->getOptions('plugins');
     }
 
-    /** @psalm-return list<TRepository> */
+    /** @return list<TRepository> */
     public function getRepositories(): array
     {
         return $this->options->getOptionsList('repositories');
     }
 
-    /** @psalm-return array<string,TTaskConfig> */
+    /** @return array<string,TTaskConfig> */
     public function getTaskConfig(): array
     {
         return $this->options->getOptions('tasks');
     }
 
-    /** @psalm-return TTaskConfig */
+    /** @return TTaskConfig */
     public function getConfigForTask(string $name): array
     {
         $config = $this->getTaskConfig();
@@ -104,7 +99,7 @@ final class PhpcqConfiguration
         return $config[$name];
     }
 
-    /** @psalm-return list<string> */
+    /** @return list<string> */
     public function getTrustedKeys(): array
     {
         return $this->options->getStringList('trusted-keys');
@@ -119,8 +114,7 @@ final class PhpcqConfiguration
     /**
      * Get the composer configuration
      *
-     * @return array<string,mixed>
-     * @psalm-return TComposerConfig
+     * @return TComposerConfig
      */
     public function getComposer(): array
     {
@@ -128,10 +122,9 @@ final class PhpcqConfiguration
     }
 
     /**
-     * Get configuration as array.
+     * Get configuration as an array.
      *
-     * @return array
-     * @psalm-return TConfig
+     * @return TConfig
      */
     public function asArray(): array
     {

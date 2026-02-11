@@ -22,47 +22,27 @@ class TaskScheduler
     public const LOG_END    = '%1$s finished';
 
     /**
-     * @var ReportWritingTaskInterface[]|Generator
-     * @psalm-var Generator<array-key, ReportWritingTaskInterface>
+     * @var Generator<array-key, ReportWritingTaskInterface>
      */
-    private $tasks;
+    private readonly Generator $tasks;
 
-    /** @var int */
-    private $parallelThreads;
+    private bool $stop;
 
-    /** @var OutputInterface */
-    private $output;
+    private bool $success;
 
-    /** @var Report */
-    private $report;
-
-    /** @var bool */
-    private $fastFinish;
-
-    /** @var bool */
-    private $stop;
-
-    /** @var bool */
-    private $success;
-
-    /** @var int */
-    private $runningThreads;
+    private int $runningThreads;
 
     /** @var SplObjectStorage<ParallelTaskInterface, TaskReportInterface> */
-    private $threads;
+    private SplObjectStorage $threads;
 
     public function __construct(
         TasklistInterface $tasks,
-        int $parallelThreads,
-        Report $report,
-        OutputInterface $output,
-        bool $fastFinish
+        private readonly int $parallelThreads,
+        private readonly Report $report,
+        private readonly OutputInterface $output,
+        private readonly bool $fastFinish
     ) {
         $this->tasks           = $this->nextTaskGenerator($tasks);
-        $this->parallelThreads = $parallelThreads;
-        $this->report          = $report;
-        $this->output          = $output;
-        $this->fastFinish      = $fastFinish;
         $this->stop            = false;
         $this->success         = true;
         $this->runningThreads  = 0;
@@ -124,7 +104,7 @@ class TaskScheduler
     {
         $this->output->writeln(sprintf(self::LOG_END, $thread->getToolName()), OutputInterface::VERBOSITY_DEBUG);
         $report = $this->threads->offsetGet($thread);
-        $this->threads->detach($thread);
+        unset($this->threads[$thread]);
         $this->runningThreads -= $thread->getCost();
         $this->success = $this->success && $report->getStatus() === TaskReportInterface::STATUS_PASSED;
         if ($this->fastFinish && !$this->success) {
@@ -132,6 +112,7 @@ class TaskScheduler
         }
     }
 
+    /** @SuppressWarnings(PHPMD.CyclomaticComplexity) */
     private function fillUp(): void
     {
         if ($this->stop || $this->runningThreads === $this->parallelThreads) {
@@ -146,6 +127,10 @@ class TaskScheduler
 
         while ($this->runningThreads < $this->parallelThreads && $this->tasks->valid()) {
             $next = $this->tasks->current();
+            if ($next === null) {
+                continue;
+            }
+
             // If the pending task is not parallelizable, return if we still have some running.
             $cost = ($next instanceof ParallelTaskInterface) ? $next->getCost() : $this->parallelThreads;
             if ($this->runningThreads + $cost > $this->parallelThreads) {
@@ -186,13 +171,12 @@ class TaskScheduler
             $this->output->writeln(sprintf(self::LOG_END, $name), OutputInterface::VERBOSITY_DEBUG);
             return;
         }
-        $this->threads->attach($task, $report);
+        $this->threads[$task] = $report;
         $this->runningThreads += $task->getCost();
     }
 
     /**
-     * @return ReportWritingTaskInterface[]|Generator
-     * @psalm-return Generator<int, ReportWritingTaskInterface>
+     * @return Generator<int, ReportWritingTaskInterface>
      */
     private function nextTaskGenerator(TasklistInterface $tasks): Generator
     {
@@ -220,7 +204,7 @@ class TaskScheduler
                 OutputInterface::CHANNEL_STDERR
             );
             $output->writeln(
-                $exception->getFile() . ' on line ' . $exception->getLine(),
+                $exception->getFile() . ' on line ' . (string) $exception->getLine(),
                 OutputInterface::VERBOSITY_VERBOSE,
                 OutputInterface::CHANNEL_STDERR
             );

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Phpcq\Runner\Downloader\FileDownloader
  */
-class FileDownloaderTest extends TestCase
+final class FileDownloaderTest extends TestCase
 {
     use TemporaryFileProducingTestTrait;
 

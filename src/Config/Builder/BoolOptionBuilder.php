@@ -13,7 +13,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\BoolOptionBuilderInterface;
  */
 final class BoolOptionBuilder extends AbstractOptionBuilder implements BoolOptionBuilderInterface
 {
-    /** @psalm-param list<TValidator> $validators */
+    /** @param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         parent::__construct($name, $description, $validators);
@@ -21,21 +21,25 @@ final class BoolOptionBuilder extends AbstractOptionBuilder implements BoolOptio
         $this->withValidator(Validator::boolValidator());
     }
 
+    #[\Override]
     public function isRequired(): BoolOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): BoolOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): BoolOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(bool $defaultValue): BoolOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

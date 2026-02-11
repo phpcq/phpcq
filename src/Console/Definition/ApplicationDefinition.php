@@ -9,16 +9,13 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
 final class ApplicationDefinition extends AbstractDefinition
 {
     /** @var array<string,CommandDefinition> */
-    private $commands = [];
+    private array $commands = [];
 
     /** @var list<OptionDefinition> */
-    private $options = [];
+    private array $options = [];
 
     /** @var list<ArgumentDefinition> */
-    private $arguments = [];
-
-    /** @var string */
-    private $optionValueSeparator;
+    private array $arguments = [];
 
     /**
      * @param string               $name
@@ -34,11 +31,9 @@ final class ApplicationDefinition extends AbstractDefinition
         array $options,
         array $arguments,
         array $commands,
-        string $optionValueSeparator
+        private readonly string $optionValueSeparator
     ) {
         parent::__construct($name, $description);
-
-        $this->optionValueSeparator = $optionValueSeparator;
 
         foreach ($commands as $command) {
             $this->commands[$command->getName()] = $command;

@@ -22,15 +22,13 @@ class HelpCommand extends AbstractCommand
 
     protected static $defaultName = 'help';
 
-    /** @var Command|null */
-    private $command;
+    private ?Command $command = null;
 
-    /** @var BaseHelpCommand */
-    private $help;
+    private BaseHelpCommand $help;
 
-    public function __construct(string $name = null)
+    public function __construct(?string $name = null)
     {
-        // Set before parent constructor is called
+        // Set before the parent constructor is called
         $this->help = new BaseHelpCommand();
 
         parent::__construct($name);
@@ -41,6 +39,7 @@ class HelpCommand extends AbstractCommand
         $this->command = $command;
     }
 
+    #[\Override]
     protected function configure(): void
     {
         parent::configure();
@@ -86,6 +85,7 @@ class HelpCommand extends AbstractCommand
         $this->addUsage('[options] exec --help <application> <command_name>');
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $exitCode = 0;
@@ -111,6 +111,7 @@ class HelpCommand extends AbstractCommand
         return parent::execute($input, $output);
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
         $installed     = $this->getInstalledRepository(true);

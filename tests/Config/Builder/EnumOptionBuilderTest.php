@@ -8,6 +8,7 @@ use Phpcq\Runner\Config\Builder\EnumOptionBuilder;
 use Phpcq\Runner\Config\Builder\StringOptionBuilder;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class EnumOptionBuilderTest extends TestCase
+final class EnumOptionBuilderTest extends TestCase
 {
     use OptionBuilderTestTrait;
 
@@ -25,12 +26,8 @@ class EnumOptionBuilderTest extends TestCase
         $builder->ofStringValues('bar');
         $builder->selfValidate();
 
-        $this->assertSame($builder, $builder->withNormalizer(function () {
-            return 'BAR';
-        }));
-        $this->assertSame($builder, $builder->withNormalizer(function ($var) {
-            return $var . ' 2';
-        }));
+        $this->assertSame($builder, $builder->withNormalizer(fn() => 'BAR'));
+        $this->assertSame($builder, $builder->withNormalizer(fn($var) => $var . ' 2'));
         $this->assertEquals('BAR 2', $builder->normalizeValue('bar'));
     }
 
@@ -114,7 +111,7 @@ class EnumOptionBuilderTest extends TestCase
         $builder->validateValue(1);
     }
 
-    public function preventMultipleValueDefinitionsProvider(): array
+    public static function preventMultipleValueDefinitionsProvider(): array
     {
         return [
             'prevent double string definitions' => [
@@ -174,7 +171,7 @@ class EnumOptionBuilderTest extends TestCase
         ];
     }
 
-    /** @dataProvider preventMultipleValueDefinitionsProvider */
+    #[DataProvider('preventMultipleValueDefinitionsProvider')]
     public function testPreventsMultipleValueDefinitions(
         string $methodA,
         array $argumentsA,

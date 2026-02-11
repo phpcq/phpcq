@@ -12,47 +12,28 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class AttachmentBuilder implements AttachmentBuilderInterface
 {
-    /** @var string */
-    private $name;
+    private ?string $mimeType = null;
 
-    /** @var string|null */
-    private $mimeType;
-
-    /** @var string|null */
-    private $absolutePath;
-
-    /** @var TaskReportInterface */
-    private $parent;
-
-    /** @var string */
-    private $tempDir;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
+    private ?string $absolutePath = null;
 
     /**
      * @var callable
-     * @psalm-var callable(AttachmentBuffer, AttachmentBuilder): void
+     * @var callable(AttachmentBuffer, AttachmentBuilder): void
      */
     private $callback;
 
-    /** @psalm-param callable(AttachmentBuffer, AttachmentBuilder): void $callback */
+    /** @param callable(AttachmentBuffer, AttachmentBuilder): void $callback */
     public function __construct(
-        string $name,
-        TaskReportInterface $parent,
-        string $tempDir,
-        Filesystem $filesystem,
+        private readonly string $name,
+        private readonly TaskReportInterface $parent,
+        private readonly string $tempDir,
+        private readonly Filesystem $filesystem,
         callable $callback
     ) {
-        $this->parent   = $parent;
-        $this->tempDir  = $tempDir;
-        $this->name     = $name;
         $this->callback = $callback;
-        $this->filesystem = $filesystem;
     }
 
+    #[\Override]
     public function fromFile(string $file): AttachmentBuilderInterface
     {
         if ('/' !== $file[0]) {
@@ -64,6 +45,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function fromString(string $buffer): AttachmentBuilderInterface
     {
         // NOTE: We do not unlink the previous file on purpose here of already set.
@@ -77,6 +59,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setMimeType(string $mimeType): AttachmentBuilderInterface
     {
         $this->mimeType = $mimeType;
@@ -84,6 +67,7 @@ final class AttachmentBuilder implements AttachmentBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {

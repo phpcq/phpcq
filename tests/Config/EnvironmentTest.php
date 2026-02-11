@@ -17,8 +17,8 @@ final class EnvironmentTest extends TestCase
     public function testCreate(): void
     {
         $environment = new Environment(
-            $projectConfig = $this->getMockForAbstractClass(ProjectConfigInterface::class),
-            $taskFactory = $this->getMockForAbstractClass(TaskFactoryInterface::class),
+            $projectConfig = $this->createMock(ProjectConfigInterface::class),
+            $taskFactory = $this->createMock(TaskFactoryInterface::class),
             '/temp/dir',
             10,
             '/installed-dir'

@@ -25,8 +25,7 @@ final class PluginConfigurationFactoryTest extends TestCase
     public function testCreate(): void
     {
         $configuration = new PhpcqConfiguration(new Options([
-            'plugins' => [
-            ],
+            'plugins' => [],
             'tasks' => [
                 'test' => [
                     'plugin' => 'phar-3',
@@ -43,8 +42,8 @@ final class PluginConfigurationFactoryTest extends TestCase
         $registry    = PluginRegistry::buildFromInstalledRepository($installed);
         $factory     = new PluginConfigurationFactory($configuration, $registry, $installed);
         $environment = new Environment(
-            $this->getMockForAbstractClass(ProjectConfigInterface::class),
-            $this->getMockForAbstractClass(TaskFactoryInterface::class),
+            $this->createMock(ProjectConfigInterface::class),
+            $this->createMock(TaskFactoryInterface::class),
             sys_get_temp_dir(),
             1,
             ''
@@ -60,8 +59,7 @@ final class PluginConfigurationFactoryTest extends TestCase
         $configuration = new PhpcqConfiguration(
             new Options(
                 [
-                    'plugins' => [
-                    ],
+                    'plugins' => [],
                     'tasks' => [
                         'test' => [
                             'plugin' => 'phar-3',
@@ -88,8 +86,8 @@ final class PluginConfigurationFactoryTest extends TestCase
         $registry    = PluginRegistry::buildFromInstalledRepository($installed);
         $factory     = new PluginConfigurationFactory($configuration, $registry, $installed);
         $environment = new Environment(
-            $this->getMockForAbstractClass(ProjectConfigInterface::class),
-            $this->getMockForAbstractClass(TaskFactoryInterface::class),
+            $this->createMock(ProjectConfigInterface::class),
+            $this->createMock(TaskFactoryInterface::class),
             sys_get_temp_dir(),
             1,
             ''
@@ -110,7 +108,7 @@ final class PluginConfigurationFactoryTest extends TestCase
 
     private function mockPlugin(string $name, string $bootstrap): InstalledPlugin
     {
-        $version = $this->getMockForAbstractClass(PhpFilePluginVersionInterface::class);
+        $version = $this->createMock(PhpFilePluginVersionInterface::class);
         $version->expects($this->atLeastOnce())->method('getName')->willReturn($name);
         $version->expects($this->atLeastOnce())->method('getFilePath')->willReturn($this->getBootstrap($bootstrap));
 

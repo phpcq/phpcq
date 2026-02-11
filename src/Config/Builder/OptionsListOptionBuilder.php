@@ -18,21 +18,25 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
 {
     use OptionsBuilderTrait;
 
+    #[\Override]
     public function isRequired(): OptionsListOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): OptionsListOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): OptionsListOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(array $defaultValue): OptionsListOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;
@@ -40,6 +44,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         return $this;
     }
 
+    #[\Override]
     public function normalizeValue($raw): ?array
     {
         if (null === $raw) {
@@ -53,12 +58,12 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             return null;
         }
 
-        /** @psalm-var list<array<string,mixed>> $raw */
+        /** @var list<array<string,mixed>> $raw */
         $raw = Constraints::listConstraint($raw);
         foreach ($raw as $index => $options) {
             foreach ($this->normalizer as $normalizer) {
                 try {
-                    /** @psalm-var array<string,mixed> */
+                    /** @var array<string,mixed> */
                     $raw[$index] = $normalizer($options);
                 } catch (ConfigurationValidationErrorException $exception) {
                     throw $exception->withOuterPath([$this->name, (string) $index]);
@@ -73,6 +78,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
         return $raw;
     }
 
+    #[\Override]
     public function validateValue($value): void
     {
         if (null === $value) {
@@ -83,7 +89,7 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
             throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
         }
 
-        /** @psalm-var list<array<string,mixed>> $value */
+        /** @var list<array<string,mixed>> $value */
         $value = Constraints::listConstraint($value, Validator::arrayValidator());
         foreach ($value as $key => $option) {
             foreach ($this->validators as $validator) {

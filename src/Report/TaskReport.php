@@ -19,36 +19,32 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class TaskReport implements TaskReportInterface
 {
-    /** @var TaskReportBuffer */
-    private $report;
+    private readonly Filesystem $filesystem;
 
-    /** @var string */
-    private $tempDir;
+    /** @var array<string, DiagnosticBuilder> */
+    private array $pendingDiagnostics = [];
 
-    /** @var Filesystem */
-    private $filesystem;
+    /** @var array<string, AttachmentBuilder> */
+    private array $pendingAttachments = [];
 
-    /** @var DiagnosticBuilder[] */
-    private $pendingDiagnostics = [];
+    /** @var array<string, DiffBuilder> */
+    private array $pendingDiffs = [];
 
-    /** @var AttachmentBuilder[] */
-    private $pendingAttachments = [];
-
-    /** @var DiffBuilder[] */
-    private $pendingDiffs = [];
-
-    public function __construct(TaskReportBuffer $report, string $tempDir, Filesystem $filesystem = null)
-    {
-        $this->report     = $report;
-        $this->tempDir    = $tempDir;
+    public function __construct(
+        private readonly TaskReportBuffer $report,
+        private readonly string $tempDir,
+        ?Filesystem $filesystem = null
+    ) {
         $this->filesystem = $filesystem ?: new Filesystem();
     }
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->report->getStatus();
     }
 
+    #[\Override]
     public function addMetadata(string $name, string $value): TaskReportInterface
     {
         $this->report->addMetadata($name, $value);
@@ -56,6 +52,7 @@ class TaskReport implements TaskReportInterface
         return $this;
     }
 
+    #[\Override]
     public function addDiagnostic(string $severity, string $message): DiagnosticBuilderInterface
     {
         $builder = new DiagnosticBuilder(
@@ -70,6 +67,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingDiagnostics[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function addAttachment(string $name): AttachmentBuilderInterface
     {
         $builder = new AttachmentBuilder(
@@ -85,6 +83,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingAttachments[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function addDiff(string $name): DiffBuilderInterface
     {
         $builder = new DiffBuilder(
@@ -101,6 +100,7 @@ class TaskReport implements TaskReportInterface
         return $this->pendingDiffs[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function close(string $status): void
     {
         foreach ($this->pendingDiagnostics as $pendingBuilder) {

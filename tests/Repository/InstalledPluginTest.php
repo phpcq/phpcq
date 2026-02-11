@@ -17,10 +17,10 @@ final class InstalledPluginTest extends TestCase
 {
     public function testInstantiation(): void
     {
-        $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $version = $this->createMock(PluginVersionInterface::class);
         $version->expects(self::once())->method('getName')->willReturn('plugin1');
 
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool = $this->createMock(ToolVersionInterface::class);
         $tool->method('getName')->willReturn('tool1');
         $tools   = [$tool];
         $plugin  = new InstalledPlugin($version, $tools);
@@ -35,12 +35,12 @@ final class InstalledPluginTest extends TestCase
 
     public function testAddTool(): void
     {
-        $version = $this->getMockForAbstractClass(PluginVersionInterface::class);
+        $version = $this->createMock(PluginVersionInterface::class);
         $plugin  = new InstalledPlugin($version);
 
         self::assertFalse($plugin->hasTool('foo'));
 
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool = $this->createMock(ToolVersionInterface::class);
         $tool->expects(self::once())->method('getName')->willReturn('foo');
         $plugin->addTool($tool);
 

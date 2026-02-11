@@ -19,7 +19,7 @@ final class PluginConfigurationFactoryTest extends TestCase
 {
     public function testDefaultDirectories(): void
     {
-        $phcqOptions = $this->getMockForAbstractClass(OptionsInterface::class);
+        $phcqOptions = $this->createMock(OptionsInterface::class);
         $phcqOptions
             ->expects($this->once())
             ->method('getOptions')
@@ -34,7 +34,7 @@ final class PluginConfigurationFactoryTest extends TestCase
         $phcqOptions
             ->expects($this->once())
             ->method('getStringList')
-            ->willReturnArgument('directories')
+            ->willReturnArgument(0)
             ->willReturn(['src', 'test']);
 
         $installedRepository = (new InstalledRepositoryLoader())->loadFile(
@@ -57,7 +57,7 @@ final class PluginConfigurationFactoryTest extends TestCase
 
     public function testCustomDirectories(): void
     {
-        $phcqOptions = $this->getMockForAbstractClass(OptionsInterface::class);
+        $phcqOptions = $this->createMock(OptionsInterface::class);
         $phcqOptions
             ->expects($this->once())
             ->method('getOptions')
@@ -76,7 +76,7 @@ final class PluginConfigurationFactoryTest extends TestCase
         $phcqOptions
             ->expects($this->never())
             ->method('getStringList')
-            ->willReturnArgument('directories')
+            ->willReturnArgument(0)
             ->willReturn(['src', 'test']);
 
         $installedRepository = (new InstalledRepositoryLoader())->loadFile(

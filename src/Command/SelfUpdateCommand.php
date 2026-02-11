@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Command;
 
 use Composer\Semver\Comparator;
+use Phar;
 use Phpcq\GnuPG\Downloader\KeyDownloader;
 use Phpcq\GnuPG\GnuPGFactory;
 use Phpcq\GnuPG\Signature\SignatureVerifier;
@@ -34,44 +35,34 @@ use function is_string;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
-use function var_dump;
 
 final class SelfUpdateCommand extends AbstractCommand
 {
-    /** @var string */
-    private $pharFile;
+    /**
+     * Only valid when examined from within doExecute().
+     *
+     * @psalm-suppress PropertyNotSetInConstructor
+     */
+    private DownloaderInterface $downloader;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var DownloaderInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    private $downloader;
+    private Filesystem $filesystem;
 
-    /**
-     * Only valid when examined from within doExecute().
-     *
-     * @var Filesystem
-     *
-     * @psalm-suppress PropertyNotSetInConstructor
-     */
-    private $filesystem;
-
-    private PlatformRequirementCheckerInterface $requirementChecker;
+    private readonly PlatformRequirementCheckerInterface $requirementChecker;
 
     /**
      * @param string $pharFile The location of the execed phar file.
      */
     public function __construct(
-        string $pharFile,
+        private readonly string $pharFile,
         ?DownloaderInterface $downloader = null,
         ?PlatformRequirementCheckerInterface $requirementChecker = null
     ) {
         parent::__construct();
-
-        $this->pharFile = $pharFile;
 
         if ($downloader !== null) {
             $this->downloader = $downloader;
@@ -80,6 +71,7 @@ final class SelfUpdateCommand extends AbstractCommand
         $this->requirementChecker = $requirementChecker ?: PlatformRequirementChecker::create();
     }
 
+    #[\Override]
     protected function configure(): void
     {
         parent::configure();
@@ -134,6 +126,7 @@ final class SelfUpdateCommand extends AbstractCommand
         );
     }
 
+    #[\Override]
     protected function prepare(InputInterface $input): void
     {
         parent::prepare($input);
@@ -147,8 +140,14 @@ final class SelfUpdateCommand extends AbstractCommand
         $this->filesystem = new Filesystem();
     }
 
+    #[\Override]
     protected function doExecute(): int
     {
+        if (! $this->pharFile) {
+            $this->output->writeln('No running phar detected. Abort self-update', OutputInterface::VERBOSITY_VERBOSE);
+            return 0;
+        }
+
         $baseUri          = $this->getBaseUri();
         $installedVersion = $this->getInstalledVersion();
         $repository       = (new VersionsRepositoryLoader($this->requirementChecker, $this->downloader))
@@ -158,14 +157,14 @@ final class SelfUpdateCommand extends AbstractCommand
 
         /** @psalm-var string|null $requiredVersion */
         $requiredVersion = $this->input->getArgument('version') ?: null;
-        $version         = $repository->findMatchingVersion($requiredVersion, ! $this->input->getOption('unsigned'));
+        $version         = $repository->findMatchingVersion($requiredVersion, !$this->input->getOption('unsigned'));
 
         if (!$this->shouldUpdate($installedVersion, $version->getVersion())) {
             return 0;
         }
 
         $pharUrl        = $this->getBaseUri() . '/' . $version->getPharFile();
-        $downloadedPhar = tempnam(sys_get_temp_dir(), 'phpcq.phar-');
+        $downloadedPhar = (string) tempnam(sys_get_temp_dir(), 'phpcq.phar-');
         $this->output->writeln('Download phpcq.phar from ' . $pharUrl, OutputInterface::VERBOSITY_VERBOSE);
         $this->downloader->downloadFileTo($pharUrl, $downloadedPhar, '', true);
 
@@ -266,7 +265,7 @@ final class SelfUpdateCommand extends AbstractCommand
         }
 
         $signatureVerifier = $this->createSignatureVerifier();
-        $result            = $signatureVerifier->verify(file_get_contents($downloadedPhar), $signature);
+        $result            = $signatureVerifier->verify((string) file_get_contents($downloadedPhar), $signature);
 
         if (!$result->isValid()) {
             $this->cleanup($downloadedPhar);

@@ -15,7 +15,7 @@ final class FileDiagnosticBuilderTest extends TestCase
     public function testBuildWithoutRanges(): void
     {
         $files = null;
-        $parent = $this->getMockForAbstractClass(DiagnosticBuilderInterface::class);
+        $parent = $this->createMock(DiagnosticBuilderInterface::class);
         $builder = new FileDiagnosticBuilder(
             $parent,
             'some/file',
@@ -41,7 +41,7 @@ final class FileDiagnosticBuilderTest extends TestCase
     public function testBuildsWithRanges(): void
     {
         $files = null;
-        $parent = $this->getMockForAbstractClass(DiagnosticBuilderInterface::class);
+        $parent = $this->createMock(DiagnosticBuilderInterface::class);
         $builder = new FileDiagnosticBuilder(
             $parent,
             'some/file',

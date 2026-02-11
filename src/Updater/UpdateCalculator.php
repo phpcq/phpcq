@@ -47,52 +47,21 @@ use function is_dir;
  */
 final class UpdateCalculator
 {
-    /**
-     * @var InstalledRepository
-     */
-    private $installed;
-
-    /**
-     * @var ResolverInterface
-     */
-    private $resolver;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var Composer
-     */
-    private $composer;
-
-    /**
-     * @var int
-     * @psalm-var TOutputVerbosity
-     */
-    private $verbosity;
-
     /**  @psalm-param TOutputVerbosity $verbosity */
     public function __construct(
-        InstalledRepository $installed,
-        ResolverInterface $resolver,
-        Composer $composer,
-        OutputInterface $output,
-        int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
+        private readonly InstalledRepository $installed,
+        private readonly ResolverInterface $resolver,
+        private readonly Composer $composer,
+        private readonly OutputInterface $output,
+        private readonly int $verbosity = OutputInterface::VERBOSITY_VERY_VERBOSE
     ) {
-        $this->installed = $installed;
-        $this->composer  = $composer;
-        $this->output    = $output;
-        $this->resolver  = $resolver;
-        $this->verbosity = $verbosity;
     }
 
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-param array<string,TPlugin> $plugins
-     * @psalm-return list<TaskInterface>
+     * @return list<TaskInterface>
      */
     public function calculate(array $plugins, bool $forceReinstall = false): array
     {
@@ -100,7 +69,7 @@ final class UpdateCalculator
     }
 
     /**
-     * @psalm-param array<string,TPlugin> $plugins
+     * @param array<string,TPlugin> $plugins
      */
     private function calculateDesiredPlugins(array $plugins): RepositoryInterface
     {
@@ -119,11 +88,9 @@ final class UpdateCalculator
 
     /**
      * @param bool $forceReinstall Intended to use if no lock file exists. Php file plugin required for all tools.
+     * @param array<string,TPlugin> $plugins
      *
-     * @psalm-param array<string,TPlugin> $plugins
-     *
-     * @return array[]
-     * @psalm-return list<TaskInterface>
+     * @return list<TaskInterface>
      */
     protected function calculateTasksToExecute(
         RepositoryInterface $desired,
@@ -435,13 +402,13 @@ final class UpdateCalculator
         $requirements = new VersionRequirementList();
 
         foreach ($pluginVersion->getRequirements()->getComposerRequirements() as $requirement) {
-            if (! isset($overrides[$requirement->getName()])) {
+            if (!isset($overrides[$requirement->getName()])) {
                 $requirements->add($requirement);
 
                 continue;
             }
 
-            if (! ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
+            if (!ConstraintUtil::matches($overrides[$requirement->getName()], $requirement->getConstraint())) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Configured version constraint "%s" is not compatible with supported versions "%s"',

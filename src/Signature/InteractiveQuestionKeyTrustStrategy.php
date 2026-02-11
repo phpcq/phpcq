@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Signature;
 
+use Override;
 use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -15,30 +16,15 @@ use function sprintf;
 
 final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
 {
-    /** @var TrustedKeysStrategy */
-    private $trustedKeys;
-
-    /** @var InputInterface */
-    private $input;
-
-    /** @var OutputInterface */
-    private $output;
-
-    /** @var QuestionHelper */
-    private $questionHelper;
-
     public function __construct(
-        TrustedKeysStrategy $trustedKeysStrategy,
-        InputInterface $input,
-        OutputInterface $output,
-        QuestionHelper $questionHelper
+        private readonly TrustedKeysStrategy $trustedKeys,
+        private readonly InputInterface $input,
+        private readonly OutputInterface $output,
+        private readonly QuestionHelper $questionHelper
     ) {
-        $this->trustedKeys    = $trustedKeysStrategy;
-        $this->input          = $input;
-        $this->output         = $output;
-        $this->questionHelper = $questionHelper;
     }
 
+    #[Override]
     public function isTrusted(string $fingerprint): bool
     {
         if ($this->trustedKeys->isTrusted($fingerprint)) {

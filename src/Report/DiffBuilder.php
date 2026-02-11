@@ -12,42 +12,25 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class DiffBuilder implements DiffBuilderInterface
 {
-    /** @var string */
-    private $name;
-
-    /** @var string|null */
-    private $absolutePath;
-
-    /** @var TaskReportInterface */
-    private $parent;
-
-    /** @var string */
-    private $tempDir;
-
-    /** @var Filesystem */
-    private $filesystem;
+    private ?string $absolutePath = null;
 
     /**
-     * @var callable
-     * @psalm-var callable(DiffBuffer, DiffBuilder): void
+     * @var callable(DiffBuffer, DiffBuilder): void
      */
     private $callback;
 
-    /** @psalm-param callable(DiffBuffer, DiffBuilder): void $callback */
+    /** @param callable(DiffBuffer, DiffBuilder): void $callback */
     public function __construct(
-        string $name,
-        TaskReportInterface $parent,
-        string $tempDir,
-        Filesystem $filesystem,
+        private readonly string $name,
+        private readonly TaskReportInterface $parent,
+        private readonly string $tempDir,
+        private readonly Filesystem $filesystem,
         callable $callback
     ) {
-        $this->parent   = $parent;
-        $this->tempDir  = $tempDir;
-        $this->name     = $name;
         $this->callback = $callback;
-        $this->filesystem = $filesystem;
     }
 
+    #[\Override]
     public function fromFile(string $file): DiffBuilderInterface
     {
         if ('/' !== $file[0]) {
@@ -59,6 +42,7 @@ final class DiffBuilder implements DiffBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function fromString(string $buffer): DiffBuilderInterface
     {
         // NOTE: We do not unlink the previous file on purpose here of already set.
@@ -72,6 +56,7 @@ final class DiffBuilder implements DiffBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         if (null === $this->absolutePath) {

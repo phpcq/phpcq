@@ -14,12 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class AbstractDescriptor
 {
-    /** @var OutputInterface */
-    private $output;
-
-    public function __construct(OutputInterface $output)
+    public function __construct(private readonly OutputInterface $output)
     {
-        $this->output = $output;
     }
 
     protected function write(string ...$messages): void

@@ -14,7 +14,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\OptionBuilderInterface;
  */
 final class FloatOptionBuilder extends AbstractOptionBuilder implements FloatOptionBuilderInterface
 {
-    /** @psalm-param list<TValidator> $validators */
+    /** @param list<TValidator> $validators */
     public function __construct(string $name, string $description, array $validators = [])
     {
         parent::__construct($name, $description, $validators);
@@ -22,21 +22,25 @@ final class FloatOptionBuilder extends AbstractOptionBuilder implements FloatOpt
         $this->withValidator(Validator::floatValidator());
     }
 
+    #[\Override]
     public function isRequired(): FloatOptionBuilderInterface
     {
         return parent::isRequired();
     }
 
+    #[\Override]
     public function withNormalizer(callable $normalizer): FloatOptionBuilderInterface
     {
         return parent::withNormalizer($normalizer);
     }
 
+    #[\Override]
     public function withValidator(callable $validator): FloatOptionBuilderInterface
     {
         return parent::withValidator($validator);
     }
 
+    #[\Override]
     public function withDefaultValue(float $defaultValue): FloatOptionBuilderInterface
     {
         $this->defaultValue = $defaultValue;

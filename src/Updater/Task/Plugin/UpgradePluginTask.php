@@ -15,23 +15,15 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
 {
     use HashValidator;
 
-    /** @var PluginVersionInterface */
-    private $oldPluginVersion;
-
-    /** @var bool */
-    private $signed;
-
     public function __construct(
         PluginVersionInterface $pluginVersion,
-        PluginVersionInterface $oldPluginVersion,
-        bool $signed
+        private PluginVersionInterface $oldPluginVersion,
+        private bool $signed
     ) {
         parent::__construct($pluginVersion);
-
-        $this->oldPluginVersion = $oldPluginVersion;
-        $this->signed           = $signed;
     }
 
+    #[\Override]
     public function getPurposeDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -53,6 +45,7 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
         return 'Will reinstall plugin ' . $this->getPluginName() . ' in version ' . $this->pluginVersion->getVersion();
     }
 
+    #[\Override]
     public function getExecutionDescription(): string
     {
         /** @psalm-suppress RedundantCondition - We experience different behaviour using or not using default branch */
@@ -74,6 +67,7 @@ final class UpgradePluginTask extends AbstractInstallingPluginTask
         return 'Reinstalling plugin ' . $this->getPluginName() . ' in version ' . $this->pluginVersion->getVersion();
     }
 
+    #[\Override]
     public function execute(UpdateContext $context): void
     {
         if ($this->pluginVersion instanceof PhpFilePluginVersionInterface) {

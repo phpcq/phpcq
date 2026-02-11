@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Test\Command;
 
 use Phpcq\Runner\Command\ExecCommand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Phpcq\Runner\Command\ExecCommand
  */
-class ExecCommandTest extends TestCase
+final class ExecCommandTest extends TestCase
 {
-    public function prepareProvider(): array
+    public static function prepareProvider(): array
     {
         return [
             'missing tool name' => [
@@ -58,9 +59,7 @@ class ExecCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider prepareProvider
-     */
+    #[DataProvider('prepareProvider')]
     public function testPreparesInputCorrectly(array $expected, array $argv): void
     {
         $this->assertSame($expected, ExecCommand::prepareArguments($argv));

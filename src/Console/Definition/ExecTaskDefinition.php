@@ -9,7 +9,7 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
 final class ExecTaskDefinition
 {
     /** @var array<string, ApplicationDefinition> */
-    private $applications = [];
+    private array $applications = [];
 
     /**
      * @param ApplicationDefinition[] $applications

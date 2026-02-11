@@ -16,42 +16,32 @@ use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
     /**
-     * @var string
-     */
-    private $toolName;
-
-    /**
      * ConsoleOutputTransformerFactory constructor.
      *
      * @param string $toolName
      */
-    public function __construct(string $toolName)
+    public function __construct(private readonly string $toolName)
     {
-        $this->toolName = $toolName;
     }
 
     /** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+    #[\Override]
     public function createFor(TaskReportInterface $report): OutputTransformerInterface
     {
         return new class ($report) implements OutputTransformerInterface {
-            /** @var TaskReportInterface */
-            private $report;
-            /** @var BufferedLineReader */
-            private $data;
-            /** @var string */
-            private $stdErr = '';
-            /** @var string */
-            private $stdOut = '';
+            private readonly BufferedLineReader $data;
+            private string $stdErr = '';
+            private string $stdOut = '';
 
             /**
              * Create a new instance.
              */
-            public function __construct(TaskReportInterface $report)
+            public function __construct(private readonly TaskReportInterface $report)
             {
-                $this->report = $report;
                 $this->data   = BufferedLineReader::create();
             }
 
+            #[\Override]
             public function write(string $data, int $channel): void
             {
                 $this->data->push($data);
@@ -65,6 +55,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
                 }
             }
 
+            #[\Override]
             public function finish(int $exitCode): void
             {
                 $content = '';
@@ -89,9 +80,7 @@ final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryI
             }
 
             /**
-             * @return string[]
-             *
-             * @psalm-return array{0: string, 1: TDiagnosticSeverity}
+             * @return array{0: string, 1: TDiagnosticSeverity}
              */
             private function calculateStatusAndSeverity(int $exitCode): array
             {

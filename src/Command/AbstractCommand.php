@@ -32,39 +32,32 @@ abstract class AbstractCommand extends Command
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var InputInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $input;
+    protected InputInterface $input;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var OutputInterface
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $output;
+    protected OutputInterface $output;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var string
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $phpcqPath;
+    protected string $phpcqPath;
 
     /**
      * Only valid when examined from within doExecute().
      *
-     * @var PhpcqConfiguration
-     *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    protected $config;
+    protected PhpcqConfiguration $config;
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -79,7 +72,7 @@ abstract class AbstractCommand extends Command
             null,
             InputOption::VALUE_REQUIRED,
             'Path to the phpcq home directory',
-            getcwd() . '/.phpcq'
+            ((string) getcwd()) . '/.phpcq'
         );
         $this->addOption(
             'ignore-platform-reqs',
@@ -89,6 +82,7 @@ abstract class AbstractCommand extends Command
         );
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
@@ -98,6 +92,7 @@ abstract class AbstractCommand extends Command
         return $this->doExecute();
     }
 
+    #[\Override]
     public function complete(CompletionInput $input, CompletionSuggestions $suggestions): void
     {
         $this->prepare($input);
@@ -111,7 +106,7 @@ abstract class AbstractCommand extends Command
 
         $configFile = $this->input->getOption('config');
         if (!is_string($configFile)) {
-            $cwd = getcwd();
+            $cwd = (string) getcwd();
             foreach (['.phpcq.yaml', 'phpcq.yaml', '.phpcq.yaml.dist', 'phpcq.yaml.dist'] as $file) {
                 $configFile = $cwd . '/' . $file;
                 if (file_exists($configFile)) {
@@ -184,8 +179,11 @@ abstract class AbstractCommand extends Command
         assert(is_string($phpcqPath));
         $this->createDirectory($phpcqPath);
 
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-        if ($this->output && $this->output->isVeryVerbose()) {
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
+        if (isset($this->output) && $this->output->isVeryVerbose()) {
             $this->output->writeln('Using HOME: ' . $phpcqPath);
         }
 
@@ -194,7 +192,11 @@ abstract class AbstractCommand extends Command
 
     protected function getWrapWidth(): int
     {
-        if ($this->output instanceof ConsoleOutputInterface) {
+        /**
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress RedundantPropertyInitializationCheck
+         */
+        if (isset($this->output) && $this->output instanceof ConsoleOutputInterface) {
             return (new Terminal())->getWidth();
         }
 
@@ -206,7 +208,7 @@ abstract class AbstractCommand extends Command
         return $this->phpcqPath . '/plugins';
     }
 
-    /** @psalm-return array{string, list<string>} */
+    /** @return array{string, list<string>} */
     protected function findPhpCli(): array
     {
         $finder     = new PhpExecutableFinder();
@@ -215,7 +217,7 @@ abstract class AbstractCommand extends Command
         if (!is_string($executable)) {
             throw new RuntimeException('PHP executable not found');
         }
-        /** @psalm-var list<string> $arguments */
+        /** @var list<string> $arguments */
         $arguments = $finder->findArguments();
 
         return [$executable, $arguments];
@@ -230,15 +232,15 @@ abstract class AbstractCommand extends Command
      */
     protected function createProjectConfiguration(int $maxCores): ProjectConfiguration
     {
-        /** @psalm-suppress DocblockTypeContradiction */
-        if ($this->config === null) {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        if (!isset($this->config)) {
             throw new RuntimeException(
                 'Phpcq configuration is not set. Method is only available within doExecute().'
             );
         }
 
         return new ProjectConfiguration(
-            getcwd(),
+            (string) getcwd(),
             $this->config->getDirectories(),
             $this->config->getArtifactDir(),
             $maxCores

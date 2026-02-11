@@ -15,61 +15,49 @@ use Phpcq\Runner\Report\Buffer\FileRangeBuffer;
  */
 final class DiagnosticBuilder implements DiagnosticBuilderInterface
 {
-    /**
-     * @var string
-     * @psalm-var TDiagnosticSeverity
-     */
-    private $severity;
+    /** @var list<FileRangeBuffer> */
+    private array $files = [];
 
-    /** @var string */
-    private $message;
-
-    /** @var FileRangeBuffer[] */
-    private $files = [];
-
-    /** @var string|null */
-    private $source;
-
-    /** @var TaskReportInterface */
-    private $parent;
+    private ?string $source = null;
 
     /**
      * @var callable
-     * @psalm-var callable(DiagnosticBuffer, DiagnosticBuilder): void
+     * @var callable(DiagnosticBuffer, DiagnosticBuilder): void
      */
     private $callback;
 
-    /** @var FileDiagnosticBuilder[] */
-    private $pendingFiles = [];
+    /** @var array<string, FileDiagnosticBuilder> */
+    private array $pendingFiles = [];
 
-    /** @var string|null */
-    private $externalInfoUrl;
+    private ?string $externalInfoUrl = null;
 
-    /** @var string[] */
-    private $classNames = [];
+    /** @var array<string, string> */
+    private array $classNames = [];
 
-    /** @var string[] */
-    private $categories = [];
+    /** @var array<string, string> */
+    private array $categories = [];
 
     /**
-     * @psalm-param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
-     * @psalm-param TDiagnosticSeverity $severity
+     * @param callable(DiagnosticBuffer, DiagnosticBuilder): void $callback
+     * @param TDiagnosticSeverity $severity
      */
-    public function __construct(TaskReportInterface $parent, string $severity, string $message, callable $callback)
-    {
-        $this->severity = $severity;
-        $this->message  = $message;
-        $this->parent   = $parent;
+    public function __construct(
+        private readonly TaskReportInterface $parent,
+        private readonly string $severity,
+        private readonly string $message,
+        callable $callback
+    ) {
         $this->callback = $callback;
     }
 
+    #[\Override]
     public function forFile(string $file): FileDiagnosticBuilderInterface
     {
         // FIXME: if we would know the root dir, we could strip it here.
         $builder = new FileDiagnosticBuilder(
             $this,
             $file,
-            /** @param FileRangeBuffer[] $rangeBuffers */
+            /** @param list<FileRangeBuffer> $rangeBuffers */
             function (array $rangeBuffers, FileDiagnosticBuilder $builder) {
                 foreach ($rangeBuffers as $rangeBuffer) {
                     $this->files[] = $rangeBuffer;
@@ -81,6 +69,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this->pendingFiles[spl_object_hash($builder)] = $builder;
     }
 
+    #[\Override]
     public function fromSource(string $source): DiagnosticBuilderInterface
     {
         $this->source = $source;
@@ -88,6 +77,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withExternalInfoUrl(string $url): DiagnosticBuilderInterface
     {
         $this->externalInfoUrl = $url;
@@ -95,6 +85,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function forClass(string $className): DiagnosticBuilderInterface
     {
         $this->classNames[$className] = $className;
@@ -102,6 +93,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withCategory(string $category): DiagnosticBuilderInterface
     {
         $this->categories[$category] = $category;
@@ -109,6 +101,7 @@ final class DiagnosticBuilder implements DiagnosticBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function end(): TaskReportInterface
     {
         foreach ($this->pendingFiles as $pendingBuilder) {

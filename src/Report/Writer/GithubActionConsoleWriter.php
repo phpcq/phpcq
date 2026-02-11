@@ -16,21 +16,9 @@ final class GithubActionConsoleWriter
     use RenderRangeTrait;
 
     /**
-     * @var OutputInterface
+     * @var Generator<DiagnosticIteratorEntry>
      */
-    private $output;
-
-    /** @var int */
-    private $wrapWidth;
-
-    /** @var ReportBuffer */
-    private $report;
-
-    /**
-     * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
-     */
-    private $diagnostics;
+    private Generator $diagnostics;
 
     public static function writeReport(OutputInterface $output, ReportBuffer $report): void
     {
@@ -39,15 +27,12 @@ final class GithubActionConsoleWriter
     }
 
     public function __construct(
-        OutputInterface $output,
-        ReportBuffer $report,
-        int $wrapWidth = 80
+        private OutputInterface $output,
+        private ReportBuffer $report,
+        private int $wrapWidth = 80
     ) {
-        $this->output      = $output;
-        $this->report      = $report;
-        $this->wrapWidth   = $wrapWidth;
         $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity(
-            $report,
+            $this->report,
             TaskReportInterface::SEVERITY_MINOR
         )
             ->thenSortByFileAndRange()
@@ -66,13 +51,12 @@ final class GithubActionConsoleWriter
         $message = $this->compileMessage($entry);
         $range   = $this->compileRange($entry);
 
-        switch ($entry->getDiagnostic()->getSeverity()) {
-            case TaskReportInterface::SEVERITY_MINOR:
-                $this->output->writeln(sprintf('::warning %s::%s', $range, $message));
-                break;
-            default:
-                $this->output->writeln(sprintf('::error %s::%s', $range, $message));
-        }
+        match ($entry->getDiagnostic()->getSeverity()) {
+            TaskReportInterface::SEVERITY_MINOR => $this->output->writeln(
+                sprintf('::warning %s::%s', $range, $message)
+            ),
+            default => $this->output->writeln(sprintf('::error %s::%s', $range, $message)),
+        };
     }
 
     private function compileMessage(DiagnosticIteratorEntry $entry): string
@@ -103,10 +87,10 @@ final class GithubActionConsoleWriter
 
         $buffer = 'file=' . $range->getFile();
         if (null !== ($line = $range->getStartLine())) {
-            $buffer .= ',line=' . $line;
+            $buffer .= ',line=' . (string) $line;
         }
         if (null !== ($column = $range->getStartColumn())) {
-            $buffer .= ',col=' . $column;
+            $buffer .= ',col=' . (string) $column;
         }
 
         return $buffer;

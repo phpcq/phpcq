@@ -6,25 +6,31 @@ namespace Phpcq\Runner\Test\Command;
 
 use Phpcq\Runner\Command\AbstractCommand;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use Symfony\Component\Console\Input\InputDefinition;
 
 /**
  * @covers \Phpcq\Runner\Command\AbstractCommand
  */
-class AbstractCommandTest extends TestCase
+final class AbstractCommandTest extends TestCase
 {
-    public function testConfigureHonorsConfigArgument()
+    public function testConfigureHonorsConfigArgument(): void
     {
-        $command    = $this->getMockForAbstractClass(AbstractCommand::class);
-        $definition = $command->getDefinition();
+        $command    = $this->createPartialMock(AbstractCommand::class, ['doExecute']);
+        $definition = new InputDefinition();
+        $command->setDefinition($definition);
+
+        $reflectionMethod = new ReflectionMethod($command, 'configure');
+        $reflectionMethod->invoke($command);
 
         $this->assertTrue($definition->hasOption('config'));
         $option = $definition->getOption('config');
         $this->assertTrue($option->isValueRequired());
-        $this->assertSame($option->getDefault(), null);
+        $this->assertSame(null, $option->getDefault());
 
         $this->assertTrue($definition->hasOption('home-dir'));
         $option = $definition->getOption('home-dir');
         $this->assertTrue($option->isValueRequired());
-        $this->assertSame($option->getDefault(), getcwd() . '/.phpcq');
+        $this->assertSame(getcwd() . '/.phpcq', $option->getDefault());
     }
 }

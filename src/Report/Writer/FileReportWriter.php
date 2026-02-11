@@ -15,16 +15,15 @@ final class FileReportWriter extends AbstractReportWriter
     public const REPORT_FILE = '/file-report.xml';
 
     /**
-     * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $diagnostics;
+    private readonly Generator $diagnostics;
 
     /**
      * @var DOMElement[]
-     * @psalm-var array<string,DOMElement>
+     * @var array<string,DOMElement>
      */
-    private $fileElements = [];
+    private array $fileElements = [];
 
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
@@ -35,6 +34,7 @@ final class FileReportWriter extends AbstractReportWriter
             ->getIterator();
     }
 
+    #[\Override]
     protected function appendReportXml(DOMElement $rootNode): void
     {
         $abstractNode       = $this->xml->createElement('abstract', $rootNode);

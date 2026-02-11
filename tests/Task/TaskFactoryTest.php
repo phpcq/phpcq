@@ -20,12 +20,12 @@ final class TaskFactoryTest extends TestCase
 {
     public function testBuildRunProcess(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool = $this->createMock(ToolVersionInterface::class);
         $tool->method('getName')->willReturn('task-name');
 
         $factory = new TaskFactory(
             'test',
-            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
+            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -38,12 +38,12 @@ final class TaskFactoryTest extends TestCase
 
     public function testBuildRunPhar(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool = $this->createMock(ToolVersionInterface::class);
         $tool->method('getName')->willReturn('phar-name');
 
         $factory = new TaskFactory(
             'test',
-            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
+            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -60,12 +60,12 @@ final class TaskFactoryTest extends TestCase
 
     public function testBuildPhpProcess(): void
     {
-        $tool = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $tool = $this->createMock(ToolVersionInterface::class);
         $tool->method('getName')->willReturn('task-name');
 
         $factory = new TaskFactory(
             'task-name',
-            new InstalledPlugin($this->getMockForAbstractClass(PluginVersionInterface::class), [$tool]),
+            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -81,7 +81,6 @@ final class TaskFactoryTest extends TestCase
     private function assertPrivateProperty($expected, string $property, object $instance): void
     {
         $reflection = new ReflectionProperty($instance, $property);
-        $reflection->setAccessible(true);
         self::assertSame($expected, $reflection->getValue($instance));
     }
 }

@@ -23,24 +23,9 @@ final class ConsoleWriter
     use RenderRangeTrait;
 
     /**
-     * @var OutputInterface
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $output;
-
-    /** @var StyleInterface */
-    private $style;
-
-    /** @var int */
-    private $wrapWidth;
-
-    /** @var ReportBuffer */
-    private $report;
-
-    /**
-     * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
-     */
-    private $diagnostics;
+    private Generator $diagnostics;
 
     public static function writeReport(
         OutputInterface $output,
@@ -54,17 +39,13 @@ final class ConsoleWriter
     }
 
     public function __construct(
-        OutputInterface $output,
-        StyleInterface $style,
-        ReportBuffer $report,
+        private OutputInterface $output,
+        private StyleInterface $style,
+        private ReportBuffer $report,
         string $minimumSeverity,
-        int $wrapWidth = 80
+        private int $wrapWidth = 80
     ) {
-        $this->output      = $output;
-        $this->style       = $style;
-        $this->report      = $report;
-        $this->wrapWidth   = $wrapWidth;
-        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($report, $minimumSeverity)
+        $this->diagnostics = DiagnosticIterator::filterByMinimumSeverity($this->report, $minimumSeverity)
             ->thenSortByFileAndRange()
             ->getIterator();
     }
@@ -161,7 +142,7 @@ final class ConsoleWriter
             $conclusion .= ': ';
             $prefix = '';
             foreach ($summary as $severity => $count) {
-                $conclusion .= $prefix . $count . ' ' . $severity . ($count > 1 ? 's' : '');
+                $conclusion .= $prefix . ((string) $count) . ' ' . $severity . ($count > 1 ? 's' : '');
                 $prefix = ', ';
             }
         }
@@ -178,38 +159,22 @@ final class ConsoleWriter
 
     private function renderToolStatus(string $status): string
     {
-        switch ($status) {
-            case TaskReport::STATUS_STARTED:
-                return '<fg=yellow>' . $status . '</>';
-
-            case TaskReport::STATUS_PASSED:
-                return '<fg=green>' . $status . '</>';
-
-            case TaskReport::STATUS_FAILED:
-                return '<fg=red>' . $status . '</>';
-        }
-
-        return $status;
+        return match ($status) {
+            TaskReport::STATUS_STARTED => '<fg=yellow>' . $status . '</>',
+            TaskReport::STATUS_PASSED => '<fg=green>' . $status . '</>',
+            TaskReport::STATUS_FAILED => '<fg=red>' . $status . '</>',
+            default => $status,
+        };
     }
 
     private function renderReportStatus(string $status): string
     {
-        switch ($status) {
-            case ReportInterface::STATUS_STARTED:
-                $color = 'yellow';
-                break;
-
-            case ReportInterface::STATUS_PASSED:
-                $color = 'green';
-                break;
-
-            case ReportInterface::STATUS_FAILED:
-                $color = 'red';
-                break;
-
-            default:
-                $color = 'white';
-        }
+        $color = match ($status) {
+            ReportInterface::STATUS_STARTED => 'yellow',
+            ReportInterface::STATUS_PASSED => 'green',
+            ReportInterface::STATUS_FAILED => 'red',
+            default => 'white',
+        };
 
         return sprintf('<fg=%s>Code quality check %s</>', $color, $status);
     }
@@ -217,22 +182,12 @@ final class ConsoleWriter
     private function renderDiagnosticSeverity(string $severity, ?string $message = null): string
     {
         $message = $message ?: $severity;
-
-        switch ($severity) {
-            case TaskReport::SEVERITY_NONE:
-            case TaskReport::SEVERITY_INFO:
-                return '<fg=white>' . $message . '</>';
-
-            case TaskReport::SEVERITY_MARGINAL:
-            case TaskReport::SEVERITY_MINOR:
-                return '<fg=yellow>' . $message . '</>';
-
-            case TaskReport::SEVERITY_MAJOR:
-            case TaskReport::SEVERITY_FATAL:
-                return '<fg=red>' . $message . '</>';
-        }
-
-        return $message;
+        return match ($severity) {
+            TaskReport::SEVERITY_NONE, TaskReport::SEVERITY_INFO => '<fg=white>' . $message . '</>',
+            TaskReport::SEVERITY_MARGINAL, TaskReport::SEVERITY_MINOR => '<fg=yellow>' . $message . '</>',
+            TaskReport::SEVERITY_MAJOR, TaskReport::SEVERITY_FATAL => '<fg=red>' . $message . '</>',
+            default => $message,
+        };
     }
 
     private function renderMultiline(string $message, int $indent): void

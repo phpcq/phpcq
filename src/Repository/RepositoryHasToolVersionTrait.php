@@ -14,7 +14,7 @@ trait RepositoryHasToolVersionTrait
         try {
             $this->getToolVersion($name, $versionConstraint);
             return true;
-        } catch (ToolVersionNotFoundException $exception) {
+        } catch (ToolVersionNotFoundException) {
             return false;
         }
     }

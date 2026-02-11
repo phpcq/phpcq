@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Test\Config\Validation;
 
-use Phpcq\Runner\Config\Validation\Constraints;
 use Phpcq\Runner\Config\Validation\Validator;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Config\Validation\Validator */
@@ -14,7 +14,7 @@ final class ValidatorTest extends TestCase
 {
     use ConstraintProviderTrait;
 
-    /** @dataProvider boolConstraintProvider */
+    #[DataProvider('boolConstraintProvider')]
     public function testBoolConstraint($value, bool $error): void
     {
         if ($error) {
@@ -27,7 +27,7 @@ final class ValidatorTest extends TestCase
         $validator($value);
     }
 
-    /** @dataProvider floatConstraintProvider */
+    #[DataProvider('floatConstraintProvider')]
     public function testFloatConstraint($value, bool $error): void
     {
         if ($error) {
@@ -40,7 +40,7 @@ final class ValidatorTest extends TestCase
         $validator($value);
     }
 
-    /** @dataProvider intConstraintProvider */
+    #[DataProvider('intConstraintProvider')]
     public function testIntConstraint($value, bool $error): void
     {
         if ($error) {
@@ -53,7 +53,7 @@ final class ValidatorTest extends TestCase
         $validator($value);
     }
 
-    /** @dataProvider arrayConstraintProvider */
+    #[DataProvider('arrayConstraintProvider')]
     public function testArrayConstraint($value, bool $error): void
     {
         if ($error) {
@@ -66,7 +66,7 @@ final class ValidatorTest extends TestCase
         $validator($value);
     }
 
-    /** @dataProvider stringConstraintProvider */
+    #[DataProvider('stringConstraintProvider')]
     public function testStringConstraint($value, bool $error): void
     {
         if ($error) {
@@ -79,8 +79,8 @@ final class ValidatorTest extends TestCase
         $validator($value);
     }
 
-    /** @dataProvider listConstraintProvider */
-    public function testListItemValidator($value, bool $error, int $expectedCalls = 0): void
+    #[DataProvider('listConstraintProvider')]
+    public function testListItemValidator($value, bool $error, int $validator = 0): void
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
@@ -91,24 +91,24 @@ final class ValidatorTest extends TestCase
             $itemValidatorCalled++;
         };
 
-        $validator = Validator::listItemValidator($itemValidator);
-        $this->assertIsCallable($validator);
-        $validator($value);
+        $itemValidator = Validator::listItemValidator($itemValidator);
+        $this->assertIsCallable($itemValidator);
+        $itemValidator($value);
 
-        if ($expectedCalls > 0) {
+        if ($validator > 0) {
             $this->assertEquals(
-                $expectedCalls,
+                $validator,
                 $itemValidatorCalled,
                 sprintf(
                     'Callback was expected to be called "%s" times, but was called "%s" times',
-                    $expectedCalls,
+                    $validator,
                     $itemValidatorCalled
                 )
             );
         }
     }
 
-    /** @dataProvider enumConstraintProvider */
+    #[DataProvider('enumConstraintProvider')]
     public function testEnumConstraint($value, array $allowed, bool $error): void
     {
         if ($error) {

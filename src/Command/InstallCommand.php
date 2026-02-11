@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class InstallCommand extends AbstractUpdateCommand
 {
+    #[\Override]
     protected function configure(): void
     {
         $this->setName('install');
@@ -21,7 +22,8 @@ final class InstallCommand extends AbstractUpdateCommand
         parent::configure();
     }
 
-    /** @psalm-return list<TaskInterface> */
+    /** @return list<TaskInterface> */
+    #[\Override]
     protected function calculateTasks(): array
     {
         $installedRepository = $this->getInstalledRepository(false);

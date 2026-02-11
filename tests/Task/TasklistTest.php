@@ -13,14 +13,14 @@ use PHPUnit\Framework\TestCase;
  *
  * @covers \Phpcq\Runner\Task\Tasklist
  */
-class TasklistTest extends TestCase
+final class TasklistTest extends TestCase
 {
     public function testAddsAndIteratesCorrectly(): void
     {
         $list = new Tasklist();
 
-        $list->add($task1 = $this->getMockForAbstractClass(TaskInterface::class));
-        $list->add($task2 = $this->getMockForAbstractClass(TaskInterface::class));
+        $list->add($task1 = $this->createMock(TaskInterface::class));
+        $list->add($task2 = $this->createMock(TaskInterface::class));
 
         $tasks = [];
         foreach ($list->getIterator() as $task) {

@@ -8,20 +8,21 @@ use Generator;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Updater\Task\Tool\UpgradeToolTask */
 final class UpgradeToolTaskTest extends TestCase
 {
-    /** @dataProvider descriptionTestProvider  */
+    #[DataProvider('descriptionTestProvider')]
     public function testDescription(string $description, string $desired, string $installed): void
     {
-        $pluginVersion = $this->getMockForAbstractClass(PluginVersionInterface::class);
-        $toolVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
+        $toolVersion = $this->createMock(ToolVersionInterface::class);
         $toolVersion->expects($this->atLeastOnce())->method('getName')->willReturn('foo');
         $toolVersion->expects($this->atLeastOnce())->method('getVersion')->willReturn($desired);
 
-        $oldToolVersion = $this->getMockForAbstractClass(ToolVersionInterface::class);
+        $oldToolVersion = $this->createMock(ToolVersionInterface::class);
         $oldToolVersion->expects($this->atLeastOnce())->method('getVersion')->willReturn($installed);
 
         $instance = new UpgradeToolTask($pluginVersion, $toolVersion, $oldToolVersion, true);
@@ -32,7 +33,7 @@ final class UpgradeToolTaskTest extends TestCase
         );
     }
 
-    public function descriptionTestProvider(): Generator
+    public static function descriptionTestProvider(): Generator
     {
         yield 'Test upgrade description' => [
             'description' => 'Will upgrade tool foo from version 1.0.0 to version 1.0.1',
@@ -45,7 +46,6 @@ final class UpgradeToolTaskTest extends TestCase
             'desired'   => '1.0.0',
             'installed' => '1.0.1',
         ];
-
 
         yield 'Test reinstall description' => [
             'description' => 'Will reinstall tool foo in version 1.0.1',

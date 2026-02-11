@@ -7,6 +7,8 @@ namespace Phpcq\Runner\Test\Command;
 use Generator;
 use Phpcq\Runner\Command\SelfUpdateCommand;
 use Phpcq\Runner\Downloader\DownloaderInterface;
+use Phpcq\Runner\Test\WithConsecutiveTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -30,7 +32,9 @@ use const DATE_ATOM;
 /** @covers \Phpcq\Runner\Command\SelfUpdateCommand */
 final class SelfUpdateCommandTest extends TestCase
 {
-    public function provideUpdate(): Generator
+    use WithConsecutiveTrait;
+
+    public static function provideUpdate(): Generator
     {
         yield 'New version found' => [
             'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
@@ -76,7 +80,7 @@ final class SelfUpdateCommandTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideUpdate */
+    #[DataProvider('provideUpdate')]
     public function testUpdate(
         string $expectedOutput,
         string $installed,
@@ -94,7 +98,7 @@ final class SelfUpdateCommandTest extends TestCase
         );
 
         $downloadLocation = tempnam(sys_get_temp_dir(), 'phpcq.test.phar');
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $json = [
             'updated' => date(DATE_ATOM),
             'versions' => [
@@ -122,12 +126,26 @@ final class SelfUpdateCommandTest extends TestCase
                 });
         }
 
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
 
-        $output
-            ->expects($download ? $this->exactly(2) : $this->once())
-            ->method('writeln')
-            ->withConsecutive([$expectedOutput]);
+        if ($download) {
+            $output
+                ->expects($this->exactly(2))
+                ->method('writeln')
+                ->with(
+                    $this->callback(
+                        $this->consecutiveCalls(
+                            $expectedOutput,
+                            'Download phpcq.phar from https://phpcq.github.io/distrib/phpcq/unstable/phpcq.phar',
+                        )
+                    ),
+                );
+        } else {
+            $output
+                ->expects($this->once())
+                ->method('writeln')
+                ->with($expectedOutput);
+        }
 
         $command = new SelfUpdateCommand($downloadLocation, $downloader);
         $command->setApplication($this->mockApplication($installed));
@@ -140,7 +158,7 @@ final class SelfUpdateCommandTest extends TestCase
         }
     }
 
-    public function provideDryRun(): Generator
+    public static function provideDryRun(): Generator
     {
         yield 'New version found' => [
             'expectedOutput' => 'Version <info>"0.0.0.1-dev+2022-01-19-16-01-15-UTC-a4873bc"</info> installed.'
@@ -163,7 +181,7 @@ final class SelfUpdateCommandTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideDryRun */
+    #[DataProvider('provideDryRun')]
     public function testDryRun(
         string $expectedOutput,
         string $installed,
@@ -190,14 +208,14 @@ final class SelfUpdateCommandTest extends TestCase
             ]
         ];
 
-        $downloader = $this->getMockForAbstractClass(DownloaderInterface::class);
+        $downloader = $this->createMock(DownloaderInterface::class);
         $downloader
             ->expects($this->once())
             ->method('downloadJsonFile')
             ->with('https://phpcq.github.io/distrib/phpcq/unstable/versions.json')
             ->willReturn($json);
 
-        $output = $this->getMockForAbstractClass(OutputInterface::class);
+        $output = $this->createMock(OutputInterface::class);
         $output
             ->expects($this->once())
             ->method('writeln')
@@ -221,14 +239,12 @@ final class SelfUpdateCommandTest extends TestCase
             ],
             $options
         );
-        $input = $this->getMockForAbstractClass(InputInterface::class);
+        $input = $this->createMock(InputInterface::class);
         $input
             ->expects($this->atLeastOnce())
             ->method('getOption')
             ->willReturnCallback(
-                function (string $name) use ($options) {
-                    return $options[$name] ?? null;
-                }
+                fn(string $name) => $options[$name] ?? null
             );
 
         return $input;

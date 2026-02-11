@@ -9,16 +9,6 @@ use Throwable;
 class ToolVersionNotFoundException extends \RuntimeException implements Exception
 {
     /**
-     * @var string
-     */
-    private $toolName;
-
-    /**
-     * @var string
-     */
-    private $constraint;
-
-    /**
      * Create a new instance.
      *
      * @param string         $toolName
@@ -26,15 +16,17 @@ class ToolVersionNotFoundException extends \RuntimeException implements Exceptio
      * @param int            $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $toolName, string $constraint = '*', int $code = 0, Throwable $previous = null)
-    {
+    public function __construct(
+        private readonly string $toolName,
+        private readonly string $constraint = '*',
+        int $code = 0,
+        Throwable $previous = null
+    ) {
         parent::__construct(
             'Tool not found: ' . $toolName . ':' . $constraint,
             $code,
             $previous
         );
-        $this->toolName   = $toolName;
-        $this->constraint = $constraint;
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Test\Config\Validation;
 
 use Phpcq\Runner\Config\Validation\Constraints;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Config\Validation\Constraints */
@@ -13,7 +14,7 @@ final class ConstraintsTest extends TestCase
 {
     use ConstraintProviderTrait;
 
-    /** @dataProvider boolConstraintProvider */
+    #[DataProvider('boolConstraintProvider')]
     public function testBoolConstraint($value, bool $error): void
     {
         if ($error) {
@@ -24,7 +25,7 @@ final class ConstraintsTest extends TestCase
         $this->assertSame($value, Constraints::boolConstraint($value));
     }
 
-    /** @dataProvider floatConstraintProvider */
+    #[DataProvider('floatConstraintProvider')]
     public function testFloatConstraint($value, bool $error): void
     {
         if ($error) {
@@ -35,7 +36,7 @@ final class ConstraintsTest extends TestCase
         $this->assertSame($value, Constraints::floatConstraint($value));
     }
 
-    /** @dataProvider intConstraintProvider */
+    #[DataProvider('intConstraintProvider')]
     public function testIntConstraint($value, bool $error): void
     {
         if ($error) {
@@ -46,7 +47,7 @@ final class ConstraintsTest extends TestCase
         $this->assertSame($value, Constraints::intConstraint($value));
     }
 
-    /** @dataProvider arrayConstraintProvider */
+    #[DataProvider('arrayConstraintProvider')]
     public function testArrayConstraint($value, bool $error): void
     {
         if ($error) {
@@ -57,7 +58,7 @@ final class ConstraintsTest extends TestCase
         $this->assertSame($value, Constraints::arrayConstraint($value));
     }
 
-    /** @dataProvider stringConstraintProvider */
+    #[DataProvider('stringConstraintProvider')]
     public function testStringConstraint($value, bool $error): void
     {
         if ($error) {
@@ -68,16 +69,17 @@ final class ConstraintsTest extends TestCase
         $this->assertSame($value, Constraints::stringConstraint($value));
     }
 
-    /** @dataProvider listConstraintProvider */
-    public function testListConstraint($value, bool $error, int $expectedCalls = 0): void
+    #[DataProvider('listConstraintProvider')]
+    public function testListConstraint($value, bool $error, int $validator = 0): void
     {
         if ($error) {
             $this->expectException(InvalidConfigurationException::class);
         }
 
         $itemValidator = null;
-        if ($expectedCalls > 0) {
-            $itemValidatorCalled = 0;
+        $itemValidatorCalled = 0;
+
+        if ($validator > 0) {
             $itemValidator = static function () use (&$itemValidatorCalled): void {
                 $itemValidatorCalled++;
             };
@@ -85,20 +87,20 @@ final class ConstraintsTest extends TestCase
 
         $this->assertSame($value, Constraints::listConstraint($value, $itemValidator));
 
-        if ($expectedCalls > 0) {
+        if ($validator > 0) {
             $this->assertEquals(
-                $expectedCalls,
+                $validator,
                 $itemValidatorCalled,
                 sprintf(
                     'Callback was expected to be called "%s" times, but was called "%s" times',
-                    $expectedCalls,
+                    $validator,
                     $itemValidatorCalled
                 )
             );
         }
     }
 
-    /** @dataProvider enumConstraintProvider */
+    #[DataProvider('enumConstraintProvider')]
     public function testEnumConstraint($value, array $allowed, bool $error): void
     {
         if ($error) {

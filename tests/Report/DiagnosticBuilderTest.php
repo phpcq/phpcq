@@ -15,7 +15,7 @@ final class DiagnosticBuilderTest extends TestCase
 {
     public function testBuildsMinimal(): void
     {
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiagnosticBuilder(
             $report,
             'error',
@@ -37,7 +37,7 @@ final class DiagnosticBuilderTest extends TestCase
 
     public function testBuildsWithSource(): void
     {
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiagnosticBuilder(
             $report,
             'error',
@@ -60,7 +60,7 @@ final class DiagnosticBuilderTest extends TestCase
 
     public function testBuildsWithSourceAndFileRange(): void
     {
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiagnosticBuilder(
             $report,
             'error',
@@ -84,7 +84,7 @@ final class DiagnosticBuilderTest extends TestCase
 
     public function testEndIsCalledForPendingBuilder(): void
     {
-        $report  = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report  = $this->createMock(TaskReportInterface::class);
         $builder = new DiagnosticBuilder(
             $report,
             'error',
@@ -115,7 +115,7 @@ final class DiagnosticBuilderTest extends TestCase
     public function testCallingEndCallsCallback(): void
     {
         $called = false;
-        $report = $this->getMockForAbstractClass(TaskReportInterface::class);
+        $report = $this->createMock(TaskReportInterface::class);
         $builder = new DiagnosticBuilder(
             $report,
             'error',

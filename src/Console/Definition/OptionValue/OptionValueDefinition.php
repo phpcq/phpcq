@@ -6,12 +6,8 @@ namespace Phpcq\Runner\Console\Definition\OptionValue;
 
 abstract class OptionValueDefinition
 {
-    /** @var bool */
-    private $required;
-
-    public function __construct(bool $required)
+    public function __construct(private readonly bool $required)
     {
-        $this->required = $required;
     }
 
     public function isRequired(): bool

@@ -26,20 +26,8 @@ use function strpos;
  * } */
 class FileDownloader implements DownloaderInterface
 {
-    /**
-     * @var array
-     */
-    private $authConfig;
-
-    /**
-     * @var string
-     */
-    private $cacheDirectory;
-
-    public function __construct(string $cacheDirectory, array $authConfig = [])
+    public function __construct(private readonly string $cacheDirectory, private readonly array $authConfig = [])
     {
-        $this->cacheDirectory = $cacheDirectory;
-        $this->authConfig     = $authConfig;
     }
 
     /**
@@ -52,6 +40,7 @@ class FileDownloader implements DownloaderInterface
      *
      * @return void
      */
+    #[\Override]
     public function downloadFileTo(
         string $url,
         string $destinationFile,
@@ -69,26 +58,25 @@ class FileDownloader implements DownloaderInterface
     /**
      * Download a file and return it's content.
      *
-     * @param string     $url
-     * @param string     $baseDir
-     * @param bool       $force
-     * @param array|null $hash
-     *
-     * @psalm-param ?TRepositoryCheckSum $hash
+     * @param string                   $url
+     * @param string                   $baseDir
+     * @param bool                     $force
+     * @param TRepositoryCheckSum|null $hash
      *
      * @return string
      */
+    #[\Override]
     public function downloadFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): string
     {
         if (!is_dir($this->cacheDirectory)) {
             mkdir($this->cacheDirectory);
         }
-        $cacheFile = $this->cacheDirectory . '/' . preg_replace('#[^a-zA-Z0-9]#', '-', $url);
+        $cacheFile = $this->cacheDirectory . '/' . ((string) preg_replace('#[^a-zA-Z0-9]#', '-', $url));
         if ($force || !is_file($cacheFile) || !$this->cacheFileMatches($cacheFile, $hash)) {
             $url = $this->validateUrlOrFile($url, $baseDir);
 
             if (is_file($url)) {
-                file_put_contents($cacheFile, file_get_contents($url));
+                file_put_contents($cacheFile, (string) file_get_contents($url));
             } else {
                 $client = $this->getClient($url);
                 // FIXME: apply auth.
@@ -106,7 +94,7 @@ class FileDownloader implements DownloaderInterface
             }
         }
 
-        return file_get_contents($cacheFile);
+        return (string) file_get_contents($cacheFile);
     }
 
     /**
@@ -115,18 +103,16 @@ class FileDownloader implements DownloaderInterface
      * @param string     $url
      * @param string     $baseDir
      * @param bool       $force
-     * @param array|null $hash
+     * @param TRepositoryCheckSum|null $hash
      *
-     * @psalm-param ?TRepositoryCheckSum $hash
-     *
-     * @return array
-     * @psalm-return TJsonRepository
+     * @return TJsonRepository
      */
+    #[\Override]
     public function downloadJsonFile(string $url, string $baseDir = '', bool $force = false, ?array $hash = null): array
     {
         /**
          * @var null|array $data
-         * @psalm-var ?TJsonRepository $data
+         * @var ?TJsonRepository $data
          */
         $data = json_decode($this->downloadFile($url, $baseDir, $force, $hash), true);
         if (null === $data) {
@@ -147,8 +133,8 @@ class FileDownloader implements DownloaderInterface
             return $baseDir . '/' . $url;
         }
         // Perform URL check.
-        $path        = parse_url($url, PHP_URL_PATH);
-        $encodedPath = array_map('urlencode', explode('/', $path));
+        $path        = (string) parse_url($url, PHP_URL_PATH);
+        $encodedPath = array_map(urlencode(...), explode('/', $path));
         $newUrl      = str_replace($path, implode('/', $encodedPath), $url);
         if (filter_var($newUrl, FILTER_VALIDATE_URL)) {
             return $newUrl;
@@ -166,9 +152,7 @@ class FileDownloader implements DownloaderInterface
      * Check the hash for the passed cache file - return true if it is valid, false otherwise.
      *
      * @param string     $cacheFile The file to check
-     * @param array|null $hash      he hash to validate.
-     *
-     * @psalm-param ?TRepositoryCheckSum $hash
+     * @param TRepositoryCheckSum|null $hash The hash to validate.
      *
      * @return bool
      */
@@ -179,7 +163,7 @@ class FileDownloader implements DownloaderInterface
         }
 
         /**
-         * @psalm-var array<AbstractHash::SHA_1|AbstractHash::SHA_256|AbstractHash::SHA_384|AbstractHash::SHA_512,
+         * @var array<AbstractHash::SHA_1|AbstractHash::SHA_256|AbstractHash::SHA_384|AbstractHash::SHA_512,
          * string> $hashMap
          */
         static $hashMap = [
@@ -199,7 +183,7 @@ class FileDownloader implements DownloaderInterface
     private function getClient(string $url): Client
     {
         $options = [];
-        if (!is_file($url) && strpos($url, 'https://hkps.pool.sks-keyservers.net') === 0) {
+        if (!is_file($url) && str_starts_with($url, 'https://hkps.pool.sks-keyservers.net')) {
             $options['verify'] = __DIR__ . '/Resources/certs/sks-keyservers.netCA.pem';
         }
 

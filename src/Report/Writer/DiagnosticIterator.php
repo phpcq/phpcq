@@ -12,12 +12,14 @@ use LogicException;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
+use function assert;
+
 /** @implements IteratorAggregate<int, DiagnosticIteratorEntry>  */
 final class DiagnosticIterator implements IteratorAggregate
 {
     /**
      * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
-     * @psalm-var array{
+     * @var array{
      *  none: int,
      *  info: int,
      *  marginal: int,
@@ -36,14 +38,7 @@ final class DiagnosticIterator implements IteratorAggregate
     ];
 
     /**
-     * @var DiagnosticIterator|Generator|Iterator
-     * @psalm-var DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator
-     */
-    private $previous;
-
-    /**
-     * @var callable|null
-     * @psalm-var null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
+     * @var null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int
      */
     private $sortCallback;
 
@@ -76,7 +71,7 @@ final class DiagnosticIterator implements IteratorAggregate
         return static::sortBy(static::sortBy($this, self::fileNameSorter()), self::fileRangeSorter());
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function toolSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -84,7 +79,7 @@ final class DiagnosticIterator implements IteratorAggregate
         };
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function fileNameSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -104,7 +99,7 @@ final class DiagnosticIterator implements IteratorAggregate
         };
     }
 
-    /** @psalm-return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
+    /** @return callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int */
     private static function fileRangeSorter(): callable
     {
         return static function (DiagnosticIteratorEntry $entry1, DiagnosticIteratorEntry $entry2): int {
@@ -135,7 +130,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-return callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool
+     * @return callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool
      */
     private static function minimumSeverityFilter(string $minimumSeverity): callable
     {
@@ -147,7 +142,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
     private static function createSorted(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
@@ -155,7 +150,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool $callback
+     * @param callable(DiagnosticIteratorEntry, mixed, Iterator<mixed, mixed>): bool $callback
      */
     private static function createFiltered(ReportBuffer $report, callable $callback): DiagnosticIterator
     {
@@ -163,7 +158,7 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @psalm-param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
     private static function sortBy(DiagnosticIterator $previous, callable $callback): DiagnosticIterator
     {
@@ -171,17 +166,15 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @param DiagnosticIterator|Generator|Iterator $previous
-     * @psalm-param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator $previous
-     * @psalm-param null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
+     * @param DiagnosticIterator|Generator<int, DiagnosticIteratorEntry>|Iterator $previous
+     * @param null|callable(DiagnosticIteratorEntry, DiagnosticIteratorEntry): int $callback
      */
-    private function __construct($previous, ?callable $callback)
+    private function __construct(private $previous, ?callable $callback)
     {
-        $this->previous     = $previous;
         $this->sortCallback = $callback;
     }
 
-    /** @psalm-return Generator<int, DiagnosticIteratorEntry> */
+    /** @return Generator<int, DiagnosticIteratorEntry> */
     private static function reportIterator(ReportBuffer $report): Generator
     {
         foreach ($report->getTaskReports() as $taskReport) {
@@ -214,9 +207,9 @@ final class DiagnosticIterator implements IteratorAggregate
     }
 
     /**
-     * @return Generator|DiagnosticIteratorEntry[]
-     * @psalm-return Generator<int, DiagnosticIteratorEntry>
+     * @return Generator<int, DiagnosticIteratorEntry>
      */
+    #[\Override]
     public function getIterator(): Generator
     {
         if ($this->previous instanceof self && $this->previous->sortCallback) {
@@ -234,7 +227,7 @@ final class DiagnosticIterator implements IteratorAggregate
         }
 
         $values = iterator_to_array($this->previous);
-        usort($values, [$this, 'compare']);
+        usort($values, $this->compare(...));
 
         foreach ($values as $entry) {
             yield $entry;
@@ -245,7 +238,7 @@ final class DiagnosticIterator implements IteratorAggregate
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @psalm-return Generator<int, DiagnosticIteratorEntry, mixed, null>
+     * @return Generator<int, DiagnosticIteratorEntry, mixed, null>
      */
     private function iterateSorted(): Generator
     {
@@ -268,7 +261,8 @@ final class DiagnosticIterator implements IteratorAggregate
             // Per definition: The previous provider sorts all items by its condition.
             // Buffer all elements until the next "partition" begins.
             $entry2 = $parent->current();
-            $delta  = $this->previous->compare($entry1, $entry2);
+            assert($entry2 instanceof DiagnosticIteratorEntry);
+            $delta = $this->previous->compare($entry1, $entry2);
             if ($delta > 0) {
                 throw new LogicException('Parent appears to be unsorted?!?');
             }

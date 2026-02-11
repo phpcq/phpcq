@@ -19,9 +19,9 @@ final class TaskReportWriter extends AbstractReportWriter
 
     /**
      * @var Generator|DiagnosticIteratorEntry[]
-     * @psalm-var Generator<int, DiagnosticIteratorEntry>
+     * @var Generator<int, DiagnosticIteratorEntry>
      */
-    private $diagnostics;
+    private readonly Generator|array $diagnostics;
 
     protected function __construct(string $targetPath, ReportBuffer $report, string $minimumSeverity)
     {
@@ -33,6 +33,7 @@ final class TaskReportWriter extends AbstractReportWriter
             ->getIterator();
     }
 
+    #[\Override]
     protected function appendReportXml(DOMElement $rootNode): void
     {
         $outputNode = $this->xml->createElement('tasks', $rootNode);
@@ -44,6 +45,7 @@ final class TaskReportWriter extends AbstractReportWriter
         }
     }
 
+    #[\Override]
     protected function handleRange(DOMElement $diagnosticElement, DiagnosticIteratorEntry $entry): void
     {
         if (!$entry->getDiagnostic()->hasFileRanges()) {
@@ -84,7 +86,7 @@ final class TaskReportWriter extends AbstractReportWriter
                 break;
             }
             $entry = $this->diagnostics->current();
-        } while ($this->diagnostics->valid() && $report === $entry->getTask());
+        } while ($entry !== null && $this->diagnostics->valid() && $report === $entry->getTask());
 
         $this->appendAttachments($task, $report);
         $this->appendDiffs($task, $report);

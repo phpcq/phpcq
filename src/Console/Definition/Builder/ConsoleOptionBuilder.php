@@ -14,42 +14,29 @@ use Phpcq\Runner\Console\Definition\OptionValue\SimpleOptionValueDefinition;
 
 final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
 {
-    /** @var string */
-    private $name;
+    private ?string $shortcut = null;
 
-    /** @var string */
-    private $description;
+    private bool $required = false;
 
-    /** @var string|null */
-    private $shortcut;
+    private bool $isArray = false;
 
-    /** @var bool */
-    private $required = false;
-
-    /** @var bool  */
-    private $isArray = false;
-
-    /** @var bool */
-    private $isValueRequired = false;
+    private bool $isValueRequired = false;
 
     /** @var array<string|int,mixed> */
-    private $optionValues = [];
+    private array $optionValues = [];
 
     /** @var array{defaultValue: mixed, valueSeparator: string}|null */
-    private $keyValueMap;
+    private ?array $keyValueMap = null;
 
-    /** @var string|null */
-    private $valueSeparator = null;
+    private ?string $valueSeparator = null;
 
-    /** @var bool */
-    private $onlyShortcut = false;
+    private bool $onlyShortcut = false;
 
-    public function __construct(string $name, string $description)
+    public function __construct(private readonly string $name, private readonly string $description)
     {
-        $this->name        = $name;
-        $this->description = $description;
     }
 
+    #[\Override]
     public function isRequired(): ConsoleOptionBuilderInterface
     {
         $this->required = true;
@@ -57,6 +44,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function isArray(): ConsoleOptionBuilderInterface
     {
         $this->isArray = true;
@@ -64,6 +52,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withRequiredValue(?string $name = null): ConsoleOptionBuilderInterface
     {
         if (null !== $this->keyValueMap) {
@@ -76,6 +65,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withShortcut(string $shortcut): ConsoleOptionBuilderInterface
     {
         $this->shortcut = $shortcut;
@@ -83,6 +73,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withOptionalValue(?string $name = null, $defaultValue = null): ConsoleOptionBuilderInterface
     {
         if (null !== $this->keyValueMap) {
@@ -94,6 +85,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withKeyValueMap($defaultValue = null, ?string $valueSeparator = null): ConsoleOptionBuilderInterface
     {
         if (count($this->optionValues)) {
@@ -109,6 +101,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withOptionValueSeparator(string $separator): ConsoleOptionBuilderInterface
     {
         $this->valueSeparator = $separator;
@@ -116,6 +109,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function withShortcutOnly(): ConsoleOptionBuilderInterface
     {
         $this->onlyShortcut = true;
@@ -156,7 +150,7 @@ final class ConsoleOptionBuilder implements ConsoleOptionBuilderInterface
                     throw new RuntimeException('If defining multiple optional values, the value needs a name');
                 }
             }
-            /** @psalm-var array<string,mixed> $values */
+            /** @var array<string,mixed> $values */
 
             return new OptionParamsDefinition($this->isValueRequired, $values);
         }

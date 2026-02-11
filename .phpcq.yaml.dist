@@ -43,6 +43,9 @@ phpcq:
     composer-normalize:
       version: ^1.0
       signed: false
+    rector:
+      version: ^1.0
+      signed: false
   trusted-keys:
     # composer-require-checker
     - 033E5F8D801A2F8D
@@ -51,6 +54,7 @@ phpcq:
     # psalm
     - 8A03EA3B385DBAA1
     - 12CE0F1D262429A5
+    - 99BF4D9A33D65E1E
     # magl@magll.net
     - D2CCAC42F6295E7D
     # PHP_CodeSniffer
@@ -67,6 +71,7 @@ phpcq:
 tasks:
   fix:
     - composer-normalize-fix
+    - rector-fix
     - phpcbf
 
   verify:
@@ -80,6 +85,7 @@ tasks:
     - phpcs
     - psalm
     - phpunit
+    - rector
 
   build:
     - box
@@ -152,7 +158,7 @@ tasks:
     config:
       dry_run: false
 
-  psalm:
+  rector-fix:
+    plugin: rector
     config:
-      custom_flags:
-        - '--use-baseline=psalm-baseline.xml'
+      dry-run: false

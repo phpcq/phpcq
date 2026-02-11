@@ -6,7 +6,7 @@ namespace Phpcq\Runner\Test\Config\Validation;
 
 trait ConstraintProviderTrait
 {
-    public function boolConstraintProvider(): array
+    public static function boolConstraintProvider(): array
     {
         return [
             'accepts false' => [
@@ -44,7 +44,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function floatConstraintProvider(): array
+    public static function floatConstraintProvider(): array
     {
         return [
             'accepts floats' => [
@@ -78,7 +78,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function intConstraintProvider(): array
+    public static function intConstraintProvider(): array
     {
         return [
             'accepts integers' => [
@@ -112,7 +112,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function arrayConstraintProvider(): array
+    public static function arrayConstraintProvider(): array
     {
         return [
             'does accept object like arrays' => [
@@ -146,7 +146,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function stringConstraintProvider(): array
+    public static function stringConstraintProvider(): array
     {
         return [
             'does accept string' => [
@@ -180,7 +180,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function listConstraintProvider(): array
+    public static function listConstraintProvider(): array
     {
         return [
             'accept list arrays' => [
@@ -223,7 +223,7 @@ trait ConstraintProviderTrait
         ];
     }
 
-    public function enumConstraintProvider(): array
+    public static function enumConstraintProvider(): array
     {
         return [
             'accepts contained in allowed values' => [
