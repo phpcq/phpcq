@@ -75,13 +75,13 @@ use const PHP_URL_PATH;
  *  plugins: array<string, TInstalledPluginVersion>,
  * }
  */
-final class InstalledRepositoryLoader
+final readonly class InstalledRepositoryLoader
 {
-    private readonly JsonFileLoaderInterface $jsonFileLoader;
+    private JsonFileLoaderInterface $jsonFileLoader;
 
     public function __construct(
         ?JsonFileLoaderInterface $jsonFileLoader = null,
-        private readonly bool $failOnError = true
+        private bool $failOnError = true
     ) {
         $this->jsonFileLoader = $jsonFileLoader ?: new FileGetContentsJsonFileLoader();
     }

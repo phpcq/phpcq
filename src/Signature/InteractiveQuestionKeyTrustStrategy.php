@@ -14,13 +14,13 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 use function sprintf;
 
-final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
+final readonly class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
 {
     public function __construct(
-        private readonly TrustedKeysStrategy $trustedKeys,
-        private readonly InputInterface $input,
-        private readonly OutputInterface $output,
-        private readonly QuestionHelper $questionHelper
+        private TrustedKeysStrategy $trustedKeys,
+        private InputInterface $input,
+        private OutputInterface $output,
+        private QuestionHelper $questionHelper
     ) {
     }
 

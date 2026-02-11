@@ -10,11 +10,11 @@ use Phpcq\GnuPG\Downloader\FileDownloaderInterface;
 use Phpcq\GnuPG\Exception\DownloadFailureException;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class SignatureFileDownloader implements FileDownloaderInterface
+final readonly class SignatureFileDownloader implements FileDownloaderInterface
 {
     public function __construct(
-        private readonly DownloaderInterface $fileDownloader,
-        private readonly OutputInterface $output
+        private DownloaderInterface $fileDownloader,
+        private OutputInterface $output
     ) {
     }
 
