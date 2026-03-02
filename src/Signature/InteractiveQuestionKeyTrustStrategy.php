@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Signature;
 
 use Override;
-use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +16,7 @@ use function sprintf;
 final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
 {
     public function __construct(
-        private readonly TrustedKeysStrategy $trustedKeys,
+        private readonly TrustKeyStrategyInterface $trustedKeys,
         private readonly InputInterface $input,
         private readonly OutputInterface $output,
         private readonly QuestionHelper $questionHelper
