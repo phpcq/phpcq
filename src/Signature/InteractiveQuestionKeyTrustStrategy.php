@@ -29,6 +29,9 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
         if ($this->trustedKeys->isTrusted($fingerprint)) {
             return true;
         }
+        if (16 < strlen($fingerprint) && $this->trustedKeys->isTrusted(substr($fingerprint, -16))) {
+            return true;
+        }
 
         $question = new ConfirmationQuestion(
             sprintf('Temporary trust key "%s"? (y/n) ', $fingerprint),

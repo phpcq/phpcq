@@ -45,6 +45,31 @@ final class InteractiveQuestionKeyTrustStrategyTest extends TestCase
                 return $strategy;
             }
         ];
+
+        yield 'Known long fingerprint is retried as short' => [
+            'fingerprint' => '00000000000000000123456789ABCDEF',
+            'strategyProvider' => function (TestCase $test): TrustKeyStrategyInterface {
+                $strategy = $test->getMockBuilder(TrustKeyStrategyInterface::class)->getMock();
+                $strategy
+                    ->expects($test->exactly(2))
+                    ->method('isTrusted')
+                    ->willReturnCallback(static function (string $fingerprint) {
+                        static $invocation = 0;
+                        switch ($invocation++) {
+                            case 0:
+                                self::assertSame('00000000000000000123456789ABCDEF', $fingerprint);
+                                return false;
+                            case 1:
+                                self::assertSame('0123456789ABCDEF', $fingerprint);
+                                return true;
+                            default:
+                        }
+                        self::fail('Unexpected invocation');
+                    });
+
+                return $strategy;
+            }
+        ];
     }
 
     #[DataProvider('trueProvider')]
