@@ -78,14 +78,14 @@ jobs:
         run: $GITHUB_WORKSPACE/phpcq.phar -v ${{ matrix.phpcq_flags }}
 
       - name: Upload build directory to artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ success() || failure() }}
         with:
           name: phpcq-builds-php-${{ matrix.php }}
           path: .phpcq/build/
 
       - name: Upload compiled phar to artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ success() }}
         with:
           name: phpcq-phar-php-${{ matrix.php }}
