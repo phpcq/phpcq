@@ -34,7 +34,7 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
         }
 
         $question = new ConfirmationQuestion(
-            sprintf('Temporary trust key "%s"? (y/n) ', $fingerprint),
+            sprintf('Temporary trust key "%s" ("%s")? (y/n)', $fingerprint, substr($fingerprint, -16)),
             false
         );
 
