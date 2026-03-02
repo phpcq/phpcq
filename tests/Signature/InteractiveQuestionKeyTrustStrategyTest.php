@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 #[CoversClass(InteractiveQuestionKeyTrustStrategy::class)]
 final class InteractiveQuestionKeyTrustStrategyTest extends TestCase
@@ -90,5 +91,71 @@ final class InteractiveQuestionKeyTrustStrategyTest extends TestCase
         );
 
         self::assertTrue($interactiveStrategy->isTrusted($fingerprint));
+    }
+
+    public function testAsksForConfirmationOnUntrustedKeyAndProceedsOnYes(): void
+    {
+        $input = $this->getMockBuilder(InputInterface::class)->getMock();
+        $output = $this->getMockBuilder(OutputInterface::class)->getMock();
+
+        $output->expects($this->once())->method('writeln');
+
+        $helper = $this->getMockBuilder(QuestionHelper::class)->getMock();
+        $helper
+            ->expects($this->once())
+            ->method('ask')
+            ->with($input, $output)
+            ->willReturnCallback(function (InputInterface $input, OutputInterface $output, Question $question) {
+                self::assertSame(
+                    'Temporary trust key "0000000000000000FFFFFFFFFFFFFFFF" ("FFFFFFFFFFFFFFFF")? (y/n)',
+                    $question->getQuestion()
+                );
+                return true;
+            });
+
+        $strategy = $this->getMockBuilder(TrustKeyStrategyInterface::class)->getMock();
+        $strategy->method('isTrusted')->willReturn(false);
+
+        $interactiveStrategy = new InteractiveQuestionKeyTrustStrategy(
+            $strategy,
+            $input,
+            $output,
+            $helper
+        );
+
+        self::assertTrue($interactiveStrategy->isTrusted('0000000000000000FFFFFFFFFFFFFFFF'));
+    }
+
+    public function testAsksForConfirmationOnUntrustedKeyAndDoesNotProceedOnNo(): void
+    {
+        $input = $this->getMockBuilder(InputInterface::class)->getMock();
+        $output = $this->getMockBuilder(OutputInterface::class)->getMock();
+
+        $output->expects($this->never())->method('writeln');
+
+        $helper = $this->getMockBuilder(QuestionHelper::class)->getMock();
+        $helper
+            ->expects($this->once())
+            ->method('ask')
+            ->with($input, $output)
+            ->willReturnCallback(function (InputInterface $input, OutputInterface $output, Question $question) {
+                self::assertSame(
+                    'Temporary trust key "0000000000000000FFFFFFFFFFFFFFFF" ("FFFFFFFFFFFFFFFF")? (y/n)',
+                    $question->getQuestion()
+                );
+                return false;
+            });
+
+        $strategy = $this->getMockBuilder(TrustKeyStrategyInterface::class)->getMock();
+        $strategy->method('isTrusted')->willReturn(false);
+
+        $interactiveStrategy = new InteractiveQuestionKeyTrustStrategy(
+            $strategy,
+            $input,
+            $output,
+            $helper
+        );
+
+        self::assertFalse($interactiveStrategy->isTrusted('0000000000000000FFFFFFFFFFFFFFFF'));
     }
 }
