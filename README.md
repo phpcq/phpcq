@@ -14,7 +14,7 @@ PHPCQ is built on well known projects and unifies the reporting into one report:
 
  - [ComposerRequireChecker](https://github.com/maglnet/ComposerRequireChecker)
  - [composer-normalize](https://github.com/ergebnis/composer-normalize)
- - [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
+ - [PHP CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)
  - [PHPMD](https://github.com/phpmd/phpmd)
  - [Psalm](https://github.com/vimeo/psalm/)
  - [PHPUnit](https://phpunit.de/index.html)
