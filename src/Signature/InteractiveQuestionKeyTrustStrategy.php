@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Signature;
 
 use Override;
-use Phpcq\GnuPG\Signature\TrustedKeysStrategy;
 use Phpcq\GnuPG\Signature\TrustKeyStrategyInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +16,7 @@ use function sprintf;
 final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInterface
 {
     public function __construct(
-        private readonly TrustedKeysStrategy $trustedKeys,
+        private readonly TrustKeyStrategyInterface $trustedKeys,
         private readonly InputInterface $input,
         private readonly OutputInterface $output,
         private readonly QuestionHelper $questionHelper
@@ -30,9 +29,12 @@ final class InteractiveQuestionKeyTrustStrategy implements TrustKeyStrategyInter
         if ($this->trustedKeys->isTrusted($fingerprint)) {
             return true;
         }
+        if (16 < strlen($fingerprint) && $this->trustedKeys->isTrusted(substr($fingerprint, -16))) {
+            return true;
+        }
 
         $question = new ConfirmationQuestion(
-            sprintf('Temporary trust key "%s"? (y/n) ', $fingerprint),
+            sprintf('Temporary trust key "%s" ("%s")? (y/n)', $fingerprint, substr($fingerprint, -16)),
             false
         );
 
