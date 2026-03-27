@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Phpcq\Runner\Report\Buffer;
 
-final class FileRangeBuffer
+final readonly class FileRangeBuffer
 {
     public function __construct(
-        private readonly string $file,
-        private readonly ?int $startLine,
-        private readonly ?int $startColumn,
-        private readonly ?int $endLine,
-        private readonly ?int $endColumn
+        private string $file,
+        private ?int $startLine,
+        private ?int $startColumn,
+        private ?int $endLine,
+        private ?int $endColumn
     ) {
     }
 

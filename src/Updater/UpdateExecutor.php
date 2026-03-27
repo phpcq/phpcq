@@ -16,16 +16,16 @@ use Symfony\Component\Filesystem\Filesystem;
 
 use function getcwd;
 
-final class UpdateExecutor
+final readonly class UpdateExecutor
 {
-    private readonly Filesystem $filesystem;
+    private Filesystem $filesystem;
 
     public function __construct(
-        private readonly DownloaderInterface $downloader,
-        private readonly SignatureVerifier $verifier,
-        private readonly string $installedPluginPath,
-        private readonly OutputInterface $output,
-        private readonly Composer $composer
+        private DownloaderInterface $downloader,
+        private SignatureVerifier $verifier,
+        private string $installedPluginPath,
+        private OutputInterface $output,
+        private Composer $composer
     ) {
         $this->filesystem          = new Filesystem();
     }

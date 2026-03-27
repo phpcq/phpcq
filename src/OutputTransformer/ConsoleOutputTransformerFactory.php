@@ -13,14 +13,14 @@ use Phpcq\PluginApi\Version10\Util\BufferedLineReader;
 /**
  * @psalm-type TDiagnosticSeverity = TaskReportInterface::SEVERITY_NONE|TaskReportInterface::SEVERITY_INFO|TaskReportInterface::SEVERITY_MARGINAL|TaskReportInterface::SEVERITY_MINOR|TaskReportInterface::SEVERITY_MAJOR|TaskReportInterface::SEVERITY_FATAL
  */
-final class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
+final readonly class ConsoleOutputTransformerFactory implements OutputTransformerFactoryInterface
 {
     /**
      * ConsoleOutputTransformerFactory constructor.
      *
      * @param string $toolName
      */
-    public function __construct(private readonly string $toolName)
+    public function __construct(private string $toolName)
     {
     }
 

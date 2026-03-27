@@ -7,15 +7,15 @@ namespace Phpcq\Runner\Downloader;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 
 /** @psalm-import-type TOutputVerbosity from OutputInterface */
-final class OutputLoggingDownloader implements DownloaderInterface
+final readonly class OutputLoggingDownloader implements DownloaderInterface
 {
     /**
      * @param TOutputVerbosity $verbosity
      */
     public function __construct(
-        private readonly DownloaderInterface $downloader,
-        private readonly OutputInterface $output,
-        private readonly int $verbosity = OutputInterface::VERBOSITY_DEBUG
+        private DownloaderInterface $downloader,
+        private OutputInterface $output,
+        private int $verbosity = OutputInterface::VERBOSITY_DEBUG
     ) {
     }
 

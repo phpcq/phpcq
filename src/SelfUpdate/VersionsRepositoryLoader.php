@@ -21,11 +21,11 @@ use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
  *     versions: list<TVersion>,
  * }
  */
-final class VersionsRepositoryLoader
+final readonly class VersionsRepositoryLoader
 {
     public function __construct(
-        private readonly PlatformRequirementCheckerInterface $requirementChecker,
-        private readonly DownloaderInterface $downloader
+        private PlatformRequirementCheckerInterface $requirementChecker,
+        private DownloaderInterface $downloader
     ) {
     }
 

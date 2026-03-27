@@ -16,9 +16,9 @@ use function dirname;
  * }
  * @psalm-import-type TJsonRepository from \Phpcq\Runner\Repository\JsonRepositoryLoader
  */
-final class DownloadingJsonFileLoader implements JsonFileLoaderInterface
+final readonly class DownloadingJsonFileLoader implements JsonFileLoaderInterface
 {
-    public function __construct(private readonly DownloaderInterface $downloader, private readonly bool $force = false)
+    public function __construct(private DownloaderInterface $downloader, private bool $force = false)
     {
     }
 

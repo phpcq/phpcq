@@ -8,9 +8,9 @@ use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 
-final class Report implements ReportInterface
+final readonly class Report implements ReportInterface
 {
-    public function __construct(private readonly ReportBuffer $report, private readonly string $tempDir)
+    public function __construct(private ReportBuffer $report, private string $tempDir)
     {
     }
 

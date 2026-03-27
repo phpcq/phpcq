@@ -40,9 +40,9 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  *   composer: TComposerConfig
  * }
  */
-final class PhpcqConfiguration
+final readonly class PhpcqConfiguration
 {
-    public function __construct(private readonly OptionsInterface $options)
+    public function __construct(private OptionsInterface $options)
     {
     }
 

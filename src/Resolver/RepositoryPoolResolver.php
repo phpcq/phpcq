@@ -8,9 +8,9 @@ use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\RepositoryPool;
 
-final class RepositoryPoolResolver implements ResolverInterface
+final readonly class RepositoryPoolResolver implements ResolverInterface
 {
-    public function __construct(private readonly RepositoryPool $pool)
+    public function __construct(private RepositoryPool $pool)
     {
     }
 

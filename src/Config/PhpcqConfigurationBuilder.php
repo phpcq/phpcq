@@ -18,9 +18,9 @@ use function array_values;
 use function in_array;
 use function is_array;
 
-final class PhpcqConfigurationBuilder
+final readonly class PhpcqConfigurationBuilder
 {
-    private readonly OptionsBuilder $builder;
+    private OptionsBuilder $builder;
 
     public function __construct()
     {

@@ -7,14 +7,14 @@ namespace Phpcq\Runner\Output;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Symfony\Component\Console\Output\OutputInterface as SymfonyOutputInterface;
 
-final class SymfonyOutput implements OutputInterface
+final readonly class SymfonyOutput implements OutputInterface
 {
     /**
      * SymfonyOutput constructor.
      *
      * @param SymfonyOutputInterface $output
      */
-    public function __construct(private readonly SymfonyOutputInterface $output)
+    public function __construct(private SymfonyOutputInterface $output)
     {
     }
 
