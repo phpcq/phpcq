@@ -55,14 +55,15 @@ final class InstalledRepositoryDumper extends AbstractDumper
         $signaturePath = $version->getSignaturePath();
 
         return [
-            'api-version'  => $version->getApiVersion(),
-            'version'      => $version->getVersion(),
-            'type'         => 'php-file',
-            'url'          => $this->getRelativePath($version->getFilePath(), $baseDir),
-            'signature'    => $signaturePath ? $this->getRelativePath($signaturePath, $baseDir) : null,
-            'requirements' => $this->encodePluginRequirements($version->getRequirements()),
-            'checksum'     => $this->encodeHash($version->getHash()),
-            'tools'        => $this->dumpTools($plugin, $baseDir),
+            'api-version'       => $version->getApiVersion(),
+            'version'           => $version->getVersion(),
+            'type'              => 'php-file',
+            'url'               => $this->getRelativePath($version->getFilePath(), $baseDir),
+            'signature'         => $signaturePath ? $this->getRelativePath($signaturePath, $baseDir) : null,
+            'requirements'      => $this->encodePluginRequirements($version->getRequirements()),
+            'checksum'          => $this->encodeHash($version->getHash()),
+            'tools'             => $this->dumpTools($plugin, $baseDir),
+            'composer-packages' => (object) $plugin->getComposerPackages(),
         ];
     }
 

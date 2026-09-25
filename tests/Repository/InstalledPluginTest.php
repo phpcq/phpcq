@@ -46,4 +46,16 @@ final class InstalledPluginTest extends TestCase
 
         self::assertTrue($plugin->hasTool('foo'));
     }
+
+    public function testComposerPackageVersions(): void
+    {
+        $version = $this->createMock(PluginVersionInterface::class);
+        $plugin  = new InstalledPlugin($version, [], null, ['vendor/foo' => '1.0.0']);
+
+        self::assertSame(['vendor/foo' => '1.0.0'], $plugin->getComposerPackages());
+
+        $plugin->updateComposerPackages(['vendor/bar' => '2.0.0']);
+
+        self::assertSame(['vendor/bar' => '2.0.0'], $plugin->getComposerPackages());
+    }
 }

@@ -75,9 +75,8 @@ abstract class AbstractOptionBuilder implements ConfigOptionBuilderInterface
     #[\Override]
     public function normalizeValue($raw)
     {
-        if (null === $raw) {
-            $raw = $this->defaultValue;
-        }
+        /** @psalm-suppress MixedAssignment */
+        $raw ??= $this->defaultValue;
 
         try {
             foreach ($this->normalizer as $normalizer) {

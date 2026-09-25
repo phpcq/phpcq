@@ -9,12 +9,18 @@ use Phpcq\RepositoryDefinition\VersionRequirementList;
 use Phpcq\Runner\Updater\Task\TaskInterface;
 use Phpcq\Runner\Updater\UpdateContext;
 
+use function json_decode;
 use function json_encode;
 
 use const JSON_FORCE_OBJECT;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 
+/**
+ * @psalm-type TComposerLock = array{
+ *   packages: list<array{name: string, version: string}>
+ * }
+ */
 abstract class AbstractComposerTask implements TaskInterface
 {
     protected const JSON_ENCODE_OPTIONS = JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT;
@@ -34,9 +40,50 @@ abstract class AbstractComposerTask implements TaskInterface
 
     protected function updateComposerLock(UpdateContext $context): void
     {
+        $composerLock = $this->getComposerLock($context);
+
         $context->lockRepository
             ->getPlugin($this->getPluginName())
-            ->updateComposerLock($this->getComposerLock($context));
+            ->updateComposerLock($composerLock);
+
+        $context->installedRepository
+            ->getPlugin($this->getPluginName())
+            ->updateComposerPackages($this->extractComposerPackages($composerLock));
+    }
+
+    /**
+     * Extract the installed versions of the explicitly required packages from the composer lock.
+     *
+     * @return array<string,string>
+     */
+    private function extractComposerPackages(?string $composerLock): array
+    {
+        if (null === $composerLock) {
+            return [];
+        }
+
+        /** @psalm-var TComposerLock $data */
+        $data     = json_decode($composerLock, true, 512, JSON_THROW_ON_ERROR);
+        $required = $this->getRequiredPackageNames();
+        $versions = [];
+        foreach ($data['packages'] as $package) {
+            if (isset($required[$package['name']])) {
+                $versions[$package['name']] = $package['version'];
+            }
+        }
+
+        return $versions;
+    }
+
+    /** @return array<string,true> */
+    private function getRequiredPackageNames(): array
+    {
+        $names = [];
+        foreach ($this->requirements ?? $this->pluginVersion->getRequirements()->getComposerRequirements() as $item) {
+            $names[$item->getName()] = true;
+        }
+
+        return $names;
     }
 
     protected function dumpComposerJson(UpdateContext $context): void

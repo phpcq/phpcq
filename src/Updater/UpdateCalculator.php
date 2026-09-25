@@ -23,6 +23,7 @@ use Phpcq\Runner\Resolver\ResolverInterface;
 use Phpcq\Runner\Semver\ConstraintUtil;
 use Phpcq\Runner\Updater\Task\Composer\ComposerInstallTask;
 use Phpcq\Runner\Updater\Task\Composer\ComposerUpdateTask;
+use Phpcq\Runner\Updater\Task\Composer\KeepComposerDependenciesTask;
 use Phpcq\Runner\Updater\Task\Composer\RemoveComposerDependenciesTask;
 use Phpcq\Runner\Updater\Task\Plugin\InstallPluginTask;
 use Phpcq\Runner\Updater\Task\Plugin\KeepPluginTask;
@@ -374,7 +375,11 @@ final class UpdateCalculator
 
             if (array_diff($required, $installed) !== [] || $this->composer->isUpdateRequired($targetDirectory)) {
                 yield new ComposerUpdateTask($pluginVersion, $requirements);
+
+                return;
             }
+
+            yield new KeepComposerDependenciesTask($pluginVersion, $requirements);
 
             return;
         }

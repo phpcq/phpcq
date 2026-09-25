@@ -64,7 +64,8 @@ use const PHP_URL_PATH;
  *   checksum: TRepositoryCheckSum,
  *   signature?: string,
  *   tools: array<string,TInstalledToolVersion>,
- *   composerLock?: string|null
+ *   composerLock?: string|null,
+ *   composer-packages?: array<string,string>
  * }
  * @psalm-type TRepositoryInclude = array{
  *  url: string,
@@ -160,7 +161,12 @@ final class InstalledRepositoryLoader
             }
         }
 
-        return new InstalledPlugin($version, $tools, $information['composerLock'] ?? null);
+        return new InstalledPlugin(
+            $version,
+            $tools,
+            $information['composerLock'] ?? null,
+            $information['composer-packages'] ?? []
+        );
     }
 
     /** @param TInstalledToolVersion $information */

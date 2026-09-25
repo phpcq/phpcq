@@ -64,7 +64,9 @@ final class InstalledRepositoryDumperTest extends TestCase
         $toolForPlugin->method('getSignatureUrl')->willReturn(self::$tempdir . '/tools/tool-code2.phar.asc');
         $toolForPlugin->method('getRequirements')->willReturn($toolRequirements);
 
-        $repository->addPlugin(new InstalledPlugin($installedPlugin, ['tool1' => $toolForPlugin]));
+        $repository->addPlugin(
+            new InstalledPlugin($installedPlugin, ['tool1' => $toolForPlugin], null, ['vendor/tool2' => '2.1.0'])
+        );
 
         $fileName = tempnam(self::$tempdir, 'phpcq-test');
 
@@ -93,6 +95,7 @@ final class InstalledRepositoryDumperTest extends TestCase
                                 '6f0dfeffdc3b296d016a35f517995e2c30dd83eef4f5',
                         ],
                         'tools' => [],
+                        'composer-packages' => [],
                     ],
                     'plugin-name2' => [
                         'api-version'  => '1.0.0',
@@ -128,6 +131,9 @@ final class InstalledRepositoryDumperTest extends TestCase
                                 ],
                                 'signature' => 'tools/tool-code2.phar.asc',
                             ],
+                        ],
+                        'composer-packages' => [
+                            'vendor/tool2' => '2.1.0',
                         ],
                     ],
                 ],

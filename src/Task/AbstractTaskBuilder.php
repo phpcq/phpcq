@@ -139,9 +139,7 @@ abstract class AbstractTaskBuilder implements TaskBuilderInterface
     public function build(): TaskInterface
     {
         $transformerFactory = $this->transformerFactory;
-        if (null === $transformerFactory) {
-            $transformerFactory = new ConsoleOutputTransformerFactory($this->taskName);
-        }
+        $transformerFactory ??= new ConsoleOutputTransformerFactory($this->taskName);
 
         if ($this->parallel) {
             return new ParallelizableProcessTask(

@@ -21,9 +21,7 @@ final class ConstraintUtil
         /** @var VersionParser|null $parser */
         static $parser = null;
 
-        if ($parser === null) {
-            $parser = new VersionParser();
-        }
+        $parser ??= new VersionParser();
 
         return $parser;
     }

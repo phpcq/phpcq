@@ -18,11 +18,14 @@ class InstalledPlugin
 
     /**
      * @param list<ToolVersionInterface> $tools
+     * @param array<string,string>       $composerPackages Installed versions of the explicitly required composer
+     *                                                     packages.
      */
     public function __construct(
         private readonly PluginVersionInterface $version,
         array $tools = [],
-        private ?string $composerLock = null
+        private ?string $composerLock = null,
+        private array $composerPackages = []
     ) {
         foreach ($tools as $tool) {
             $this->tools[$tool->getName()] = $tool;
@@ -78,5 +81,17 @@ class InstalledPlugin
     public function updateComposerLock(?string $composerLock): void
     {
         $this->composerLock = $composerLock;
+    }
+
+    /** @return array<string,string> */
+    public function getComposerPackages(): array
+    {
+        return $this->composerPackages;
+    }
+
+    /** @param array<string,string> $composerPackages */
+    public function updateComposerPackages(array $composerPackages): void
+    {
+        $this->composerPackages = $composerPackages;
     }
 }

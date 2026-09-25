@@ -47,9 +47,8 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
     #[\Override]
     public function normalizeValue($raw): ?array
     {
-        if (null === $raw) {
-            $raw = $this->defaultValue;
-        }
+        /** @psalm-suppress MixedAssignment */
+        $raw ??= $this->defaultValue;
         if ($raw === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));

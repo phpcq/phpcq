@@ -93,6 +93,7 @@ final class LockFileDumperTest extends TestCase
                                 '6f0dfeffdc3b296d016a35f517995e2c30dd83eef4f5',
                         ],
                         'tools' => [],
+                        'composer-packages' => [],
                     ],
                     'plugin-name2' => [
                         'api-version'  => '1.0.0',
@@ -129,6 +130,7 @@ final class LockFileDumperTest extends TestCase
                                 'signature' => 'https://example.org/tool-code2.phar.asc',
                             ],
                         ],
+                        'composer-packages' => [],
                     ],
                 ],
                 'tools' => [],

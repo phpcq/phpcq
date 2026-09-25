@@ -7,6 +7,7 @@ namespace Phpcq\Runner\Test\Task;
 use Phpcq\RepositoryDefinition\Plugin\PluginVersionInterface;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\Runner\Repository\InstalledPlugin;
+use Phpcq\Runner\Task\AbstractTaskBuilder;
 use Phpcq\Runner\Task\TaskBuilderPhp;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\TaskBuilder;
@@ -76,6 +77,82 @@ final class TaskFactoryTest extends TestCase
         $this->assertPrivateProperty('/path/to/php-cli', 'phpCliBinary', $builder);
         $this->assertPrivateProperty(['php', 'arguments'], 'phpArguments', $builder);
         $this->assertPrivateProperty(['command', 'arg1', 'arg2'], 'arguments', $builder);
+    }
+
+    public function testMetadataContainsVersionOfPharTool(): void
+    {
+        $tool = $this->createMock(ToolVersionInterface::class);
+        $tool->method('getName')->willReturn('tool');
+        $tool->method('getVersion')->willReturn('1.2.3');
+
+        $metadata = $this->buildMetadata(
+            new InstalledPlugin($this->mockPluginVersion(), [$tool], null, ['vendor/tool' => '2.0.0']),
+            'tool'
+        );
+
+        self::assertSame('tool', $metadata['tool_name']);
+        self::assertSame('1.2.3', $metadata['tool_version']);
+    }
+
+    public function testMetadataContainsVersionOfComposerPackageMatchingToolName(): void
+    {
+        $metadata = $this->buildMetadata(
+            new InstalledPlugin(
+                $this->mockPluginVersion(),
+                [],
+                null,
+                ['vendor/other' => '1.0.0', 'vendor/tool' => '2.0.0']
+            ),
+            'tool'
+        );
+
+        self::assertSame('tool', $metadata['tool_name']);
+        self::assertSame('2.0.0', $metadata['tool_version']);
+    }
+
+    public function testMetadataContainsNoVersionIfComposerPackageIsAmbiguous(): void
+    {
+        $metadata = $this->buildMetadata(
+            new InstalledPlugin(
+                $this->mockPluginVersion(),
+                [],
+                null,
+                ['vendor/tool' => '1.0.0', 'other-vendor/tool' => '2.0.0']
+            ),
+            'tool'
+        );
+
+        self::assertArrayNotHasKey('tool_name', $metadata);
+        self::assertArrayNotHasKey('tool_version', $metadata);
+    }
+
+    public function testMetadataContainsNoVersionIfNoComposerPackageMatches(): void
+    {
+        $metadata = $this->buildMetadata(
+            new InstalledPlugin($this->mockPluginVersion(), [], null, ['vendor/tool-extension' => '1.0.0']),
+            'tool'
+        );
+
+        self::assertArrayNotHasKey('tool_name', $metadata);
+        self::assertArrayNotHasKey('tool_version', $metadata);
+    }
+
+    private function mockPluginVersion(): PluginVersionInterface
+    {
+        $pluginVersion = $this->createMock(PluginVersionInterface::class);
+        $pluginVersion->method('getName')->willReturn('plugin');
+        $pluginVersion->method('getVersion')->willReturn('1.0.0');
+
+        return $pluginVersion;
+    }
+
+    /** @return array<string,string> */
+    private function buildMetadata(InstalledPlugin $installed, string $toolName): array
+    {
+        $factory = new TaskFactory('test', $installed, '/path/to/php-cli', []);
+        $builder = $factory->buildRunProcess($toolName, ['command']);
+
+        return (new ReflectionProperty(AbstractTaskBuilder::class, 'metadata'))->getValue($builder);
     }
 
     private function assertPrivateProperty($expected, string $property, object $instance): void
