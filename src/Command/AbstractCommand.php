@@ -142,17 +142,15 @@ abstract class AbstractCommand extends Command
      */
     protected function createDirectory(string $path): void
     {
+        /** @psalm-var Filesystem|null $filesystem */
         static $filesystem = null;
 
         if (is_dir($path)) {
             return;
         }
 
-        if ($filesystem === null) {
-            $filesystem = new Filesystem();
-        }
+        $filesystem ??= new Filesystem();
 
-        assert($filesystem instanceof Filesystem);
         $filesystem->mkdir($path);
     }
 

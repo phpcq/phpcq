@@ -56,9 +56,8 @@ final class StringListOptionBuilder extends AbstractOptionBuilder implements Str
     #[\Override]
     public function normalizeValue($raw): ?array
     {
-        if (null === $raw) {
-            $raw = $this->defaultValue;
-        }
+        /** @psalm-suppress MixedAssignment */
+        $raw ??= $this->defaultValue;
         if ($raw === null) {
             if ($this->required) {
                 throw new InvalidConfigurationException(sprintf('Configuration key "%s" has to be set', $this->name));
