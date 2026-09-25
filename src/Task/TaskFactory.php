@@ -95,8 +95,35 @@ class TaskFactory implements TaskFactoryInterface
             $tool                     = $this->installed->getTool($toolName);
             $metadata['tool_name']    = $tool->getName();
             $metadata['tool_version'] = $tool->getVersion();
+
+            return $metadata;
+        }
+
+        $composerVersion = $this->findComposerPackageVersion($toolName);
+        if (null !== $composerVersion) {
+            $metadata['tool_name']    = $toolName;
+            $metadata['tool_version'] = $composerVersion;
         }
 
         return $metadata;
+    }
+
+    /**
+     * Find the version of the explicitly required composer package matching the tool name ignoring the vendor prefix.
+     *
+     * Returns null if none or more than one package matches.
+     */
+    private function findComposerPackageVersion(string $toolName): ?string
+    {
+        $matches = [];
+        foreach ($this->installed->getComposerPackages() as $packageName => $version) {
+            $separator = strpos($packageName, '/');
+            $shortName = false === $separator ? $packageName : substr($packageName, $separator + 1);
+            if ($shortName === $toolName) {
+                $matches[] = $version;
+            }
+        }
+
+        return count($matches) === 1 ? $matches[0] : null;
     }
 }
