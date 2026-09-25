@@ -15,9 +15,11 @@ use Phpcq\RepositoryDefinition\Tool\ToolRequirements;
 use Phpcq\RepositoryDefinition\Tool\ToolVersion;
 use Phpcq\RepositoryDefinition\Tool\ToolVersionInterface;
 use Phpcq\RepositoryDefinition\VersionRequirement;
+use Phpcq\Runner\Plugin\ApiVersion;
 use Phpcq\Runner\Plugin\ChainPlugin;
 
 use function array_map;
+use function sprintf;
 use function dirname;
 use function explode;
 use function filter_var;
@@ -136,6 +138,18 @@ final class InstalledRepositoryLoader
     /** @param TInstalledPluginVersion $information */
     private function createInstalledPlugin(string $name, array $information, string $baseDir): InstalledPlugin
     {
+        $range = ApiVersion::range();
+        if (!$range->contains($information['api-version'])) {
+            throw new RuntimeException(sprintf(
+                'Plugin "%s" requires plugin API %s, supported are %s - %s. '
+                . 'Please run "phpcq self-update" and "phpcq update".',
+                $name,
+                $information['api-version'],
+                $range->getMin(),
+                $range->getMax()
+            ));
+        }
+
         $version = new PhpFilePluginVersion(
             $name,
             $information['version'],
