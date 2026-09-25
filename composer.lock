@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5537020dbf696da9f3b1a934f0eeda60",
+    "content-hash": "8f9906709c046760d75000d5d09eab0a",
     "packages": [
         {
             "name": "composer/pcre",
@@ -709,16 +709,16 @@
         },
         {
             "name": "phpcq/repository-definition",
-            "version": "1.0.2",
+            "version": "dev-feature/api-version-range",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/repository-definition.git",
-                "reference": "57828852a12b7c198dcac7948a93f3fbc95bfff7"
+                "reference": "18546172bf574733e751c793d2b67726a2d7ae9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/57828852a12b7c198dcac7948a93f3fbc95bfff7",
-                "reference": "57828852a12b7c198dcac7948a93f3fbc95bfff7",
+                "url": "https://api.github.com/repos/phpcq/repository-definition/zipball/18546172bf574733e751c793d2b67726a2d7ae9c",
+                "reference": "18546172bf574733e751c793d2b67726a2d7ae9c",
                 "shasum": ""
             },
             "require": {
@@ -733,7 +733,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-master": "1.x-dev",
+                    "dev-feature/api-version-range": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -741,7 +742,11 @@
                     "Phpcq\\RepositoryDefinition\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Phpcq\\RepositoryDefinition\\Test\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -761,20 +766,20 @@
             ],
             "description": "PHP code quality project.",
             "support": {
-                "issues": "https://github.com/phpcq/repository-definition/issues",
-                "source": "https://github.com/phpcq/repository-definition/tree/1.0.2"
+                "source": "https://github.com/phpcq/repository-definition/tree/feature/api-version-range",
+                "issues": "https://github.com/phpcq/repository-definition/issues"
             },
             "funding": [
                 {
-                    "url": "https://github.com/discordier",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/discordier"
                 },
                 {
-                    "url": "https://github.com/dmolineus",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/dmolineus"
                 }
             ],
-            "time": "2026-02-11T07:09:01+00:00"
+            "time": "2026-09-25T09:01:26+00:00"
         },
         {
             "name": "phpcq/schema",
@@ -2116,7 +2121,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "phpcq/repository-definition": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -2127,5 +2134,5 @@
         "ext-xml": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

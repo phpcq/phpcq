@@ -1,0 +1,22 @@
+{
+  "plugins": {
+    "phpmd": [
+      {
+        "api-version": "1.0.0",
+        "version": "1.0.0",
+        "type": "php-file",
+        "url": "https://example.org/foo.php",
+        "checksum": {"type": "sha-512", "value": "abc"},
+        "requirements": {"php": {"php": "^7.1"}}
+      },
+      {
+        "api-version": "99.0.0",
+        "version": "9.0.0",
+        "type": "php-file",
+        "url": "https://example.org/foo-9.php",
+        "checksum": {"type": "sha-512", "value": "abc"},
+        "requirements": {"php": {"php": "^7.1"}}
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Repository;
 
 use Phpcq\Runner\Platform\PlatformRequirementCheckerInterface;
+use Phpcq\Runner\Plugin\ApiVersion;
 use Phpcq\RepositoryDefinition\JsonFileLoaderInterface;
 use Phpcq\RepositoryDefinition\RepositoryLoader;
 
@@ -60,7 +61,7 @@ class JsonRepositoryLoader
     {
         return new Repository(
             $this->requirementChecker,
-            RepositoryLoader::loadRepository($filePath, $hash, $this->jsonFileLoader),
+            RepositoryLoader::loadRepository($filePath, $hash, $this->jsonFileLoader, ApiVersion::range()),
         );
     }
 }

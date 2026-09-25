@@ -42,4 +42,17 @@ final class JsonRepositoryLoaderTest extends TestCase
         $this->assertSame('1.0.0', $version->getVersion());
         $this->assertSame('https://example.org/foo.php', $version->getFilePath());
     }
+
+    public function testSkipsPluginVersionsWithUnsupportedApiVersion(): void
+    {
+        $downloader = new FileDownloader(self::$tempdir . '/phpcq-test');
+        $requirementChecker = $this->createMock(PlatformRequirementCheckerInterface::class);
+        $requirementChecker->method('isFulfilled')->willReturn(true);
+
+        $loader = new JsonRepositoryLoader($requirementChecker, new DownloadingJsonFileLoader($downloader));
+        $repository = $loader->loadFile(__DIR__ . '/../fixtures/repositories/repository-api-versions.json');
+
+        $this->assertTrue($repository->hasPluginVersion('phpmd', '1.0.0'));
+        $this->assertFalse($repository->hasPluginVersion('phpmd', '9.0.0'));
+    }
 }
