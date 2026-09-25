@@ -32,7 +32,7 @@
     "composer/xdebug-handler": "^3.0",
     "guzzlehttp/guzzle": "^7.8",
     "phpcq/gnupg": "^1.0",
-    "phpcq/plugin-api": "^1.0",
+    "phpcq/plugin-api": "1.1.x-dev",
     "phpcq/repository-definition": "1.1.x-dev",
     "phpcq/schema": "^1.0",
     "symfony/console": "^5.4.34 || ^6.0 || ^7.0",
@@ -47,6 +47,10 @@
     "symfony/polyfill-php73": "*"
   },
   "repositories": {
+    "plugin-api": {
+      "type": "vcs",
+      "url": "https://github.com/phpcq/plugin-api"
+    },
     "repository-definition": {
       "type": "vcs",
       "url": "https://github.com/phpcq/repository-definition"

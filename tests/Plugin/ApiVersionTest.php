@@ -18,4 +18,13 @@ final class ApiVersionTest extends TestCase
         self::assertSame(ApiVersion::MAX, $range->getMax());
         self::assertTrue($range->contains('1.0.0'));
     }
+
+    public function testSupportsApi11AndApi10Plugins(): void
+    {
+        $range = ApiVersion::range();
+
+        self::assertTrue($range->contains('1.0.0'));
+        self::assertTrue($range->contains('1.1.0'));
+        self::assertFalse($range->contains('1.2.0'));
+    }
 }

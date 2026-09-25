@@ -13,7 +13,7 @@ final class ApiVersion
 {
     public const MIN = '1.0.0';
 
-    public const MAX = '1.0.0';
+    public const MAX = '1.1.0';
 
     public static function range(): ApiVersionRange
     {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f9906709c046760d75000d5d09eab0a",
+    "content-hash": "9d95d127ce7f936bae95b690f4c9e308",
     "packages": [
         {
             "name": "composer/pcre",
@@ -642,21 +642,21 @@
         },
         {
             "name": "phpcq/plugin-api",
-            "version": "1.0.3",
+            "version": "dev-feature/fix-plugin-interface",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpcq/plugin-api.git",
-                "reference": "5cdbbbcea41191533e8c2bee4a61a73d731df0bb"
+                "reference": "5c52aadf4a5f53eec775444e9f4b174c37e87c77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/5cdbbbcea41191533e8c2bee4a61a73d731df0bb",
-                "reference": "5cdbbbcea41191533e8c2bee4a61a73d731df0bb",
+                "url": "https://api.github.com/repos/phpcq/plugin-api/zipball/5c52aadf4a5f53eec775444e9f4b174c37e87c77",
+                "reference": "5c52aadf4a5f53eec775444e9f4b174c37e87c77",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
-                "php": "^7.3 || ^8.0"
+                "php": "^8.1"
             },
             "require-dev": {
                 "phpcq/runner-bootstrap": "^1.0@dev"
@@ -664,7 +664,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-master": "1.x-dev",
+                    "dev-feature/fix-plugin-interface": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -672,7 +673,11 @@
                     "Phpcq\\PluginApi\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Phpcq\\PluginApi\\Test\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -692,20 +697,20 @@
             ],
             "description": "PHP code quality project plugin API interfaces.",
             "support": {
-                "issues": "https://github.com/phpcq/plugin-api/issues",
-                "source": "https://github.com/phpcq/plugin-api/tree/1.0.3"
+                "source": "https://github.com/phpcq/plugin-api/tree/feature/fix-plugin-interface",
+                "issues": "https://github.com/phpcq/plugin-api/issues"
             },
             "funding": [
                 {
-                    "url": "https://github.com/discordier",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/discordier"
                 },
                 {
-                    "url": "https://github.com/dmolineus",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/dmolineus"
                 }
             ],
-            "time": "2024-03-21T08:35:42+00:00"
+            "time": "2026-09-25T09:08:26+00:00"
         },
         {
             "name": "phpcq/repository-definition",
@@ -2122,6 +2127,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "phpcq/plugin-api": 20,
         "phpcq/repository-definition": 20
     },
     "prefer-stable": false,
@@ -2134,5 +2140,5 @@
         "ext-xml": "*"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
