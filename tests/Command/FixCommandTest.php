@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Phpcq\Runner\Test\Command;
+
+use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
+use Phpcq\PluginApi\Version10\FixPluginInterface;
+use Phpcq\PluginApi\Version10\FixStage;
+use Phpcq\PluginApi\Version10\PluginInterface;
+use Phpcq\PluginApi\Version10\Task\TaskInterface;
+use Phpcq\Runner\Command\FixCommand;
+use Phpcq\Runner\Command\RunCommand;
+use Phpcq\Runner\Config\PluginConfiguration;
+use Phpcq\Runner\Environment;
+use Phpcq\Runner\Task\FixTasklist;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionProperty;
+
+use function iterator_to_array;
+
+/**
+ * @covers \Phpcq\Runner\Command\FixCommand
+ * @covers \Phpcq\Runner\Command\RunCommand
+ * @covers \Phpcq\Runner\Command\AbstractTaskCommand
+ */
+final class FixCommandTest extends TestCase
+{
+    public function testFixCommandSharesRunOptions(): void
+    {
+        $fix = new FixCommand();
+        $run = new RunCommand();
+
+        self::assertSame('fix', $fix->getName());
+        self::assertSame('run', $run->getName());
+
+        foreach (['fast-finish', 'exit-0', 'report', 'output', 'threshold', 'threads'] as $option) {
+            self::assertTrue($fix->getDefinition()->hasOption($option), $option);
+            self::assertTrue($run->getDefinition()->hasOption($option), $option);
+        }
+        self::assertTrue($fix->getDefinition()->hasArgument('task'));
+        self::assertSame('default', $fix->getDefinition()->getArgument('task')->getDefault());
+    }
+
+    public function testCollectsFixTasksInStageOrder(): void
+    {
+        $format   = self::createStub(TaskInterface::class);
+        $refactor = self::createStub(TaskInterface::class);
+        $command  = $this->createInitializedCommand();
+
+        $this->collectTasks($command, ['config' => []], $this->createFixPlugin(FixStage::Format, [$format]));
+        $this->collectTasks(
+            $command,
+            ['config' => [], 'fix-stage' => 'refactor'],
+            $this->createFixPlugin(FixStage::Format, [$refactor])
+        );
+
+        self::assertSame([$refactor, $format], iterator_to_array($this->getFixTasks($command), false));
+    }
+
+    public function testIgnoresPluginsWithoutFixInterface(): void
+    {
+        $plugin = $this->createMock(DiagnosticsPluginInterface::class);
+        $plugin->expects(self::never())->method('createDiagnosticTasks');
+
+        $command = $this->createInitializedCommand();
+        $this->collectTasks($command, ['config' => [], 'fix-stage' => 'format'], $plugin);
+
+        self::assertSame([], iterator_to_array($this->getFixTasks($command), false));
+    }
+
+    private function createInitializedCommand(): FixCommand
+    {
+        $command = new FixCommand();
+        (new ReflectionProperty($command, 'fixTasks'))->setValue($command, new FixTasklist());
+
+        return $command;
+    }
+
+    private function collectTasks(FixCommand $command, array $taskConfig, PluginInterface $plugin): void
+    {
+        (new ReflectionMethod($command, 'collectTasks'))->invoke(
+            $command,
+            'task',
+            $taskConfig,
+            $plugin,
+            self::createStub(PluginConfiguration::class),
+            self::createStub(Environment::class)
+        );
+    }
+
+    private function getFixTasks(FixCommand $command): FixTasklist
+    {
+        $tasks = (new ReflectionProperty($command, 'fixTasks'))->getValue($command);
+        self::assertInstanceOf(FixTasklist::class, $tasks);
+
+        return $tasks;
+    }
+
+    /** @param list<TaskInterface> $tasks */
+    private function createFixPlugin(FixStage $stage, array $tasks): FixPluginInterface
+    {
+        $plugin = $this->createMock(FixPluginInterface::class);
+        $plugin->method('getFixStage')->willReturn($stage);
+        $plugin->expects(self::once())->method('createFixTasks')->willReturnCallback(
+            static function () use ($tasks): \Generator {
+                yield from $tasks;
+            }
+        );
+
+        return $plugin;
+    }
+}

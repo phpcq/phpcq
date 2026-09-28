@@ -23,3 +23,21 @@ PHPCQ is built on well known projects and unifies the reporting into one report:
  - [phploc](https://github.com/sebastianbergmann/phploc)
  - [deptrac](https://github.com/qossmic/deptrac)
 
+Fixing
+------
+
+`phpcq fix [task]` runs the fixers of all plugins in the given task (default: `default`) one after another and
+afterwards runs the diagnostics exactly like `phpcq run`. Fixers are ordered by stage (`normalize`, `refactor`,
+`format`) and, within a stage, by their position in the configuration. Like diagnostic tasks, the output of
+each fixer is processed by the output transformer of its plugin, by default attached to the report as
+`stdout.log` and `stderr.log`. Attachments and diffs of fixers are written with the prefix `<task>-fix-`
+(e.g. `rector-fix-stdout.log`), those of the diagnostics keep the prefix `<task>-` (e.g. `rector-output.log`).
+
+The stage of a task can be overridden:
+
+    tasks:
+      php-cs-fixer-risky:
+        plugin: php-cs-fixer
+        fix-stage: refactor
+
+Plugins without fix support only contribute their diagnostics.

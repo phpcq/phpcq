@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\CompleteCommand;
 use Symfony\Component\Console\Command\DumpCompletionCommand;
 use Symfony\Component\Console\Command\ListCommand;
 use Phpcq\Runner\Command\ExecCommand;
+use Phpcq\Runner\Command\FixCommand;
 use Phpcq\Runner\Command\InstallCommand;
 use Phpcq\Runner\Command\PlatformInformationCommand;
 use Phpcq\Runner\Command\RunCommand;
@@ -40,6 +41,7 @@ class Application extends BaseApplication
             new CompleteCommand(),
             new DumpCompletionCommand(),
             new RunCommand(),
+            new FixCommand(),
             new UpdateCommand(),
             new InstallCommand(),
             new ValidateCommand(),
