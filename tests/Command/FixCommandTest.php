@@ -14,6 +14,8 @@ use Phpcq\Runner\Command\RunCommand;
 use Phpcq\Runner\Config\PluginConfiguration;
 use Phpcq\Runner\Environment;
 use Phpcq\Runner\Task\FixTasklist;
+use Phpcq\Runner\Task\ResolvedTask;
+use Phpcq\Runner\Task\Tasklist;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -59,14 +61,20 @@ final class FixCommandTest extends TestCase
         self::assertSame([$refactor, $format], iterator_to_array($this->getFixTasks($command), false));
     }
 
-    public function testIgnoresPluginsWithoutFixInterface(): void
+    public function testAddsDiagnosticTasksOfPluginsWithoutFixInterface(): void
     {
-        $plugin = $this->createMock(DiagnosticsPluginInterface::class);
-        $plugin->expects(self::never())->method('createDiagnosticTasks');
+        $diagnostic = self::createStub(TaskInterface::class);
+        $plugin     = $this->createMock(DiagnosticsPluginInterface::class);
+        $plugin->expects(self::once())->method('createDiagnosticTasks')->willReturnCallback(
+            static function () use ($diagnostic): \Generator {
+                yield $diagnostic;
+            }
+        );
 
-        $command = $this->createInitializedCommand();
-        $this->collectTasks($command, ['config' => [], 'fix-stage' => 'format'], $plugin);
+        $command  = $this->createInitializedCommand();
+        $taskList = $this->collectTasks($command, ['config' => [], 'fix-stage' => 'format'], $plugin);
 
+        self::assertSame([$diagnostic], iterator_to_array($taskList, false));
         self::assertSame([], iterator_to_array($this->getFixTasks($command), false));
     }
 
@@ -78,16 +86,22 @@ final class FixCommandTest extends TestCase
         return $command;
     }
 
-    private function collectTasks(FixCommand $command, array $taskConfig, PluginInterface $plugin): void
+    private function collectTasks(FixCommand $command, array $taskConfig, PluginInterface $plugin): Tasklist
     {
-        (new ReflectionMethod($command, 'collectTasks'))->invoke(
+        $taskList = new Tasklist();
+        (new ReflectionMethod($command, 'handleTask'))->invoke(
             $command,
-            'task',
-            $taskConfig,
-            $plugin,
-            self::createStub(PluginConfiguration::class),
-            self::createStub(Environment::class)
+            new ResolvedTask(
+                'task',
+                $taskConfig,
+                $plugin,
+                self::createStub(PluginConfiguration::class),
+                self::createStub(Environment::class)
+            ),
+            $taskList
         );
+
+        return $taskList;
     }
 
     private function getFixTasks(FixCommand $command): FixTasklist

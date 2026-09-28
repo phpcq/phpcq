@@ -7,12 +7,10 @@ namespace Phpcq\Runner\Command;
 use Phpcq\PluginApi\Version10\FixPluginInterface;
 use Phpcq\PluginApi\Version10\FixStage;
 use Phpcq\PluginApi\Version10\Output\OutputInterface;
-use Phpcq\PluginApi\Version10\PluginInterface;
-use Phpcq\Runner\Config\PluginConfiguration;
-use Phpcq\Runner\Environment;
 use Phpcq\Runner\Report\Report;
 use Phpcq\Runner\Report\TaskKind;
 use Phpcq\Runner\Task\FixTasklist;
+use Phpcq\Runner\Task\ResolvedTask;
 use Phpcq\Runner\Task\SequentialTaskRunner;
 use Phpcq\Runner\Task\Tasklist;
 
@@ -21,8 +19,6 @@ use Phpcq\Runner\Task\Tasklist;
  *
  * The fix tasks are executed sequentially. With fast finish enabled, the diagnostics are skipped when a fix task
  * failed.
- *
- * @psalm-import-type TTaskConfig from \Phpcq\Runner\Config\PhpcqConfiguration
  */
 final class FixCommand extends AbstractTaskCommand
 {
@@ -51,26 +47,21 @@ final class FixCommand extends AbstractTaskCommand
         return parent::doExecute();
     }
 
-    /**
-     * @param TTaskConfig $taskConfig
-     */
     #[\Override]
-    protected function collectTasks(
-        string $taskName,
-        array $taskConfig,
-        PluginInterface $plugin,
-        PluginConfiguration $configuration,
-        Environment $environment
-    ): void {
+    protected function handleTask(ResolvedTask $resolvedTask, Tasklist $taskList): void
+    {
+        parent::handleTask($resolvedTask, $taskList);
+
+        $plugin = $resolvedTask->plugin;
         if (!$plugin instanceof FixPluginInterface) {
             return;
         }
 
         // The fix stage override is validated while loading the configuration.
-        $override = $taskConfig['fix-stage'] ?? null;
+        $override = $resolvedTask->taskConfig['fix-stage'] ?? null;
         $stage    = null === $override ? $plugin->getFixStage() : FixStage::from($override);
 
-        foreach ($plugin->createFixTasks($configuration, $environment) as $task) {
+        foreach ($plugin->createFixTasks($resolvedTask->configuration, $resolvedTask->environment) as $task) {
             $this->fixTasks->addFixTask($task, $stage);
         }
     }

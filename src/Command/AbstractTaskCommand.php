@@ -27,6 +27,7 @@ use Phpcq\Runner\Report\Writer\GithubActionConsoleWriter;
 use Phpcq\Runner\Report\Writer\ReportWriterInterface;
 use Phpcq\Runner\Report\Writer\TaskReportWriter;
 use Phpcq\Runner\Repository\InstalledRepository;
+use Phpcq\Runner\Task\ResolvedTask;
 use Phpcq\Runner\Task\TaskFactory;
 use Phpcq\Runner\Task\Tasklist;
 use Phpcq\Runner\Task\TaskScheduler;
@@ -37,6 +38,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
+use Generator;
 use Throwable;
 
 use function array_keys;
@@ -49,8 +51,6 @@ use function sort;
 
 /**
  * Base class of the commands executing the configured tasks.
- *
- * @psalm-import-type TTaskConfig from \Phpcq\Runner\Config\PhpcqConfiguration
  */
 abstract class AbstractTaskCommand extends AbstractCommand
 {
@@ -161,15 +161,17 @@ abstract class AbstractTaskCommand extends AbstractCommand
 
         $this->pluginConfigFactory = new PluginConfigurationFactory($this->config, $plugins, $installed);
 
-        $this->handleTask(
+        $resolvedTasks = $this->resolveTasks(
             $plugins,
             $installed,
             $taskName,
             $projectConfig,
             $tempDirectory,
-            $taskList,
             $maxCores
         );
+        foreach ($resolvedTasks as $resolvedTask) {
+            $this->handleTask($resolvedTask, $taskList);
+        }
 
         // Stage 2: execution.
         $reportBuffer  = new ReportBuffer();
@@ -239,15 +241,34 @@ abstract class AbstractTaskCommand extends AbstractCommand
         return $scheduler->run();
     }
 
-    private function handleTask(
+    /**
+     * Add the tasks of a resolved task to the task list.
+     */
+    protected function handleTask(ResolvedTask $resolvedTask, Tasklist $taskList): void
+    {
+        $plugin = $resolvedTask->plugin;
+        if (!$plugin instanceof DiagnosticsPluginInterface) {
+            return;
+        }
+
+        foreach ($plugin->createDiagnosticTasks($resolvedTask->configuration, $resolvedTask->environment) as $task) {
+            $taskList->add($task);
+        }
+    }
+
+    /**
+     * Resolve the task and the children of chain plugins to the tasks providing a configuration.
+     *
+     * @return Generator<int, ResolvedTask>
+     */
+    private function resolveTasks(
         PluginRegistry $plugins,
         InstalledRepository $installed,
         string $taskName,
         ProjectConfiguration $projectConfig,
         string $tempDirectory,
-        Tasklist $taskList,
         int $availableThreads
-    ): void {
+    ): Generator {
         $configValues = $this->config->getConfigForTask($taskName);
         $plugin       = $plugins->getPluginByName($configValues['plugin'] ?? $taskName);
         $environment  = $this->createEnvironment(
@@ -264,13 +285,12 @@ abstract class AbstractTaskCommand extends AbstractCommand
             assert($configuration instanceof PluginConfiguration);
 
             foreach ($plugin->getTaskNames($configuration) as $childTask) {
-                $this->handleTask(
+                yield from $this->resolveTasks(
                     $plugins,
                     $installed,
                     $childTask,
                     $projectConfig,
                     $tempDirectory,
-                    $taskList,
                     $availableThreads
                 );
             }
@@ -283,29 +303,7 @@ abstract class AbstractTaskCommand extends AbstractCommand
             return;
         }
 
-        if ($plugin instanceof DiagnosticsPluginInterface) {
-            foreach ($plugin->createDiagnosticTasks($configuration, $environment) as $task) {
-                $taskList->add($task);
-            }
-        }
-
-        $this->collectTasks($taskName, $configValues, $plugin, $configuration, $environment);
-    }
-
-    /**
-     * Hook to collect additional tasks of a task besides the diagnostics.
-     *
-     * @param TTaskConfig $taskConfig
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function collectTasks(
-        string $taskName,
-        array $taskConfig,
-        PluginInterface $plugin,
-        PluginConfiguration $configuration,
-        Environment $environment
-    ): void {
+        yield new ResolvedTask($taskName, $configValues, $plugin, $configuration, $environment);
     }
 
     private function createConfiguration(
