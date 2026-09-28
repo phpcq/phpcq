@@ -7,6 +7,7 @@ namespace Phpcq\Runner\Report\Buffer;
 use Generator;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
+use Phpcq\Runner\Report\TaskKind;
 
 /**
  * TODO: Use class constants as key when implemented in psalm https://github.com/vimeo/psalm/issues/3555
@@ -36,7 +37,8 @@ final class TaskReportBuffer
     public function __construct(
         private readonly string $taskName,
         private readonly string $reportName, /** @var array<string,string> */
-        private array $metadata = []
+        private array $metadata = [],
+        private readonly TaskKind $kind = TaskKind::Diagnostic
     ) {
         $this->status     = ReportInterface::STATUS_STARTED;
     }
@@ -65,6 +67,11 @@ final class TaskReportBuffer
     public function getReportName(): string
     {
         return $this->reportName;
+    }
+
+    public function getKind(): TaskKind
+    {
+        return $this->kind;
     }
 
     public function setStatus(string $status): void

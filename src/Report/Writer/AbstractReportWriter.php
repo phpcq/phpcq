@@ -12,6 +12,7 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\TaskKind;
 use Symfony\Component\Filesystem\Filesystem;
 
 use function assert;
@@ -157,7 +158,7 @@ abstract class AbstractReportWriter implements ReportWriterInterface
         }
 
         $attachmentsNode = $this->xml->createElement('attachments', $toolNode);
-        $filePrefix = $report->getTaskName() . '-';
+        $filePrefix = $this->getFilePrefix($report);
         foreach ($attachments as $attachment) {
             $absolutePath = $attachment->getAbsolutePath();
             if (!$this->filesystem->exists($absolutePath)) {
@@ -186,7 +187,7 @@ abstract class AbstractReportWriter implements ReportWriterInterface
         }
 
         $attachmentsNode = $this->xml->createElement('diffs', $toolNode);
-        $filePrefix = $report->getTaskName() . '-';
+        $filePrefix = $this->getFilePrefix($report);
         foreach ($diffs as $attachment) {
             $absolutePath = $attachment->getAbsolutePath();
             if (!$this->filesystem->exists($absolutePath)) {
@@ -202,5 +203,17 @@ abstract class AbstractReportWriter implements ReportWriterInterface
             // FIXME: better embedd the file instead of copy to the target dir?
             // $this->xml->setTextContent($node, file_get_contents($attachment->getAbsolutePath()));
         }
+    }
+
+    /**
+     * Files of fix tasks are marked to distinguish them from the files of the diagnostic task of the same name.
+     */
+    private function getFilePrefix(TaskReportBuffer $report): string
+    {
+        if (TaskKind::Fix === $report->getKind()) {
+            return $report->getTaskName() . '-fix-';
+        }
+
+        return $report->getTaskName() . '-';
     }
 }

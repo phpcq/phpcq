@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Report\Buffer;
 
 use DateTimeImmutable;
 use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
+use Phpcq\Runner\Report\TaskKind;
 
 use function array_values;
 
@@ -39,8 +40,11 @@ final class ReportBuffer
     }
 
     /** @param array<string,string> $metadata */
-    public function createTaskReport(string $taskName, array $metadata = []): TaskReportBuffer
-    {
+    public function createTaskReport(
+        string $taskName,
+        array $metadata = [],
+        TaskKind $kind = TaskKind::Diagnostic
+    ): TaskReportBuffer {
         $reportName = $taskName;
         if (isset($this->taskReports[$reportName])) {
             $number = 0;
@@ -48,7 +52,7 @@ final class ReportBuffer
                 $reportName = $taskName . '-' . ((string) ++$number);
             } while (isset($this->taskReports[$reportName]));
         }
-        return $this->taskReports[$reportName] = new TaskReportBuffer($taskName, $reportName, $metadata);
+        return $this->taskReports[$reportName] = new TaskReportBuffer($taskName, $reportName, $metadata, $kind);
     }
 
     public function complete(string $status): void

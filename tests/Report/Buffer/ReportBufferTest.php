@@ -9,6 +9,7 @@ use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
 use Phpcq\Runner\Report\Buffer\DiagnosticBuffer;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
 use Phpcq\Runner\Report\Buffer\TaskReportBuffer;
+use Phpcq\Runner\Report\TaskKind;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Report\Buffer\ReportBuffer */
@@ -41,7 +42,17 @@ final class ReportBufferTest extends TestCase
 
         $this->assertInstanceOf(TaskReportBuffer::class, $toolBuffer);
         $this->assertSame('task-name', $toolBuffer->getTaskName());
+        $this->assertSame(TaskKind::Diagnostic, $toolBuffer->getKind());
         $this->assertSame([$toolBuffer], $buffer->getTaskReports());
+    }
+
+    public function testCreatesTaskReportOfGivenKind(): void
+    {
+        $buffer = new ReportBuffer();
+
+        $toolBuffer = $buffer->createTaskReport('task-name', [], TaskKind::Fix);
+
+        $this->assertSame(TaskKind::Fix, $toolBuffer->getKind());
     }
 
     public function testCreatesTaskReportWithIncrementedNameWhenToolAlreadyExists(): void
