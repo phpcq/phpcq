@@ -32,7 +32,7 @@
       }
     },
     "RepositoryPluginVersionItem": {
-      "$ref": "#/definitions/RepositoryPluginVersionItemExternal",
+      "$ref": "#/definitions/RepositoryPluginVersionItemExternal"
     },
     "RepositoryPluginVersionItemExternal": {
       "$comment": "Definition of a downloadable plugin version and it's requirements",
