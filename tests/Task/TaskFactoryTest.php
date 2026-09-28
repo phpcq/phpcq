@@ -25,7 +25,7 @@ final class TaskFactoryTest extends TestCase
 
         $factory = new TaskFactory(
             'test',
-            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
+            $this->createInstalledPlugin([$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -43,7 +43,7 @@ final class TaskFactoryTest extends TestCase
 
         $factory = new TaskFactory(
             'test',
-            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
+            $this->createInstalledPlugin([$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -65,7 +65,7 @@ final class TaskFactoryTest extends TestCase
 
         $factory = new TaskFactory(
             'task-name',
-            new InstalledPlugin($this->createMock(PluginVersionInterface::class), [$tool]),
+            $this->createInstalledPlugin([$tool]),
             '/path/to/php-cli',
             ['php', 'arguments']
         );
@@ -76,6 +76,14 @@ final class TaskFactoryTest extends TestCase
         $this->assertPrivateProperty('/path/to/php-cli', 'phpCliBinary', $builder);
         $this->assertPrivateProperty(['php', 'arguments'], 'phpArguments', $builder);
         $this->assertPrivateProperty(['command', 'arg1', 'arg2'], 'arguments', $builder);
+    }
+
+    /**
+     * @param list<ToolVersionInterface> $tools
+     */
+    private function createInstalledPlugin(array $tools = []): InstalledPlugin
+    {
+        return new InstalledPlugin($this->createMock(PluginVersionInterface::class), $tools);
     }
 
     private function assertPrivateProperty($expected, string $property, object $instance): void
