@@ -1,0 +1,9 @@
+phpcq:
+  directories:
+    - src
+
+tasks:
+  cs:
+    plugin: phpcs
+    fix-stage: refactor
+    config: {}

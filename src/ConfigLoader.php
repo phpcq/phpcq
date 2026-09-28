@@ -6,18 +6,15 @@ namespace Phpcq\Runner;
 
 use Phpcq\Runner\Config\PhpcqConfiguration;
 use Phpcq\Runner\Config\PhpcqConfigurationBuilder;
+use Phpcq\Runner\Config\TasksConfigBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Symfony\Component\Yaml\Yaml;
 
-use function array_key_exists;
-use function array_keys;
+use function array_merge;
 
 /**
  * @psalm-import-type TPlugin from \Phpcq\Runner\Config\PhpcqConfiguration
- * @psalm-type TTaskConfig = null|list<string>|array{
- *   directories?: array<string, array|null|bool>,
- *   ...
- * }
+ * @psalm-import-type TTaskConfig from \Phpcq\Runner\Config\PhpcqConfiguration
  * @psalm-type TConfig = array{
  *   repositories: list<string>,
  *   directories: list<string>,
@@ -53,35 +50,12 @@ final class ConfigLoader
             throw new InvalidConfigurationException('Phpcq section missing');
         }
 
-        $configBuilder = new PhpcqConfigurationBuilder();
         /** @psalm-suppress MixedArgument */
-        $processed = $configBuilder->processConfig($config['phpcq']);
-        unset($config['phpcq']);
-        $processed = array_merge($processed, $config);
+        $processed = (new PhpcqConfigurationBuilder())->processConfig($config['phpcq']);
+        $processed['tasks'] = (new TasksConfigBuilder())->processConfig($config['tasks'] ?? []);
+        unset($config['phpcq'], $config['tasks']);
         /** @var TConfig $processed */
-
-        // Support simplified chain plugin configuration
-        foreach ($processed['tasks'] ?? [] as $task => $taskConfig) {
-            /** @psalm-suppress DocblockTypeContradiction */
-            if (is_array($taskConfig) && $taskConfig === array_values($taskConfig)) {
-                $processed['tasks'][$task] = [
-                    'plugin' => 'chain',
-                    'config' => [
-                        'tasks' => $taskConfig
-                    ]
-                ];
-            }
-        }
-
-        // Define default task if not defined
-        if (!array_key_exists('default', $processed['tasks'])) {
-            $processed['tasks']['default'] = [
-                'plugin' => 'chain',
-                'config' => [
-                    'tasks' => array_keys($processed['tasks'])
-                ]
-            ];
-        }
+        $processed = array_merge($processed, $config);
 
         return PhpcqConfiguration::fromArray($processed);
     }

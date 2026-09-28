@@ -19,6 +19,7 @@ use Phpcq\Runner\Exception\InvalidArgumentException;
  * @psalm-type TTaskConfig = array{
  *   directories?: list<string>,
  *   plugin?: string,
+ *   fix-stage?: string,
  *   config: array<string, mixed>,
  *   uses?: array<string, array<string,mixed>|null>
  * }
