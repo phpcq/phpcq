@@ -46,7 +46,7 @@
         "api-version": {
           "$comment": "API version used in this plugin",
           "type": "string",
-          "const": "1.0.0"
+          "enum": ["1.0.0", "1.1.0"]
         },
         "version": {
           "$comment": "Version of the plugin",
