@@ -166,8 +166,14 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
          * @psalm-suppress MixedAssignment
          */
         foreach ($raw as $key => $value) {
-            /** @psalm-suppress MixedAssignment */
-            $raw[$key] = $this->valueBuilder->normalizeValue($value);
+            try {
+                /** @psalm-suppress MixedAssignment */
+                $raw[$key] = $this->valueBuilder->normalizeValue($value);
+            } catch (ConfigurationValidationErrorException $exception) {
+                throw $this->withIndexPath($exception, $key);
+            } catch (InvalidConfigurationException $exception) {
+                throw ConfigurationValidationErrorException::fromError([$this->name, $key], $exception);
+            }
         }
 
         return $raw;
@@ -192,15 +198,26 @@ final class PrototypeOptionBuilder extends AbstractOptionBuilder implements Prot
             try {
                 $this->valueBuilder->validateValue($option);
             } catch (ConfigurationValidationErrorException $exception) {
-                $path = $exception->getPath();
-                array_splice($path, 0, 1, [(string) $index]);
-                throw ConfigurationValidationErrorException::fromError($path, $exception);
+                throw $this->withIndexPath($exception, (string) $index);
             } catch (InvalidConfigurationException $exception) {
                 throw ConfigurationValidationErrorException::fromError(
-                    [(string) $index],
+                    [$this->name, (string) $index],
                     $exception
                 );
             }
         }
+    }
+
+    /**
+     * Replace the name of the value builder, which starts the path of the exception, with the prototype index.
+     */
+    private function withIndexPath(
+        ConfigurationValidationErrorException $exception,
+        string $index
+    ): ConfigurationValidationErrorException {
+        $path = $exception->getPath();
+        array_splice($path, 0, 1, [$this->name, $index]);
+
+        return ConfigurationValidationErrorException::fromError($path, $exception->getRootError(), $exception);
     }
 }

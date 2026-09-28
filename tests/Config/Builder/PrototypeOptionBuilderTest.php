@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Test\Config\Builder;
 
 use Phpcq\Runner\Config\Builder\PrototypeOptionBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
@@ -61,5 +62,22 @@ final class PrototypeOptionBuilderTest extends TestCase
     protected function createInstance(array $validators = []): PrototypeOptionBuilder
     {
         return new PrototypeOptionBuilder('option', 'Option configuration', $validators);
+    }
+
+    public function testErrorPathContainsPrototypeIndex(): void
+    {
+        $builder = $this->createInstance();
+        $builder->ofOptionsValue()->describeBoolOption('flag', 'Flag');
+
+        try {
+            $builder->validateValue($builder->normalizeValue(['first' => ['flag' => 'yes']]));
+            self::fail('Exception expected');
+        } catch (ConfigurationValidationErrorException $exception) {
+            self::assertSame(['option', 'first', 'flag'], $exception->getPath());
+            self::assertSame(
+                'Configuration validation failed at path "option.first.flag": Boolean expected, got string',
+                $exception->getMessage()
+            );
+        }
     }
 }

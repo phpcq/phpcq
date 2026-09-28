@@ -1,0 +1,22 @@
+{
+  "plugins": {
+    "phar-1": {
+      "version": "1.0.0",
+      "api-version": "99.0.0",
+      "type": "php-file",
+      "url": "phar-1~1.0.0.php",
+      "requirements": {
+        "php": {
+          "php": "^7.3",
+          "ext-dom": "*"
+        }
+      },
+      "checksum": {
+        "type": "sha-512",
+        "value": "f72444aede688a1c8d78fd622f5cd7fb941141f930976bec79b5a996aebfe85f08d12d8602a39b7cca241b14dd9490cfcb21d2daae7dca4971df6442dcfef119"
+      },
+      "tools": {}
+    }
+  },
+  "tools": {}
+}

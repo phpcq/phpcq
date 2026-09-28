@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Test;
 
 use Phpcq\Runner\ConfigLoader;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use PHPUnit\Framework\TestCase;
 
@@ -129,8 +130,8 @@ final class ConfigLoaderTest extends TestCase
                         'customflags' => null,
                     ],
                 ],
-                'branch-alias-validation' => null,
-                'composer-validate' => null,
+                'branch-alias-validation' => ['config' => []],
+                'composer-validate' => ['config' => []],
                 'pdepend' => [
                     'config' => [
                         'excluded' => null,
@@ -197,6 +198,23 @@ final class ConfigLoaderTest extends TestCase
 
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Phpcq section missing');
+
+        $loader->getConfig();
+    }
+
+    public function testAcceptsValidFixStage(): void
+    {
+        $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-fix-stage.yaml');
+
+        self::assertSame('refactor', $loader->getConfig()->getConfigForTask('cs')['fix-stage'] ?? null);
+    }
+
+    public function testRejectsInvalidFixStage(): void
+    {
+        $loader = new ConfigLoader(__DIR__ . '/fixtures/phpcq-invalid-fix-stage.yaml');
+
+        $this->expectException(ConfigurationValidationErrorException::class);
+        $this->expectExceptionMessage('tasks.cs.fix-stage');
 
         $loader->getConfig();
     }

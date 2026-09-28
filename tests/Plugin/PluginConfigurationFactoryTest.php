@@ -12,6 +12,7 @@ use Phpcq\Runner\Config\Options;
 use Phpcq\Runner\Config\PhpcqConfiguration;
 use Phpcq\Runner\Config\PluginConfigurationFactory;
 use Phpcq\Runner\Environment;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\Runner\Repository\InstalledPlugin;
 use Phpcq\Runner\Repository\InstalledRepository;
@@ -99,6 +100,37 @@ final class PluginConfigurationFactoryTest extends TestCase
             ['standard.xml', 'enricher-a.xml', 'enricher-b-strict.xml'],
             $config->getStringList('rulesets')
         );
+    }
+
+    public function testErrorPathStartsWithConfigKey(): void
+    {
+        $configuration = new PhpcqConfiguration(new Options([
+            'plugins' => [],
+            'tasks'   => ['test' => ['plugin' => 'phar-3', 'config' => ['rulesets' => 'standard.xml']]],
+        ]));
+
+        $installed = new InstalledRepository();
+        $installed->addPlugin($this->mockPlugin('phar-3', 'phar-3~2.0.0.php'));
+
+        $factory     = new PluginConfigurationFactory(
+            $configuration,
+            PluginRegistry::buildFromInstalledRepository($installed),
+            $installed
+        );
+        $environment = new Environment(
+            $this->createMock(ProjectConfigInterface::class),
+            $this->createMock(TaskFactoryInterface::class),
+            sys_get_temp_dir(),
+            1,
+            ''
+        );
+
+        try {
+            $factory->createForTask('test', $environment);
+            self::fail('Exception expected');
+        } catch (ConfigurationValidationErrorException $exception) {
+            self::assertSame(['config', 'rulesets'], $exception->getPath());
+        }
     }
 
     private function getBootstrap(string $fileName): string

@@ -11,6 +11,7 @@ use Phpcq\PluginApi\Version10\Configuration\Builder\OptionsListOptionBuilderInte
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
 use Throwable;
 
+use function array_splice;
 use function sprintf;
 
 /** @extends AbstractOptionBuilder<OptionsListOptionBuilderInterface, list<array<string,mixed>>> */
@@ -72,7 +73,14 @@ final class OptionsListOptionBuilder extends AbstractOptionBuilder implements Op
                 }
             }
 
-            $raw[$index] = $this->normalizeOptions($raw[$index]);
+            try {
+                $raw[$index] = $this->normalizeOptions($raw[$index]);
+            } catch (ConfigurationValidationErrorException $exception) {
+                // Replace the name of the option, which starts the path of the exception, with the list index.
+                $path = $exception->getPath();
+                array_splice($path, 0, 1, [$this->name, (string) $index]);
+                throw ConfigurationValidationErrorException::fromError($path, $exception->getRootError(), $exception);
+            }
         }
 
         return $raw;

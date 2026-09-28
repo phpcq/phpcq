@@ -8,10 +8,12 @@ use Phpcq\PluginApi\Version10\ConfigurationPluginInterface;
 use Phpcq\PluginApi\Version10\EnricherPluginInterface;
 use Phpcq\Runner\Config\Builder\PluginConfigurationBuilder;
 use Phpcq\Runner\Environment;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use Phpcq\Runner\Exception\RuntimeException;
 use Phpcq\Runner\Plugin\PluginRegistry;
 use Phpcq\Runner\Repository\InstalledRepository;
 
+use function array_splice;
 use function dirname;
 
 /**
@@ -38,9 +40,6 @@ final class PluginConfigurationFactory
             );
         }
 
-        $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
-        $plugin->describeConfiguration($configOptionsBuilder);
-
         return $this->createConfiguration($plugin, $environment, $taskConfig);
     }
 
@@ -52,7 +51,7 @@ final class PluginConfigurationFactory
         Environment $environment,
         array $taskConfig
     ): PluginConfiguration {
-        $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
+        $configOptionsBuilder = new PluginConfigurationBuilder('config', 'Plugin configuration');
         $plugin->describeConfiguration($configOptionsBuilder);
 
         $pluginConfig = $taskConfig['config'] ?? [];
@@ -74,7 +73,18 @@ final class PluginConfigurationFactory
                 dirname($installedVersion->getFilePath())
             );
 
-            $enricherConfig = $this->createConfiguration($enricher, $environment, ['config' => $enricherConfig ?? []]);
+            try {
+                $enricherConfig = $this->createConfiguration(
+                    $enricher,
+                    $environment,
+                    ['config' => $enricherConfig ?? []]
+                );
+            } catch (ConfigurationValidationErrorException $exception) {
+                // Replace the "config" key, which starts the path of the exception, with the enricher path.
+                $path = $exception->getPath();
+                array_splice($path, 0, 1, ['uses', $enricherName]);
+                throw ConfigurationValidationErrorException::fromError($path, $exception->getRootError(), $exception);
+            }
             $pluginConfig   = $enricher->enrich(
                 $plugin->getName(),
                 $installedVersion->getVersion(),

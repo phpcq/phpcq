@@ -85,23 +85,6 @@
       <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int]]></code>
     </MissingOverrideAttribute>
   </file>
-  <file src="src/Command/RunCommand.php">
-    <InvalidArgument>
-      <code><![CDATA[$numCores]]></code>
-      <code><![CDATA['default']]></code>
-      <code><![CDATA[TaskReportInterface::SEVERITY_MARGINAL]]></code>
-      <code><![CDATA[['default']]]></code>
-      <code><![CDATA[['file-report']]]></code>
-    </InvalidArgument>
-    <MissingOverrideAttribute>
-      <code><![CDATA[protected function configure(): void]]></code>
-      <code><![CDATA[protected function doComplete(CompletionInput $input, CompletionSuggestions $suggestions): void]]></code>
-      <code><![CDATA[protected function doExecute(): int]]></code>
-    </MissingOverrideAttribute>
-    <PossiblyFalseOperand>
-      <code><![CDATA[getcwd()]]></code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="src/Command/SelfUpdateCommand.php">
     <InvalidArgument>
       <code><![CDATA['https://phpcq.github.io/distrib/phpcq']]></code>

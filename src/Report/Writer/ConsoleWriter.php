@@ -8,7 +8,10 @@ use DateTimeImmutable;
 use Generator;
 use Phpcq\PluginApi\Version10\Report\ReportInterface;
 use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\TaskKind;
 use Phpcq\Runner\Report\TaskReport;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 
@@ -85,18 +88,48 @@ final class ConsoleWriter
 
     private function writeSummary(): void
     {
-        $rows = [];
+        $groups = [];
         foreach ($this->report->getTaskReports() as $taskReport) {
             $metadata = $taskReport->getMetadata();
-            $rows[] = [
+            $groups[$taskReport->getKind()->value][] = [
                 $taskReport->getTaskName(),
-                ($taskReport->getMetadata()['tool_name'] ?? ''),
+                ($metadata['tool_name'] ?? ''),
                 ($metadata['tool_version'] ?? ''),
                 $this->renderToolStatus($taskReport->getStatus()),
             ];
         }
 
-        $this->style->table(['Task', 'Tool', 'Version', 'State'], $rows);
+        $this->style->table(['Task', 'Tool', 'Version', 'State'], $this->buildSummaryRows($groups));
+    }
+
+    /**
+     * Group the rows by the task kind if fix tasks were run. The fix tasks are listed first as they run first.
+     *
+     * @param array<string, list<list<string>>> $groups
+     *
+     * @return list<list<string|TableCell>|TableSeparator>
+     */
+    private function buildSummaryRows(array $groups): array
+    {
+        if (!isset($groups[TaskKind::Fix->value])) {
+            return $groups[TaskKind::Diagnostic->value] ?? [];
+        }
+
+        $rows = [];
+        foreach ([TaskKind::Fix->value => 'Fixes', TaskKind::Diagnostic->value => 'Diagnostics'] as $kind => $label) {
+            if (!isset($groups[$kind])) {
+                continue;
+            }
+            if ([] !== $rows) {
+                $rows[] = new TableSeparator();
+            }
+            $rows[] = [new TableCell('<comment>' . $label . '</comment>', ['colspan' => 4])];
+            foreach ($groups[$kind] as $row) {
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
     }
 
     private function writeEntryReport(DiagnosticIteratorEntry $entry): void

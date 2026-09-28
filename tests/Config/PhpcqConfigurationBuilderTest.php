@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Phpcq\Runner\Test\Config;
 
 use Phpcq\Runner\Config\PhpcqConfigurationBuilder;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function var_dump;
@@ -162,5 +164,24 @@ final class PhpcqConfigurationBuilderTest extends TestCase
             ],
             $configuration,
         );
+    }
+
+    /** @return iterable<string, array{array<string, mixed>, string}> */
+    public static function invalidConfigurationProvider(): iterable
+    {
+        yield 'scalar option' => [['artifact' => []], 'phpcq.artifact'];
+        yield 'nested option' => [['composer' => ['autodiscover' => []]], 'phpcq.composer.autodiscover'];
+        yield 'prototype option' => [['plugins' => ['a' => ['version' => 1]]], 'phpcq.plugins.a.version'];
+        yield 'unexpected key' => [['unknown' => 1], 'phpcq.unknown'];
+    }
+
+    /** @param array<string, mixed> $config */
+    #[DataProvider('invalidConfigurationProvider')]
+    public function testReportsErrorPath(array $config, string $path): void
+    {
+        $this->expectException(ConfigurationValidationErrorException::class);
+        $this->expectExceptionMessage('Configuration validation failed at path "' . $path . '"');
+
+        (new PhpcqConfigurationBuilder())->processConfig($config);
     }
 }
