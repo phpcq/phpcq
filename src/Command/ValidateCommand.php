@@ -69,7 +69,7 @@ final class ValidateCommand extends AbstractCommand
             return true;
         }
 
-        $configOptionsBuilder = new PluginConfigurationBuilder($plugin->getName(), 'Plugin configuration');
+        $configOptionsBuilder = new PluginConfigurationBuilder('config', 'Plugin configuration');
         $pluginConfig = $configValues['config'] ?? [];
 
         $hash = md5($taskName . serialize($pluginConfig));
@@ -96,7 +96,7 @@ final class ValidateCommand extends AbstractCommand
 
             return $cache[$taskName][$hash] = true;
         } catch (ConfigurationValidationErrorException $exception) {
-            $exception = $exception->withOuterPath(['tasks', $taskName, 'config']);
+            $exception = $exception->withOuterPath(['tasks', $taskName]);
         } catch (Throwable $exception) {
             $exception = ConfigurationValidationErrorException::fromError(['tasks', $taskName, 'config'], $exception);
         }

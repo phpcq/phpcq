@@ -87,7 +87,7 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
             /** @var list<string> $keys */
             $keys = array_keys($diff);
             throw ConfigurationValidationErrorException::withCustomMessage(
-                [$keys[0]],
+                [$this->name, $keys[0]],
                 sprintf('Unexpected array key "%s"', $keys[0])
             );
         }
@@ -96,10 +96,11 @@ abstract class AbstractOptionsBuilder extends AbstractOptionBuilder implements O
             try {
                 $builder->validateValue($value[$key] ?? null);
             } catch (ConfigurationValidationErrorException $exception) {
-                throw $exception->withOuterPath([$key]);
+                // The path of the exception already starts with the name of the option.
+                throw $exception->withOuterPath([$this->name]);
             } catch (InvalidConfigurationException $exception) {
                 throw ConfigurationValidationErrorException::fromError(
-                    [$key],
+                    [$this->name, $key],
                     $exception
                 );
             }

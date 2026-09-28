@@ -6,6 +6,7 @@ namespace Phpcq\Runner\Test\Config\Builder;
 
 use Phpcq\Runner\Config\Builder\OptionsBuilder;
 use Phpcq\PluginApi\Version10\Exception\InvalidConfigurationException;
+use Phpcq\Runner\Exception\ConfigurationValidationErrorException;
 use PHPUnit\Framework\TestCase;
 
 /** @covers \Phpcq\Runner\Config\Builder\OptionsBuilder */
@@ -58,5 +59,30 @@ final class OptionsBuilderTest extends TestCase
     protected function createInstance(): OptionsBuilder
     {
         return new OptionsBuilder('Option', 'Example option');
+    }
+
+    public function testErrorPathContainsNestedOptionNames(): void
+    {
+        $builder = $this->createInstance();
+        $builder->describeOptions('nested', 'Nested options')->describeBoolOption('flag', 'Flag');
+
+        try {
+            $builder->validateValue($builder->normalizeValue(['nested' => ['flag' => 'yes']]));
+            self::fail('Exception expected');
+        } catch (ConfigurationValidationErrorException $exception) {
+            self::assertSame(['Option', 'nested', 'flag'], $exception->getPath());
+        }
+    }
+
+    public function testErrorPathContainsUnexpectedKey(): void
+    {
+        $builder = $this->createInstance();
+
+        try {
+            $builder->validateValue($builder->normalizeValue(['unknown' => true]));
+            self::fail('Exception expected');
+        } catch (ConfigurationValidationErrorException $exception) {
+            self::assertSame(['Option', 'unknown'], $exception->getPath());
+        }
     }
 }

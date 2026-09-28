@@ -67,7 +67,8 @@ final class PhpcqConfigurationBuilder
             $processed = $this->builder->normalizeValue($raw);
             $this->builder->validateValue($processed);
         } catch (ConfigurationValidationErrorException $exception) {
-            throw $exception->withOuterPath(['phpcq']);
+            // The path already starts with "phpcq", only the message has to be built with the full path.
+            throw $exception->withOuterPath([]);
         } catch (Throwable $exception) {
             throw ConfigurationValidationErrorException::fromError(['phpcq'], $exception);
         }

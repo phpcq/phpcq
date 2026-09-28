@@ -258,7 +258,7 @@ final class RunCommand extends AbstractCommand
             try {
                 $configuration = $this->pluginConfigFactory->createForTask($taskName, $environment);
             } catch (ConfigurationValidationErrorException $exception) {
-                throw $exception->withOuterPath(['tasks', $taskName, 'config']);
+                throw $exception->withOuterPath(['tasks', $taskName]);
             } catch (Throwable $exception) {
                 throw ConfigurationValidationErrorException::fromError(['tasks', $taskName, 'config'], $exception);
             }
