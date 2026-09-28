@@ -17,8 +17,8 @@ use Phpcq\Runner\Task\Tasklist;
 /**
  * Runs the fix tasks before the diagnostics.
  *
- * The fix tasks are executed sequentially. With fast finish enabled, the diagnostics are skipped when a fix task
- * failed.
+ * The fix tasks are executed sequentially and stop at the first failing fix task. The diagnostics are run anyway,
+ * unless fast finish is enabled.
  */
 final class FixCommand extends AbstractTaskCommand
 {
@@ -69,10 +69,10 @@ final class FixCommand extends AbstractTaskCommand
     #[\Override]
     protected function executeTasks(Tasklist $taskList, Report $report, OutputInterface $output): bool
     {
-        $fastFinish = (bool) $this->input->getOption('fast-finish');
-        $runner     = new SequentialTaskRunner($report->withKind(TaskKind::Fix), $output, $fastFinish);
-        $success    = $runner->run($this->fixTasks);
-        if (!$success && $fastFinish) {
+        // Later fix tasks must not work on a partially fixed code base, so the fix tasks always stop on failure.
+        $runner  = new SequentialTaskRunner($report->withKind(TaskKind::Fix), $output, true);
+        $success = $runner->run($this->fixTasks);
+        if (!$success && $this->input->getOption('fast-finish')) {
             return false;
         }
 

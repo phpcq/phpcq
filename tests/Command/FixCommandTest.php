@@ -7,16 +7,23 @@ namespace Phpcq\Runner\Test\Command;
 use Phpcq\PluginApi\Version10\DiagnosticsPluginInterface;
 use Phpcq\PluginApi\Version10\FixPluginInterface;
 use Phpcq\PluginApi\Version10\FixStage;
+use Phpcq\PluginApi\Version10\Output\OutputInterface;
 use Phpcq\PluginApi\Version10\PluginInterface;
+use Phpcq\PluginApi\Version10\Report\TaskReportInterface;
+use Phpcq\PluginApi\Version10\Task\ReportWritingTaskInterface;
 use Phpcq\PluginApi\Version10\Task\TaskInterface;
 use Phpcq\Runner\Command\FixCommand;
 use Phpcq\Runner\Command\RunCommand;
 use Phpcq\Runner\Config\PluginConfiguration;
 use Phpcq\Runner\Environment;
+use Phpcq\Runner\Report\Buffer\ReportBuffer;
+use Phpcq\Runner\Report\Report;
 use Phpcq\Runner\Task\FixTasklist;
 use Phpcq\Runner\Task\ResolvedTask;
 use Phpcq\Runner\Task\Tasklist;
+use Phpcq\Runner\Test\TemporaryFileProducingTestTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\ArrayInput;
 use ReflectionMethod;
 use ReflectionProperty;
 
@@ -29,6 +36,8 @@ use function iterator_to_array;
  */
 final class FixCommandTest extends TestCase
 {
+    use TemporaryFileProducingTestTrait;
+
     public function testFixCommandSharesRunOptions(): void
     {
         $fix = new FixCommand();
@@ -78,6 +87,35 @@ final class FixCommandTest extends TestCase
         self::assertSame([], iterator_to_array($this->getFixTasks($command), false));
     }
 
+    public function testStopsFixTasksAfterFailureButRunsDiagnostics(): void
+    {
+        $order   = [];
+        $command = $this->createInitializedCommand();
+        $this->setInput($command, []);
+        $fixTasks = $this->getFixTasks($command);
+        $fixTasks->addFixTask($this->createTask('fix-a', TaskReportInterface::STATUS_FAILED, $order), FixStage::Format);
+        $fixTasks->addFixTask($this->createTask('fix-b', TaskReportInterface::STATUS_PASSED, $order), FixStage::Format);
+        $taskList = new Tasklist();
+        $taskList->add($this->createTask('diagnostic', TaskReportInterface::STATUS_PASSED, $order));
+
+        self::assertFalse($this->executeTasks($command, $taskList));
+        self::assertSame(['fix-a', 'diagnostic'], $order);
+    }
+
+    public function testSkipsDiagnosticsAfterFailedFixTaskWithFastFinish(): void
+    {
+        $order   = [];
+        $command = $this->createInitializedCommand();
+        $this->setInput($command, ['--fast-finish' => true]);
+        $this->getFixTasks($command)
+            ->addFixTask($this->createTask('fix-a', TaskReportInterface::STATUS_FAILED, $order), FixStage::Format);
+        $taskList = new Tasklist();
+        $taskList->add($this->createTask('diagnostic', TaskReportInterface::STATUS_PASSED, $order));
+
+        self::assertFalse($this->executeTasks($command, $taskList));
+        self::assertSame(['fix-a'], $order);
+    }
+
     private function createInitializedCommand(): FixCommand
     {
         $command = new FixCommand();
@@ -102,6 +140,40 @@ final class FixCommandTest extends TestCase
         );
 
         return $taskList;
+    }
+
+    private function setInput(FixCommand $command, array $parameters): void
+    {
+        $input = new ArrayInput($parameters + ['--threads' => '1'], $command->getDefinition());
+        (new ReflectionProperty($command, 'input'))->setValue($command, $input);
+    }
+
+    private function executeTasks(FixCommand $command, Tasklist $taskList): bool
+    {
+        $result = (new ReflectionMethod($command, 'executeTasks'))->invoke(
+            $command,
+            $taskList,
+            new Report(new ReportBuffer(), self::$tempdir),
+            self::createStub(OutputInterface::class)
+        );
+        self::assertIsBool($result);
+
+        return $result;
+    }
+
+    /** @param list<string> $order */
+    private function createTask(string $name, string $status, array &$order): ReportWritingTaskInterface
+    {
+        $task = self::createStub(ReportWritingTaskInterface::class);
+        $task->method('getToolName')->willReturn($name);
+        $task->method('runWithReport')->willReturnCallback(
+            function (TaskReportInterface $report) use ($name, $status, &$order): void {
+                $order[] = $name;
+                $report->close($status);
+            }
+        );
+
+        return $task;
     }
 
     private function getFixTasks(FixCommand $command): FixTasklist
